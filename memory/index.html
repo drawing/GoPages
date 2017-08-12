@@ -4,6 +4,12 @@
 		<meta charset="utf-8">
 		<title> digit memory </title>
 	</head>
+
+	<style type="text/css">
+body {
+	font-family: 'Courier New', Courier, monospace;
+}
+	</style>
 	<script>
 
 (function(doc, win) {  
@@ -15,7 +21,6 @@
 	if (!doc.addEventListener)  
 		return;  
 	win.addEventListener(resizeEvt, recalc, false);  
-	// doc.addEventListener('DOMContentLoaded', recalc, false);  
 })(document, window);  
 
 function setRem() {  
@@ -35,10 +40,13 @@ function generateCode() {
 	var res = "";
 	var index = Math.floor(Math.random() * 110);
 	if (index >= 100) {
-		res = "0" + (index - 100);
+		res += "0" + (index - 100);
 	}
 	else {
-		res = index;
+		if (index < 10) {
+			res += "&nbsp"
+		}
+		res += index;
 	}
 	return res;
 }
@@ -57,7 +65,7 @@ function refreshDigit() {
 
 function loadBody(){
 	refreshDigit();
-	setInterval(refreshDigit, 30000);
+	setInterval(refreshDigit, 60000);
 }
 
 	</script>
