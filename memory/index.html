@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title> digit memory </title>
+	</head>
+	<script>
+
+window.onload = loadBody;
+
+function generateCode() {
+	var res = "";
+	var index = Math.floor(Math.random() * 110);
+	if (index >= 100) {
+		res = "0" + (index - 100);
+	}
+	else {
+		res = index;
+	}
+	return res;
+}
+
+function refreshDigit() {
+	var text = "";
+	for (var i = 0; i < 5; i++)
+	{ 
+		for (var j = 0; j < 5; j++) {
+			text += generateCode() + "&emsp;";
+		}
+		text += "<br>";
+	}
+	document.getElementById('display').innerHTML = text;
+}
+
+function loadBody(){
+	refreshDigit();
+	setInterval(refreshDigit, 30000);
+}
+
+	</script>
+	<body>
+		<div><h1 id="display"></h1></div>
+	</body>
+</html>
