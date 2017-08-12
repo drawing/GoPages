@@ -6,7 +6,30 @@
 	</head>
 	<script>
 
+(function(doc, win) {  
+	setRem();  
+	var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',  
+	recalc = function() {  
+		setRem();  
+	};  
+	if (!doc.addEventListener)  
+		return;  
+	win.addEventListener(resizeEvt, recalc, false);  
+	// doc.addEventListener('DOMContentLoaded', recalc, false);  
+})(document, window);  
+
+function setRem() {  
+	var docEl = document.documentElement;  
+	var clientWidth = docEl.clientWidth;  
+	if (!clientWidth) {  
+		return;  
+	}  
+	docEl.style.fontSize = 100 * (clientWidth / 1080) + 'px';  
+}
+
 window.onload = loadBody;
+var row = 5;
+var col = 5;
 
 function generateCode() {
 	var res = "";
@@ -22,12 +45,12 @@ function generateCode() {
 
 function refreshDigit() {
 	var text = "";
-	for (var i = 0; i < 5; i++)
+	for (var i = 0; i < row; i++)
 	{ 
-		for (var j = 0; j < 5; j++) {
+		for (var j = 0; j < col - 1; j++) {
 			text += generateCode() + "&emsp;";
 		}
-		text += "<br>";
+		text += generateCode() + "<br>";
 	}
 	document.getElementById('display').innerHTML = text;
 }
@@ -39,6 +62,6 @@ function loadBody(){
 
 	</script>
 	<body>
-		<div><h1 id="display"></h1></div>
+		<div id="display"></div>
 	</body>
 </html>
