@@ -1,21 +1,47 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>编程 - Category - My New Hugo Site</title>
-        <link>http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/</link>
-        <description>编程 - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>cppbreak@qq.com (fancymore)</managingEditor>
-            <webMaster>cppbreak@qq.com (fancymore)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 10 Apr 2023 22:40:04 &#43;0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/" rel="self" type="application/rss+xml" /><item>
-    <title>SWIG 跨语言调用</title>
-    <link>http://drawing.fancymore.com/swig_cross_language_call/</link>
-    <pubDate>Mon, 10 Apr 2023 22:40:04 &#43;0800</pubDate>
-    <author>fancymore</author>
-    <guid>http://drawing.fancymore.com/swig_cross_language_call/</guid>
-    <description><![CDATA[一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>编程 on My New Hugo Site</title>
+    <link>http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 编程 on My New Hugo Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>无效告警优化实践总结</title>
+      <link>http://drawing.fancymore.com/posts/program/invalid_alarm_optimization_practice/</link>
+      <pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
+      
+      <guid>http://drawing.fancymore.com/posts/program/invalid_alarm_optimization_practice/</guid>
+      <description>一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。
+如何提升告警的有效性，准确识别问题，同时又不至于淹没在大量的无效告警中，正是本文所探讨的内容。
+二、告警是可靠性的基础 首先来看一下告警的重要性，为什么我们需要耗费这么多精力来优化告警。虽然我们都期望一个服务是没有故障的，但事实确是不存在 100% 没问题的系统，我们只能不断提升服务的可靠性，我们期望做到：
+对服务当前状态了如指掌，尽在掌控 能够第一时间发现问题，并且快速定位问题原因 要想做到以上两点，只能依赖完善的监控&amp;amp;告警，监控展示服务的完整运行状态，但是不可能一直盯屏观察，并且也不可能关注到所有方面，要想被动的了解系统状态，唯有通过告警，自动检测异常情况。
+所以，告警是团队监控服务质量和可用性的一个最主要手段。系统故障相关的时间问题通常用 MTBF、MTTF、MTTR 这三项指标来表示。
+MTTF (Mean Time To Failure，平均无故障时间）：指系统无故障运行的平均时间，取所有从系统开始正常运行到发生故障之间的时间段的平均值。 MTTF = ∑T1 / N MTTR (Mean Time To Repair，平均修复时间）：指系统从发生故障到维修结束之间的时间段的平均值。MTTR = ∑(T2+T3) / N MTBF (Mean Time Between Failure，平均失效间隔）：指系统两次故障发生时间之间的时间段的平均值。 MTBF = ∑(T2+T3+T1) / N 可靠性在于追求更高的 MTTF 和低的 MTTR（平均无故障时间）。最好的情况是能够不产生故障，但不存在 100%可靠的系统，当出现故障/异常时，我们需要尽可能减少 MTTR（平均修复时间），告警的意义在于尽可能减少 T2 + T3 时间。
+三、告警面临的现实问题 理想中的告警，不存在误报（即本来正常的，告警为异常）也不存在漏报（即本来异常的，误认为正常），所以理想的模型满足以下三点：
+误报为 0：出现的告警都是需要处理的问题 漏报为 0：异常问题都能够告警发现 及时发现：能够第一时间发现问题，甚至于在导致故障前发现问题 但在实践中无法做到理想情况。要减少漏报，需要针对每一种可能发生的场景进行监控，同时配置告警，这其实并不算困难；但我们的告警往往不是太少了，而是太多了，以至于需要耗费大量时间处理无效告警，由于告警过多，容易忽略真正有用的告警，导致异常发现的时间变长，或者忽略的潜在的风险。所以对于告警，最大的问题在于如何减少无效告警，提升告警的效率。
+先来看一下无效告警产生的原因。
+监控系统应该解决两个问题：什么东西出故障了，以及为什么会出故障。其中“什么东西出故障了”即为现象，“为什么”则代表了原因（可能是中间原因）。现象和原因的区分是构建信噪比高的监控系统时最重要的概念。
+在实践中，想绝对做到这两点几乎不可能，但我们可以无限趋向于理想模型。
+告警一般是通过“现象”来判断，而是否有问题要看产生现象的原因判断。相同的现象引起的原因可能不同，这种“可能性”是导致误告警的最核心原因。
+举个例子，请求失败告警，原因可能是请求内容有问题，也可能上游机器异常，或者是我们自身的服务处理异常。理想的情况肯定是期望告警有着唯一的原因，但实际上由于现实的复杂性，未必能够做到精准的区分。
+减少误告警的思路，就是要尽可能减少现象产生的原因，如果能减少到唯一的一个原因，那就能很明确问题所在。
+四、告警分类 同样是告警，对于 CPU 跑满这种情况需要立即处理，但对于单机健康状态告警（正常异常机器会自动置换，异常情况可能置换失败），系统并不能自动解决这种状况，但是一段时间内不处理，也不会造成影响，负载均衡设备会自动摘除。</description>
+    </item>
+    
+    <item>
+      <title>SWIG 跨语言调用</title>
+      <link>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</link>
+      <pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
+      
+      <guid>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</guid>
+      <description>一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
 Web 流派：PhoneGap
 优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
 语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C++, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C++，Go
 Golang（gobind） C/C++（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C++库提供给不同平台和不同语言使用，存在的一些问题
-适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。]]></description>
-</item>
-</channel>
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。</description>
+    </item>
+    
+  </channel>
 </rss>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My New Hugo Site</title>
-    <link>http://drawing.fancymore.com/</link>
-    <description>Recent content on My New Hugo Site</description>
+    <title>工程实践 on My New Hugo Site</title>
+    <link>http://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link>
+    <description>Recent content in 工程实践 on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>无效告警优化实践总结</title>
       <link>http://drawing.fancymore.com/posts/program/invalid_alarm_optimization_practice/</link>
@@ -27,20 +27,6 @@ MTTF (Mean Time To Failure，平均无故障时间）：指系统无故障运行
 举个例子，请求失败告警，原因可能是请求内容有问题，也可能上游机器异常，或者是我们自身的服务处理异常。理想的情况肯定是期望告警有着唯一的原因，但实际上由于现实的复杂性，未必能够做到精准的区分。
 减少误告警的思路，就是要尽可能减少现象产生的原因，如果能减少到唯一的一个原因，那就能很明确问题所在。
 四、告警分类 同样是告警，对于 CPU 跑满这种情况需要立即处理，但对于单机健康状态告警（正常异常机器会自动置换，异常情况可能置换失败），系统并不能自动解决这种状况，但是一段时间内不处理，也不会造成影响，负载均衡设备会自动摘除。</description>
-    </item>
-    
-    <item>
-      <title>SWIG 跨语言调用</title>
-      <link>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</link>
-      <pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
-      
-      <guid>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</guid>
-      <description>一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
-Web 流派：PhoneGap
-优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
-语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C++, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C++，Go
-Golang（gobind） C/C++（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C++库提供给不同平台和不同语言使用，存在的一些问题
-适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。</description>
     </item>
     
   </channel>

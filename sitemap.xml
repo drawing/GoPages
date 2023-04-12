@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  <sitemap>
-    <loc>http://drawing.fancymore.com/en/sitemap.xml</loc>
-    
-      <lastmod>2023-04-10T22:40:04+08:00</lastmod>
-    
-  </sitemap>
-  
-  <sitemap>
-    <loc>http://drawing.fancymore.com/zh-cn/sitemap.xml</loc>
-    
-  </sitemap>
-  
-</sitemapindex>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>http://drawing.fancymore.com/categories/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/posts/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/tags/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/posts/program/invalid_alarm_optimization_practice/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</loc>
+    <lastmod>2023-04-10T22:40:04+08:00</lastmod>
+  </url><url>
+    <loc>http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
+    <lastmod>2023-04-10T22:40:04+08:00</lastmod>
+  </url>
+</urlset>

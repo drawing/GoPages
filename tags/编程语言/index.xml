@@ -1,21 +1,24 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>编程语言 - Tag - My New Hugo Site</title>
-        <link>http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
-        <description>编程语言 - Tag - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>cppbreak@qq.com (fancymore)</managingEditor>
-            <webMaster>cppbreak@qq.com (fancymore)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 10 Apr 2023 22:40:04 &#43;0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="self" type="application/rss+xml" /><item>
-    <title>SWIG 跨语言调用</title>
-    <link>http://drawing.fancymore.com/swig_cross_language_call/</link>
-    <pubDate>Mon, 10 Apr 2023 22:40:04 &#43;0800</pubDate>
-    <author>fancymore</author>
-    <guid>http://drawing.fancymore.com/swig_cross_language_call/</guid>
-    <description><![CDATA[一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>编程语言 on My New Hugo Site</title>
+    <link>http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
+    <description>Recent content in 编程语言 on My New Hugo Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 10 Apr 2023 22:40:04 +0800</lastBuildDate><atom:link href="http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SWIG 跨语言调用</title>
+      <link>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</link>
+      <pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
+      
+      <guid>http://drawing.fancymore.com/posts/program/swig_cross_language_call/</guid>
+      <description>一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
 Web 流派：PhoneGap
 优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
 语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C++, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C++，Go
 Golang（gobind） C/C++（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C++库提供给不同平台和不同语言使用，存在的一些问题
-适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。]]></description>
-</item>
-</channel>
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。</description>
+    </item>
+    
+  </channel>
 </rss>

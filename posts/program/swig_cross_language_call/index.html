@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #faf6f1"
+  lang=""
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>SWIG 跨语言调用 - My New Hugo Site</title>
+
+  
+  <meta name="theme-color" />
+
+  
+  
+  
+  <meta name="description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+Web 流派：PhoneGap
+优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
+语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
+Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。" />
+  <meta name="author" content="YOUR_NAME" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="http://drawing.fancymore.com/main.min.css" />
+
+  
+
+  
+     
+  <link rel="preload" as="image" href="http://drawing.fancymore.com/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="GRAVATAR_CDN_LINK6fd8df4abe41f17fd8e2dd7d97b5cc8c?s=160&amp;d=identicon" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="http://drawing.fancymore.com/github.svg" />
+  
+  <link rel="preload" as="image" href="http://drawing.fancymore.com/rss.svg" />
+  
+
+  
+  <link rel="icon" href="http://drawing.fancymore.com/favicon.ico" />
+  <link rel="apple-touch-icon" href="http://drawing.fancymore.com/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.111.3">
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="SWIG 跨语言调用" />
+<meta property="og:description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+Web 流派：PhoneGap
+优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
+语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
+Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://drawing.fancymore.com/posts/program/swig_cross_language_call/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-04-10T22:40:04+08:00" />
+<meta property="article:modified_time" content="2023-04-10T22:40:04+08:00" />
+
+  
+  <meta itemprop="name" content="SWIG 跨语言调用">
+<meta itemprop="description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+Web 流派：PhoneGap
+优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
+语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
+Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。"><meta itemprop="datePublished" content="2023-04-10T22:40:04+08:00" />
+<meta itemprop="dateModified" content="2023-04-10T22:40:04+08:00" />
+<meta itemprop="wordCount" content="521">
+<meta itemprop="keywords" content="编程语言," />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SWIG 跨语言调用"/>
+<meta name="twitter:description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+Web 流派：PhoneGap
+优点 支持 UI 开发 跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen 缺点 运行效率慢 PhoneGap 支持 API 调用范围有限 代码转换流派：
+语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
+Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
+适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。"/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="http://drawing.fancymore.com/"
+      >My New Hugo Site</a
+    >
+    <div
+      class="btn-dark text-[0] ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]"
+      role="button"
+      aria-label="Dark"
+    ></div>
+  </div>
+
+  <div
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+    role="button"
+    aria-label="Menu"
+  ></div>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#faf6f1"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href="https://github.com/drawing"
+        target="_blank"
+        rel="me"
+      >
+        github
+      </a>
+      
+      <a
+        class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./rss.svg)"
+        href="http://drawing.fancymore.com/index.xml"
+        target="_blank"
+        rel="alternate"
+      >
+        rss
+      </a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-16 pb-24 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">SWIG 跨语言调用</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>Apr 10, 2023</time>
+      
+      
+      
+      
+    </div>
+    
+  </header>
+
+  <section><h2 id="一跨平台调用">一、跨平台调用</h2>
+<p>在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。</p>
+<p><strong>Web 流派</strong>：PhoneGap</p>
+<ul>
+<li>优点
+<ul>
+<li>支持 UI 开发</li>
+<li>跨平台：PhoneGap 目前支持的移动平台有：Android, iOS, Windows Phone, Windows 8, Firefox OS, Amazon Fire OS, BlackBerry 10, Ubuntu, Tizen</li>
+</ul>
+</li>
+<li>缺点
+<ul>
+<li>运行效率慢</li>
+<li>PhoneGap 支持 API 调用范围有限</li>
+</ul>
+</li>
+</ul>
+<p><strong>代码转换流派</strong>：</p>
+<ul>
+<li>语言之间转换：Java-OC（J2ObjC）</li>
+<li>Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C++, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行</li>
+</ul>
+<p><strong>编译流派</strong>：C/C++，Go</p>
+<ul>
+<li>Golang（gobind）</li>
+<li>C/C++（java: jni，go: cgo, python: ctypes)</li>
+</ul>
+<h2 id="二swig-是什么">二、SWIG 是什么</h2>
+<p>C/C++库提供给不同平台和不同语言使用，存在的一些问题</p>
+<ul>
+<li>适配层工作量较大：取决于 API 数量</li>
+<li>易错：涉及底层数据类型的转换</li>
+<li>不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等</li>
+</ul>
+<p>SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。</p>
+<h2 id="三swig-能做什么">三、SWIG 能做什么</h2>
+<p>自动生成 C/C++代码不同高级语言的封装（胶水层），支持的语言 ：C#, D, Go, Guile, Java, Javascript, Lua, MzScheme/Racket, OCaml, Octave, Perl, PHP, Python, R, Ruby, Scilab, Tcl</p>
+<p>支持 ISO C99：所有的数据类型，指针、枚举、结构体、数组、typedef 等
+支持 ISO C++98 to C++17：类，继承和多重继承，重载、静态方法、名字空间、模板、嵌套类、STL 等</p>
+<p>文档生成：支持 Doxygen 注释生成对应目标语言的文档（Java、Python）</p>
+<h2 id="四show-一些例子">四、Show 一些例子</h2>
+<h3 id="1-java-调用-c-最简单例子">1. Java 调用 C 最简单例子</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// File: tools.c
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">TestFunction</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">+</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// File: tools.i
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">%</span>module test
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extern</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">TestFunction</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b);
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// File: main.java
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">main</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String argv<span style="color:#f92672">[])</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/home/bo.deng/libtest.so&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>test<span style="color:#f92672">.</span><span style="color:#a6e22e">TestFunction</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>编译命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>swig -java tools.i
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>gcc -c -fPIC tools.c tools_wrap.c -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.1.alios7.x86_64/include -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.1.alios7.x86_64/include/linux/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>gcc -shared tools.o tools_wrap.o -o libtest.so
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>javac main.java
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>java main
+</span></span></code></pre></div><h3 id="2-c-回调">2. C++ 回调</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// File: include/shape.h
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#ifndef SHAPE_H
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#define SHAPE_H
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Param</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string one;
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string two;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Shape</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> draw(<span style="color:#66d9ef">const</span> Param <span style="color:#f92672">&amp;</span> param) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>Shape() {}
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Painter</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> drawShape(Shape <span style="color:#f92672">*</span> shape);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif </span><span style="color:#75715e">// SHAPE_H
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// File: src/shape.cpp
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;shape.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> Painter<span style="color:#f92672">::</span>drawShape(Shape <span style="color:#f92672">*</span> shape)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">100</span>; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        Param p;
+</span></span><span style="display:flex;"><span>        p.one <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;testddd&#34;</span>;
+</span></span><span style="display:flex;"><span>        p.two <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ddd&#34;</span>;
+</span></span><span style="display:flex;"><span>        shape<span style="color:#f92672">-&gt;</span>draw(p);
+</span></span><span style="display:flex;"><span>        printf(<span style="color:#e6db74">&#34;call java over</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>        sleep(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// File: shape.i
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">%</span><span style="color:#a6e22e">module</span>(directors<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;1&#34;</span>) drawing
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span><span style="color:#a6e22e">feature</span>(<span style="color:#e6db74">&#34;director&#34;</span>) Shape;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;include/shape.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">%</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>include <span style="color:#e6db74">&#34;std_string.i&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>include <span style="color:#e6db74">&#34;include/shape.h&#34;</span>;
+</span></span></code></pre></div><p>director 指令允许目标语言从当前类派生。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// File: main.java
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">import</span> com.test.shape.Shape<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.test.shape.Painter<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.test.shape.Param<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Circle</span> <span style="color:#66d9ef">extends</span> Shape <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">draw</span><span style="color:#f92672">(</span>Param param<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>param<span style="color:#f92672">.</span><span style="color:#a6e22e">getOne</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>param<span style="color:#f92672">.</span><span style="color:#a6e22e">getTwo</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;drawing a circle&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">main</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String argv<span style="color:#f92672">[])</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;user.dir&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/libdrawing.so&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;start...&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                Painter painter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Painter<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                painter<span style="color:#f92672">.</span><span style="color:#a6e22e">drawShape</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Circle<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;end...&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">100</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;main thread&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1000</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>编译</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Makefile" data-lang="Makefile"><span style="display:flex;"><span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	mkdir -p com/test/shape/
+</span></span><span style="display:flex;"><span>	swig -c++ -java -package com.test.shape -outdir com/test/shape/ shape.i
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">lib</span><span style="color:#f92672">:</span>java
+</span></span><span style="display:flex;"><span>	g++ -fPIC -c src/shape.cpp -Iinclude
+</span></span><span style="display:flex;"><span>	g++ -fPIC -c shape_wrap.cxx -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.1.alios7.x86_64/include -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.1.alios7.x86_64/include/linux/
+</span></span><span style="display:flex;"><span>	g++ -shared shape.o shape_wrap.o -o libdrawing.so
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">test</span><span style="color:#f92672">:</span>lib
+</span></span><span style="display:flex;"><span>	mkdir jar
+</span></span><span style="display:flex;"><span>	javac -d jar/ -sourcepath . com/test/shape/*.java
+</span></span><span style="display:flex;"><span>	jar cf drawing.jar -C jar/ .
+</span></span><span style="display:flex;"><span>	javac -classpath drawing.jar main.java
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">run</span><span style="color:#f92672">:</span>clean test
+</span></span><span style="display:flex;"><span>	java -classpath drawing.jar:. main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">clean</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	rm -rf com
+</span></span><span style="display:flex;"><span>	rm -rf jar
+</span></span><span style="display:flex;"><span>	rm -f shape_wrap.cxx
+</span></span><span style="display:flex;"><span>	rm -f shape_wrap.h
+</span></span><span style="display:flex;"><span>	rm -f *.o
+</span></span><span style="display:flex;"><span>	rm -f *.so
+</span></span><span style="display:flex;"><span>	rm -f *.jar
+</span></span><span style="display:flex;"><span>	rm -f *.class
+</span></span><span style="display:flex;"><span>	rm -f drawing_wrap.*
+</span></span></code></pre></div><h3 id="3-go-语言调用">3. Go 语言调用</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// File: main.go
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;./drawing&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Cicle</span> <span style="color:#66d9ef">struct</span>{
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Cicle</span>) <span style="color:#a6e22e">Draw</span>(<span style="color:#a6e22e">p</span> <span style="color:#a6e22e">drawing</span>.<span style="color:#a6e22e">Param</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;callback:&#34;</span>, <span style="color:#a6e22e">p</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">GetOne</span>())
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">GetTwo</span>())
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cicle</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Cicle</span>{}
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;cicle is &#34;</span>, <span style="color:#a6e22e">cicle</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">painter</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">drawing</span>.<span style="color:#a6e22e">NewPainter</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shape</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">drawing</span>.<span style="color:#a6e22e">NewDirectorShape</span>(<span style="color:#a6e22e">cicle</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">painter</span>.<span style="color:#a6e22e">DrawShape</span>(<span style="color:#a6e22e">shape</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">drawing</span>.<span style="color:#a6e22e">DeleteShape</span>(<span style="color:#a6e22e">shape</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">drawing</span>.<span style="color:#a6e22e">DeletePainter</span>(<span style="color:#a6e22e">painter</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir drawing
+</span></span><span style="display:flex;"><span>swig -go -cgo -c++ -intgosize <span style="color:#ae81ff">64</span> -outdir drawing shape.i
+</span></span><span style="display:flex;"><span>GO111MODULE<span style="color:#f92672">=</span>off go run main.go
+</span></span></code></pre></div><p>C/C++代码不用修改，跟 Java 的区别在于 Go 应用层逻辑 以及 编译命令不同。</p>
+<h2 id="五其他高级功能">五、其他高级功能</h2>
+<p>参阅文档：https://www.swig.org/Doc4.0/Contents.html#Contents</p>
+</section>
+
+  
+  
+  <footer class="mt-12 flex flex-wrap">
+     
+    <a
+      class="mr-1.5 mb-1.5 rounded-lg bg-black/[3%] px-5 py-2 no-underline dark:bg-white/[8%]"
+      href="http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80"
+      >编程语言</a
+    >
+    
+  </footer>
+  
+
+  
+  
+  
+  <nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]">
+    
+    <a
+      class="flex w-1/2 items-center rounded-l-md p-6 pr-3 no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]"
+      href="http://drawing.fancymore.com/posts/program/invalid_alarm_optimization_practice/"
+      ><span class="mr-1.5">←</span><span>无效告警优化实践总结</span></a
+    >
+    
+    
+  </nav>
+  
+
+  
+  
+
+  
+  
+  <div class="mt-24" id="graphcomment"></div>
+  <script type="text/javascript">
+    var __semio__params = {
+      graphcommentId: 'YOUR_GRAPH_COMMENT_ID',
+      behaviour: {
+        
+      },
+      
+    };
+
+    function __semio__onload() {
+      __semio__gc_graphlogin(__semio__params);
+    }
+
+    (function () {
+      var gc = document.createElement('script');
+      gc.type = 'text/javascript';
+      gc.async = true;
+      gc.onload = __semio__onload;
+      gc.defer = true;
+      gc.src =
+        'https://integration.graphcomment.com/gc_graphlogin.js?' + Date.now();
+      (
+        document.getElementsByTagName('head')[0] ||
+        document.getElementsByTagName('body')[0]
+      ).appendChild(gc);
+    })();
+  </script>
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="http://drawing.fancymore.com/">My New Hugo Site</a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >Theme Paper</a
+  >
+</footer>
+
+  </body>
+</html>
