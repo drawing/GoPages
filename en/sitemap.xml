@@ -2,7 +2,7 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://drawing.fancymore.com/categories/</loc><changefreq>weekly</changefreq><priority>0.5</priority><xhtml:link
+            <loc>http://drawing.fancymore.com/categories/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="zh-cn"
                         href="http://drawing.fancymore.com/zh-cn/categories/"
@@ -11,7 +11,7 @@
                     hreflang="en"
                     href="http://drawing.fancymore.com/categories/"
                     /></url><url>
-            <loc>http://drawing.fancymore.com/</loc><changefreq>weekly</changefreq><priority>0.5</priority><xhtml:link
+            <loc>http://drawing.fancymore.com/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="zh-cn"
                         href="http://drawing.fancymore.com/zh-cn/"
@@ -20,7 +20,9 @@
                     hreflang="en"
                     href="http://drawing.fancymore.com/"
                     /></url><url>
-            <loc>http://drawing.fancymore.com/tags/</loc><changefreq>weekly</changefreq><priority>0.5</priority><xhtml:link
+            <loc>http://drawing.fancymore.com/posts/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>http://drawing.fancymore.com/swig_cross_language_call/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>http://drawing.fancymore.com/tags/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="zh-cn"
                         href="http://drawing.fancymore.com/zh-cn/tags/"
@@ -28,4 +30,6 @@
                     rel="alternate"
                     hreflang="en"
                     href="http://drawing.fancymore.com/tags/"
-                    /></url></urlset>
+                    /></url><url>
+            <loc>http://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>http://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc><lastmod>2023-04-10T22:40:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url></urlset>
