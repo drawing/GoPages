@@ -8,10 +8,10 @@
         <language>zh-cn</language>
         <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="https://example.com/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>无效告警优化实践总结</title>
-        <link>https://example.com/posts/program/invalid_alarm_optimization_practice/</link>
+        <link>https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</link>
         <pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
         
-        <guid>https://example.com/posts/program/invalid_alarm_optimization_practice/</guid>
+        <guid>https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</guid>
         <description>&lt;h2 id=&#34;一背景&#34;&gt;一、背景&lt;/h2&gt;
 &lt;p&gt;对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。&lt;/p&gt;
 &lt;p&gt;如何提升告警的有效性，准确识别问题，同时又不至于淹没在大量的无效告警中，正是本文所探讨的内容。&lt;/p&gt;
@@ -28,12 +28,18 @@
 &lt;li&gt;&lt;strong&gt;MTTR (Mean Time To Repair，平均修复时间）&lt;/strong&gt;：指系统从发生故障到维修结束之间的时间段的平均值。MTTR = ∑(T2+T3) / N&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;MTBF (Mean Time Between Failure，平均失效间隔）&lt;/strong&gt;：指系统两次故障发生时间之间的时间段的平均值。 MTBF = ∑(T2+T3+T1) / N&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://example.com/_images_/2023-04-12-18-10-28.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28.png&#34;
+	width=&#34;2042&#34;
+	height=&#34;570&#34;
+	srcset=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_480x0_resize_box_3.png 480w, https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+		alt=&#34;可用性指标&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;358&#34;
+		data-flex-basis=&#34;859px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;可靠性在于追求更高的 MTTF 和低的 MTTR（平均无故障时间）。最好的情况是能够不产生故障，但不存在 100%可靠的系统，当出现故障/异常时，我们需要尽可能减少 MTTR（平均修复时间），告警的意义在于尽可能减少 T2 + T3 时间。&lt;/p&gt;
@@ -49,21 +55,29 @@
 &lt;p&gt;监控系统应该解决两个问题：什么东西出故障了，以及为什么会出故障。其中“什么东西出故障了”即为现象，“为什么”则代表了原因（可能是中间原因）。现象和原因的区分是构建信噪比高的监控系统时最重要的概念。&lt;/p&gt;
 &lt;p&gt;在实践中，想绝对做到这两点几乎不可能，但我们可以无限趋向于理想模型。&lt;/p&gt;
 &lt;p&gt;告警一般是通过“现象”来判断，而是否有问题要看产生现象的原因判断。相同的现象引起的原因可能不同，这种“可能性”是导致误告警的最核心原因。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://example.com/_images_/2023-04-12-18-11-21.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21.png&#34;
+	width=&#34;766&#34;
+	height=&#34;388&#34;
+	srcset=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_480x0_resize_box_3.png 480w, https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;197&#34;
+		data-flex-basis=&#34;473px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;举个例子，请求失败告警，原因可能是请求内容有问题，也可能上游机器异常，或者是我们自身的服务处理异常。理想的情况肯定是期望告警有着唯一的原因，但实际上由于现实的复杂性，未必能够做到精准的区分。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://example.com/_images_/2023-04-12-18-11-50.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50.png&#34;
+	width=&#34;916&#34;
+	height=&#34;510&#34;
+	srcset=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_480x0_resize_box_3.png 480w, https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;179&#34;
+		data-flex-basis=&#34;431px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;减少误告警的思路，就是要尽可能减少现象产生的原因，如果能减少到唯一的一个原因，那就能很明确问题所在。&lt;/p&gt;
@@ -99,23 +113,31 @@
 &lt;/ul&gt;
 &lt;p&gt;以请求失败举例，告警平台是否可以区分不同原因类型告警，是否可以统计成功率告警，是否可以配置持续多久告警，是否可以配置环比同比条件告警；以及不同类型的阈值区分配置，不同条件下的短信，还是电话告警，短信一段时间未处理是否可以转换为电话通知，是否可以屏蔽重复告警等等。所有的特性都有利于我们设置一个精准的告警条件。&lt;/p&gt;
 &lt;p&gt;另外平台提供的统计和趋势，有利于我们进行针对性优化，查看每天每周的 TopN 告警是什么，整体的趋势是什么样的，从而进行针对性优化。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://example.com/_images_/2023-04-12-18-13-22.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22.png&#34;
+	width=&#34;2806&#34;
+	height=&#34;938&#34;
+	srcset=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_480x0_resize_box_3.png 480w, https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;299&#34;
+		data-flex-basis=&#34;717px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;七告警处理流程&#34;&gt;七、告警处理流程&lt;/h2&gt;
 &lt;p&gt;前面提到了告警的优化是一个持续的过程，不存在一劳永逸的事情。需要每天或者每周安排值班人员负责告警事宜，这点上确实是需要一定的投入。值班同学需要持续关注告警的有效性，对于出现的无效告警，分析清楚原因，持续优化阈值或者告警策略。&lt;/p&gt;
 &lt;p&gt;合理的告警流转流程：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://example.com/_images_/2023-04-12-18-13-33.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33.png&#34;
+	width=&#34;1688&#34;
+	height=&#34;174&#34;
+	srcset=&#34;https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_480x0_resize_box_3.png 480w, https://example.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;970&#34;
+		data-flex-basis=&#34;2328px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;处理流程中，在告警触发后，通过短信/电话等方式触达，值班处理人接单处理，再接单后处理完成前，重复的问题不再触发告警，以避免大量的重复无效告警。确认原因后结单返回原因。&lt;/p&gt;
