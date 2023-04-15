@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
+概念 之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。
+分层 Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C&#43;&#43;的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。
+VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。
+inode 内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 inode_operations ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。file_operations 实现文件内容操作，如read、write等等，inode_operations 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。
+file inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。
+dentry dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。
+file_system_type file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 register_filesystem 向内核注册，函数只是简单的把 file_system_type 插入链表，其中最关键的成员就是 get_sb，得到 super_block 结构。
+super_block super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。
+vfsmount 对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 super_block 对与挂接点来说，都是唯一的。'>
+<title>Linux内核笔记-VFS</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-VFS'>
+<meta property='og:description' content='Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
+概念 之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。
+分层 Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C&#43;&#43;的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。
+VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。
+inode 内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 inode_operations ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。file_operations 实现文件内容操作，如read、write等等，inode_operations 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。
+file inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。
+dentry dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。
+file_system_type file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 register_filesystem 向内核注册，函数只是简单的把 file_system_type 插入链表，其中最关键的成员就是 get_sb，得到 super_block 结构。
+super_block super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。
+vfsmount 对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 super_block 对与挂接点来说，都是唯一的。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-21T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-21T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux内核笔记-VFS">
+<meta name="twitter:description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
+概念 之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。
+分层 Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C&#43;&#43;的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。
+VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。
+inode 内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 inode_operations ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。file_operations 实现文件内容操作，如read、write等等，inode_operations 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。
+file inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。
+dentry dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。
+file_system_type file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 register_filesystem 向内核注册，函数只是简单的把 file_system_type 插入链表，其中最关键的成员就是 get_sb，得到 super_block 结构。
+super_block super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。
+vfsmount 对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 super_block 对与挂接点来说，都是唯一的。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#分层">分层</a></li>
+    <li><a href="#inode">inode</a></li>
+    <li><a href="#file">file</a></li>
+    <li><a href="#dentry">dentry</a></li>
+    <li><a href="#file_system_type">file_system_type</a></li>
+    <li><a href="#super_block">super_block</a></li>
+    <li><a href="#vfsmount">vfsmount</a></li>
+    <li><a href="#path">path</a></li>
+    <li><a href="#nameidata">nameidata</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">Linux内核笔记-VFS</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 21, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。</p>
+<h1 id="概念">概念</h1>
+<p>之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。</p>
+<h2 id="分层">分层</h2>
+<p>Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。</p>
+<p>VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。</p>
+<h2 id="inode">inode</h2>
+<p>内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 <code>inode_operations</code> ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。<code>file_operations</code> 实现文件内容操作，如read、write等等，<code>inode_operations</code> 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。</p>
+<h2 id="file">file</h2>
+<p>inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。</p>
+<h2 id="dentry">dentry</h2>
+<p>dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。</p>
+<h2 id="file_system_type">file_system_type</h2>
+<p>file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 <code>register_filesystem</code> 向内核注册，函数只是简单的把 <code>file_system_type</code> 插入链表，其中最关键的成员就是 get_sb，得到 <code>super_block</code> 结构。</p>
+<h2 id="super_block">super_block</h2>
+<p>super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。</p>
+<h2 id="vfsmount">vfsmount</h2>
+<p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对与挂接点来说，都是唯一的。</p>
+<h2 id="path">path</h2>
+<p>path 包含 vfsmount 和 dentry 结构。</p>
+<h2 id="nameidata">nameidata</h2>
+<p>nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
+<h1 id="sys_mount-实现">sys_mount 实现</h1>
+<p><code>sys_mount</code> 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 <code>sys_mount</code> 的函数原型：</p>
+<pre><code># 源码中的原型
+SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+		char __user *, type, unsigned long, flags, void __user *, data)
+
+# 根据宏推演开来展现原型
+#define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
+
+#define SYSCALL_DEFINEx(x, sname, ...)				\
+	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__
+
+#define __SYSCALL_DEFINEx(x, name, ...)					\
+	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__)
+
+#define __SC_DECL1(t1, a1)	t1 a1
+#define __SC_DECL2(t2, a2, ...) t2 a2, __SC_DECL1(__VA_ARGS__)
+#define __SC_DECL3(t3, a3, ...) t3 a3, __SC_DECL2(__VA_ARGS__)
+#define __SC_DECL4(t4, a4, ...) t4 a4, __SC_DECL3(__VA_ARGS__)
+#define __SC_DECL5(t5, a5, ...) t5 a5, __SC_DECL4(__VA_ARGS__)
+
+# 最终展开宏之后的原型为
+asmlinkage long sys_mount(char __user * dev_name, char __user * dir_name,	\
+		char __user * type, unsigned long flags, void __user * data)
+</code></pre>
+<p>参数 dev_name 是设备名，如/dev/sda1；dir_name 是目标挂接点路径，如/mnt/target/；type 是文件系统类型，如ext2、ext3等；flags 是mount标志；data是附加选项值。</p>
+<p>由于<code>sys_mount</code>的字符串参数都是 <code>__user</code> 内存，所以在 sys_mount 开始处，首先使用<code>copy_mount_string</code>等函数把用户空间的字串复制到内核空间。之后再去调用 <code>do_mount</code> 完成具体的操作。<code>do_mount</code> 的原型与 <code>sys_mount</code> 相对应，仅是参数全部已经转换成内核空间的地址。</p>
+<pre><code>long do_mount(char *dev_name, char *dir_name, char *type_page,
+		  unsigned long flags, void *data_page)
+{
+	/** 省略无关部分 */
+
+	/* ... and get the mountpoint */
+	retval = kern_path(dir_name, LOOKUP_FOLLOW, &amp;path);
+	if (retval)
+		return retval;
+
+	retval = security_sb_mount(dev_name, &amp;path,
+				   type_page, flags, data_page);
+	if (retval)
+		goto dput_out;
+
+	/** 省略flags判断分支 */
+
+		retval = do_new_mount(&amp;path, type_page, flags, mnt_flags,
+				      dev_name, data_page);
+dput_out:
+	path_put(&amp;path);
+	return retval;
+}
+</code></pre>
+<p>可以看到 <code>do_mount</code> 的主干是非常清晰的，开始省去一些参数校验代码，紧接着调用 <code>kern_path</code> 根据 <code>dir_name</code> 指示的路径名获取其 path 结构，<code>security_sb_mount</code> 做一些安全校验工作，如果没有设置，这个函数为空，否则去调用 <code>security_ops-&gt;sb_mount</code> 成员实现。这里不去研究 LSM 安全模块，省去这个函数的分析。紧接着根据flags进行判断，决定是重新加载，或者移动，或者更改文件系统，这里仅跟加载新的 mount 作为分析对象，其他部分类似。最后使用<code>path_put</code>回收path资源。</p>
+<p>这里可以看书，<code>do_mount</code>其实也只是一个分发函数，首先获得path，然后调用各分支的mount函数，接下来分析 <code>kern_path</code> 和 <code>do_new_mount</code> 函数。</p>
+<pre><code>int kern_path(const char *name, unsigned int flags, struct path *path)
+{
+	struct nameidata nd;
+	int res = do_path_lookup(AT_FDCWD, name, flags, &amp;nd);
+	if (!res)
+		*path = nd.path;
+	return res;
+}
+</code></pre>
+<p><code>kern_path</code> 很明显，构建一个 nameidata 对象，使用 <code>do_path_lookup</code> 函数由路径名 name 得到 nameidata 对象，path 仅是 nameidata 对象的一个成员，把这个成员返回给上层。也就是 <code>kern_path</code> 调用了更为广泛的 <code>do_path_lookup</code>。</p>
+<pre><code>static int do_path_lookup(int dfd, const char *name,
+				unsigned int flags, struct nameidata *nd)
+{
+	int retval = path_init(dfd, name, flags, nd);
+	if (!retval)
+		retval = path_walk(name, nd);
+	if (unlikely(!retval &amp;&amp; !audit_dummy_context() &amp;&amp; nd-&gt;path.dentry &amp;&amp;
+				nd-&gt;path.dentry-&gt;d_inode))
+		audit_inode(name, nd-&gt;path.dentry);
+	if (nd-&gt;root.mnt) {
+		path_put(&amp;nd-&gt;root);
+		nd-&gt;root.mnt = NULL;
+	}
+	return retval;
+}
+</code></pre>
+<p>可以看到，<code>do_path_lookup</code> 又去调用了 <code>path_init</code> 和 <code>path_walk</code> 函数实现功能，<code>path_init</code> 代码很易懂，根据路径名 name 获取当前相对 name 的 nameidata 结构，如果 name 是以/开始的绝对路径，<code>nameidata-&gt;path</code> 即为根，否则，如果name是相对路径，nameidata-&gt;path 为当前路径的path，也就是不管name是相对路径还是绝对的，对此时的 nameidata 来讲都可以认为是相对路径。</p>
+<p><code>path_walk</code> 便是根据 nameidata 找到相对路径 name 的 path 节点。<code>path_walk</code> 本身也没有做这件事，只是把参数又传递给 <code>link_path_walk</code> 去具体操作，<code>link_path_walk</code> 的操作便复杂了许多，需要处理各种奇怪的路径名，这里先无视这段复杂的代码，继续向后分析，至少已经知道 <code>link_path_walk</code> 所实现的功能，不怕他写的复杂，就怕你猜不到他在做什么。</p>
+<p>如此便已清楚 <code>kern_path</code> 的功能，接下来看 <code>do_new_mount</code> 的操作：</p>
+<pre><code>static int do_new_mount(struct path *path, char *type, int flags,
+			int mnt_flags, char *name, void *data)
+{
+	struct vfsmount *mnt;
+
+	if (!type)
+		return -EINVAL;
+
+	/* we need capabilities... */
+	if (!capable(CAP_SYS_ADMIN))
+		return -EPERM;
+
+	lock_kernel();
+	mnt = do_kern_mount(type, flags, name, data);
+	unlock_kernel();
+	if (IS_ERR(mnt))
+		return PTR_ERR(mnt);
+
+	return do_add_mount(mnt, path, mnt_flags, NULL);
+}
+</code></pre>
+<p><code>do_new_mount</code> 也分为两步，第一步调用 <code>do_kern_mount</code> 创建 vfsmount 挂接点结构，之后调用 <code>do_add_mount</code> 挂接 mnt 到文件系统树。再来一步一步分析，从 <code>do_kern_mount</code> 开始：</p>
+<pre><code>struct vfsmount *
+do_kern_mount(const char *fstype, int flags, const char *name, void *data)
+{
+	struct file_system_type *type = get_fs_type(fstype);
+	struct vfsmount *mnt;
+	if (!type)
+		return ERR_PTR(-ENODEV);
+	mnt = vfs_kern_mount(type, flags, name, data);
+	if (!IS_ERR(mnt) &amp;&amp; (type-&gt;fs_flags &amp; FS_HAS_SUBTYPE) &amp;&amp;
+	    !mnt-&gt;mnt_sb-&gt;s_subtype)
+		mnt = fs_set_subtype(mnt, fstype);
+	put_filesystem(type);
+	return mnt;
+}
+</code></pre>
+<p><code>do_kern_mount</code> 从主干来看，首先调用 <code>get_fs_type</code> 得到文件系统的 <code>file_system_type</code> 结构，之后调用 <code>vfs_kern_mount</code> 生成 vfsmount 结构。<code>get_fs_type</code> 所作工作比较简单，直接调用<code>__get_fs_type</code>函数从当前已加载的 <code>file_systems</code> 查找对应文件系统，如果未找到，便以文件系统名为模块名调用 request_module 加载模块，如果加载成功，对应模块会调用 <code>register_filesystem</code> 把自己的 <code>file_system_type</code> 结构插入 <code>file_systems</code> 链表，<code>get_fs_type</code>会再次进行查找。如果查找失败，便返回 NULL。</p>
+<p>在得到 <code>file_system_type</code> 文件系统结构后，调用 <code>vfs_kern_mount</code> 创建 mnt 挂接点。</p>
+<pre><code>struct vfsmount *
+vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void *data)
+{
+	/** 省去无关代码 */
+	mnt = alloc_vfsmnt(name);
+	if (!mnt)
+		goto out;
+
+	if (flags &amp; MS_KERNMOUNT)
+		mnt-&gt;mnt_flags = MNT_INTERNAL;
+
+	/** 省去无关代码 */
+
+	error = type-&gt;get_sb(type, flags, name, data, mnt);
+	if (error &lt; 0) 		goto out_free_secdata; 	/** 省去 LSM 安全模块代码 */ 	mnt-&gt;mnt_mountpoint = mnt-&gt;mnt_root;
+	mnt-&gt;mnt_parent = mnt;
+	up_write(&amp;mnt-&gt;mnt_sb-&gt;s_umount);
+	free_secdata(secdata);
+	return mnt;
+
+	/** 省去错误清理代码 */
+
+	return ERR_PTR(error);
+}
+</code></pre>
+<p>经过抽取函数的骨干，可以清楚看到函数所作操作，首先 alloc_vfsmnt 为 vfsmount 结构分配空间，并初始化成员。再调用对应文件系统的 file_system_type 成员 get_sb 填充 mnt结构。分配空间并初始化代码并无关键之处，而 get_sb 函数却是相应文件系统的实现，比如 ext2 的 ext2_get_sb 函数。</p>
+<p>先不去研究文件系统的具体实现，这与VFS无关，<code>do_kern_mount</code> 便以分析完毕，所作功能便是为 vfsmount 分配空间，再去调用文件系统的 <code>get_sb</code> 实现填充 vfsmount 结构。</p>
+<p>接下来查看 <code>do_add_mount</code> 的实现：</p>
+<pre><code>int do_add_mount(struct vfsmount *newmnt, struct path *path,
+		 int mnt_flags, struct list_head *fslist)
+{
+	int err;
+
+	mnt_flags &amp;= ~(MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL);
+
+	down_write(&amp;namespace_sem);
+	/* Something was mounted here while we slept */
+	while (d_mountpoint(path-&gt;dentry) &amp;&amp;
+	       follow_down(path))
+		;
+	err = -EINVAL;
+	if (!(mnt_flags &amp; MNT_SHRINKABLE) &amp;&amp; !check_mnt(path-&gt;mnt))
+		goto unlock;
+
+	/* Refuse the same filesystem on the same mount point */
+	err = -EBUSY;
+	if (path-&gt;mnt-&gt;mnt_sb == newmnt-&gt;mnt_sb &amp;&amp;
+	    path-&gt;mnt-&gt;mnt_root == path-&gt;dentry)
+		goto unlock;
+
+	err = -EINVAL;
+	if (S_ISLNK(newmnt-&gt;mnt_root-&gt;d_inode-&gt;i_mode))
+		goto unlock;
+
+	newmnt-&gt;mnt_flags = mnt_flags;
+	if ((err = graft_tree(newmnt, path)))
+		goto unlock;
+
+	if (fslist) /* add to the specified expiration list */
+		list_add_tail(&amp;newmnt-&gt;mnt_expire, fslist);
+
+	up_write(&amp;namespace_sem);
+	return 0;
+
+unlock:
+	up_write(&amp;namespace_sem);
+	mntput(newmnt);
+	return err;
+}
+</code></pre>
+<p>函数开始调用 <code>d_mountpoint</code> 和 <code>follow_down</code> 查看是否已经有 mnt 挂接到 path 位置，之后便调用 <code>graft_tree</code> 把 newmnt 挂接到 path 位置：</p>
+<pre><code>static int graft_tree(struct vfsmount *mnt, struct path *path)
+{
+	int err;
+	if (mnt-&gt;mnt_sb-&gt;s_flags &amp; MS_NOUSER)
+		return -EINVAL;
+
+	/** 检测是否文件夹 */
+	if (S_ISDIR(path-&gt;dentry-&gt;d_inode-&gt;i_mode) !=
+	      S_ISDIR(mnt-&gt;mnt_root-&gt;d_inode-&gt;i_mode))
+		return -ENOTDIR;
+
+	err = -ENOENT;
+	mutex_lock(&amp;path-&gt;dentry-&gt;d_inode-&gt;i_mutex);
+
+	/** 检测路径的标志，是否允许 mount */
+	if (cant_mount(path-&gt;dentry))
+		goto out_unlock;
+
+	/** 挂接 mnt */
+	if (!d_unlinked(path-&gt;dentry))
+		err = attach_recursive_mnt(mnt, path, NULL);
+out_unlock:
+	mutex_unlock(&amp;path-&gt;dentry-&gt;d_inode-&gt;i_mutex);
+	return err;
+}
+</code></pre>
+<p>看来这里的关键点便是 <code>attach_recursive_mnt</code> 函数，它挂接 mnt 到 path 路径上，甚至内核源码本身也为这个函数使用了很大篇幅的注释。此函数调用 <code>mnt_set_mountpoint</code> ，增加目标挂接点 mounted 计数，最后调用 <code>commit_tree</code> 把当前 mnt 添加至全局散列表和父文件系统的子文件系统链。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linxu内核笔记-虚拟地址空间</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

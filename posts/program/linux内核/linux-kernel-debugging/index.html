@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
+之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。
+这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如linux- 2.6.34:
+编译内核命令要在普通方式后加入构架um参数：
+# 配置内核 make menuconfig ARCH=um # 编译内核 make linux ARCH=um 编译完成后会在源码根目录下生成可执行文件 linux。
+到这里似乎很简单，下面需要创建 Linux 根文件系统，也就是除内核以外的硬盘文件，这个根文件系统包括Linux文件组织数，以及启动系统所必须的一些辅助程序。
+一种方法就是手工制作：
+# 创建一个2G的文件作为硬盘 dd if=/dev/zero of=rootfs.img bs=1M count=2048 # 格式化文件 mkfs.ext3 rootfs.img # 映射此文件到主机文件夹 mount -o loop rootfs.img /mnt/temp 如此便可通过拷贝文件到/mnt/temp/目录，等同于拷贝文件到rootfs.img硬盘文件。这里可以直接通过主机的文件目录组织去构建跟文件系统，也可以直接安装一个linux到此目录。
+使用最简单的方式就是直接使用现成的根文件系统。在UML网站 The User-mode Linux Kernel Home Page 有相关链接可以下载，比如下载 DSL-4.4-root_fs.bz2 文件，首先解压运行之：
+bunzip2 DSL-4.4-root_fs.bz2 ./linux ubda=DSL-4.4-root_fs #登录之后出现root提示符 root@console[/]# #关闭UML root@console[/]# shutdown -h 0 至于根文件系统需要慢慢积累。
+接下来看看如何调试内核，由官方文档 Kernel Hacking with UML 所言，直接使用 gdb linux 便可调试，不过我在启动一开始便遇到段错误，单步运行居然还能继续，之后便陷入无休止的trap中。'>
+<title>Linux 内核调试</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 内核调试'>
+<meta property='og:description' content='UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
+之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。
+这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如linux- 2.6.34:
+编译内核命令要在普通方式后加入构架um参数：
+# 配置内核 make menuconfig ARCH=um # 编译内核 make linux ARCH=um 编译完成后会在源码根目录下生成可执行文件 linux。
+到这里似乎很简单，下面需要创建 Linux 根文件系统，也就是除内核以外的硬盘文件，这个根文件系统包括Linux文件组织数，以及启动系统所必须的一些辅助程序。
+一种方法就是手工制作：
+# 创建一个2G的文件作为硬盘 dd if=/dev/zero of=rootfs.img bs=1M count=2048 # 格式化文件 mkfs.ext3 rootfs.img # 映射此文件到主机文件夹 mount -o loop rootfs.img /mnt/temp 如此便可通过拷贝文件到/mnt/temp/目录，等同于拷贝文件到rootfs.img硬盘文件。这里可以直接通过主机的文件目录组织去构建跟文件系统，也可以直接安装一个linux到此目录。
+使用最简单的方式就是直接使用现成的根文件系统。在UML网站 The User-mode Linux Kernel Home Page 有相关链接可以下载，比如下载 DSL-4.4-root_fs.bz2 文件，首先解压运行之：
+bunzip2 DSL-4.4-root_fs.bz2 ./linux ubda=DSL-4.4-root_fs #登录之后出现root提示符 root@console[/]# #关闭UML root@console[/]# shutdown -h 0 至于根文件系统需要慢慢积累。
+接下来看看如何调试内核，由官方文档 Kernel Hacking with UML 所言，直接使用 gdb linux 便可调试，不过我在启动一开始便遇到段错误，单步运行居然还能继续，之后便陷入无休止的trap中。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-19T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-19T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux 内核调试">
+<meta name="twitter:description" content="UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
+之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。
+这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如linux- 2.6.34:
+编译内核命令要在普通方式后加入构架um参数：
+# 配置内核 make menuconfig ARCH=um # 编译内核 make linux ARCH=um 编译完成后会在源码根目录下生成可执行文件 linux。
+到这里似乎很简单，下面需要创建 Linux 根文件系统，也就是除内核以外的硬盘文件，这个根文件系统包括Linux文件组织数，以及启动系统所必须的一些辅助程序。
+一种方法就是手工制作：
+# 创建一个2G的文件作为硬盘 dd if=/dev/zero of=rootfs.img bs=1M count=2048 # 格式化文件 mkfs.ext3 rootfs.img # 映射此文件到主机文件夹 mount -o loop rootfs.img /mnt/temp 如此便可通过拷贝文件到/mnt/temp/目录，等同于拷贝文件到rootfs.img硬盘文件。这里可以直接通过主机的文件目录组织去构建跟文件系统，也可以直接安装一个linux到此目录。
+使用最简单的方式就是直接使用现成的根文件系统。在UML网站 The User-mode Linux Kernel Home Page 有相关链接可以下载，比如下载 DSL-4.4-root_fs.bz2 文件，首先解压运行之：
+bunzip2 DSL-4.4-root_fs.bz2 ./linux ubda=DSL-4.4-root_fs #登录之后出现root提示符 root@console[/]# #关闭UML root@console[/]# shutdown -h 0 至于根文件系统需要慢慢积累。
+接下来看看如何调试内核，由官方文档 Kernel Hacking with UML 所言，直接使用 gdb linux 便可调试，不过我在启动一开始便遇到段错误，单步运行居然还能继续，之后便陷入无休止的trap中。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/">Linux 内核调试</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 19, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 9 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="uml调试linux内核">UML调试Linux内核</h1>
+<p>最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。</p>
+<p>之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。</p>
+<p>这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如<code>linux- 2.6.34</code>:</p>
+<p>编译内核命令要在普通方式后加入构架um参数：</p>
+<pre><code># 配置内核
+make menuconfig ARCH=um
+# 编译内核
+make linux ARCH=um
+</code></pre>
+<p>编译完成后会在源码根目录下生成可执行文件 linux。</p>
+<p>到这里似乎很简单，下面需要创建 Linux 根文件系统，也就是除内核以外的硬盘文件，这个根文件系统包括Linux文件组织数，以及启动系统所必须的一些辅助程序。</p>
+<p>一种方法就是手工制作：</p>
+<pre><code># 创建一个2G的文件作为硬盘
+dd if=/dev/zero of=rootfs.img bs=1M count=2048
+# 格式化文件
+mkfs.ext3 rootfs.img
+# 映射此文件到主机文件夹
+mount -o loop rootfs.img /mnt/temp
+</code></pre>
+<p>如此便可通过拷贝文件到<code>/mnt/temp/</code>目录，等同于拷贝文件到rootfs.img硬盘文件。这里可以直接通过主机的文件目录组织去构建跟文件系统，也可以直接安装一个linux到此目录。</p>
+<p>使用最简单的方式就是直接使用现成的根文件系统。在UML网站 <a class="link" href="http://user-mode-linux.sourceforge.net/"  target="_blank" rel="noopener"
+    >The User-mode Linux Kernel Home Page</a> 有相关链接可以下载，比如下载 DSL-4.4-root_fs.bz2 文件，首先解压运行之：</p>
+<pre><code>bunzip2 DSL-4.4-root_fs.bz2
+./linux ubda=DSL-4.4-root_fs
+
+#登录之后出现root提示符
+root@console[/]#
+#关闭UML
+root@console[/]# shutdown -h 0
+</code></pre>
+<p>至于根文件系统需要慢慢积累。</p>
+<p>接下来看看如何调试内核，由官方文档 <a class="link" href="http://user-mode-linux.sourceforge.net/hacking.html"  target="_blank" rel="noopener"
+    >Kernel Hacking with UML</a> 所言，直接使用 gdb linux 便可调试，不过我在启动一开始便遇到段错误，单步运行居然还能继续，之后便陷入无休止的trap中。</p>
+<p>继续 google（最能找到答案的往往在国外的论坛，而且常常需要翻墙），最后找到两个设置，是SIGSEGV和SIGUSR1信号不中断继续运行，最终居然可以，这点让人百思不得其解，还是先看看现象如何：</p>
+<pre><code>$ gdb linux
+(gdb) br start_kernel
+Breakpoint 1 at 0x80493bb: file init/main.c, line 533.
+(gdb) handle SIGSEGV pass nostop noprint
+Signal        Stop      Print   Pass to program Description
+SIGSEGV       No        No      Yes             Segmentation fault
+(gdb) handle SIGUSR1 pass nostop noprint
+Signal        Stop      Print   Pass to program Description
+SIGUSR1       No        No      Yes             User defined signal 1
+(gdb) r ubda=DSL-4.4-root_fs
+Starting program: /home/cpp/fox/kernel/linux-2.6.34/linux ubda=DSL-4.4-root_fs
+Locating the bottom of the address space ... 0x1000
+Locating the top of the address space ... 0xc0000000
+Core dump limits :
+        soft - 0
+        hard - NONE
+Checking that ptrace can change system call numbers...OK
+Checking syscall emulation patch for ptrace...OK
+Checking advanced syscall emulation patch for ptrace...OK
+Checking for tmpfs mount on /dev/shm...OK
+Checking PROT_EXEC mmap in /dev/shm/...OK
+Checking for the skas3 patch in the host:
+  - /proc/mm...not found: No such file or directory
+  - PTRACE_FAULTINFO...not found
+  - PTRACE_LDT...not found
+UML running in SKAS0 mode
+
+Breakpoint 1, start_kernel () at init/main.c:533
+533             smp_setup_prhandleocessor_id();
+(gdb)
+
+# 注释，gdb 启动参数的设置
+(gdb) r arg1 arg2 ...
+(gdb) set args arg1 arg2 ...
+# handle 指定如何处理一个信号，详尽的解释可查阅帮助
+(gdb) help handle
+</code></pre>
+<p>居然一切顺利的断到了start_kernel，哈哈，不管如何，总算能够调试内核了。接下来还有UML虚拟机的网络配置，UML使用了一个取巧的方式就是利用 tun 和 iptables ，好在我也研究了大半年，明天继续。</p>
+<p>另外有个GDB调试的问题，明明遇到了SIGSEG，为什么还能继续呢？莫非这个信号是自己发出的？还有之后的SEGTRAP信号是怎么发出来的？要弄清楚这个问题，或许还得查阅UML代码。</p>
+<h1 id="uml网络配置">UML网络配置</h1>
+<p>UML支持多种方式的网络，一般使用tap/tun模拟UML虚拟机中的eth0驱动，仅仅这种方式也能分为桥接和NAT等等，手工配置网络也有助于理解网络的运行方式。</p>
+<p>根据官方文档 <a class="link" href="http://user-mode-linux.sourceforge.net/network.html"  target="_blank" rel="noopener"
+    >Simple UML Networking</a> 下载 <code>uml_utilities</code> ，其实也就使用了一个工具 tunctl，这个工具很简单，就是启动 tun 驱动，首先得先查看是否加载 tun 驱动，当然首先需要有root权限：</p>
+<pre><code># 查看用户 ID （tunctl 使用）
+[cpp@dark tunctl]$ id
+uid=500(cpp) gid=500(cpp) groups=500(cpp) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+# 切换管理员权限
+[cpp@dark tunctl]$ su
+Password:
+
+# 查看tun驱动是否加载
+[root@dark tunctl]# lsmod | grep tun
+
+# 没有则加载tun驱动
+[root@dark tunctl]# modprobe tun
+
+# 再次查看
+[root@dark tunctl]# lsmod | grep tun
+tun                    13014  0
+
+# 查看普通用户是否有读写tun设备权限
+[root@dark tunctl]# ls /dev/net/tun -l
+crw-rw-rw-. 1 root root 10, 200 Dec  8 11:19 /dev/net/tun
+
+# 启动tun，设置用户ID
+# 随后驱动以tap模式启动，设备为 tap0
+[root@dark tunctl]# ./tunctl -u 500
+Set 'tap0' persistent and owned by uid 500
+
+# 查看所有网卡状态，可以看到已经有tap0接口
+[root@dark tunctl]#ifconfig -a
+eth1      Link encap:Ethernet  HWaddr 08:00:27:54:D1:F5
+          inet addr:10.33.33.34  Bcast:10.255.255.255  Mask:255.0.0.0
+          inet6 addr: fe80::a00:27ff:fe54:d1f5/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:555523 errors:13 dropped:0 overruns:0 frame:0
+          TX packets:70630 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:424000963 (404.3 MiB)  TX bytes:4827144 (4.6 MiB)
+          Interrupt:19 Base address:0xd020
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:102 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:102 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:13444 (13.1 KiB)  TX bytes:13444 (13.1 KiB)
+
+tap0      Link encap:Ethernet  HWaddr DA:47:96:23:59:AA
+          BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:500
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+
+# 激活tap网卡并设置IP地址
+[root@dark cpp]# ifconfig tap0 192.168.33.33 up
+
+# 完毕后删除网卡可使用命令
+[root@dark tunctl]# ./tunctl -d tap0
+
+到这里已经设置好tun/tap网卡，接下来启动UML虚拟机并且配置网络：
+
+# 启动UML虚拟机，设置网卡为tap
+[cpp@dark linux-2.6.36]$ ./linux eth0=tuntap,tap0 ubda=Gentoo-10.0-AMD64-root_fs
+
+# 启动过程中出现
+eth0: broadcasting for a lease
+eth0: timed out
+# 说明并没有连通网络
+
+# 启动虚拟机后检测网卡配置
+eth0: broadcasting for a lease
+eth0: timed out
+eth0: trying to use old lease in `/var/lib/dhcpcd/dhcpcd-eth0.lease'
+localhost ~ # ifconfig
+eth0      Link encap:Ethernet  HWaddr b2:9d:a5:12:b9:45
+          inet addr:169.254.186.160  Bcast:169.254.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:1578 (1.5 KiB)
+          Interrupt:5
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+</code></pre>
+<p>可以看到UML虚拟机已经有网卡配置，但是并无法连通网络。连通网络有几种方式，像virtualbox等虚拟机的NAT和桥接等等，按照UML这种设计方式，应该可以配置出来任意类型，这里尝试配置桥接模式：</p>
+<pre><code># 设置IP路由转发
+[root@dark linux-2.6.36]# echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+[root@dark linux-2.6.36]# echo 1 &gt; /proc/sys/net/ipv4/conf/tap0/proxy_arp
+
+# 创建网桥 （brctl 位于 bridge-utils 软件包）
+[root@dark linux-2.6.36]# brctl addbr br0
+# 把 eth1 和 tap0 加入网桥
+[root@dark linux-2.6.36]# brctl addif br0 eth1
+[root@dark linux-2.6.36]# brctl addif br0 tap0
+
+# 修改br0网桥的网络配置并激活
+[root@dark linux-2.6.36]# ifconfig eth1 10.33.33.35 up
+[root@dark linux-2.6.36]# ifconfig tap0 10.33.33.36 up
+[root@dark linux-2.6.36]# ifconfig br0 10.33.33.34 up
+
+# 启动UML虚拟机，设置网卡为tap
+[cpp@dark linux-2.6.36]$ ./linux eth0=tuntap,tap0 ubda=Gentoo-10.0-AMD64-root_fs
+
+# 设置UML虚拟机网络配置
+localhost ~ # ifconfig eth0 10.33.33.36 netmask 255.255.255.0
+</code></pre>
+<p>经过设置网桥后发现仍然无法连通本地10.33.33.35，却可以ping通远程机器地址，真是抓狂，抓包发现tap0网卡arp解 析有问题，进一步查看发现tap0网卡的mac地址与虚拟机内eth0网卡mac地址不同，也就是UML内部重新创建一个网卡而并没有直接使用tap0， 只是通过tap0收发数据，但为什么远程机器可以接受但是本地地址无法接受呢？本地网卡把10.33.33.36当成了本机tap0，而外网地址把 10.33.33.36当成了UML虚拟机，故能连通，也就是UML虚拟机跟主机tap0并不相同，是两个独立的机器，把UML虚拟机设置为 10.33.33.37，发现所有机器都可以连通。这样就把UML虚拟机桥接到网络上了。</p>
+<p>现在设置NAT网络，把系统网络状态恢复到开始， 重新设置tap驱动，地址为192.168.33.33，启动虚拟机，设置ip地址为 192.168.33.34，这样 192.168.33.* 就相当于一个小局域网，192.168.33.34 通过 192.168.33.33 转发，设置完毕以后二者便可通信，也省去了桥接的麻烦，只是需要操纵 iptables。</p>
+<pre><code># 在 UML 虚拟机内设置默认路由
+localhost ~ # route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.168.33.33
+# 查看路由表，看到已经添加了 default 网关为 192.168.33.33
+localhost ~ # route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.33.0    *               255.255.255.0   U     0      0        0 eth0
+loopback        *               255.0.0.0       U     0      0        0 lo
+default         192.168.33.33   0.0.0.0         UG    0      0        0 eth0
+
+# 设置IP路由转发
+[root@dark linux-2.6.36]# echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+
+# 设置SNAT源地址转换 10.33.33.34 为eth1地址
+[root@dark linux-2.6.36]# iptables -t nat -A POSTROUTING -o eth1 -j SNAT --to-source 10.33.33.34
+
+# 如果此时不通，可检查iptables的其他规则和UML与主机的路由表配置
+</code></pre>
+<p>这样便可做成NAT的效果，比桥接方式简单的多，只是需要知道iptables的用法。当然以上配置每次重启将会消失，可以写到配置开机自动设置。</p>
+<h1 id="qemu调试linux内核">Qemu调试Linux内核</h1>
+<p>通过UML可以方便的在本机调试Linux内核，UML是一种特殊的虚拟机，另外一种更为灵活的虚拟机是Qemu，Qemu是一种完全仿真虚拟机， 可以在i386平台仿真任意其他处理器构架，而且支持GDB调试，这里尝试一下使用Qemu调试Linux内核，Qemu参数-kernel可以直接指定 内核启动，这与UML有相似之处。</p>
+<p>首先需要编译安装Qemu，这里并没有什么疑惑之处，直接从官方网站下载源码，使用Linux最常用的编译命令即可：</p>
+<pre><code># 默认选项会编译所有处理器构架虚拟机
+# 可以 ./configure --help 查看编译特定平台的配置
+
+cpp@dark:~/qemu-0.12.4$ ./configure --target-list=i386-softmmu
+cpp@dark:~/qemu-0.12.4$ make
+cpp@dark:~/qemu-0.12.4$ make install
+</code></pre>
+<p>接下来以默认选项编译内核，不过巨崩溃的是内核默认没有DEBUG_INFO选项，所以虽然能在导出符号部分断下来，但是没有源码，所以需要选则Compile the kernel with debug info选项。</p>
+<pre><code># 默认选项
+cpp@dark:~/linux-2.6.34$ make defconfig
+# 配置菜单，选择调试信息
+cpp@dark:~/linux-2.6.34$ make menuconfig
+# 编译内核
+cpp@dark:~/linux-2.6.34$ make
+</code></pre>
+<p>然后使用Qemu加载内核启动</p>
+<pre><code>cpp@dark:~/linux-2.6.34$ qemu -s -S -kernel arch/x86/boot/bzImage -hda rootfs.img -append &quot;root=/dev/sda&quot;
+# 其中一些选项的解释如下
+# -s 监听tcp:1234端口以等待GDB连接
+# -S 虚拟机启动后停止，以便GDB连接后调试启动过程
+# -kernel 压缩内核
+# -hda 硬盘
+# -appand 启动参数
+</code></pre>
+<p>这里系统很容易启动不了，如果系统由于VFS加载错误无法启动，首先尝试启动参数root=/dev/sda为root=/dev /hda，hda是IDE硬盘标识，sda为SCSI硬盘，这要看内核识别成哪种，如果仍然不行，那要检测rootfs.img根文件系统的格式跟内核所 支持的格式是否匹配，2.6.34支持ext3格式，如果格式错误，可以利用 Linux 内核调试1 里的方法，自己手工创建一个ext3格式的文件，然后mount到临时文件，把其他根文件系统全部拷贝进去即可。</p>
+<p>这 样启动Qemu之后，发现系统一片黑屏，这里因为Qemu启动参数被设置为禁止，Qemu本身具有显示窗口和控制窗口，利用 Ctrl+Alt+2 进入控制台，c命令继续虚拟机，Ctrl+Alt+1 返回显示窗口，Qemu的控制台可以控制很多选项，从这点来看要比VMware等要灵活一些，UML本身也支持运行时控制。</p>
+<p>接下来使用GDB启动虚拟机，当系统停止在启动之后时，用GDB加载：</p>
+<pre><code># 启动GDB，GDB加载未压缩内核
+cpp@dark:~/linux-2.6.34$ gdb vmlinux
+GNU gdb 6.8
+Copyright (C) 2008 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later 
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;
+and &quot;show warranty&quot; for details.
+This GDB was configured as &quot;i486-slackware-linux&quot;...
+(gdb)
+
+# 设置断点
+(gdb) br start_kernel
+Breakpoint 1 at 0xc172f5d4: file init/main.c, line 533.
+
+# 连接Qemu监听端口1234
+(gdb) target remote localhost:1234
+Remote debugging using localhost:1234
+[New Thread 1]
+0x0000fff0 in ?? ()
+
+# 继续Qemu虚拟机执行
+(gdb) c
+Continuing.
+
+# 内核解压之后很快便到达断点
+Breakpoint 1, start_kernel () at init/main.c:533
+533             smp_setup_processor_id();
+(gdb)
+
+# 接下来便可任意调试内核
+(gdb) list
+528     asmlinkage void __init start_kernel(void)
+529     {
+530             char * command_line;
+531             extern struct kernel_param __start___param[], __stop___param[];
+532
+533             smp_setup_processor_id();
+534
+535             /*
+536              * Need to run as early as possible, to initialize the
+537              * lockdep hash:
+(gdb)
+</code></pre>
+<p>Qemu由于是完全仿真实现，所以可以在任意平台调试其他构架内核，理论上甚至可以在Windows平台交叉编译Linux内核，再去由Qemu加载调试（交叉编译比较麻烦，需要先编译目标构架的binutil，而后链接内核）。</p>
+<h1 id="uml和qemu调试内核模块">UML和Qemu调试内核模块</h1>
+<p>这次来看如何调试内核模块，也就是驱动程序，模块的调试跟普通程序略有不同，不论是内核还是普通应用程序，在连接之后便以得知代码将要加载的位置，用户态程序有虚拟地址映射机制，而内核独占物理内存。内核运行与共享的内核地址空间，所以不能使用相同的线性地址，只能由内核加载模块时指定起始地址，模块中都以此为偏移运行。所以内核的调试不能使用普通的方式，需要知道模块的加载地址。</p>
+<p>而且Qemu的调试原理与UML相似，也可用相同的方法进行模块的调试，这里仅以UML模块调试举例</p>
+<p>首先需要完成一个内核模块，这里可以照搬之前的 Linux 内核调试 ，保存源文件为go.c，完成Makefile和编译工作，内核源码以编译UML的内核为准：</p>
+<pre><code># Makefile 内容
+obj-m := go.o
+
+# 编译命令
+[cpp@dark go]$ make -C /home/cpp/fox/linux-2.6.36 M=$PWD modules ARCH=um
+
+接下来启动带网络的UML，拷贝go.ko模块文件到UML虚拟机中，之后启动GDB：
+
+# 查看 linux 进程 ID
+[cpp@dark linux-2.6.36]$ ps -A | grep linux
+ 7333 pts/0    00:00:38 linux
+ 7340 pts/0    00:00:00 linux
+ 7341 pts/0    00:00:00 linux
+ 7342 pts/0    00:00:00 linux
+ 7343 pts/0    00:00:00 linux
+ 7481 pts/0    00:00:00 linux
+ 7546 pts/0    00:00:00 linux
+ 9864 pts/0    00:00:00 linux
+ 9866 pts/0    00:00:00 linux
+ 9868 pts/0    00:00:00 linux
+
+# 启动 GDB
+[cpp@dark linux-2.6.36]$ gdb linux
+GNU gdb (GDB) Fedora (7.1-18.fc13)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;
+and &quot;show warranty&quot; for details.
+This GDB was configured as &quot;x86_64-redhat-linux-gnu&quot;.
+For bug reporting instructions, please see:...
+Reading symbols from /home/cpp/fox/linux-2.6.36/linux...done.
+
+# attach 到 linux 进程，attach第一个进程
+(gdb) attach 7333
+
+# 忽略段错误
+(gdb) handle SIGSEGV pass nostop noprint
+
+# 对 sys_init_module 设置断点，截获模块加载事件
+(gdb) br sys_init_module
+Breakpoint 1 at 0x60052421: file kernel/module.c, line 2696.
+
+# 继续执行
+(gdb) c
+Continuing.
+
+# 在虚拟机中加载 go.ko 模块
+localhost ~ # insmod go.ko
+
+# 主机GDB截获断点
+Breakpoint 1, sys_init_module (umod=0x603030, len=124282,
+    uargs=0x603010) at kernel/module.c:2696
+2696 if (!capable(CAP_SYS_MODULE) || modules_disabled)
+(gdb)
+# 模块加载 load_module 调用结果
+(gdb) n 2691 {
+(gdb) n 2696 if (!capable(CAP_SYS_MODULE) || modules_disabled)
+(gdb) n 2700 mod = load_module(umod, len, uargs);
+(gdb) n 2701 if (IS_ERR(mod))
+(gdb) print mod
+$1 = (struct module *) 0x628482b0
+
+# 从 include/linux/module.h 查看 module.h结构
+# struct module_sect_attrs *sect_attrs; 为模块的段属性
+# 查看模块名
+(gdb) print mod-&gt;name
+$2 = &quot;go&quot;, '\000'
+# 查看模块段个数
+(gdb) print mod-&gt;sect_attrs-&gt;nsections
+$3 = 11
+# 查看第一个段名
+(gdb) print mod-&gt;sect_attrs-&gt;attrs[0]-&gt;name
+$4 = 0x61daa3a0 &quot;.note.gnu.build-id&quot;
+# 找到 .text 段，并显示基址
+(gdb) print mod-&gt;sect_attrs-&gt;attrs[1]-&gt;name
+$5 = 0x61daa3c0 &quot;.text&quot;
+(gdb) print /x mod-&gt;sect_attrs-&gt;attrs[1]-&gt;address
+$6 = 0x62848000
+# 加载符号，使用 GDB 的 add-symbol-file 命令加载模块符号到基址
+(gdb) add-symbol-file go/go.ko 0x62848000 add symbol table from file &quot;go/go.ko&quot; at .text_addr = 0x62848000 (y or n) y Reading symbols from /home/cpp/fox/linux-2.6.36/go/go.ko...done.
+
+# 设置模块断点
+(gdb) br simple_read Breakpoint 2 at 0x62848028: file /home/cpp/fox/linux-2.6.36/go/go.c, line 21.
+# 继续运行
+(gdb) c Continuing.
+
+# UML 虚拟机中操作模块 localhost ~
+# cat /dev/simple
+
+# 主机断点生效 Breakpoint 2, simple_read (pfile=0x61c74180, buf=0x60d000
+
+, size=32768, ppos=0x61e0bec0) at /home/cpp/fox/linux-2.6.36/go/go.c:21 21 { (gdb) # 查看信息并调试 (gdb) n 22 if (copy_to_user(buf, “test data\n”, 10)) (gdb)
+</code></pre>
+<p>当然加载符号时还可以查看 .data 段和 .bss 段的基址，加载go.ko时同时可以设置二者的基址，以便可以调试全局变量等等，初看起来这个过程比较复杂，其实就是通过调试内核加载位置来确定模块最终将要加载的基址，而后通过机制加载模块符号。</p>
+<p>这个复杂的过程如果每次都需要手动处理是非常烦人的一件事，好在GDB本身有脚本扩展（甚至可执行Python脚本），来简化这个过程，这里来试着写一个简单的打印模块section名字和基址的脚本。</p>
+<p>GDB脚本运行可以由两种方式，一种是在GDB启动时，在当前目录查找.gdbinit文件解释执行，另一种在GDB运行期间使用 source script-file 命令来执行，脚本的说明可查阅文档，以下是简单的打印段信息的脚本：</p>
+<pre><code>define modsec
+        set $index = 0
+        while $index &lt; mod-&gt;sect_attrs-&gt;nsections
+                printf &quot;Name\t%s\tAddress\t0x%x\n&quot;, mod-&gt;sect_attrs-&gt;attrs[$index]-&gt;name, mod-&gt;sect_attrs-&gt;attrs[$index]-&gt;address
+                set $index = $index + 1
+        end
+end
+</code></pre>
+<p>以下是加载并执行脚本效果：</p>
+<pre><code># 加载脚本
+(gdb) source modsec
+(gdb) c
+Continuing.
+
+# 在虚拟机中加载 go.ko 模块
+# 并单步执行到 mod = load_module(umod, len, uargs);
+Breakpoint 1, sys_init_module (umod=0x603030, len=124282,
+    uargs=0x603010) at kernel/module.c:2696
+2696 if (!capable(CAP_SYS_MODULE) || modules_disabled)
+(gdb) n
+2691 {
+(gdb) n
+2696 if (!capable(CAP_SYS_MODULE) || modules_disabled)
+(gdb) n
+2700 mod = load_module(umod, len, uargs);
+(gdb) n
+2701 if (IS_ERR(mod))
+# 调用定义命令打印段
+(gdb) modsec
+Name .note.gnu.build-id Address 0x6286f09c
+Name .text Address 0x6286f000
+Name .exit.text Address 0x6286f050
+Name .init.text Address 0x62872000
+Name .rodata.str1.1 Address 0x6286f0c0
+Name .eh_frame Address 0x6286f118
+Name .data Address 0x6286f1e0
+Name .gnu.linkonce.this_module Address 0x6286f2b0
+Name .bss Address 0x6286f490
+Name .symtab Address 0x62872098
+Name .strtab Address 0x628725c0
+</code></pre>
+<p>如此便可稍微方便一点的打印所有段名和段基址，如果添加其他脚本扩展，可以更加方便且高效的调试Linux内核。</p>
+<h1 id="使用kgdb双机调试">使用KGDB双机调试</h1>
+<p>虽然使用UML或者Qemu可以调试Linux内核，但UML和Qemu毕竟是一个模拟，调试硬件驱动总是用虚拟硬件总不成事，而且Qemu据传闻 对于时钟和中断的处理也有问题，所以对于处理真实硬件的问题，最完美的调试方式就是双机调试，被调试内核在完全真实的环境中运行，排除虚拟机制的不稳定因 素，而且使用内核自带的KGDB机制，更具有可靠性，类似Windows下的WinDbg调试方式。这里使用VirtualBox虚拟机进行调试，但所提 及的方法完全适用于诸如VMWare、Qemu虚拟机或者真实机器，只是相关的串口配置方式有些许不同而已。</p>
+<p>首先需要编译配置KGDB选项的内核，编译方式也比较简单：</p>
+<pre><code># 配置内核选项
+[cpp@dark linux-2.6.34]$ make menucofnig
+# Kernel hacking  ---&gt;
+# 		[*] Compile the kernel with debug info
+# 		[*] KGDB: kernel debugging with remote gdb  ---&gt;
+
+# 编译
+[cpp@dark linux-2.6.34]$ make
+</code></pre>
+<p>编译完成之后需要在目标机器部署自己的内核，需要修改grub.conf，或者lilo的配置，这决定于Linux使用哪种引导程序，这里修改grub.conf，首先拷贝编译好未压缩内核镜像至目标机器boot分区，命名为linux-2.6.34。</p>
+<pre><code># 配置文件路径 /boot/grub/grub.conf
+# 默认启动内核
+default 0
+# 选择超时时间
+timeout 30
+
+# 添加以下内容，以增加一个新的启动项
+title Linux 2.6.34 (Debug)
+root (hd0,0)
+kernel /boot/linux-2.6.34 root=/dev/sdb
+</code></pre>
+<p>对于lilo，修改配置文件/etc/lilo.conf，之后必须使用lilo -C /etc/lilo.conf使配置生效。</p>
+<p>启 动系统后，首先出现grub引导画面，选择Debug内核启动，不论真机还是虚拟机，时常有系统无法启动的问题，是因为内核配置过小，最基本的启动都无法 支持，如果出现找不到sdb1类似错误，需要检查sdb1是否正确，IDE/ATA硬盘以h打头，为hda等，SATA和SCIS以s打头，为sda等 等，后缀a，b分别为第几块硬盘，sda为第一块，sdb为第二块，其后的数字1、2指明第几个分区，另外需要检查的是硬盘驱动是否正确安装，这个可参阅 Linux安装配置说明，结合google，应该能够解决。</p>
+<p>能够启动系统后，在目标Linux内核启动选项append命令 ro kgdboc=ttyS0,115200 kgdbwait，如此目标机器启动到一定时机停止，出现kgdb: Waiting for connection from remote gdb…的字句，这样对于目标机器的配置已经完成，再来看主机配置，启动gdb配置串口：</p>
+<pre><code># 加载 vmlinux
+cpp@dark:~/linux-2.6.34$ gdb vmlinux
+GNU gdb 6.8
+Copyright (C) 2008 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later 
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;
+and &quot;show warranty&quot; for details.
+This GDB was configured as &quot;i486-slackware-linux&quot;...
+
+# 设置远程端口 波特率
+(gdb) set remotebaud 115200
+# 连接远程串口
+(gdb) target remote /dev/pts/3
+Remote debugging using /dev/pts/3
+kgdb_register_io_module (new_kgdb_io_ops=)
+    at kernel/kgdb.c:1749
+1749            wmb(); /* Sync point after breakpoint */
+
+# 至此便可任意调试
+(gdb)
+</code></pre>
+<p>这里串口我使用的是 /dev/pts/3 是因为我在linux下使用virtualbox虚拟机的管道串口，再利用socat虚拟串口，有条件的可以直接利用主机串口，这里的设备便成为 /dev/ttyS0，使用socat 虚拟串口的命令如下：</p>
+<pre><code># vboxS0 为virtualbox的串口管道
+cpp@dark:~/kernel/socat-2.0.0-b4$ ./socat -d -d /tmp/vboxS0 pty:1
+2010/12/10 23:24:14 socat[3962.3082070656] N opening connection to AF=1 &quot;/tmp/vboxS0&quot;
+2010/12/10 23:24:14 socat[3962.3082070656] N successfully connected from local address AF=1 &quot;\x04\b\x94\x18\x@C\xAE\xB4\x@7\xE2\xA7\a&quot;
+2010/12/10 23:24:14 socat[3962.3082070656] N successfully connected via
+2010/12/10 23:24:14 socat[3962.3082070656] N PTY is /dev/pts/3
+2010/12/10 23:24:14 socat[3962.3082070656] N starting data transfer loop with FDs [3,3] and [4,4]
+</code></pre>
+<p>至此便可使用kgdb进行串口双机调试，这里使用linux主机和虚拟机实现，当然相同的思路可以很容易知道如何进行两个虚拟机或者两个真实机调试。</p>
+<p>kgdb 也支持网络调试，使用tcp协议，但是串口应该是最理想的方式，如果需要调试网络程序，再通过网络传输调试指令，会不会混乱呢？关于kgdb，在 linux内核源码的文档部分 /linux-2.6.34/Documentation/DocBook/kgdb.tmpl ，有一分文档说明，配置时可参阅之。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

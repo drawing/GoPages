@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
+那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
+unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
+unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
+#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.'>
+<title>Linux 设备驱动轮询编程</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-driver-select-implement/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 设备驱动轮询编程'>
+<meta property='og:description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
+那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
+unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
+unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
+#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-driver-select-implement/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-15T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-15T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux 设备驱动轮询编程">
+<meta name="twitter:description" content="Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
+那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
+unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
+unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
+#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-driver-select-implement/">Linux 设备驱动轮询编程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 15, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为<a class="link" href="./linux-kernel-waiting-queue/" >等待队列</a>，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。</p>
+<p>那在驱动层面是如何支持select的呢？驱动需要实现<code>file_operations</code>结构中的poll函数指针，其实现也非常简单，只是<code>poll_wait</code>函数的调用，原型如下：</p>
+<pre><code>unsigned int (*poll) (struct file *, struct poll_table_struct *);
+void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait);
+</code></pre>
+<p>需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 <a class="link" href="/reading/linux-character-driver.html" >字符驱动</a> 中的simple程序，实现poll回调函数如下：</p>
+<pre><code>unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait)
+{
+	unsigned int mask = 0;
+	poll_wait(filp, &amp;simple_queue, wait);
+
+	if (len &gt; 0)
+	{
+		mask |= POLLIN | POLLRDNORM;
+	}
+
+	return mask;
+}
+</code></pre>
+<p>在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：</p>
+<pre><code>#include &lt;linux/init.h&gt;
+#include &lt;linux/module.h&gt;
+
+#include &lt;linux/fs.h&gt;
+#include &lt;linux/types.h&gt;
+#include &lt;linux/cdev.h&gt;
+#include &lt;linux/mm.h&gt;
+#include &lt;linux/sched.h&gt;
+#include &lt;asm/io.h&gt;
+#include &lt;asm/uaccess.h&gt;
+#include &lt;asm/system.h&gt;
+
+#include &lt;linux/device.h&gt;
+#include &lt;linux/poll.h&gt;
+
+dev_t devno;
+struct class * simple_class;
+static struct cdev cdev;
+
+wait_queue_head_t simple_queue;
+
+char test_data[255];
+int len = 0;
+
+unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait)
+{
+	unsigned int mask = 0;
+	poll_wait(filp, &amp;simple_queue, wait);
+
+	if (len &gt; 0)
+	{
+		mask |= POLLIN | POLLRDNORM;
+	}
+
+	return mask;
+}
+
+ssize_t simple_read(struct file * pfile,
+	char __user * buf, size_t size, loff_t * ppos)
+{
+	int ret = len;
+	len = 0;
+	if (copy_to_user(buf, test_data, ret))
+		return -EFAULT;
+	else
+		return ret;
+}
+
+ssize_t simple_write(struct file * pfile, const char __user * buf, size_t count, loff_t * ppos)
+{
+	if (count &gt; 255)
+	{
+		return -EFAULT;
+	}
+
+	if (!copy_from_user(test_data, buf, count))
+	{
+		len = count;
+		wake_up(&amp;simple_queue);
+	}
+	return len;
+}
+
+int simple_open(struct inode * pnode, struct file * pfile)
+{
+	printk(KERN_INFO &quot;open simple\n&quot;);
+	return 0;
+}
+
+int simple_release(struct inode * pnode, struct file * pfile)
+{
+	printk(KERN_INFO &quot;close simple\n&quot;);
+	return 0;
+}
+
+static struct file_operations simple_op = 
+{
+	.owner = THIS_MODULE,
+	.read = simple_read,
+	.open = simple_open,
+	.release = simple_release,
+	.write = simple_write,
+	.poll = simple_poll,
+};
+
+static int __init initialization(void)
+{
+	int result;
+
+	result = alloc_chrdev_region(&amp;devno, 0, 1, &quot;simple&quot;);
+	if (result &lt; 0)
+		return result;
+
+	cdev_init(&amp;cdev, &amp;simple_op);
+	result = cdev_add(&amp;cdev, devno, 1);
+
+	simple_class = class_create(THIS_MODULE, &quot;simple&quot;);
+	device_create(simple_class, NULL, devno, NULL, &quot;simple&quot;);
+
+	printk(KERN_INFO &quot; init simple\n&quot;);
+
+	init_waitqueue_head(&amp;simple_queue);
+
+	return result;
+}
+
+static void __exit cleanup(void)
+{
+	device_destroy(simple_class, devno);
+	class_destroy(simple_class);
+
+	cdev_del(&amp;cdev);
+	unregister_chrdev_region(devno, 1);
+	printk(KERN_INFO &quot; cleanup simple\n&quot;);
+}
+
+module_init(initialization);
+module_exit(cleanup);
+
+MODULE_AUTHOR(&quot;alloc cppbreak@gmail.com&quot;);
+MODULE_DESCRIPTION(&quot;A simple linux kernel module&quot;);
+MODULE_VERSION(&quot;V0.1&quot;);
+MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
+</code></pre>
+<p>用户态使用select测试程序如下：</p>
+<pre><code>#include &lt;sys/select.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+int main()
+{
+	int fd, ret;
+	char data[255];
+	fd_set set;
+
+	fd = open(&quot;/dev/simple&quot;, O_RDONLY | O_NONBLOCK);
+	while (fd != -1)
+	{
+		FD_ZERO(&amp;set);
+		FD_SET(fd, &amp;set);
+		select(fd + 1, &amp;set, 0, 0, 0);
+		if (FD_ISSET(fd, &amp;set))
+		{
+			printf(&quot;simple can read\n&quot;);
+			ret = read(fd, data, 255);
+			data[ret] = 0;
+			printf(&quot;\t%s\n&quot;, data);
+		}
+	}
+	return 0;
+}
+</code></pre>
+<p>最终效果，加载驱动之后，使用uesr程序select，会进入阻塞状态，当再另一个终端下写入数据 echo “simple” &gt; /dev/simple 后程序解除阻塞，输出：</p>
+<pre><code>:::bash
+[root@cpphost driver]# ./a.out 
+simple can read
+	simple
+</code></pre>
+<p>这样，简单的几行代码就可让设备驱动支持select模型，复杂而又繁琐的工作都有系统内核处理掉了。</p>
+<p>受好奇心驱使，可能会想系统是如何处理select请求的，select是个系统调用，最后会走到内核的<code>do_select</code>函数，位于fs/select.c，代码结构大致如下（仅留下框架）：</p>
+<pre><code>int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
+{
+	...
+	struct poll_wqueues table;
+	poll_table *wait;
+	...
+	poll_initwait(&amp;table);
+	...
+	for (;;) {
+		...
+		for (i = 0; i &lt; n; ++rinp, ++routp, ++rexp) {
+			...
+			for (j = 0; j &lt; __NFDBITS; ++j, ++i, bit &lt;f_op;
+					mask = DEFAULT_POLLMASK;
+					if (f_op &amp;&amp; f_op-&gt;poll) {
+						wait_key_set(wait, in, out, bit);
+						/* 这里，调用了f_op的poll函数，即我们的实现 */
+						mask = (*f_op-&gt;poll)(file, wait);
+					}
+					...
+					if ((mask &amp; POLLIN_SET) &amp;&amp; (in &amp; bit)) {
+						res_in |= bit;
+						retval++;
+						wait = NULL;
+					}
+					if ((mask &amp; POLLOUT_SET) &amp;&amp; (out &amp; bit)) {
+						res_out |= bit;
+						retval++;
+						wait = NULL;
+					}
+					if ((mask &amp; POLLEX_SET) &amp;&amp; (ex &amp; bit)) {
+						res_ex |= bit;
+						retval++;
+						wait = NULL;
+					}
+				}
+			}
+			if (res_in)
+				*rinp = res_in;
+			if (res_out)
+				*routp = res_out;
+			if (res_ex)
+				*rexp = res_ex;
+			/* 这里进行调度 */
+			cond_resched();
+		}
+		...
+		/* 超时处理 */
+		if (!poll_schedule_timeout(&amp;table, TASK_INTERRUPTIBLE,
+					   to, slack))
+			timed_out = 1;
+	}
+	/* 释放table */
+	poll_freewait(&amp;table);
+
+	return retval;
+}
+</code></pre>
+<p>大致结构也很清晰，进入select时，首先初始化一个等待变量wait，对每一个描述符循环调用对应的poll回调函数，驱动中poll函数又把wait加入自己的等待队列，这样当有数据时，可以及时唤醒select，poll回调返回后，select检查返回的mask，是否有数据可读写，如果都没有，则调用<code>cond_resched();</code>进入等待，等待超时或者write唤醒等待队列。</p>
+<p>这个过程也验证了select是遍历每个描述符，当描述符增多时导致效率线性下降，所以有了更为先进的 epoll 模型，具体实现可以参考 <a class="link" href="/reading/linux-kernel-epoll.html" >epoll源码分析</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

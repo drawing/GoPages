@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+先来看一张各种工具的图谱，要想了解这张图中所有工具的确切含义，需要对Linux操作系统，以及内核实现有着一定的了解，所有的工具，都可以man具体的使用细节。
+top top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。
+top - 20:40:53 up 411 days, 2:55, 1 user, load average: 2.75, 2.65, 2.43 Tasks: 233 total, 1 running, 232 sleeping, 0 stopped, 0 zombie Cpu(s): 19.9%us, 4.0%sy, 0.0%ni, 71.9%id, 2.7%wa, 0.0%hi, 1.5%si, 0.0%st Mem: 8052640k total, 8001296k used, 51344k free, 51668k buffers Swap: 2104504k total, 25832k used, 2078672k free, 6776596k cached PID USER PR NI VIRT RES SHR S %CPU %MEM TIME&#43; COMMAND 18161 mqq 20 0 3796m 1.'>
+<title>Linux性能调优之工具篇</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之工具篇'>
+<meta property='og:description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+先来看一张各种工具的图谱，要想了解这张图中所有工具的确切含义，需要对Linux操作系统，以及内核实现有着一定的了解，所有的工具，都可以man具体的使用细节。
+top top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。
+top - 20:40:53 up 411 days, 2:55, 1 user, load average: 2.75, 2.65, 2.43 Tasks: 233 total, 1 running, 232 sleeping, 0 stopped, 0 zombie Cpu(s): 19.9%us, 4.0%sy, 0.0%ni, 71.9%id, 2.7%wa, 0.0%hi, 1.5%si, 0.0%st Mem: 8052640k total, 8001296k used, 51344k free, 51668k buffers Swap: 2104504k total, 25832k used, 2078672k free, 6776596k cached PID USER PR NI VIRT RES SHR S %CPU %MEM TIME&#43; COMMAND 18161 mqq 20 0 3796m 1.'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-01T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-01T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux性能调优之工具篇">
+<meta name="twitter:description" content="在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+先来看一张各种工具的图谱，要想了解这张图中所有工具的确切含义，需要对Linux操作系统，以及内核实现有着一定的了解，所有的工具，都可以man具体的使用细节。
+top top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。
+top - 20:40:53 up 411 days, 2:55, 1 user, load average: 2.75, 2.65, 2.43 Tasks: 233 total, 1 running, 232 sleeping, 0 stopped, 0 zombie Cpu(s): 19.9%us, 4.0%sy, 0.0%ni, 71.9%id, 2.7%wa, 0.0%hi, 1.5%si, 0.0%st Mem: 8052640k total, 8001296k used, 51344k free, 51668k buffers Swap: 2104504k total, 25832k used, 2078672k free, 6776596k cached PID USER PR NI VIRT RES SHR S %CPU %MEM TIME&#43; COMMAND 18161 mqq 20 0 3796m 1.">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#第一行系统信息">第一行：系统信息</a></li>
+    <li><a href="#第二行进程信息">第二行：进程信息</a></li>
+    <li><a href="#第三行cpu信息">第三行：cpu信息</a></li>
+    <li><a href="#第四行内存信息">第四行：内存信息</a></li>
+    <li><a href="#第五行交换区信息">第五行：交换区信息</a></li>
+    <li><a href="#列含义">列含义</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#procs">procs</a></li>
+    <li><a href="#memory">memory</a></li>
+    <li><a href="#swap">swap</a></li>
+    <li><a href="#io">io</a></li>
+    <li><a href="#system">system</a></li>
+    <li><a href="#cpu">cpu</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#cpu-1">cpu</a></li>
+    <li><a href="#device">Device</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/">Linux性能调优之工具篇</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 01, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。</p>
+<p>先来看一张各种工具的图谱，要想了解这张图中所有工具的确切含义，需要对Linux操作系统，以及内核实现有着一定的了解，所有的工具，都可以man具体的使用细节。</p>
+<p><img src="http://i.imgur.com/pKopgkk.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="323"
+	
+	
+></p>
+<h1 id="top">top</h1>
+<p>top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">top - 20:40:53 up 411 days,  2:55,  1 user,  load average: 2.75, 2.65, 2.43
+</span></span><span class="line"><span class="cl">Tasks: 233 total,   1 running, 232 sleeping,   0 stopped,   0 zombie
+</span></span><span class="line"><span class="cl">Cpu(s): 19.9%us,  4.0%sy,  0.0%ni, 71.9%id,  2.7%wa,  0.0%hi,  1.5%si,  0.0%st
+</span></span><span class="line"><span class="cl">Mem:   8052640k total,  8001296k used,    51344k free,    51668k buffers
+</span></span><span class="line"><span class="cl">Swap:  2104504k total,    25832k used,  2078672k free,  6776596k cached
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+</span></span><span class="line"><span class="cl">18161 mqq       20   0 3796m 1.7g 927m S  166 22.1   9171:12 IphonePushServi
+</span></span><span class="line"><span class="cl">  830 mqq       20   0  342m 199m 198m S   23  2.5  49542:15 VideoRelay
+</span></span><span class="line"><span class="cl"> 1342 admin     20   0     0    0    0 D    1  0.0 209:54.07 flush-8:0
+</span></span><span class="line"><span class="cl">32390 mqq       20   0  502m 5164 2524 S    1  0.1 162:26.01 tafnode
+</span></span><span class="line"><span class="cl">16238 mqq       20   0  5664 1320  876 R    0  0.0   0:00.02 top
+</span></span></code></pre></div><p>各行含义如下：</p>
+<h2 id="第一行系统信息">第一行：系统信息</h2>
+<ul>
+<li>20:40:53：系统当前时间</li>
+<li>up 411 days,  2:55：系统已经启动时间</li>
+<li>1 user：当前登陆的用户数</li>
+<li>load average：当前机器负载，三个数分别是1分钟、5分钟、15分钟的负载情况，程序每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。</li>
+</ul>
+<h2 id="第二行进程信息">第二行：进程信息</h2>
+<p>依次分别是，总进成数，运行进程数，sleep进程数，stop进程数，还有僵尸进程数</p>
+<h2 id="第三行cpu信息">第三行：cpu信息</h2>
+<ul>
+<li>us：用户空间占用CPU的百分比</li>
+<li>sy：内核空间占用CPU的百分比</li>
+<li>ni：改变过优先级的进程占用CPU的百分比</li>
+<li>id：空闲CPU百分比</li>
+<li>wa：IO等待占用CPU的百分比</li>
+<li>hi：硬中断（Hardware IRQ）占用CPU的百分比</li>
+<li>si：软中断（Software Interrupts）占用CPU的百分比</li>
+</ul>
+<h2 id="第四行内存信息">第四行：内存信息</h2>
+<ul>
+<li>total：总内存大小</li>
+<li>used：已经使用内存大小</li>
+<li>free：空闲内存大小</li>
+<li>buffers：缓存内存大小</li>
+</ul>
+<h2 id="第五行交换区信息">第五行：交换区信息</h2>
+<ul>
+<li>total：总交换区大小</li>
+<li>used：已经使用交换区大小</li>
+<li>free：空闲交换区大小</li>
+<li>cached：cached缓存大小</li>
+</ul>
+<h2 id="列含义">列含义</h2>
+<p>各列含义如下：</p>
+<ul>
+<li>PID：进程ID</li>
+<li>USER：创建者</li>
+<li>PRI：进程优先级</li>
+<li>NI：nick level，负值表示高优先级</li>
+<li>VIRT：进程使用的虚拟内存总量，单位kb（VIRT=SWAP+RES）</li>
+<li>RES：进程使用的、未被换出的物理内存大小，单位kb（RES=CODE+DATA）</li>
+<li>SHR：共享内存大小，单位kb</li>
+<li>S：进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程</li>
+<li>%CPU：上次更新到现在的CPU时间占用百分比</li>
+<li>%MEM：进程使用的物理内存百分比</li>
+<li>TIME+：进程使用的CPU时间总计，单位1/100秒</li>
+<li>COMMAND：进程名</li>
+</ul>
+<p>另外，按<code>1</code>可以显示各个cpu情况，<code>top -H</code>可以显示各个线程情况。</p>
+<h1 id="vmstat">vmstat</h1>
+<p>vmstat 可以查看进程、内存、分页、IO和CPU等信息，执行<code>vmstat 2</code>(2秒统计一次)，输出如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">procs -----------memory---------- ---swap-- -----io---- -system-- -----cpu------
+</span></span><span class="line"><span class="cl"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+</span></span><span class="line"><span class="cl"> 4  0  25832  50440  52928 6841116    0    0   125   192    0    0  6  2 91  0  0
+</span></span><span class="line"><span class="cl"> 2  0  25832  50440  52932 6839432    0    0     0     0 48744 61153 19  6 76  0  0
+</span></span><span class="line"><span class="cl"> 2  0  25832  53176  52944 6836144    0    0     0   370 48132 63201 19  6 75  0  0
+</span></span><span class="line"><span class="cl"> 2  0  25832  52184  52952 6836428    0    0     0    30 48525 63944 19  5 75  0  0
+</span></span></code></pre></div><p>注意：第一行数据显示系统上次启动后到现在的平均负载，需要排除在外。</p>
+<h2 id="procs">procs</h2>
+<ul>
+<li>r：等待执行的进程数（显示cpu正在执行和等待cpu资源的进程数，该数字大于cpu个数，可能出现cpu性能瓶颈）</li>
+<li>b：等待IO的进程数</li>
+</ul>
+<h2 id="memory">memory</h2>
+<ul>
+<li>swpd：正在使用的虚拟内存大小</li>
+<li>free：空闲内存大小</li>
+<li>buff：已用的 buff 大小，对块设备的读写进行缓冲</li>
+<li>cache：文件系统缓存 cache 大小</li>
+</ul>
+<h2 id="swap">swap</h2>
+<ul>
+<li>si：每秒从交换区写入内存的大小（kb/s）</li>
+<li>so：每秒从内存写到交换区的大小</li>
+</ul>
+<h2 id="io">io</h2>
+<ul>
+<li>bi：每秒读取的块数（读磁盘）</li>
+<li>bo：每秒写入的块数（写磁盘）</li>
+</ul>
+<h2 id="system">system</h2>
+<ul>
+<li>in：每秒中断数，包括时钟中断</li>
+<li>cs：每秒上下文切换数</li>
+</ul>
+<h2 id="cpu">cpu</h2>
+<p>含义见 top-cpu信息</p>
+<h1 id="uptime">uptime</h1>
+<p>见 top 第一行：系统信息</p>
+<h1 id="free">free</h1>
+<p>free 命令主要查看内存的使用情况：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">             total       used       free     shared    buffers     cached
+</span></span><span class="line"><span class="cl">Mem:       8052640    8000400      52240          0      52872    6853252
+</span></span><span class="line"><span class="cl">-/+ buffers/cache:    1094276    6958364
+</span></span><span class="line"><span class="cl">Swap:      2104504      25832    2078672
+</span></span></code></pre></div><p>第二行含义：</p>
+<ul>
+<li>total：总物理内存大小</li>
+<li>used：已使用内存大小（包括系统cache）</li>
+<li>free：空闲内存大小</li>
+<li>shared：多个进程共享的内存大小</li>
+<li>buffers：buffer大小（块设备缓存）</li>
+<li>cached：cache大小（文件系统缓存）</li>
+</ul>
+<p>第三行：</p>
+<p>used/free：已使用内存大小和空闲内存大小，跟第二行相同字段的区别在于减去了buffer和cache，buffer和cache从操作系统角度来讲是已经使用的内存，但当系统可用内存不足时，操作系统会释放buffer和cache，对进程来讲，这部分内存也是可用的。</p>
+<p>第四行：参考 top</p>
+<h1 id="iostat">iostat</h1>
+<p>此命令用户输出cpu和磁盘io相关的统计信息，默认不加参数输出的是系统启动后到现在的统计情况，一般当系统启动很长时间以后，不具有太大的参考意义：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Linux 2.6.32.43-tlinux-1.0.8-state (10_135_11_35_kqq)   01/13/2015      _x86_64_
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+</span></span><span class="line"><span class="cl">           5.64    0.49    2.84    0.41    0.00   91.20
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
+</span></span><span class="line"><span class="cl">sda              25.64      2006.79      3075.79 71288307775 109262888974
+</span></span><span class="line"><span class="cl">sda1              0.99        14.09         5.05  500582972  179528792
+</span></span><span class="line"><span class="cl">sda2              0.00         0.00         0.00      13182     142936
+</span></span><span class="line"><span class="cl">sda3              3.54        25.77        80.34  915263981 2853850978
+</span></span><span class="line"><span class="cl">sda4             21.11      1966.93      2990.39 69872425096 106229366268
+</span></span></code></pre></div><p>字段含义如下：</p>
+<h2 id="cpu-1">cpu</h2>
+<ul>
+<li>%user: 在用户级别运行所使用的CPU的百分比</li>
+<li>%nice: nice操作所使用的CPU的百分比</li>
+<li>%sys: 在系统级别(kernel)运行所使用CPU的百分比</li>
+<li>%iowait: CPU等待硬件I/O时,所占用CPU百分比</li>
+<li>%idle: CPU空闲时间的百分比</li>
+</ul>
+<h2 id="device">Device</h2>
+<ul>
+<li>tps: 每秒钟发送到的I/O请求数</li>
+<li>Blk_read /s: 每秒读取的block数</li>
+<li>Blk_wrtn/s: 每秒写入的block数</li>
+<li>Blk_read:   读入的block总数</li>
+<li>Blk_wrtn:  写入的block总数</li>
+</ul>
+<p>另外，iostate可以加入一些参数执行更为丰富的功能：</p>
+<p><code>iostat -d 2</code>：每隔两秒统计一次（注：第一行仍然显示系统启动至今的统计）
+<code>iostat -x -d 2</code>：显示更加详细的信息，2秒统计一次
+<code>iostat -d 2 6</code>：两秒统计一次，统计6次</p>
+<p>其中，<code>-x</code>参数显示详细信息，具体字段如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Device:         rrqm/s   wrqm/s     r/s     w/s   rsec/s   wsec/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await  svctm  %util
+</span></span><span class="line"><span class="cl">sda               0.50     0.00   19.50    4.50   332.00  1772.00   166.00   886.00    87.67     0.27   77.67   3.08   7.40
+</span></span></code></pre></div><p>解释：</p>
+<ul>
+<li>rrqm/s（wrqm/s）：将读（写）入请求合并后,每秒发送到设备的读（写）入请求数</li>
+<li>r/s（w/s）：每秒发送到设备的读（写）入请求数</li>
+<li>rsec/s（wsec/s）：每秒从设备读（写）入的扇区数</li>
+<li>rkB/s（wkB/s）：每秒从设备读（写）入的数据量,单位为K</li>
+<li>avgrq-sz：发送到设备的请求的平均大小，单位是扇区</li>
+<li>avgqu-sz： 发送到设备的请求的平均队列长度</li>
+<li>await：I/O请求平均执行时间，包括发送请求和执行的时间，单位是毫秒</li>
+<li>svctm：发送到设备的I/O请求的平均执行时间，单位是毫秒</li>
+<li>%util：在I/O请求发送到设备期间，占用CPU时间的百分比（此值越大，表示设备占用率越高，100时表示设备已占满）</li>
+</ul>
+<h1 id="sar">sar</h1>
+<p>sar 可以显示多种系统资源，具体命令格式：</p>
+<p><code>sar [options] [-A] [-o file] t [n]</code></p>
+<p>在命令行中，n 和 t 两个参数组合起来定义采样间隔和次数，t为采样间隔，是必须有的参数，n为采样次数，是可选的，默认值是1，-o file表示将命令结果以二进制格式存放在文件中，file 在此处不是关键字，是文件名。options 为命令行选项。</p>
+<p>sar 常用的命令选项有：</p>
+<ul>
+<li>-A：所有报告的总和</li>
+<li>-u：CPU利用率</li>
+<li>-v：进程、I节点、文件和锁表状态</li>
+<li>-d：硬盘使用报告</li>
+<li>-r：没有使用的内存页面和硬盘块</li>
+<li>-g：串口I/O的情况</li>
+<li>-b：缓冲区使用情况</li>
+<li>-a：文件读写情况</li>
+<li>-c：系统调用情况</li>
+<li>-R：进程的活动情况</li>
+</ul>
+<h1 id="iotop">iotop</h1>
+<p>有时机器磁盘使用率过高，想知道哪个进程占用磁盘过大，可使用 iotop 命令：</p>
+<p><code>iotop –b –n 3 –d 5</code></p>
+<ul>
+<li>-h, &ndash;help				#显示帮助信息</li>
+<li>-o, &ndash;only				#显示进程或者线程实际上正在做的I/O，而不是全部的，可以随时切换按o</li>
+<li>-b, &ndash;batch				#运行在非交互式的模式</li>
+<li>-n NUM, &ndash;iter=NUM		#在非交互式模式下，设置显示的次数，</li>
+<li>-d SEC, &ndash;delay=SEC		#设置显示的间隔秒数，支持非整数值</li>
+<li>-p PID, &ndash;pid=PID			#只显示指定PID的信息</li>
+<li>-u USER, &ndash;user=USER		#显示指定的用户的进程的信息</li>
+<li>-P, &ndash;processes			#只显示进程，一般为显示所有的线程</li>
+<li>-a, &ndash;accumulated			#显示从iotop启动后每个线程完成了的IO总数</li>
+<li>-k, &ndash;kilobytes			#以千字节显示</li>
+<li>-t, &ndash;time				#在每一行前添加一个当前的时间</li>
+<li>-q, &ndash;quiet				#suppress some lines of header (implies &ndash;batch). This option can be specified up to three times to remove header lines.</li>
+<li>-q     					# column names are only printed on the first iteration,</li>
+<li>-qq    					# column names are never printed,</li>
+<li>-qqq   					# the I/O summary is never printed.</li>
+</ul>
+<h1 id="mpstat">mpstat</h1>
+<p>mpstat 主要显示cpu相关信息，跟 vmstat 相比优点在于可以分别显示各个cpu的情况。执行<code>mpstat -P ALL 1</code>，显示所有CPU状态，采样间隔1s。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">09:52:44 PM  CPU    %user   %nice    %sys %iowait    %irq   %soft  %steal  %idle    %intr/s    %guest
+</span></span><span class="line"><span class="cl">09:52:45 PM  all   19.43    0.00    4.86    3.86    0.00    1.99    0.00   69.86   50984.00    0.00
+</span></span><span class="line"><span class="cl">09:52:45 PM    0   33.33    0.00    5.05    0.00    0.00    2.02    0.00   59.60    4623.00    0.00
+</span></span><span class="line"><span class="cl">09:52:45 PM    1   27.72    0.00    4.95    0.00    0.00    0.99    0.00   66.34    5771.00    0.00
+</span></span></code></pre></div><p>参数含义：</p>
+<ul>
+<li>%user：表示处理用户进程所使用 CPU 的百分比</li>
+<li>%nice：表示使用 nice 命令对进程进行降级时 CPU 的百分比</li>
+<li>%sys：表示内核进程使用的 CPU 百分比</li>
+<li>%iowait：表示等待进行 I/O 所使用的 CPU 时间百分比</li>
+<li>%irq：表示用于处理系统中断的 CPU 百分比</li>
+<li>%soft：表示用于软件中断的 CPU 百分比</li>
+<li>%steal：管理程序维护另一个虚拟处理器时，虚拟CPU的无意识等待时间百分比</li>
+<li>%idle：显示 CPU 的空闲时间</li>
+<li>%intr/s：显示每秒 CPU 接收的中断总数</li>
+</ul>
+<h1 id="pmap">pmap</h1>
+<p>pmap 用于查看进程的内存映像信息。使用方式：<code>pmap -d &lt;pid&gt;</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">18161: IphonePushServi
+</span></span><span class="line"><span class="cl">START               SIZE     RSS     PSS   DIRTY    SWAP PERM OFFSET   DEVICE MAPPING
+</span></span><span class="line"><span class="cl">0000000000400000   7292K   3252K   3252K      0K      0K r-xp 0000000000000000 08:04  IphonePushService
+</span></span><span class="line"><span class="cl">0000000000c1f000    116K     92K     92K     44K      0K rw-p 000000000071f000 08:04  IphonePushService
+</span></span></code></pre></div><p>字段含义如下：</p>
+<ul>
+<li>START: 内存开始地址</li>
+<li>SIZE: 占用内存的字节数（KB）</li>
+<li>RSS: 保留内存的字节数（KB）</li>
+<li>Dirty: 脏页的字节数（包括共享和私有的）</li>
+<li>PERM: 内存的权限</li>
+<li>Offset: 文件偏移</li>
+<li>Device: 设备名 (major:minor)</li>
+<li>MAPPING: 对应的映像文件名</li>
+</ul>
+<h1 id="netstat">netstat</h1>
+<p>netstat 是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。</p>
+<p>该命令的一般形式：<code>netstat [-a][-e][-n][-o][-p Protocol][-r][-s][Interval]</code>，执行 <code>netstat -anop</code> 显示信息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name Timer
+</span></span><span class="line"><span class="cl">tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN      -                off (0.00/0/0)
+</span></span><span class="line"><span class="cl">tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      -                off (0.00/0/0)
+</span></span><span class="line"><span class="cl">tcp        0      0 127.0.0.1:8088          0.0.0.0:*               LISTEN      24346/tunnel     off (0.00/0/0)
+</span></span></code></pre></div><p>其中需要关注<code>Recv-Q</code>，<code>Send-Q</code>，分别表示发送队列和接受队列大小，当<code>Recv-Q</code>过大，意味着当前程序无法及时接收数据包，<code>Send-Q</code>过大，表示对端网络状况不好或者达到对端性能瓶颈。</p>
+<h1 id="tcpdump">tcpdump</h1>
+<p>tcpdump 可以截获网络数据包，对于网络协议的联调和测试有很大的辅助作用。</p>
+<p>tcpdump 它的命令格式为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tcpdump [-adeflnNOpqStvx] [-c 数量] [-F filename] [-i 网络接口] [-r 文件名] [ -s snaplen ] [ -T 类型 ] [ -w 文件名 ] [表达式]
+</span></span></code></pre></div><p>选项说明：</p>
+<ul>
+<li>-a 将网络地址和广播地址转变成名字</li>
+<li>-d 　将匹配信息包的代码以人们能够理解的汇编格式给出</li>
+<li>-dd 　将匹配信息包的代码以c语言程序段的格式给出</li>
+<li>-ddd 　将匹配信息包的代码以十进制的形式给出</li>
+<li>-e 　在输出行打印出数据链路层的头部信息</li>
+<li>-f 　将外部的Internet地址以数字的形式打印出来</li>
+<li>-l 　使标准输出变为缓冲行形式</li>
+<li>-n 　不把网络地址转换成名字</li>
+<li>-t 　在输出的每一行不打印时间戳</li>
+<li>-v 　输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息</li>
+<li>-vv 　输出详细的报文信息</li>
+<li>-c 　在收到指定的包的数目后，tcpdump就会停止</li>
+<li>-F 　从指定的文件中读取表达式，忽略其它的表达式</li>
+<li>-i 　指定监听的网络接口</li>
+<li>-r 　从指定的文件中读取包(这些包一般通过-w选项产生)</li>
+<li>-w 　直接将包写入文件中，并不分析和打印出来</li>
+<li>-T 　将监听到的包直接解释为指定的类型的报文，常见的类型有 rpc 和 snmp</li>
+</ul>
+<h1 id="strace">strace</h1>
+<p>strace 可以查看一个进程所调用的系统api情况，在某些情况下，知道系统所调用的api，可以判断程序运行时的一些状态，该命令使用方式：<code>strace -p &lt;PID&gt;</code>。可以查看调用的api和参数。</p>
+<h1 id="lsof">lsof</h1>
+<p>lsof 是一个列出当前系统打开文件的工具。在linux环境下，任何事物都以 文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。所以如传输控制协议(TCP)和用户数据报协议(UDP)套接字等，系统在后台都为该应用程序分配了一个文件描述符，通过lsof工具能够查看这个列表的详细信息。</p>
+<p>lsof 的使用方法可以参考这里。这里列出几种常见的用法。</p>
+<ul>
+<li>查看文件系统阻塞 <code>lsof /boot</code></li>
+<li>查看端口号被哪个进程占用 <code>lsof -i :3306</code></li>
+<li>查看用户打开哪些文件 <code>lsof -u username</code></li>
+<li>查看进程打开哪些文件 <code>lsof -p 4838</code></li>
+<li>查看远程已打开的网络链接<code> lsof -i @192.168.34.128</code></li>
+</ul>
+<h1 id="proc文件系统">proc文件系统</h1>
+<p>在Linux上<code>/proc/</code>是很特殊的文件系统，存储了内核当前运行状态的虚拟文件系统</p>
+<ul>
+<li><code>/proc/meminfo</code>：当前系统内存状态</li>
+<li><code>/proc/cpuinfo</code>：cpu状态</li>
+<li><code>/proc/&lt;PID&gt;</code>：PID进程信息</li>
+<li><code>/proc/&lt;PID&gt;/cmdline</code>：进程执行命令行信息</li>
+<li><code>/proc/&lt;PID&gt;/exe</code>：软链接，指向当前执行进程</li>
+<li><code>/proc/sys/net/ipv4/tcp_wmem</code>：tcp write buffer值，分别表示：最小，默认，最大</li>
+</ul>
+<h1 id="benchmark">Benchmark</h1>
+<p>除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，有时候通过测试系统固有的特定，是一个好的选择。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lmbench</td>
+<td>反应时间测评工具，上下文切换，网络：连接的建立，管道，文件系统的建立和删除，内存读入反应时间等等</td>
+</tr>
+<tr>
+<td>IOzone</td>
+<td>测试不同的操作系统中文件系统的读写性能</td>
+</tr>
+<tr>
+<td>netperf</td>
+<td>测试网络的性能</td>
+</tr>
+<tr>
+<td>bonnie</td>
+<td>磁盘IO和文件系统测试</td>
+</tr>
+<tr>
+<td>iperf</td>
+<td>网络测试</td>
+</tr>
+<tr>
+<td>ab(Apache)</td>
+<td>web server 测试</td>
+</tr>
+</tbody>
+</table></div>
+<p>其中 Lmbench 可以测试读写内存，网络建立，上下文切换等性能，这可以提供给我们很好的参考，作为架构师，一定需要了解各种性能指标，甚至主要api调用性能，才能更合理的使用。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">告警优化实践总结</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux性能调优之内核篇</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux性能调优之硬件篇</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件版本对系统架构的理解</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/everything-under-control/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">一切尽在掌握</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

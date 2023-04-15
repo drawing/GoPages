@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+label: ... jmp label 跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，jmp near ptr label, jmp far ptr label。
+但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：
+指令 跳转条件 eflags标志 JA Jump if above CF=0 &amp;amp; ZF=0 JAE Jump if above or equal CF=0 JB Jump if below CF=1 JBE Jump if below or equal CF=1 or ZF=1 JC Jump if carry CF=1 JCXZ Jump if CX=0 register CX=0 JE (is the same as JZ) Jump if equal ZF=1 JG Jump if greater (signed) ZF=0 &amp;amp; SF=OF JGE Jump if greater or equal (signed) SF=OF JL Jump if less (signed) SF !'>
+<title>汇编语言学习笔记(五)-控制流</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(五)-控制流'>
+<meta property='og:description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+label: ... jmp label 跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，jmp near ptr label, jmp far ptr label。
+但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：
+指令 跳转条件 eflags标志 JA Jump if above CF=0 &amp;amp; ZF=0 JAE Jump if above or equal CF=0 JB Jump if below CF=1 JBE Jump if below or equal CF=1 or ZF=1 JC Jump if carry CF=1 JCXZ Jump if CX=0 register CX=0 JE (is the same as JZ) Jump if equal ZF=1 JG Jump if greater (signed) ZF=0 &amp;amp; SF=OF JGE Jump if greater or equal (signed) SF=OF JL Jump if less (signed) SF !'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-16T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-16T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(五)-控制流">
+<meta name="twitter:description" content="程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+label: ... jmp label 跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，jmp near ptr label, jmp far ptr label。
+但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：
+指令 跳转条件 eflags标志 JA Jump if above CF=0 &amp;amp; ZF=0 JAE Jump if above or equal CF=0 JB Jump if below CF=1 JBE Jump if below or equal CF=1 or ZF=1 JC Jump if carry CF=1 JCXZ Jump if CX=0 register CX=0 JE (is the same as JZ) Jump if equal ZF=1 JG Jump if greater (signed) ZF=0 &amp;amp; SF=OF JGE Jump if greater or equal (signed) SF=OF JL Jump if less (signed) SF !">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 16, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	label:
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">		jmp label
+</span></span></code></pre></div><p>跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，<code>jmp near ptr label</code>, <code>jmp far ptr label</code>。</p>
+<p>但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>跳转条件</th>
+<th>eflags标志</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JA</td>
+<td>Jump if above</td>
+<td>CF=0 &amp; ZF=0</td>
+</tr>
+<tr>
+<td>JAE</td>
+<td>Jump if above or equal</td>
+<td>CF=0</td>
+</tr>
+<tr>
+<td>JB</td>
+<td>Jump if below</td>
+<td>CF=1</td>
+</tr>
+<tr>
+<td>JBE</td>
+<td>Jump if below or equal</td>
+<td>CF=1 or ZF=1</td>
+</tr>
+<tr>
+<td>JC</td>
+<td>Jump if carry</td>
+<td>CF=1</td>
+</tr>
+<tr>
+<td>JCXZ</td>
+<td>Jump if CX=0</td>
+<td>register CX=0</td>
+</tr>
+<tr>
+<td>JE</td>
+<td>(is the same as JZ) Jump if equal</td>
+<td>ZF=1</td>
+</tr>
+<tr>
+<td>JG</td>
+<td>Jump if greater (signed)</td>
+<td>ZF=0 &amp; SF=OF</td>
+</tr>
+<tr>
+<td>JGE</td>
+<td>Jump if greater or equal (signed)</td>
+<td>SF=OF</td>
+</tr>
+<tr>
+<td>JL</td>
+<td>Jump if less (signed)</td>
+<td>SF != OF</td>
+</tr>
+<tr>
+<td>JLE</td>
+<td>Jump if less or equal (signed)</td>
+<td>ZF=1 or SF!=OF</td>
+</tr>
+<tr>
+<td>JMP</td>
+<td>Unconditional Jump</td>
+<td>-</td>
+</tr>
+<tr>
+<td>JNA</td>
+<td>Jump if not above</td>
+<td>CF=1 or ZF=1</td>
+</tr>
+<tr>
+<td>JNAE</td>
+<td>Jump if not above or equal</td>
+<td>CF=1</td>
+</tr>
+<tr>
+<td>JNB</td>
+<td>Jump if not below</td>
+<td>CF=0</td>
+</tr>
+<tr>
+<td>JNBE</td>
+<td>Jump if not below or equal</td>
+<td>CF=1 &amp; ZF=0</td>
+</tr>
+<tr>
+<td>JNC</td>
+<td>Jump if not carry</td>
+<td>CF=0</td>
+</tr>
+<tr>
+<td>JNE</td>
+<td>Jump if not equal</td>
+<td>ZF=0</td>
+</tr>
+<tr>
+<td>JNG</td>
+<td>Jump if not greater (signed)</td>
+<td>ZF=1 or SF!=OF</td>
+</tr>
+<tr>
+<td>JNGE</td>
+<td>Jump if not greater or equal (signed)</td>
+<td>SF!=OF</td>
+</tr>
+<tr>
+<td>JNL</td>
+<td>Jump if not less (signed)</td>
+<td>SF=OF</td>
+</tr>
+<tr>
+<td>JNLE</td>
+<td>Jump if not less or equal (signed)</td>
+<td>ZF=0 &amp; SF=OF</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>Jump if not overflow (signed)</td>
+<td>OF=0</td>
+</tr>
+<tr>
+<td>JNP</td>
+<td>Jump if no parity</td>
+<td>PF=0</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>Jump if not signed (signed)</td>
+<td>SF=0</td>
+</tr>
+<tr>
+<td>JNZ</td>
+<td>Jump if not zero</td>
+<td>ZF=0</td>
+</tr>
+<tr>
+<td>JO</td>
+<td>Jump if overflow (signed)</td>
+<td>OF=1</td>
+</tr>
+<tr>
+<td>JP</td>
+<td>Jump if parity</td>
+<td>PF=1</td>
+</tr>
+<tr>
+<td>JPE</td>
+<td>Jump if parity even</td>
+<td>PF=1</td>
+</tr>
+<tr>
+<td>JPO</td>
+<td>Jump if paity odd</td>
+<td>PF=0</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>Jump if signed (signed)</td>
+<td>SF=1</td>
+</tr>
+<tr>
+<td>JZ</td>
+<td>Jump if zero</td>
+<td>ZF=1</td>
+</tr>
+</tbody>
+</table></div>
+<p>根据上次的规律很容易理解，这里我们举几个例子，把c语言的流程控制语句转化为汇编：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">num</span> <span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+</span></span></code></pre></div><p>对应的汇编语言写成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">sum:</span> <span class="na">.int</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">num:</span> <span class="na">.int</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="na">.globl</span> <span class="no">_main</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">_main:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">cmpl</span> <span class="no">$10</span><span class="p">,</span> <span class="no">num</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">jbe</span> <span class="no">label1</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">incl</span> <span class="no">num</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">label1:</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="nf">movl</span> <span class="no">$0</span><span class="p">,</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">label2:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">addl</span> <span class="nv">%eax</span><span class="p">,</span> <span class="no">sum</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">incl</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">cmp</span> <span class="no">$10</span><span class="p">,</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">jb</span> <span class="no">label2</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="nl">label3:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">pushl</span> <span class="no">$0</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">call</span> <span class="no">_exit</span>
+</span></span></code></pre></div><p>编译使用<code>gcc hello.s -g</code>，加上调试信息，之后使用gdb调试，这里直接使用<code>br label3</code>在<code>label3</code>处下断，然后<code>print sum</code>打印信息查看结果。</p>
+<p>这段程序开始 <code>cmpl $10, num</code>，比较num和10，jbe跳转，相当于<code>if (num &gt; 10)</code> 部分，incl把操作数加一。</p>
+<p>对于for循环比较麻烦，这里把eax寄存器当做循环计数，先初始化eax为0，紧接着调用addl %eax, sum把eax加到sum上，再把eax加一，后面的比较就与if相同了，如果小于则跳转到label2。</p>
+<p>汇编中还有一类分支结构，就是循环loop，有三种形式：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	loop 循环到ecx为0，每次循环ecx减一
+</span></span><span class="line"><span class="cl">	loope/loopz 循环到ecx为0或者没有设置ZF标志
+</span></span><span class="line"><span class="cl">	loopne/loopnz 循环到ecx为0，或者设置了ZF标志
+</span></span></code></pre></div><p>还记得在寄存器那里提到，ecx被用作循环计数器，全部体现在这里了。loop本质上讲每次先把ecx减一，如果不为零则跳转到label，通过实现上面的for循环，很容易理解loop的使用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">		sum dd 0
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">		mov ecx, 9;
+</span></span><span class="line"><span class="cl">	label1:
+</span></span><span class="line"><span class="cl">		add sum, ecx
+</span></span><span class="line"><span class="cl">		loop label1
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>当然准确的从逻辑上讲其实这样是少一个循环的，不过最后一次加的是0，忽略掉吧。
+注意这里loop是先把ecx减一后判断是否为0，如果ecx开始为0，则不会停止，ecx直接溢出，被减成负数。</p>
+<p>在学习汇编时，可以多参阅编译器生成的汇编代码，用编译器gcc -S，便可生成汇编代码，也可使用不同的优化参数-O1 -O3优化生成的汇编，这样一来可以更好的学习汇编，而来可以理解c和汇编的对应关系，方便阅读反汇编代码。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
+基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
+Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
+注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
+导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
+基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
+数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
+字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
+数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
+插入操作：
+NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：'>
+<title>Objective-C 简明教程</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/objective-c-brief-course/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Objective-C 简明教程'>
+<meta property='og:description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
+基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
+Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
+注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
+导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
+基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
+数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
+字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
+数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
+插入操作：
+NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/objective-c-brief-course/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2011-04-10T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2011-04-10T22:40:04&#43;08:00'/>
+<meta name="twitter:title" content="Objective-C 简明教程">
+<meta name="twitter:description" content="本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
+基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
+Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
+注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
+导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
+基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
+数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
+字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
+数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
+插入操作：
+NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#c语言的扩展">C语言的扩展</a></li>
+    <li><a href="#hello-world">Hello World</a></li>
+    <li><a href="#注释">注释</a></li>
+    <li><a href="#导入">导入</a></li>
+    <li><a href="#基本类型">基本类型</a></li>
+    <li><a href="#字符串">字符串</a></li>
+    <li><a href="#数组">数组</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#interface">interface</a></li>
+    <li><a href="#方法调用">方法调用</a></li>
+    <li><a href="#implementation">implementation</a></li>
+    <li><a href="#属性">属性</a></li>
+    <li><a href="#实例化">实例化</a></li>
+    <li><a href="#私有成员">私有成员</a></li>
+    <li><a href="#class">@class</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#selector">selector</a></li>
+    <li><a href="#内存管理">内存管理</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/objective-c-brief-course/">Objective-C 简明教程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 10, 2011</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。</p>
+<h1 id="基础">基础</h1>
+<h2 id="c语言的扩展">C语言的扩展</h2>
+<p>Objective-C很大程度上兼容C语言，是C语言的扩展，所有以<code>@</code>开头的语言，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。</p>
+<h2 id="hello-world">Hello World</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#import &lt;Foundatioin/Foundation.h&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">int main(int argc, const char * argv[])
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    NSLog(@&#34;Hello, World!&#34;);
+</span></span><span class="line"><span class="cl">    return (0);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><p>Objective-C头文件以.h结尾，源文件以.m结尾。</p>
+<h2 id="注释">注释</h2>
+<p>Objective-C 注释与 C++ 相同，符号： <code>//</code> 或者 <code>/* */</code></p>
+<h2 id="导入">导入</h2>
+<p>与C语言中的 <code>#include &lt;&gt;</code> 相对应的导入 <code>#import &lt;&gt;</code></p>
+<h2 id="基本类型">基本类型</h2>
+<p>Objective-C 中的基本类型同C，包括 <code>bool</code>, <code>char</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, <code>int</code> 等。另外，在<code>Foundation</code>库中，这些类型还定义了别名，<code>NSInteger</code>对应有符号整数，<code>NSUInteger</code>对应无符号整数，<code>CGFloat</code>对应浮点数，<code>BOOL</code>对应布尔值。</p>
+<p>数字对应的对象还有 <code>NSNumber</code>，可以跟基本的数字类型相互转化，详细信息可参阅 <a class="link" href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/index.html#//apple_ref/occ/instp/NSNumber/longValue"  target="_blank" rel="noopener"
+    >NSNumber Class Reference</a>。</p>
+<h2 id="字符串">字符串</h2>
+<p>常量字符串可以用<code>@&quot;&quot;</code>结构表示，另外变量使用<code>NSString</code>表示不可变字符串 ，<code>NSMutableString</code>表示可变字符串。具体<code>NSString</code>和普通C字符串的转换，可参阅<a class="link" href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/index.html#//apple_ref/occ/instp/NSString/UTF8String"  target="_blank" rel="noopener"
+    >NSString Class Reference</a></p>
+<h2 id="数组">数组</h2>
+<p>之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 <code>NSArray</code>和<code>NSMutableArray</code>，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。</p>
+<p>插入操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">NSMutableArray * array = [NSMutableArray arrayWithCapacity:50];
+</span></span><span class="line"><span class="cl">[array addObject:[NSNumber numberWithUnsignedLongLong:123]];
+</span></span><span class="line"><span class="cl">[array addObject:[NSNumber numberWithUnsignedLongLong:456]];
+</span></span></code></pre></div><p>遍历操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">NSLog(@&#34;Array Size: %u&#34;, (int)[userIdList count]);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// method one
+</span></span><span class="line"><span class="cl">for(int i=0;i&lt;[array count];i++)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">	NSLog(@&#34;%@&#34;,[array objectAtIndex:i]);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// method two
+</span></span><span class="line"><span class="cl">id ob;  
+</span></span><span class="line"><span class="cl">NSEnumerator *enumerator = [array objectEnumerator];
+</span></span><span class="line"><span class="cl">while(ob=[enumerator nextObject])
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">	NSLog(@&#34;%@&#34;,ob);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// method three
+</span></span><span class="line"><span class="cl">for (NSNumber *num in array) {
+</span></span><span class="line"><span class="cl">	if ([num isKindOfClass:[NSNumber class]]) {
+</span></span><span class="line"><span class="cl">		NSLog(@&#34;Elem: %llu&#34;, [num unsignedLongLongValue]);
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><p>可以看出，<code>NSArray</code>可以插入任何对象，遍历可使用<code>isKindOfClass</code>识别哪种数据类型。详细的操作可参照<a class="link" href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSMutableArray_Class/index.html#//apple_ref/occ/cl/NSMutableArray"  target="_blank" rel="noopener"
+    >NSMutableArray Class Reference</a>。</p>
+<h1 id="面向对象">面向对象</h1>
+<h2 id="interface">interface</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle : NSObject
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    ShapeColor fillColor;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- (void) setFillColor : (ShapeColor) fillColor;
+</span></span><span class="line"><span class="cl">- (void) draw;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@end
+</span></span></code></pre></div><ul>
+<li>程序开始 <code>@interface</code> 表示C的扩展语法，表示接口，继承自<code>NSObject</code></li>
+<li><code>ShapeColor fillColor;</code> 声明了成员</li>
+<li><code>- (void) draw;</code>表示方法，前面的括号中表示方法的返回类型</li>
+<li><code>- (void) setFillColor : (ShapeColor) fillColor;</code> 冒号后面的部分，表示有一个参数 <code>fillColor</code>，类型是<code>ShapeColor</code></li>
+</ul>
+<h2 id="方法调用">方法调用</h2>
+<p>Objective-C 调用对象方法的基本语法如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[object method];
+</span></span><span class="line"><span class="cl">[object methodWithInput:input];
+</span></span></code></pre></div><p>同样可以调用类的方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">id myObject = [NSString string];
+</span></span></code></pre></div><p>其中<code>id</code>表示<code>myObject</code>类型，可以承载任何对象。</p>
+<p>在很多语言中支持嵌套调用，如<code>function1 ( function2() );</code>，Objective-C中可以同样可以写为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[NSString stringWithFormat:[prefs format]];
+</span></span></code></pre></div><p>多参数调用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 声明：-(BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile;
+</span></span><span class="line"><span class="cl">BOOL result = [myData writeToFile:@&#34;/tmp/log.txt&#34; atomically:NO];
+</span></span></code></pre></div><h2 id="implementation">implementation</h2>
+<p>之前的<code>interface</code>只是声明了接口，具体的实现如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@implementation Circle
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- (void) setFillColor: (ShapeColor) c
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    fillColor = c;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- (void) draw
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    NSLog(@&#34;drawing&#34;);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@end
+</span></span></code></pre></div><p>解释：</p>
+<ul>
+<li>开始 <code>@implementation Circle</code> 表示为某个类提供代码。</li>
+<li>接下来是方法定义，<code>fillColor = c</code> 隐含 <code>self-&gt;fillColor</code>，表示当前对象的成员，调用方法时，<code>circle setFillColor: kRedColor</code>，方法将<code>circle</code>作为<code>self</code>参数进行传递。</li>
+</ul>
+<h2 id="属性">属性</h2>
+<p><code>@interface</code>属性定义：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 头文件
+</span></span><span class="line"><span class="cl">@interface TestMessage : NSObject {
+</span></span><span class="line"><span class="cl">    NSMutableArray * elems;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@property(nonatomic,retain) NSMutableArray* elems;
+</span></span><span class="line"><span class="cl">@end
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 实现文件
+</span></span><span class="line"><span class="cl">@implementation IMMessage
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@synthesize elems;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@end
+</span></span></code></pre></div><p>关键字<code>@property</code>和<code>@synthesize</code>含义如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 头文件中：
+</span></span><span class="line"><span class="cl">@property int count;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 等效为声明两个方法：
+</span></span><span class="line"><span class="cl">- (int)count;
+</span></span><span class="line"><span class="cl">- (void)setCount:(int)newCount;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 实现文件中：
+</span></span><span class="line"><span class="cl">@synthesize count;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 等效两个方法的实现
+</span></span><span class="line"><span class="cl">- (int)count
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">	return count;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">-(void)setCount:(int)newCount
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">	count = newCount;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><p>声明property的语法格式为：<code>@property (参数1,参数2) 类型 名字;</code></p>
+<p>参数的含义如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">readwrite: 产生setter\getter方法
+</span></span><span class="line"><span class="cl">readonly: 只产生简单的getter,没有setter。
+</span></span><span class="line"><span class="cl">assign: 默认类型,setter方法直接赋值，而不进行retain操作
+</span></span><span class="line"><span class="cl">retain: setter方法对参数进行release旧值，再retain新值。
+</span></span><span class="line"><span class="cl">copy: setter方法进行Copy操作，与retain一样
+</span></span><span class="line"><span class="cl">nonatomic: 禁止多线程，变量保护，提高性能
+</span></span></code></pre></div><h2 id="实例化">实例化</h2>
+<p>对象的实例化：<code>shape = [Circle new];</code></p>
+<h2 id="私有成员">私有成员</h2>
+<p>对于私有变量，可以在 <code>.m</code>文件中声明一个 <code>name</code> 私有变量：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle (){
+</span></span><span class="line"><span class="cl">    NSString* name;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><p>对于私有方法，可以实现为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle (Private)
+</span></span><span class="line"><span class="cl">- (NSString*) GetName;
+</span></span><span class="line"><span class="cl">@end
+</span></span></code></pre></div><h2 id="class">@class</h2>
+<p>当两个类有循环依赖，如A类引用到B，B类又引用到A，import的时候没办法把两个类都放到自身前面，无法编译通过，这事可以A类中使用<code>@class B</code>来声明有一个类B，具体实现在其他地方，来解决循环依赖问题。</p>
+<h1 id="高级特性">高级特性</h1>
+<h2 id="selector">selector</h2>
+<p><code>Objective-C</code>中的方法调用就是消息传递，除了使用<code>[]</code>来传递消息以外，还有一种在运行期间进行消息传递的方法，就是<code>selector</code>方式，不同参数的消息传递如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 无参数
+</span></span><span class="line"><span class="cl">- (void) fooNoInputs {
+</span></span><span class="line"><span class="cl">	NSLog(@&#34;Does nothing&#34;);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[self performSelector:@selector(fooNoInputs)];
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 一个参数
+</span></span><span class="line"><span class="cl">- (void) fooOneIput:(NSString*) first {
+</span></span><span class="line"><span class="cl">	NSLog(@&#34;Logs %@&#34;, first);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[self performSelector:@selector(fooOneInput:) withObject:@&#34;first&#34;];
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 多个参数
+</span></span><span class="line"><span class="cl">- (void) fooFirstInput:(NSString*) first secondInput:(NSString*) second {
+</span></span><span class="line"><span class="cl">	NSLog(@&#34;Logs %@ then %@&#34;, first, second);
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">[self performSelector:@selector(fooFirstInput:secondInput:) withObject:@&#34;first&#34; withObject:@&#34;second&#34;];
+</span></span></code></pre></div><p>另外，在<code>selector</code>中可以使用<code>onThread</code>参数指定所执行方法的线程。</p>
+<h2 id="内存管理">内存管理</h2>
+<p>在之前的OC版本中，需要对象操作<code>alloc</code>，<code>release</code>等手工进行分配释放，一旦管理不善，容易出现内存泄漏或者崩溃。在Xcode 4.2中，增加了自动引用计数<code>Automatic Reference Counting, ARC</code>，不需要开发者考虑<code>release</code>的问题，详情可参考<a class="link" href="http://www.oschina.net/translate/objc-automatic-reference-counting-in-xcode-explained"  target="_blank" rel="noopener"
+    >理解 Objective-C 的 ARC</a>。</p>
+<h1 id="参考资源">参考资源</h1>
+<ul>
+<li><a class="link" href="http://cocoadevcentral.com/d/learn_objectivec/"  target="_blank" rel="noopener"
+    >http://cocoadevcentral.com/d/learn_objectivec/</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SWIG 跨语言调用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

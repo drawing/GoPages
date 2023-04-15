@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+此驱动运行时可设置tun模式和tap模式，tun模式能取到IP数据包，无法获得ARP数据，而tap模式取到的是以太包，可以得到链路层以上的一切数据包。
+由于项目需要使用tun驱动，而又不想不求甚解，从而阅读了驱动代码，想对此做一些记录，可以使自己理解的更为透彻，虽然代码并不多，但是涉及内核态编程，倘若追根溯源，恐怕需读完Linux协议栈代码了。
+我阅读的代码取自Linux 2.6.34内核源码，路径 drivers\net\tun.c
+驱动入口点，Linux驱动入口点不同Windows平台，入口函数都是DriverEntry，Linux平台需要通过module_init宏指定入口点（当然最终宏也会统一把函数转化成init_module作为入口点），当执行modprobe加载内核模块时由内核调用，module_exit宏指定清理函数，当执行rmmod时由内核调用。另外，通过 MODULE_* 一系列宏记录作者，驱动描述，以及协议信息。
+module_init(tun_init); module_exit(tun_cleanup); MODULE_DESCRIPTION(DRV_DESCRIPTION); MODULE_AUTHOR(DRV_COPYRIGHT); MODULE_LICENSE(&amp;quot;GPL&amp;quot;); MODULE_ALIAS_MISCDEV(TUN_MINOR); 这里指明了驱动程序的基本信息，MODULE_DESCRIPTION声明驱动描述，MODULE_AUTHOR声明作者，在程序开始已有定义。
+#define DRV_DESCRIPTION	&amp;quot;Universal TUN/TAP device driver&amp;quot; #define DRV_COPYRIGHT	&amp;quot;(C) 1999-2004 Max Krasnyansky &amp;quot; TUN_MINOR 位于文件 include/linux/miscdevice.h
+#define TUN_MINOR 200 再来看初始化和清理函数的实现，初始化函数所作工作非常简单，主要功能是建立一个设备节点供用户态进程控制 ret = misc_register(&amp;amp;tun_miscdev); 函数misc_register注册一个字符设备，所注册信息位于tun_miscdev结构。
+static struct miscdevice tun_miscdev = { .minor = TUN_MINOR, .name = &amp;quot;tun&amp;quot;, .nodename = &amp;quot;net/tun&amp;quot;, .fops = &amp;amp;tun_fops, }; 调用过后会在/dev下以 nodename 为名创建节点，即/dev/net/tun，用户进程可通过open函数打开并操作驱动，操作驱动函数由 tun_fops 指定。
+static const struct file_operations tun_fops = { .'>
+<title>tun/tap 驱动源码分析</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='tun/tap 驱动源码分析'>
+<meta property='og:description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+此驱动运行时可设置tun模式和tap模式，tun模式能取到IP数据包，无法获得ARP数据，而tap模式取到的是以太包，可以得到链路层以上的一切数据包。
+由于项目需要使用tun驱动，而又不想不求甚解，从而阅读了驱动代码，想对此做一些记录，可以使自己理解的更为透彻，虽然代码并不多，但是涉及内核态编程，倘若追根溯源，恐怕需读完Linux协议栈代码了。
+我阅读的代码取自Linux 2.6.34内核源码，路径 drivers\net\tun.c
+驱动入口点，Linux驱动入口点不同Windows平台，入口函数都是DriverEntry，Linux平台需要通过module_init宏指定入口点（当然最终宏也会统一把函数转化成init_module作为入口点），当执行modprobe加载内核模块时由内核调用，module_exit宏指定清理函数，当执行rmmod时由内核调用。另外，通过 MODULE_* 一系列宏记录作者，驱动描述，以及协议信息。
+module_init(tun_init); module_exit(tun_cleanup); MODULE_DESCRIPTION(DRV_DESCRIPTION); MODULE_AUTHOR(DRV_COPYRIGHT); MODULE_LICENSE(&amp;quot;GPL&amp;quot;); MODULE_ALIAS_MISCDEV(TUN_MINOR); 这里指明了驱动程序的基本信息，MODULE_DESCRIPTION声明驱动描述，MODULE_AUTHOR声明作者，在程序开始已有定义。
+#define DRV_DESCRIPTION	&amp;quot;Universal TUN/TAP device driver&amp;quot; #define DRV_COPYRIGHT	&amp;quot;(C) 1999-2004 Max Krasnyansky &amp;quot; TUN_MINOR 位于文件 include/linux/miscdevice.h
+#define TUN_MINOR 200 再来看初始化和清理函数的实现，初始化函数所作工作非常简单，主要功能是建立一个设备节点供用户态进程控制 ret = misc_register(&amp;amp;tun_miscdev); 函数misc_register注册一个字符设备，所注册信息位于tun_miscdev结构。
+static struct miscdevice tun_miscdev = { .minor = TUN_MINOR, .name = &amp;quot;tun&amp;quot;, .nodename = &amp;quot;net/tun&amp;quot;, .fops = &amp;amp;tun_fops, }; 调用过后会在/dev下以 nodename 为名创建节点，即/dev/net/tun，用户进程可通过open函数打开并操作驱动，操作驱动函数由 tun_fops 指定。
+static const struct file_operations tun_fops = { .'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-12T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-12T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="tun/tap 驱动源码分析">
+<meta name="twitter:description" content="tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+此驱动运行时可设置tun模式和tap模式，tun模式能取到IP数据包，无法获得ARP数据，而tap模式取到的是以太包，可以得到链路层以上的一切数据包。
+由于项目需要使用tun驱动，而又不想不求甚解，从而阅读了驱动代码，想对此做一些记录，可以使自己理解的更为透彻，虽然代码并不多，但是涉及内核态编程，倘若追根溯源，恐怕需读完Linux协议栈代码了。
+我阅读的代码取自Linux 2.6.34内核源码，路径 drivers\net\tun.c
+驱动入口点，Linux驱动入口点不同Windows平台，入口函数都是DriverEntry，Linux平台需要通过module_init宏指定入口点（当然最终宏也会统一把函数转化成init_module作为入口点），当执行modprobe加载内核模块时由内核调用，module_exit宏指定清理函数，当执行rmmod时由内核调用。另外，通过 MODULE_* 一系列宏记录作者，驱动描述，以及协议信息。
+module_init(tun_init); module_exit(tun_cleanup); MODULE_DESCRIPTION(DRV_DESCRIPTION); MODULE_AUTHOR(DRV_COPYRIGHT); MODULE_LICENSE(&amp;quot;GPL&amp;quot;); MODULE_ALIAS_MISCDEV(TUN_MINOR); 这里指明了驱动程序的基本信息，MODULE_DESCRIPTION声明驱动描述，MODULE_AUTHOR声明作者，在程序开始已有定义。
+#define DRV_DESCRIPTION	&amp;quot;Universal TUN/TAP device driver&amp;quot; #define DRV_COPYRIGHT	&amp;quot;(C) 1999-2004 Max Krasnyansky &amp;quot; TUN_MINOR 位于文件 include/linux/miscdevice.h
+#define TUN_MINOR 200 再来看初始化和清理函数的实现，初始化函数所作工作非常简单，主要功能是建立一个设备节点供用户态进程控制 ret = misc_register(&amp;amp;tun_miscdev); 函数misc_register注册一个字符设备，所注册信息位于tun_miscdev结构。
+static struct miscdevice tun_miscdev = { .minor = TUN_MINOR, .name = &amp;quot;tun&amp;quot;, .nodename = &amp;quot;net/tun&amp;quot;, .fops = &amp;amp;tun_fops, }; 调用过后会在/dev下以 nodename 为名创建节点，即/dev/net/tun，用户进程可通过open函数打开并操作驱动，操作驱动函数由 tun_fops 指定。
+static const struct file_operations tun_fops = { .">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/">tun/tap 驱动源码分析</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 12, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。</p>
+<p>此驱动运行时可设置tun模式和tap模式，tun模式能取到IP数据包，无法获得ARP数据，而tap模式取到的是以太包，可以得到链路层以上的一切数据包。</p>
+<p>由于项目需要使用tun驱动，而又不想不求甚解，从而阅读了驱动代码，想对此做一些记录，可以使自己理解的更为透彻，虽然代码并不多，但是涉及内核态编程，倘若追根溯源，恐怕需读完Linux协议栈代码了。</p>
+<p>我阅读的代码取自Linux 2.6.34内核源码，路径 drivers\net\tun.c</p>
+<p>驱动入口点，Linux驱动入口点不同Windows平台，入口函数都是DriverEntry，Linux平台需要通过<code>module_init</code>宏指定入口点（当然最终宏也会统一把函数转化成<code>init_module</code>作为入口点），当执行modprobe加载内核模块时由内核调用，<code>module_exit</code>宏指定清理函数，当执行rmmod时由内核调用。另外，通过 <code>MODULE_*</code> 一系列宏记录作者，驱动描述，以及协议信息。</p>
+<pre><code>module_init(tun_init);
+module_exit(tun_cleanup);
+MODULE_DESCRIPTION(DRV_DESCRIPTION);
+MODULE_AUTHOR(DRV_COPYRIGHT);
+MODULE_LICENSE(&quot;GPL&quot;);
+MODULE_ALIAS_MISCDEV(TUN_MINOR);
+</code></pre>
+<p>这里指明了驱动程序的基本信息，<code>MODULE_DESCRIPTION</code>声明驱动描述，<code>MODULE_AUTHOR</code>声明作者，在程序开始已有定义。</p>
+<pre><code>#define DRV_DESCRIPTION	&quot;Universal TUN/TAP device driver&quot;
+#define DRV_COPYRIGHT	&quot;(C) 1999-2004 Max Krasnyansky &quot;
+</code></pre>
+<p>TUN_MINOR 位于文件 include/linux/miscdevice.h</p>
+<pre><code>#define TUN_MINOR 200
+</code></pre>
+<p>再来看初始化和清理函数的实现，初始化函数所作工作非常简单，主要功能是建立一个设备节点供用户态进程控制
+<code>ret = misc_register(&amp;tun_miscdev);</code>
+函数<code>misc_register</code>注册一个字符设备，所注册信息位于tun_miscdev结构。</p>
+<pre><code>static struct miscdevice tun_miscdev = {
+	.minor = TUN_MINOR,
+	.name = &quot;tun&quot;,
+	.nodename = &quot;net/tun&quot;,
+	.fops = &amp;tun_fops,
+};
+</code></pre>
+<p>调用过后会在/dev下以 nodename 为名创建节点，即/dev/net/tun，用户进程可通过open函数打开并操作驱动，操作驱动函数由 tun_fops 指定。</p>
+<pre><code>static const struct file_operations tun_fops = {
+	.owner	= THIS_MODULE,
+	.llseek = no_llseek,
+	.read  = do_sync_read,
+	.aio_read  = tun_chr_aio_read,
+	.write = do_sync_write,
+	.aio_write = tun_chr_aio_write,
+	.poll	= tun_chr_poll,
+	.unlocked_ioctl	= tun_chr_ioctl,
+#ifdef CONFIG_COMPAT
+	.compat_ioctl = tun_chr_compat_ioctl,
+#endif
+	.open	= tun_chr_open,
+	.release = tun_chr_close,
+	.fasync = tun_chr_fasync
+};
+</code></pre>
+<p>这里操作都是字符设备操作，用户open设备节点/dev/net/tun时内核调用<code>tun_chr_open</code>回调，这里函数都与用户态操作相对应，用户对设备调用read，write时最终会回调至此，这也是字符设备驱动编程规范。用户态核心操作都在这几个函数当中了。</p>
+<p>现逐条分析每个函数：</p>
+<ul>
+<li>
+<p><code>.llseek = no_llseek</code> : <code>no_llseek</code>为内核函数，实现也十分简单，直接返回-ESPIPE，就是说用户态对设备文件调用lseek就会出Illegal seek错。
+字符设备，块设备</p>
+</li>
+<li>
+<p><code>.read = do_sync_read</code> :
+<code>do_sync_read</code> 也是内核函数，直接调用aio_read异步读写函数</p>
+</li>
+<li>
+<p><code>.aio_read = tun_chr_aio_read</code> :
+<code>tun_chr_aio_read</code> -&gt; <code>tun_do_read</code> -&gt; <code>skb_dequeue</code> 以非阻塞方式从接收队列 <code>tun</code>-&gt;<code>socket.sk</code>-&gt;<code>sk_receive_queue</code> 取出一个网络包返给用户态。</p>
+</li>
+<li>
+<p><code>.write = do_sync_write</code> :
+同<code>aio_read</code>，调用<code>aio_write</code></p>
+</li>
+<li>
+<p><code>.aio_write = tun_chr_aio_write</code> :
+<code>tun_chr_aio_write</code> -&gt; <code>tun_get_user</code> -&gt; <code>netif_rx_ni</code> ，netif_rx_ni函数为内核函数，最终调用netif_rx返包给TCP/IP协议栈，Linux系统网络数据包都是以sk_buff结构存在，这里函数大部分都是构造此结构。</p>
+</li>
+<li>
+<p>.poll = tun_chr_poll :
+tun_chr_poll 调用 poll_wait 实现poll功能。</p>
+</li>
+<li>
+<p>.unlocked_ioctl = tun_chr_ioctl :
+tun_chr_ioctl -&gt; __tun_chr_ioctl 就是垃圾桶函数ioctl的实现了，所有对驱动程序的操控基本都实现于此函数。函数处理各种不同命令，使用switch-case处理不同命令号，设置硬件地址获取信息等等，关键部分在命令TUNSETIFF，处理在switch之前，这个命令设置基本信息并启动驱动程序的网卡部分。TUNSETIFF 命令最终实现于 tun_set_iff 函数。</p>
+</li>
+<li>
+<p>.open = tun_chr_open :
+tun_chr_open 当用户调用，此函数仅仅分配自定义结构tun_file，存至文件节点私有数据。</p>
+</li>
+<li>
+<p>.release = tun_chr_close :
+tun_chr_close 与 open 操作相反，释放结构体，以及结构体之中的子结构。</p>
+</li>
+<li>
+<p>.fasync = tun_chr_fasync</p>
+</li>
+</ul>
+<p>以上是tun驱动中字符驱动部分，其中省略了细节，如等待队列等内容，跟内核机制有关，我想再另一篇文章中单独总结更好。</p>
+<p>网卡驱动部分</p>
+<p>初始化工作在函数 <code>tun_set_iff</code> 中
+<code>alloc_netdev</code> 分配网络设备 -&gt; <code>tun_net_init</code> 初始化网络设备 -&gt; <code>register_netdevice</code> 注册网络设备
+其中自定义函数 <code>tun_net_init</code> 关键部分如下：</p>
+<pre><code>switch (tun-&gt;flags &amp; TUN_TYPE_MASK) {
+	case TUN_TUN_DEV:
+		dev-&gt;netdev_ops = &amp;tun_netdev_ops;
+
+		/* ... */
+	case TUN_TAP_DEV:
+		dev-&gt;netdev_ops = &amp;tap_netdev_ops;
+		/* ... */
+}
+</code></pre>
+<p>程序查看设置模式，若是tun模式，设置回调函数为 <code>tun_netdev_ops</code>， 若是tap模式，设置回调函数为 <code>tap_netdev_ops</code>。</p>
+<p>先来分析 <code>tun_netdev_ops</code> ：</p>
+<pre><code>static const struct net_device_ops tun_netdev_ops = {
+	.ndo_uninit		= tun_net_uninit,
+	.ndo_open		= tun_net_open,
+	.ndo_stop		= tun_net_close,
+	.ndo_start_xmit		= tun_net_xmit,
+	.ndo_change_mtu		= tun_net_change_mtu,
+};
+</code></pre>
+<p>同字符设备驱动的范式，网络驱动也是设置一系列回调函数，当有数据传输时调用相应回调。</p>
+<p>.ndo_open = tun_net_open
+open 函数调用 netif_start_queue(dev); 通知上层开始接受数据包</p>
+<p>.ndo_stop = tun_net_close
+close 函数调用 netif_stop_queue(dev); 通知上层停止接受数据包</p>
+<p>.ndo_start_xmit = tun_net_xmit
+当有数据包到达时调用 tun_net_xmit 函数，通知网卡发送数据包，函数处理数据包时调用 skb_queue_tail 把数据包压入接收队列 tun-&gt;socket.sk-&gt;sk_receive_queue</p>
+<p>.ndo_change_mtu = tun_net_change_mtu
+改变网卡mtu，控制数据帧大小。</p>
+<p>分析 tap 模式下操作回调 <code>tap_netdev_ops</code></p>
+<pre><code>static const struct net_device_ops tap_netdev_ops = {
+	.ndo_uninit		= tun_net_uninit,
+	.ndo_open		= tun_net_open,
+	.ndo_stop		= tun_net_close,
+	.ndo_start_xmit		= tun_net_xmit,
+	.ndo_change_mtu		= tun_net_change_mtu,
+	.ndo_set_multicast_list	= tun_net_mclist,
+	.ndo_set_mac_address	= eth_mac_addr,
+	.ndo_validate_addr	= eth_validate_addr,
+};
+</code></pre>
+<p>其中大部分函数都同 tun 模式相同，因为这些函数都无需关心数据包是否含有以太头。而<code>tun_net_mclist</code>仅实现为空函数，<code>eth_mac_addr</code>和<code>eth_validate_addr</code>操作函数直接回调系统默认函数，此模式下并无新回调函数出现。</p>
+<p>虽然Linux系统是用纯C语言写的，但是其中到处充斥着面向对象的思想，分析驱动程序首先理清结构，以及结构对应的方法，对字符设备驱动对象，file存储数据，<code>file_operations</code>回调是其方法；网络设备对象也是如此。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

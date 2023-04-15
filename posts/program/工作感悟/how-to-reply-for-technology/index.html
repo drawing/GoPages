@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
+准备 成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。
+另外，答辩之前，也需要针对性的做一些准备，首先，需要知道这次答辩的目的，比如昨晚的答辩，实际上最开始就以为review一下代码就行，其实最后还是纠结在如何设计和实现。之前我自己的答辩，也是没有对答辩的状况有合理的预期，准备的时候更多的是考虑如何讲更有逻辑性，而不知道评委最终会纠结在什么地方，什么地方他们根本不关心，没有对状况的预期，往往会手忙脚乱。
+还有对评委的背景，最好能有一个初步的了解，一般评委关注点更多的跟自己的背景有关。不过有时候很难了解每个评委的风格。
+论述 关于如何讲自己的项目或者设计，以前都是站在自己的角度考虑，如何才能清楚、有逻辑的讲完，但对于评委，可能是完全不同的理解。评委对一开始讲的背景，优缺点其实并不是很在意，模型才是关键，有时候一贴架构图，评委就来了精神，这里的图，就是整个架构的模型，也是理解架构的切入点，所以如何讲清楚模型是非常重要的。
+评委都有自身的背景，面对模型，也会结合自己的经验，所谓的经验就是定式，如果你的模型符合他的定式，便会非常容易理解，一旦模型不符合定式，就需要花费很大精力去讲解，所以从大众熟悉的模型讲起，逐渐推演，便会容易理解很多。
+另外还需要学习一些通用的表达方式，如金字塔原理等。
+面对挑战 答辩必然会遇到评委的挑战，有些评委气势如虹，很容易造成答辩者的心理压力，导致不能正常发挥。其实很多情况下，评委只是一时兴起的问题，还不没有深思熟虑，稍加思考即可应对，所以回答问题不能急，要慢下来，思考后回答。'>
+<title>技术答辩感悟</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/how-to-reply-for-technology/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='技术答辩感悟'>
+<meta property='og:description' content='昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
+准备 成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。
+另外，答辩之前，也需要针对性的做一些准备，首先，需要知道这次答辩的目的，比如昨晚的答辩，实际上最开始就以为review一下代码就行，其实最后还是纠结在如何设计和实现。之前我自己的答辩，也是没有对答辩的状况有合理的预期，准备的时候更多的是考虑如何讲更有逻辑性，而不知道评委最终会纠结在什么地方，什么地方他们根本不关心，没有对状况的预期，往往会手忙脚乱。
+还有对评委的背景，最好能有一个初步的了解，一般评委关注点更多的跟自己的背景有关。不过有时候很难了解每个评委的风格。
+论述 关于如何讲自己的项目或者设计，以前都是站在自己的角度考虑，如何才能清楚、有逻辑的讲完，但对于评委，可能是完全不同的理解。评委对一开始讲的背景，优缺点其实并不是很在意，模型才是关键，有时候一贴架构图，评委就来了精神，这里的图，就是整个架构的模型，也是理解架构的切入点，所以如何讲清楚模型是非常重要的。
+评委都有自身的背景，面对模型，也会结合自己的经验，所谓的经验就是定式，如果你的模型符合他的定式，便会非常容易理解，一旦模型不符合定式，就需要花费很大精力去讲解，所以从大众熟悉的模型讲起，逐渐推演，便会容易理解很多。
+另外还需要学习一些通用的表达方式，如金字塔原理等。
+面对挑战 答辩必然会遇到评委的挑战，有些评委气势如虹，很容易造成答辩者的心理压力，导致不能正常发挥。其实很多情况下，评委只是一时兴起的问题，还不没有深思熟虑，稍加思考即可应对，所以回答问题不能急，要慢下来，思考后回答。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/how-to-reply-for-technology/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='技术' /><meta property='article:published_time' content='2011-06-01T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2011-06-01T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="技术答辩感悟">
+<meta name="twitter:description" content="昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
+准备 成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。
+另外，答辩之前，也需要针对性的做一些准备，首先，需要知道这次答辩的目的，比如昨晚的答辩，实际上最开始就以为review一下代码就行，其实最后还是纠结在如何设计和实现。之前我自己的答辩，也是没有对答辩的状况有合理的预期，准备的时候更多的是考虑如何讲更有逻辑性，而不知道评委最终会纠结在什么地方，什么地方他们根本不关心，没有对状况的预期，往往会手忙脚乱。
+还有对评委的背景，最好能有一个初步的了解，一般评委关注点更多的跟自己的背景有关。不过有时候很难了解每个评委的风格。
+论述 关于如何讲自己的项目或者设计，以前都是站在自己的角度考虑，如何才能清楚、有逻辑的讲完，但对于评委，可能是完全不同的理解。评委对一开始讲的背景，优缺点其实并不是很在意，模型才是关键，有时候一贴架构图，评委就来了精神，这里的图，就是整个架构的模型，也是理解架构的切入点，所以如何讲清楚模型是非常重要的。
+评委都有自身的背景，面对模型，也会结合自己的经验，所谓的经验就是定式，如果你的模型符合他的定式，便会非常容易理解，一旦模型不符合定式，就需要花费很大精力去讲解，所以从大众熟悉的模型讲起，逐渐推演，便会容易理解很多。
+另外还需要学习一些通用的表达方式，如金字塔原理等。
+面对挑战 答辩必然会遇到评委的挑战，有些评委气势如虹，很容易造成答辩者的心理压力，导致不能正常发挥。其实很多情况下，评委只是一时兴起的问题，还不没有深思熟虑，稍加思考即可应对，所以回答问题不能急，要慢下来，思考后回答。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/how-to-reply-for-technology/">技术答辩感悟</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 01, 2011</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。</p>
+<h1 id="准备">准备</h1>
+<p>成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。</p>
+<p>另外，答辩之前，也需要针对性的做一些准备，首先，需要知道这次答辩的目的，比如昨晚的答辩，实际上最开始就以为review一下代码就行，其实最后还是纠结在如何设计和实现。之前我自己的答辩，也是没有对答辩的状况有合理的预期，准备的时候更多的是考虑如何讲更有逻辑性，而不知道评委最终会纠结在什么地方，什么地方他们根本不关心，没有对状况的预期，往往会手忙脚乱。</p>
+<p>还有对评委的背景，最好能有一个初步的了解，一般评委关注点更多的跟自己的背景有关。不过有时候很难了解每个评委的风格。</p>
+<h1 id="论述">论述</h1>
+<p>关于如何讲自己的项目或者设计，以前都是站在自己的角度考虑，如何才能清楚、有逻辑的讲完，但对于评委，可能是完全不同的理解。评委对一开始讲的背景，优缺点其实并不是很在意，模型才是关键，有时候一贴架构图，评委就来了精神，这里的图，就是整个架构的模型，也是理解架构的切入点，所以如何讲清楚模型是非常重要的。</p>
+<p>评委都有自身的背景，面对模型，也会结合自己的经验，所谓的经验就是定式，如果你的模型符合他的定式，便会非常容易理解，一旦模型不符合定式，就需要花费很大精力去讲解，所以从大众熟悉的模型讲起，逐渐推演，便会容易理解很多。</p>
+<p>另外还需要学习一些通用的表达方式，如金字塔原理等。</p>
+<h1 id="面对挑战">面对挑战</h1>
+<p>答辩必然会遇到评委的挑战，有些评委气势如虹，很容易造成答辩者的心理压力，导致不能正常发挥。其实很多情况下，评委只是一时兴起的问题，还不没有深思熟虑，稍加思考即可应对，所以回答问题不能急，要慢下来，思考后回答。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/management-training-sentiment/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">腾讯-育龙培训感悟</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/curriculum-development/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">课程设计与开发入门</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/interview-cola/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">腾讯-育龙-cola访谈记录</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/effective-executive/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">如何有效决策-《卓有成效的管理者》读感</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/become-an-influential-programmers/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">成为有影响力的开发者</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

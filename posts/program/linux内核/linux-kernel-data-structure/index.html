@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
+// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
+来看一个简单的例子：
+struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
+答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
+// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.'>
+<title>Linux内核数据结构</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核数据结构'>
+<meta property='og:description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
+// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
+来看一个简单的例子：
+struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
+答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
+// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-17T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-17T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux内核数据结构">
+<meta name="twitter:description" content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
+// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
+来看一个简单的例子：
+struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
+答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
+// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概览">概览</a></li>
+    <li><a href="#初始化链表">初始化链表</a></li>
+    <li><a href="#插入节点">插入节点</a></li>
+    <li><a href="#删除节点">删除节点</a></li>
+    <li><a href="#检查是否空链表">检查是否空链表</a></li>
+    <li><a href="#遍历链表">遍历链表</a></li>
+    <li><a href="#实例">实例</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#定义">定义</a></li>
+    <li><a href="#基本操作">基本操作</a></li>
+    <li><a href="#实例-1">实例</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#定义-1">定义</a></li>
+    <li><a href="#实现">实现</a></li>
+    <li><a href="#初始化">初始化</a></li>
+    <li><a href="#增删操作">增删操作</a></li>
+    <li><a href="#例子">例子</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#定义-2">定义</a></li>
+    <li><a href="#实现-1">实现</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/">Linux内核数据结构</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 17, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="内核链表">内核链表</h1>
+<p>Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。</p>
+<h2 id="概览">概览</h2>
+<p>先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：</p>
+<pre><code>// include/linux/types.h
+struct list_head {
+        struct list_head *next, *prev;
+};
+</code></pre>
+<p>这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？</p>
+<p>来看一个简单的例子：</p>
+<pre><code>struce simple {
+	int data;
+	struct list_head list;
+};
+</code></pre>
+<p>simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？</p>
+<p>答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：</p>
+<pre><code>// include/linux/list.h
+/**
+ * list_entry - get the struct for this entry
+ * @ptr:        the &amp;struct list_head pointer.
+ * @type:       the type of the struct this is embedded in.
+ * @member:     the name of the list_struct within the struct.
+ */
+#define list_entry(ptr, type, member) \
+        container_of(ptr, type, member)
+
+// include/linux/kernel.h
+#define container_of(ptr, type, member) ({                      \
+        const typeof( ((type *)0)-&gt;member ) *__mptr = (ptr);    \
+        (type *)( (char *)__mptr - offsetof(type,member) );})
+
+#undef offsetof
+#ifdef __compiler_offsetof
+#define offsetof(TYPE,MEMBER) __compiler_offsetof(TYPE,MEMBER)
+#else
+#define offsetof(TYPE, MEMBER) ((size_t) &amp;((TYPE *)0)-&gt;MEMBER)
+#endif
+#endif /* __KERNEL__ */
+</code></pre>
+<p>可以看到，<code>list_entry</code>直接调用了<code>container_of</code>，<code>container_of</code>分为两句，<code>((type *)0)-&gt;member</code>可以获得member在结构体type中的偏移，假设有一个结构体在地址0的位置，那么成员的地址便是成员对结构体的偏移，typeof是gcc的扩展，用于获取变量的类型，<code>offsetof(type,member)</code> 获取member成员在type中的偏移，然后使用member成员的指针ptr（复制成<code>__mptr</code>）减去偏移，即是结构体的地址。在我们的例子中，从list成员的地址获取simple结构的地址如下：</p>
+<pre><code>simple * p = list_entry(ptr, struct simple, list);
+</code></pre>
+<p>这样便解决了从<code>list_head</code>上获取附着的数据的问题。接下来需要解决对链表的增删改查的问题：</p>
+<h2 id="初始化链表">初始化链表</h2>
+<p>初始化链表有两种方法，LIST_HEAD_INIT和LIST_HEAD</p>
+<pre><code>#define LIST_HEAD_INIT(name) { &amp;(name), &amp;(name) }
+
+#define LIST_HEAD(name) \
+        struct list_head name = LIST_HEAD_INIT(name)
+
+static inline void INIT_LIST_HEAD(struct list_head *list)
+{
+        list-&gt;next = list;
+        list-&gt;prev = list;
+}
+</code></pre>
+<p>创建一个指向自身的节点。</p>
+<h2 id="插入节点">插入节点</h2>
+<p>在节点后插入新节点<code>list_add_tail</code>，和在节点前插入新节点<code>list_add</code>：</p>
+<pre><code>/**
+ * list_add - add a new entry
+ * @new: new entry to be added
+ * @head: list head to add it after
+ *
+ * Insert a new entry after the specified head.
+ * This is good for implementing stacks.
+ */
+static inline void list_add(struct list_head *new, struct list_head *head)
+{
+        __list_add(new, head, head-&gt;next);
+}
+
+/**     
+ * list_add_tail - add a new entry
+ * @new: new entry to be added
+ * @head: list head to add it before
+ *
+ * Insert a new entry before the specified head.
+ * This is useful for implementing queues.
+ */
+static inline void list_add_tail(struct list_head *new, struct list_head *head)
+{
+        __list_add(new, head-&gt;prev, head);
+}
+</code></pre>
+<p>其中 <code>__list_add</code> 只是普通的链表操作，并无特别之处，可参见Linux源码查看实现。</p>
+<h2 id="删除节点">删除节点</h2>
+<pre><code>static inline void list_del(struct list_head *entry)
+{
+        __list_del(entry-&gt;prev, entry-&gt;next);
+        entry-&gt;next = LIST_POISON1;
+        entry-&gt;prev = LIST_POISON2;
+}
+</code></pre>
+<p><code>__list_del</code> 把entry从链表中删除，之后把entry链表指针复制成非空指针（如果使用会出现段错误）</p>
+<h2 id="检查是否空链表">检查是否空链表</h2>
+<p>判断一个链表是否为空，只需要看头节点是否指向自己便可：</p>
+<pre><code>static inline int list_empty(const struct list_head *head)
+{
+        return head-&gt;next == head;
+}
+</code></pre>
+<h2 id="遍历链表">遍历链表</h2>
+<p>遍历是这几种操作中最为复杂的，有四个函数：</p>
+<pre><code>#define list_for_each(pos, head) \
+        for (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
+
+#define list_for_each_prev(pos, head) \
+        for (pos = (head)-&gt;prev; pos != (head); pos = pos-&gt;prev)
+
+#define list_for_each_entry(pos, head, member)                          \
+        for (pos = list_entry((head)-&gt;next, typeof(*pos), member);      \
+             &amp;pos-&gt;member != (head);    \
+             pos = list_entry(pos-&gt;member.next, typeof(*pos), member))
+
+#define list_for_each_entry_reverse(pos, head, member)                  \
+        for (pos = list_entry((head)-&gt;prev, typeof(*pos), member);      \
+             &amp;pos-&gt;member != (head);    \
+             pos = list_entry(pos-&gt;member.prev, typeof(*pos), member))
+</code></pre>
+<p><code>list_for_each</code> 和 <code>list_for_each_prev</code> 较为简单，一个向后遍历，另一个向前遍历，<code>list_for_each_entry</code>和<code>list_for_each_entry_reverse</code>功能相似，不过不是对<code>list_head</code>操作，而是直接对结构体操作，如我们这里的simple结构。根据之前的叙述也不难理解函数实现，只是在<code>list_head</code>上调用了<code>list_entry</code>获取了完整结构。</p>
+<h2 id="实例">实例</h2>
+<p>千言万语不如一个例子来的直观，我们通过一个简单的例子说明一下如何使用内核链表：</p>
+<pre><code>#include &lt;linux/list.h&gt;
+#include &lt;linux/kernel.h&gt;
+#include &lt;stdio.h&gt;
+
+struct simple {
+    int data;
+    struct list_head list;
+};
+
+int main()
+{
+    int i = 0;
+    struct simple * p;
+    struct list_head * pos;
+    LIST_HEAD(head);
+    for (i = 0; i &lt; 10; i++) {
+        p = (struct simple*)malloc(sizeof(struct simple));
+        p-&gt;data = i * 10;
+        list_add_tail(&amp;p-&gt;list, &amp;head);
+    }
+
+    list_for_each_entry(p, &amp;head, list) {
+        printf(&quot;for %d\n&quot;, p-&gt;data);
+    }
+
+    while (!list_empty(&amp;head)) {
+        pos = head.next;
+        p = (struct simple*)list_entry(pos,
+                struct simple, list);
+        list_del(pos);
+        printf(&quot;del %d\n&quot;, p-&gt;data);
+        free(p);
+    }
+    return 0;
+}
+</code></pre>
+<p>编译参数为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">gcc -D__KERNEL__ -I/usr/src/linux-headers-3.2.0-27-generic/include/ -I/usr/src/linux-headers-3.2.0-27-generic/arch/ia64/include/ simple.c
+</span></span></code></pre></div><p>其中头文件中都是内核函数，需要宏<code>__KERNEL__</code>，否则大部分定义会被忽略。</p>
+<h1 id="hash表">Hash表</h1>
+<h2 id="定义">定义</h2>
+<p>链表虽然是最常见的数据结构，但实际使用中，由于链表的检索能力较差，更多的是作为队列和栈结构使用，如果需要查询，比如通过pid查找进程，通过描述符查找inode，就需要用到检索更快的数据结构——Hash表。
+先来看Hash节点的定义：</p>
+<pre><code>struct hlist_head {
+	struct hlist_node *first;
+};
+struct hlist_node {
+	struct hlist_node *next, **pprev;
+};
+</code></pre>
+<p>其中 <code>hlist_head</code> 为头结点，与链表不同的是还需要一个节点的概念 <code>hlist_node</code>，他们之间的关系如图：</p>
+<p>左侧是定长数组，每个节点是 <code>hlist_head</code> ，其中first指向 <code>hlist_node</code> 节点，<code>hlist_node</code>又组成一列链表，<code>hlist_node</code>的链表结构跟 <code>list_head</code>不同之处在于 <code>hlist_node</code> 的 pprev 指向了 前一个节点的指针地址。</p>
+<h2 id="基本操作">基本操作</h2>
+<p>Hash表使用起来也非常简单，首先通过hash函数计算目标值，得到一个索引，在<code>hlist_head</code>数组中找到相应位置，再插入链表。Hash的链表Linux也提供了多种操作方式：</p>
+<pre><code>#define INIT_HLIST_HEAD(ptr) ((ptr)-&gt;first = NULL)
+static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h);
+static inline void hlist_add_before(struct hlist_node *n, 
+		struct hlist_node *next)
+static inline void hlist_add_after(struct hlist_node *n, 
+		struct hlist_node *next)
+static inline void hlist_move_list(struct hlist_head *old,
+		struct hlist_head *new);
+
+#define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+#define hlist_for_each(pos, head) \     
+        for (pos = (head)-&gt;first; pos ; pos = pos-&gt;next)
+#define hlist_for_each_entry(tpos, pos, head, member)                    \
+        for (pos = (head)-&gt;first;                                        \
+             pos &amp;&amp;                                                      \
+                ({ tpos = hlist_entry(pos, typeof(*tpos), member); 1;}); \
+             pos = pos-&gt;next)
+</code></pre>
+<ul>
+<li><code>INIT_HLIST_HEAD</code> —— 初始化链表；</li>
+<li><code>hlist_add_head</code> —— 在链表头插入节点；</li>
+<li><code>hlist_add_before</code> —— 在一个节点之前插入；</li>
+<li><code>hlist_add_after</code> —— 在一个节点之后插入；</li>
+<li><code>hlist_entry</code> —— 同list_entry；</li>
+<li><code>hlist_for_each</code> —— 相关的一系列函数进行链表的遍历，与普通双向链表操作相同。</li>
+</ul>
+<p>除了Hash表中链表的操作，还有一个重要的元素是Hash函数，Hash函数的好坏直接影响Hash表的性能，Hash函数一般来讲跟具体要实现的业务相关，include/linux/jhash.h下实现了几个不同用途的Hash函数，另外，Linux还给出一个简单的Hash函数：</p>
+<pre><code>static inline u32 hash_32(u32 val, unsigned int bits)
+{
+        /* On some cpus multiply is faster, on others gcc will do shifts */
+        u32 hash = val * GOLDEN_RATIO_PRIME_32;
+
+        /* High bits are more random, so use them. */
+        return hash &gt;&gt; (32 - bits);
+}
+</code></pre>
+<p>这个函数把32位整数Hash成bits位的整数，另外还有 <code>hash_64</code> 等等Hash函数。</p>
+<h2 id="实例-1">实例</h2>
+<p>最后再来通过一个简单的例子看一下Hash表的使用：</p>
+<pre><code>#include &lt;linux/kernel.h&gt;
+#include &lt;linux/types.h&gt;
+#include &lt;linux/list.h&gt;
+#include &lt;linux/init.h&gt;
+#include &lt;linux/module.h&gt;
+#include &lt;linux/slab.h&gt;
+#include &lt;linux/hash.h&gt;
+
+struct simple_hash
+{
+    int data;
+    struct hlist_node node;
+};
+
+struct hlist_head * phash = NULL;
+
+static int __init initialization(void)
+{
+    int i,k;
+    struct hlist_head * phead;
+    struct hlist_node * pnode;
+    struct simple_hash * p;
+
+    printk(KERN_INFO &quot; init simple start\n&quot;);
+
+    phash = (struct hlist_head*)kmalloc(sizeof(struct hlist_head) * 0xFF, GFP_KERNEL);
+    for (i = 0; i &lt; 0xFF; i++) {
+        INIT_HLIST_HEAD(&amp;phash[i]);
+    }
+    for (i = 0; i &lt; 10; i++) {
+        p = (struct simple_hash*)kmalloc(sizeof(struct simple_hash), GFP_KERNEL);
+        k = i * 13;
+
+        p-&gt;data = k;
+        INIT_HLIST_NODE(&amp;p-&gt;node);
+
+        printk(KERN_INFO &quot;insert %d\n&quot;, k);
+        phead = &amp;phash[hash_32(k, 8)];
+        hlist_add_head(&amp;p-&gt;node, phead);
+    }
+    k = 3 * 13;
+    phead = &amp;phash[hash_32(k, 8)];
+    printk(KERN_INFO &quot;search %d\n&quot;, k);
+    hlist_for_each_entry(p, pnode, phead, node) {
+        if (p-&gt;data == k) {
+            printk(KERN_INFO &quot; find it\n&quot;);
+        }
+    }
+
+    printk(KERN_INFO &quot;init simple end\n&quot;);
+    return 0;
+}
+
+static void __exit cleanup(void)
+{
+    int i;
+    struct hlist_head * phead = NULL;
+    struct simple_hash * p = NULL;
+    printk(KERN_INFO &quot;cleanup simple\n&quot;);
+
+    if (phash == NULL) {
+        return;
+    }
+
+    for (i = 0; i &lt; 0xFF; i++) {
+        phead = &amp;phash[i];
+        while (!hlist_empty(phead)) {
+            p = hlist_entry(phead-&gt;first, struct simple_hash, node);
+            printk(KERN_INFO &quot;delete %d&quot;, p-&gt;data);
+            hlist_del(&amp;p-&gt;node);
+            kfree(p);
+        }
+    }
+    kfree(phead);
+}
+
+module_init(initialization);
+module_exit(cleanup);
+
+MODULE_AUTHOR(&quot;cppbreak cppbreak@gmail.com&quot;);
+MODULE_DESCRIPTION(&quot;A simple linux kernel module&quot;);
+MODULE_VERSION(&quot;V0.1&quot;);
+MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
+</code></pre>
+<p>这里的代码是一个简单的Linux内核，关于如何写一个简单的Linux内核，可以参阅 Linux字符设备驱动框架</p>
+<h1 id="红黑树">红黑树</h1>
+<h2 id="定义-1">定义</h2>
+<p>Hash表虽然检索复杂度只需要O(1)，但是性能依赖于Hash函数，不合适的Hash函数会导致性能极其低下，而且需要预分配Hash头结点的空间，扩展性和性能稳定性都是问题，所以Linux内核另外还有一套快速插入查询的数据结构——红黑树。</p>
+<p>红黑树是一种平衡二叉树，二叉树查找效率是O(logn)，但对于某些极端情况下，一个分支的节点远高于另一个分支，处于不平衡状态下的二叉树性能很差，极端情况跟链表相同。所以出现很多保持二叉树平衡的方法，其中一种便是红黑树，红黑树在二叉树的基础上又规定了一些规则：</p>
+<ul>
+<li>性质1：节点是红色或黑色。</li>
+<li>性质2：根节点是黑色。</li>
+<li>性质3：每个叶节点是黑色的。</li>
+<li>性质4：每个红色节点的两个子节点都是黑色。(从每个叶子到根的所有路径上不能有两个连续的红色节点)</li>
+<li>性质5：从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。</li>
+</ul>
+<p>红黑树的性质保证了从根节点到任何一个叶子节点的长度都不会相差两倍以上，只要在增删的过程中保持红黑树的性质，也便保持了树的平衡性。</p>
+<h2 id="实现">实现</h2>
+<p>红黑树在内核中的实现位于：</p>
+<pre><code>linux/lib/rbtree.c
+linux/include/linux/rbtree.h
+</code></pre>
+<p>头文件 rbtree.h 中有红黑树节点的定义：</p>
+<pre><code>struct rb_node
+{
+	unsigned long  rb_parent_color;
+#define RB_RED          0
+#define RB_BLACK        1
+	struct rb_node *rb_right;
+	struct rb_node *rb_left;
+} __attribute__((aligned(sizeof(long))));
+/* The alignment might seem pointless, but allegedly CRIS needs it */
+
+struct rb_root
+{
+	struct rb_node *rb_node;
+};
+</code></pre>
+<p>可以看到红黑树同链表一样，都没有数据块的定义，因为C语言中没有模版，这样实现能使数据结构跟具体的业务分离，<code>rb_root</code> 中仅有一个 rb_node 域，rb_node中有颜色和左右节点的指针，都很容易理解。</p>
+<h2 id="初始化">初始化</h2>
+<p>节点的初始化操作，节点默认被置为红色：</p>
+<pre><code>static inline void rb_init_node(struct rb_node *rb)
+{
+	rb-&gt;rb_parent_color = 0;
+	rb-&gt;rb_right = NULL;
+	rb-&gt;rb_left = NULL;
+	RB_CLEAR_NODE(rb);
+}
+</code></pre>
+<h2 id="增删操作">增删操作</h2>
+<p>红黑树的增加删除操作如下：</p>
+<pre><code>// node为已插入的节点，函数检查树的平衡性并修正
+void rb_insert_color(struct rb_node *node, struct rb_root *root);
+// 删除节点
+void rb_erase(struct rb_node *node, struct rb_root *root);
+</code></pre>
+<p>由于二叉树需要比较数据区域的大小，这里仅仅有节点是不够的，所以插入操作需要调用者比较插入，然后调用<code>rb_insert_color</code>调整树的平衡性，<code>rb_erase</code>可以直接删除，另外搜索操作也需要用户根据二叉树的性质自己处理，在头文件rbtree.h开头的注释给了一个使用的例子，这里再试着写一个简单的例子：</p>
+<h2 id="例子">例子</h2>
+<pre><code>#include &lt;linux/kernel.h&gt;
+#include &lt;linux/types.h&gt;
+#include &lt;linux/init.h&gt;
+#include &lt;linux/module.h&gt;
+#include &lt;linux/slab.h&gt;
+#include &lt;linux/rbtree.h&gt;
+
+struct simple
+{
+    int data;
+    struct rb_node node;
+};
+
+struct simple * search_simple(struct rb_root * root, int data)
+{
+    struct simple * p;
+    struct rb_node * pnode = root-&gt;rb_node;
+    while (pnode)
+    {
+        p = rb_entry(pnode, struct simple, node);
+        if (data &lt; p-&gt;data) {
+            pnode = pnode-&gt;rb_left;
+        } else if (data &gt; p-&gt;data){
+            pnode = pnode-&gt;rb_right;
+        } else {
+            return p;
+        }
+    }
+    return NULL;
+}
+
+struct simple * insert_simple(struct rb_root * root,
+        int data, struct simple * new)
+{
+    struct simple * p = NULL;
+    struct rb_node ** pnode = &amp;root-&gt;rb_node;
+    struct rb_node * parent = NULL;
+    while (*pnode)
+    {
+        parent = *pnode;
+        p = rb_entry(parent, struct simple, node);
+        if (data &lt; p-&gt;data) {
+            pnode = &amp;(*pnode)-&gt;rb_left;
+        } else if (data &gt; p-&gt;data){
+            pnode = &amp;(*pnode)-&gt;rb_right;
+        } else {
+            return p;
+        }
+    }
+    rb_link_node(&amp;new-&gt;node, parent, pnode);
+    rb_insert_color(&amp;new-&gt;node, root);
+    return p;
+}
+
+struct rb_root g_root = RB_ROOT;
+
+static int __init initialization(void)
+{
+    int i;
+    struct simple * p;
+    for (i = 0; i &lt; 10; i++) {
+        p = (struct simple *)kmalloc(sizeof (struct simple),
+                GFP_KERNEL);
+        p-&gt;data = i * 10;
+        rb_init_node(&amp;p-&gt;node);
+        insert_simple(&amp;g_root, i * 10, p);
+        printk(KERN_INFO &quot;insert %d\n&quot;, i * 10);
+    }
+    p = search_simple(&amp;g_root, 30);
+    if (p != NULL) {
+        printk(KERN_INFO &quot;find it\n&quot;);
+    }
+
+    return 0;
+}
+
+static void __exit cleanup(void)
+{
+    struct simple * p;
+    struct rb_node * pnode = rb_first(&amp;g_root);
+    while (pnode != NULL) {
+        p = rb_entry(pnode, struct simple, node);        
+        printk(KERN_INFO &quot;delete %d\n&quot;, p-&gt;data);
+        rb_erase(pnode, &amp;g_root);
+        kfree(p);
+        pnode = rb_first(&amp;g_root);
+    }
+}
+
+module_init(initialization);
+module_exit(cleanup);
+
+MODULE_AUTHOR(&quot;cppbreak cppbreak@gmail.com&quot;);
+MODULE_DESCRIPTION(&quot;A simple linux kernel module&quot;);
+MODULE_VERSION(&quot;V0.1&quot;);
+MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
+</code></pre>
+<p>程序编译运行请参考 Linux字符设备驱动框架。</p>
+<h1 id="radix-tree">Radix Tree</h1>
+<h2 id="定义-2">定义</h2>
+<p>Linux内核实现了大量的数据结构，其中树结构除了前面提到的红黑树以外，还有一种很有意思的树-Radix Tree，翻译为基数树。Radix Tree也是一种key-value结构，要说最快速的key-value查找结构，非数组莫属，只需一次定位便可找到目标值，其缺点是需要占用过多的内存空间，如果连续的key中大多数都是空值，空间的利用率会非常低，如一个整数范围的key，value占一个字节也需要4G的存储，当key非常稀疏的情况下，无疑是一种浪费，Radix Tree的解决方式是分级，简单来说，如果按照整数的尾数分为2级，第一级需要10个指针即可，尾数为0的key映射到第一个指针上，第一个指针再指向存储数组，这样如果只有0-4的key，便可不需要给5-9的指针分配空间，可节省一半的空间。当然这只是简单的例子，内核的Radix Tree更为精炼。</p>
+<h2 id="实现-1">实现</h2>
+<p>Linux内核的根据Radix Tree的高度把key分为若干段，如下图所示，每段长度固定为<code>RADIX_TREE_MAP_SHIFT</code>，树高度可通过<code>radix_tree_extend</code>扩展，key的每一段分别指定了每一层的位置。</p>
+<p><img src="/keep/2014/0_radix-tree.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Radix Tree"
+	
+	
+></p>
+<p>接下来可以看一些处理细节：</p>
+<pre><code>struct radix_tree_node {
+	unsigned int    height;         /* Height from the bottom */
+	unsigned int    count;
+	union {
+		struct radix_tree_node *parent; /* Used when ascending tree */
+		struct rcu_head rcu_head;       /* Used when freeing node */
+	};
+	void __rcu      *slots[RADIX_TREE_MAP_SIZE];
+	unsigned long   tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS];
+};
+</code></pre>
+<p><code>radix_tree_node</code> 是基数树的节点定义，其中最主要的字段是 <code>RADIX_TREE_MAP_SIZE</code> 大小的数组 slots，其中可以指向下一层节点或者叶子节点 item。</p>
+<pre><code>struct radix_tree_root {
+	unsigned int            height;
+	gfp_t                   gfp_mask;
+	struct radix_tree_node  __rcu *rnode;
+};
+
+#define RADIX_TREE_INIT(mask)   {                                       \
+	.height = 0,                                                    \
+	.gfp_mask = (mask),                                             \
+	.rnode = NULL,                                                  \
+}
+
+#define RADIX_TREE(name, mask) \
+struct radix_tree_root name = RADIX_TREE_INIT(mask)
+</code></pre>
+<p><code>radix_tree_root</code> 是根节点类型，记录了数高度 height 和第一层节点rnode，<code>RADIX_TREE_INIT</code>宏对根节点初始化。</p>
+<p>接下来看基数树的核心，如何插入节点和如何查找节点：</p>
+<pre><code>int radix_tree_insert(struct radix_tree_root *root,
+				unsigned long index, void *item)
+{
+	/** 省略 */
+	/* Make sure the tree is high enough.  */
+	if (index &gt; radix_tree_maxindex(root-&gt;height)) {
+		error = radix_tree_extend(root, index);
+		if (error)
+			return error;
+	}
+
+	slot = indirect_to_ptr(root-&gt;rnode);
+
+	height = root-&gt;height;
+	shift = (height-1) * RADIX_TREE_MAP_SHIFT;
+
+	offset = 0;                     /* uninitialised var warning */
+	while (height &gt; 0) {
+		if (slot == NULL) {
+			/* Have to add a child node.  */
+			if (!(slot = radix_tree_node_alloc(root)))
+				return -ENOMEM;
+			slot-&gt;height = height;
+			slot-&gt;parent = node;
+			if (node) {
+				rcu_assign_pointer(node-&gt;slots[offset], slot);
+				node-&gt;count++;
+			} else
+				rcu_assign_pointer(root-&gt;rnode, ptr_to_indirect(slot));
+		}
+
+		/* Go a level down */
+		offset = (index &gt;&gt; shift) &amp; RADIX_TREE_MAP_MASK;
+		node = slot;
+		slot = node-&gt;slots[offset];
+		shift -= RADIX_TREE_MAP_SHIFT;
+		height--;
+	}
+
+	/** 省略 */
+	return 0;
+}
+</code></pre>
+<p>篇幅关系简略了代码，代码首先使用 <code>radix_tree_maxindex</code> 计算树高度是否能够存储 index，不行就调用 <code>radix_tree_extend</code> 扩展树高度，紧接着根据key的每个字段定位节点，直到到达树叶子节点，如果树节点未分配空间，则调用 <code>radix_tree_node_alloc</code> 分配，最后再把 item 挂接到叶子节点上，完成插入操作。</p>
+<p>基数树查找操作为：</p>
+<pre><code>static void *radix_tree_lookup_element(struct radix_tree_root *root,
+			unsigned long index, int is_slot);
+
+void *radix_tree_lookup(struct radix_tree_root *root, unsigned long index)
+{
+	return radix_tree_lookup_element(root, index, 0);
+}
+</code></pre>
+<p>其中 <code>radix_tree_lookup_element</code> 查找过程与插入操作类似，比较容易理解。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

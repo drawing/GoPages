@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。
+分治法 分治法几乎学过程序的人都能理解，简而言之就是分而治之，一个问题很复杂很难解决，就设法把大问题转化为若干个小问题，小问题解决经过汇总，大问题也就迎刃而解了。
+举个例子，在某公司，要设计开发一个大型项目，上百人一窝蜂去解决这个问题效率显然很低，这时CTO会把项目分解成若干子项目，分给各部门总监，总监拿到项目又进行模块分解，分给手下的各个小组，由各个小组负责开发完成具体的模块，在总监指导下完成整合，再由CTO汇总在一起，就合理的分工完成一个大型的项目了。这就是分治法。
+那动态规划跟分治法有什么关系呢？再说上面的例子，当各个小组负责开发时，发现有些模块是重复的！比如网络框架，如果各个小组各自为战，每个小组都会开发一套自己的网络框架，这显然会造成大量的人员浪费。CTO考虑到这点，就会想，为什么不构建一个所有小组都能通用的公共库呢？当一个小组开发完成一个功能，就放入公共库，其他小组再开发前，先在公共库查找，如果已经有了，就不用再开发了，这就节省了大量的重复工作。
+其中用一个公共的“Table”记录已经完成的工作，避免重复运算，这种解决问题的思路，就是动态规划了。
+动态规划 现在就知道什么是动态规划了，动态规划类似于分治法，适用于分治法有重复的子问题，动态规划使用一个table保存计算结果，确保每个子问题只被运算一次。
+动态规划被用于解决&amp;quot;最优解&amp;quot;问题，举上面的例子，如果CTO不知道如何分配任务，想知道由哪个小组做哪个模块才能最快，需要进行多次“尝试”，把问题的各种分配方法都试一次，让各小组解决，看如何分配才能最快，这显然其中有很多重复的开发，但如果把某个小组执行某个模块需要多长时间都记录下来，可以最大程度上减少开发。（注意这里的问题已经不是解决这个项目了，而且怎么分解项目能达到最优解，table里存的变成某个小组完成某个模块的时间，求最优解往往要比求一个解复杂很多），这就是求最优解的应用了。
+解题步骤 现在对动态规划有了一个感性的认识，接下来需要看看面对具体的问题该如何解决了，现看看动态规划通用的解题方法。
+分析最优解特征 递归定义最优解 自底向上求解 构造最优解 这只是一个抽象的步骤，接下来通过动态规划一个典型的应用“背包问题”来说明一下具体是如何实现的。
+0-1背包问题 题目 有N件物品和一个容量为V的背包。第i件物品的重量是c[i]，价值是w[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。
+分析最优解特征 如果题目中N件物品都只有一件，就是典型的0-1背包问题，这里先来看看0-1背包问题如何解决。感性的认识一下题目，每个商品只有放入背包和不放入背包两种，如果先挑单体重量价值最大的，也有可能体积太大无法装下其他货物，还不如放两个价值不是最大的划算，乍一看还是挺难解决的。接下来使用动态规划详细分析一下题目。
+首先什么是一个解，就是一种背包方法，解的值就是背包中物品的最大价值。最优解就是不同的取法中最大的价值，再来看看这个最优解的递归特征，所谓的递归特征，就是如何把大问题化为小问题。这里考虑把N件物品转化为N-1件物品，考虑最后一件物品（索引从0开始）：c[N-1], w[N-1]，只有两种可能：不放入背包和放入背包，如果最优解中没有物品obj(N-1)，那么最优解其实就是N-1个物品的最优解，如果obj(N-1)存在最优解中，那么也可以把这个问题转换为N-1个物品的最优解，只是背包的容量就剩下V-c[N-1]了，这样不论哪种情况，都可以N个物品的问题，转化为N-1个物品的问题。这就是最优解的递归特性。
+递归定义最优解 分析完递归特性以后，便很容易定义一个递归公式：
+N=1 只有一个物品的时候很容易解决，直接看能不能放下即可，N&amp;gt;1的时候，想办法利用最优解的递归特性转换为N-1，使我们解决的问题少了一个纬度，是解决这类问题的关键。
+其实如果学过数学归纳法，会发现这个思路很相似，数学归纳法是已知f(0)成立，要证明f(N-1)成立的情况下f(N)成立，解题关键是怎么推导f(N-1)到f(N)，这里的递归结构同理，已知f(0)，要想办法从f(N-1)的解推出f(N)的解。
+自底向上求解 公式有了，只要用程序实现即可，这里的自底向上，是指从0到N逐个求解，因为公式本身具有递归特性，所以用递归解决这个问题最为直接：
+int Package(int N, int c[], int w[], int V) { int w_contain = 0; int w_without = 0; if (N == 1 &amp;amp;&amp;amp; c[0] &amp;gt;= V) { return w[0]; } if (N == 1 &amp;amp;&amp;amp; c[0] &amp;lt; V) { return 0; } w_without = Package(N-1, c, w, V); w_contain = Package(N-1, c, w, V - c[N-1]) &#43; w[N-1]; if (w_contain &amp;gt; w_without) { return w_contain; } else { return w_without; } } 那说了半天，动态规划怎么还没用呢？接下来可以看一下这个代码的复杂度，很容易能看出来，每次代码都会走两个分支，复杂度是 O(2^n)，指数级别的复杂度很大，如果n很大的情况下，代码就不具有可行性了。那如何优化呢，这就需要动态规划了，保存什么结果呢，可以看出其中的N和V都是变量，所以需要以这两个为key存储最优解。代码就优化为：'>
+<title>算法学习笔记-动态规划</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='算法学习笔记-动态规划'>
+<meta property='og:description' content='动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。
+分治法 分治法几乎学过程序的人都能理解，简而言之就是分而治之，一个问题很复杂很难解决，就设法把大问题转化为若干个小问题，小问题解决经过汇总，大问题也就迎刃而解了。
+举个例子，在某公司，要设计开发一个大型项目，上百人一窝蜂去解决这个问题效率显然很低，这时CTO会把项目分解成若干子项目，分给各部门总监，总监拿到项目又进行模块分解，分给手下的各个小组，由各个小组负责开发完成具体的模块，在总监指导下完成整合，再由CTO汇总在一起，就合理的分工完成一个大型的项目了。这就是分治法。
+那动态规划跟分治法有什么关系呢？再说上面的例子，当各个小组负责开发时，发现有些模块是重复的！比如网络框架，如果各个小组各自为战，每个小组都会开发一套自己的网络框架，这显然会造成大量的人员浪费。CTO考虑到这点，就会想，为什么不构建一个所有小组都能通用的公共库呢？当一个小组开发完成一个功能，就放入公共库，其他小组再开发前，先在公共库查找，如果已经有了，就不用再开发了，这就节省了大量的重复工作。
+其中用一个公共的“Table”记录已经完成的工作，避免重复运算，这种解决问题的思路，就是动态规划了。
+动态规划 现在就知道什么是动态规划了，动态规划类似于分治法，适用于分治法有重复的子问题，动态规划使用一个table保存计算结果，确保每个子问题只被运算一次。
+动态规划被用于解决&amp;quot;最优解&amp;quot;问题，举上面的例子，如果CTO不知道如何分配任务，想知道由哪个小组做哪个模块才能最快，需要进行多次“尝试”，把问题的各种分配方法都试一次，让各小组解决，看如何分配才能最快，这显然其中有很多重复的开发，但如果把某个小组执行某个模块需要多长时间都记录下来，可以最大程度上减少开发。（注意这里的问题已经不是解决这个项目了，而且怎么分解项目能达到最优解，table里存的变成某个小组完成某个模块的时间，求最优解往往要比求一个解复杂很多），这就是求最优解的应用了。
+解题步骤 现在对动态规划有了一个感性的认识，接下来需要看看面对具体的问题该如何解决了，现看看动态规划通用的解题方法。
+分析最优解特征 递归定义最优解 自底向上求解 构造最优解 这只是一个抽象的步骤，接下来通过动态规划一个典型的应用“背包问题”来说明一下具体是如何实现的。
+0-1背包问题 题目 有N件物品和一个容量为V的背包。第i件物品的重量是c[i]，价值是w[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。
+分析最优解特征 如果题目中N件物品都只有一件，就是典型的0-1背包问题，这里先来看看0-1背包问题如何解决。感性的认识一下题目，每个商品只有放入背包和不放入背包两种，如果先挑单体重量价值最大的，也有可能体积太大无法装下其他货物，还不如放两个价值不是最大的划算，乍一看还是挺难解决的。接下来使用动态规划详细分析一下题目。
+首先什么是一个解，就是一种背包方法，解的值就是背包中物品的最大价值。最优解就是不同的取法中最大的价值，再来看看这个最优解的递归特征，所谓的递归特征，就是如何把大问题化为小问题。这里考虑把N件物品转化为N-1件物品，考虑最后一件物品（索引从0开始）：c[N-1], w[N-1]，只有两种可能：不放入背包和放入背包，如果最优解中没有物品obj(N-1)，那么最优解其实就是N-1个物品的最优解，如果obj(N-1)存在最优解中，那么也可以把这个问题转换为N-1个物品的最优解，只是背包的容量就剩下V-c[N-1]了，这样不论哪种情况，都可以N个物品的问题，转化为N-1个物品的问题。这就是最优解的递归特性。
+递归定义最优解 分析完递归特性以后，便很容易定义一个递归公式：
+N=1 只有一个物品的时候很容易解决，直接看能不能放下即可，N&amp;gt;1的时候，想办法利用最优解的递归特性转换为N-1，使我们解决的问题少了一个纬度，是解决这类问题的关键。
+其实如果学过数学归纳法，会发现这个思路很相似，数学归纳法是已知f(0)成立，要证明f(N-1)成立的情况下f(N)成立，解题关键是怎么推导f(N-1)到f(N)，这里的递归结构同理，已知f(0)，要想办法从f(N-1)的解推出f(N)的解。
+自底向上求解 公式有了，只要用程序实现即可，这里的自底向上，是指从0到N逐个求解，因为公式本身具有递归特性，所以用递归解决这个问题最为直接：
+int Package(int N, int c[], int w[], int V) { int w_contain = 0; int w_without = 0; if (N == 1 &amp;amp;&amp;amp; c[0] &amp;gt;= V) { return w[0]; } if (N == 1 &amp;amp;&amp;amp; c[0] &amp;lt; V) { return 0; } w_without = Package(N-1, c, w, V); w_contain = Package(N-1, c, w, V - c[N-1]) &#43; w[N-1]; if (w_contain &amp;gt; w_without) { return w_contain; } else { return w_without; } } 那说了半天，动态规划怎么还没用呢？接下来可以看一下这个代码的复杂度，很容易能看出来，每次代码都会走两个分支，复杂度是 O(2^n)，指数级别的复杂度很大，如果n很大的情况下，代码就不具有可行性了。那如何优化呢，这就需要动态规划了，保存什么结果呢，可以看出其中的N和V都是变量，所以需要以这两个为key存储最优解。代码就优化为：'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='算法' /><meta property='article:published_time' content='2014-06-01T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-06-01T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="算法学习笔记-动态规划">
+<meta name="twitter:description" content="动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。
+分治法 分治法几乎学过程序的人都能理解，简而言之就是分而治之，一个问题很复杂很难解决，就设法把大问题转化为若干个小问题，小问题解决经过汇总，大问题也就迎刃而解了。
+举个例子，在某公司，要设计开发一个大型项目，上百人一窝蜂去解决这个问题效率显然很低，这时CTO会把项目分解成若干子项目，分给各部门总监，总监拿到项目又进行模块分解，分给手下的各个小组，由各个小组负责开发完成具体的模块，在总监指导下完成整合，再由CTO汇总在一起，就合理的分工完成一个大型的项目了。这就是分治法。
+那动态规划跟分治法有什么关系呢？再说上面的例子，当各个小组负责开发时，发现有些模块是重复的！比如网络框架，如果各个小组各自为战，每个小组都会开发一套自己的网络框架，这显然会造成大量的人员浪费。CTO考虑到这点，就会想，为什么不构建一个所有小组都能通用的公共库呢？当一个小组开发完成一个功能，就放入公共库，其他小组再开发前，先在公共库查找，如果已经有了，就不用再开发了，这就节省了大量的重复工作。
+其中用一个公共的“Table”记录已经完成的工作，避免重复运算，这种解决问题的思路，就是动态规划了。
+动态规划 现在就知道什么是动态规划了，动态规划类似于分治法，适用于分治法有重复的子问题，动态规划使用一个table保存计算结果，确保每个子问题只被运算一次。
+动态规划被用于解决&amp;quot;最优解&amp;quot;问题，举上面的例子，如果CTO不知道如何分配任务，想知道由哪个小组做哪个模块才能最快，需要进行多次“尝试”，把问题的各种分配方法都试一次，让各小组解决，看如何分配才能最快，这显然其中有很多重复的开发，但如果把某个小组执行某个模块需要多长时间都记录下来，可以最大程度上减少开发。（注意这里的问题已经不是解决这个项目了，而且怎么分解项目能达到最优解，table里存的变成某个小组完成某个模块的时间，求最优解往往要比求一个解复杂很多），这就是求最优解的应用了。
+解题步骤 现在对动态规划有了一个感性的认识，接下来需要看看面对具体的问题该如何解决了，现看看动态规划通用的解题方法。
+分析最优解特征 递归定义最优解 自底向上求解 构造最优解 这只是一个抽象的步骤，接下来通过动态规划一个典型的应用“背包问题”来说明一下具体是如何实现的。
+0-1背包问题 题目 有N件物品和一个容量为V的背包。第i件物品的重量是c[i]，价值是w[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。
+分析最优解特征 如果题目中N件物品都只有一件，就是典型的0-1背包问题，这里先来看看0-1背包问题如何解决。感性的认识一下题目，每个商品只有放入背包和不放入背包两种，如果先挑单体重量价值最大的，也有可能体积太大无法装下其他货物，还不如放两个价值不是最大的划算，乍一看还是挺难解决的。接下来使用动态规划详细分析一下题目。
+首先什么是一个解，就是一种背包方法，解的值就是背包中物品的最大价值。最优解就是不同的取法中最大的价值，再来看看这个最优解的递归特征，所谓的递归特征，就是如何把大问题化为小问题。这里考虑把N件物品转化为N-1件物品，考虑最后一件物品（索引从0开始）：c[N-1], w[N-1]，只有两种可能：不放入背包和放入背包，如果最优解中没有物品obj(N-1)，那么最优解其实就是N-1个物品的最优解，如果obj(N-1)存在最优解中，那么也可以把这个问题转换为N-1个物品的最优解，只是背包的容量就剩下V-c[N-1]了，这样不论哪种情况，都可以N个物品的问题，转化为N-1个物品的问题。这就是最优解的递归特性。
+递归定义最优解 分析完递归特性以后，便很容易定义一个递归公式：
+N=1 只有一个物品的时候很容易解决，直接看能不能放下即可，N&amp;gt;1的时候，想办法利用最优解的递归特性转换为N-1，使我们解决的问题少了一个纬度，是解决这类问题的关键。
+其实如果学过数学归纳法，会发现这个思路很相似，数学归纳法是已知f(0)成立，要证明f(N-1)成立的情况下f(N)成立，解题关键是怎么推导f(N-1)到f(N)，这里的递归结构同理，已知f(0)，要想办法从f(N-1)的解推出f(N)的解。
+自底向上求解 公式有了，只要用程序实现即可，这里的自底向上，是指从0到N逐个求解，因为公式本身具有递归特性，所以用递归解决这个问题最为直接：
+int Package(int N, int c[], int w[], int V) { int w_contain = 0; int w_without = 0; if (N == 1 &amp;amp;&amp;amp; c[0] &amp;gt;= V) { return w[0]; } if (N == 1 &amp;amp;&amp;amp; c[0] &amp;lt; V) { return 0; } w_without = Package(N-1, c, w, V); w_contain = Package(N-1, c, w, V - c[N-1]) &#43; w[N-1]; if (w_contain &amp;gt; w_without) { return w_contain; } else { return w_without; } } 那说了半天，动态规划怎么还没用呢？接下来可以看一下这个代码的复杂度，很容易能看出来，每次代码都会走两个分支，复杂度是 O(2^n)，指数级别的复杂度很大，如果n很大的情况下，代码就不具有可行性了。那如何优化呢，这就需要动态规划了，保存什么结果呢，可以看出其中的N和V都是变量，所以需要以这两个为key存储最优解。代码就优化为：">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#题目">题目</a></li>
+    <li><a href="#分析最优解特征">分析最优解特征</a></li>
+    <li><a href="#递归定义最优解">递归定义最优解</a></li>
+    <li><a href="#自底向上求解">自底向上求解</a></li>
+    <li><a href="#空间优化">空间优化</a></li>
+    <li><a href="#构造最优解">构造最优解</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#问题">问题</a></li>
+    <li><a href="#算法">算法</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/">算法学习笔记-动态规划</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 01, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。</p>
+<h1 id="分治法">分治法</h1>
+<p>分治法几乎学过程序的人都能理解，简而言之就是分而治之，一个问题很复杂很难解决，就设法把大问题转化为若干个小问题，小问题解决经过汇总，大问题也就迎刃而解了。</p>
+<p>举个例子，在某公司，要设计开发一个大型项目，上百人一窝蜂去解决这个问题效率显然很低，这时CTO会把项目分解成若干子项目，分给各部门总监，总监拿到项目又进行模块分解，分给手下的各个小组，由各个小组负责开发完成具体的模块，在总监指导下完成整合，再由CTO汇总在一起，就合理的分工完成一个大型的项目了。这就是分治法。</p>
+<p>那动态规划跟分治法有什么关系呢？再说上面的例子，当各个小组负责开发时，发现有些模块是重复的！比如网络框架，如果各个小组各自为战，每个小组都会开发一套自己的网络框架，这显然会造成大量的人员浪费。CTO考虑到这点，就会想，为什么不构建一个所有小组都能通用的公共库呢？当一个小组开发完成一个功能，就放入公共库，其他小组再开发前，先在公共库查找，如果已经有了，就不用再开发了，这就节省了大量的重复工作。</p>
+<p>其中用一个公共的“Table”记录已经完成的工作，避免重复运算，这种解决问题的思路，就是动态规划了。</p>
+<h1 id="动态规划">动态规划</h1>
+<p>现在就知道什么是动态规划了，动态规划类似于分治法，适用于分治法有重复的子问题，动态规划使用一个table保存计算结果，确保每个子问题只被运算一次。</p>
+<p>动态规划被用于解决&quot;最优解&quot;问题，举上面的例子，如果CTO不知道如何分配任务，想知道由哪个小组做哪个模块才能最快，需要进行多次“尝试”，把问题的各种分配方法都试一次，让各小组解决，看如何分配才能最快，这显然其中有很多重复的开发，但如果把某个小组执行某个模块需要多长时间都记录下来，可以最大程度上减少开发。（注意这里的问题已经不是解决这个项目了，而且怎么分解项目能达到最优解，table里存的变成某个小组完成某个模块的时间，求最优解往往要比求一个解复杂很多），这就是求最优解的应用了。</p>
+<h1 id="解题步骤">解题步骤</h1>
+<p>现在对动态规划有了一个感性的认识，接下来需要看看面对具体的问题该如何解决了，现看看动态规划通用的解题方法。</p>
+<ul>
+<li>分析最优解特征</li>
+<li>递归定义最优解</li>
+<li>自底向上求解</li>
+<li>构造最优解</li>
+</ul>
+<p>这只是一个抽象的步骤，接下来通过动态规划一个典型的应用“背包问题”来说明一下具体是如何实现的。</p>
+<h1 id="0-1背包问题">0-1背包问题</h1>
+<h2 id="题目">题目</h2>
+<p>有N件物品和一个容量为V的背包。第i件物品的重量是c[i]，价值是w[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。</p>
+<h2 id="分析最优解特征">分析最优解特征</h2>
+<p>如果题目中N件物品都只有一件，就是典型的0-1背包问题，这里先来看看0-1背包问题如何解决。感性的认识一下题目，每个商品只有放入背包和不放入背包两种，如果先挑单体重量价值最大的，也有可能体积太大无法装下其他货物，还不如放两个价值不是最大的划算，乍一看还是挺难解决的。接下来使用动态规划详细分析一下题目。</p>
+<p>首先什么是一个解，就是一种背包方法，解的值就是背包中物品的最大价值。最优解就是不同的取法中最大的价值，再来看看这个最优解的递归特征，所谓的递归特征，就是如何把大问题化为小问题。这里考虑把N件物品转化为N-1件物品，考虑最后一件物品（索引从0开始）：c[N-1], w[N-1]，只有两种可能：不放入背包和放入背包，如果最优解中没有物品obj(N-1)，那么最优解其实就是N-1个物品的最优解，如果obj(N-1)存在最优解中，那么也可以把这个问题转换为N-1个物品的最优解，只是背包的容量就剩下V-c[N-1]了，这样不论哪种情况，都可以N个物品的问题，转化为N-1个物品的问题。这就是最优解的递归特性。</p>
+<h2 id="递归定义最优解">递归定义最优解</h2>
+<p>分析完递归特性以后，便很容易定义一个递归公式：</p>
+<p><img src="/keep/2014/0_0-1package.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="0-1 package"
+	
+	
+></p>
+<p>N=1 只有一个物品的时候很容易解决，直接看能不能放下即可，N&gt;1的时候，想办法利用最优解的递归特性转换为N-1，使我们解决的问题少了一个纬度，是解决这类问题的关键。</p>
+<p>其实如果学过数学归纳法，会发现这个思路很相似，数学归纳法是已知f(0)成立，要证明f(N-1)成立的情况下f(N)成立，解题关键是怎么推导f(N-1)到f(N)，这里的递归结构同理，已知f(0)，要想办法从f(N-1)的解推出f(N)的解。</p>
+<h2 id="自底向上求解">自底向上求解</h2>
+<p>公式有了，只要用程序实现即可，这里的自底向上，是指从0到N逐个求解，因为公式本身具有递归特性，所以用递归解决这个问题最为直接：</p>
+<pre><code>int Package(int N, int c[], int w[], int V)
+{
+	int w_contain = 0;
+	int w_without = 0;
+	
+	if (N == 1 &amp;&amp; c[0] &gt;= V) {
+		return w[0];
+	}
+	if (N == 1 &amp;&amp; c[0] &lt; V) {
+		return 0;
+	}
+	
+	w_without = Package(N-1, c, w, V);
+	w_contain = Package(N-1, c, w, V - c[N-1]) + w[N-1];
+	if (w_contain &gt; w_without) {
+		return w_contain;
+	}
+	else {
+		return w_without;
+	}
+}
+</code></pre>
+<p>那说了半天，动态规划怎么还没用呢？接下来可以看一下这个代码的复杂度，很容易能看出来，每次代码都会走两个分支，复杂度是 O(2^n)，指数级别的复杂度很大，如果n很大的情况下，代码就不具有可行性了。那如何优化呢，这就需要动态规划了，保存什么结果呢，可以看出其中的N和V都是变量，所以需要以这两个为key存储最优解。代码就优化为：</p>
+<pre><code>int table[N][V] = {};
+
+int init()
+{
+	for (int i = 0; i &lt; V * N; i++) {
+		table[i] = -1;
+	}
+}
+
+int Package(int N, int c[], int w[], int V)
+{
+	int w_contain = 0;
+	int w_without = 0;
+	
+	if (N == 1 &amp;&amp; c[0] &gt;= V) {
+		return w[0];
+	}
+	if (N == 1 &amp;&amp; c[0] &lt; V) {
+		return 0;
+	}
+	
+	w_without = table[N-1][V];
+	if (w_without == -1) {
+		w_without = Package(N-1, c, w, V);
+		table[N-1][V] = w_without;
+	}
+	
+	w_contain = table[N-1][V - c[N-1]];
+	if (w_contain == -1) {
+		w_contain = Package(N-1, c, w, V - c[N-1]) + w[N-1];
+		table[N-1][V - c[N-1]] = w_contain;
+	}
+	
+	return (w_contain &gt; w_without) ? w_contain : w_without;
+}
+</code></pre>
+<p>经过动态规划的优化，因为table表里的值最多计算一次，时间复杂度变成O(N<em>V)，当然也增加了O(N</em>V)的空间复杂度，是典型的用空间换时间做法。</p>
+<h2 id="空间优化">空间优化</h2>
+<p>如果仔细考虑一下，会发现其实空间还可以进一步优化，因为计算过程中，f(N)依赖于f(N-1)，并不依赖于N-1之前的结果，完全可以在计算过程中，使f(N)覆盖掉f(N-1)的结果，节省空间。</p>
+<pre><code>int table[V] = {};
+
+int Package(int N, int c[], int w[], int V)
+{
+	for (int i = 0; i &lt; N; i++) {
+		for (int j = V; j &gt; c[i]; V++) {
+			int w_contain = table[j-c[i]] + w[i];
+			int w_without = table[j];
+			table[j] = (w_contain &gt; w_without) ? w_contain : w_without;
+		}
+	}
+}
+</code></pre>
+<p>因为需要一层一层计算，所以递归代码改成了迭代。空间复杂度缩小至O(V)，时间复杂度仍然是O(N*V)。</p>
+<h2 id="构造最优解">构造最优解</h2>
+<p>解了半天，终于能知道最大能背多少价值的东西了，但是如何取才能得到最优解呢？通过优化方法计算，已经没法得知怎么才能是最优解了，因为计算的过程已经被抹杀了，但是使用非空间优化的方法，很容易获取，只需要把最优解table[N-1][V]是怎么计算出来的倒推回去即可。</p>
+<pre><code>int table[N][V] = {};
+
+bool result[N] = {};
+
+void ConstructResult(int N, int c[], int w[], int V)
+{
+	for (int i = N-1; i &gt;=0; i++) {
+		if (table[i-1][V] &gt; table[i-1][V-c[i]] + w[i]) {
+			printf(&quot;1\t&quot;);
+			V -= w[i];
+		}
+		else {
+			printf(&quot;0\t&quot;);
+		}
+	}
+	print(&quot;\n&quot;);
+}
+</code></pre>
+<p>按照刚才计算的路程倒推回去，便可知道如何取才能得到最优解，只是按照这种方法打印出来的是倒序，需要调整一下顺序。</p>
+<h1 id="有界背包问题">有界背包问题</h1>
+<h2 id="问题">问题</h2>
+<p>刚才只是最简单的一种背包问题，0-1背包，其中一个物品只有一个，如果再加一个条件，一个物品可以有有限多个，这个问题就变成了有界背包问题。对于有界背包问题如何解决呢？</p>
+<h2 id="算法">算法</h2>
+<p>其实有界背包问题可以很容易转换为0-1背包问题，如果一个物品可以选择n次，只需要把一个物品重复n个，就成了n个物品的0-1背包问题。通过动态规划便可顺利解决了。</p>
+<h1 id="无界解背包问题">无界解背包问题</h1>
+<p>如果把0-1背包的问题再变化一下，没种物品可以无限选择，就不能用有界背包的解法把问题转换为0-1背包了。当然可以借用0-1背包的思路，0-1背包在递归的时候会考虑存在和不存在的情况，从而把问题转换为N-1的子问题，而无界背包问题同样可以考虑这个物品不出现、出现1次、2次。。。等多种情况，把问题降维到N-1。只是要比0-1背包复杂好多。</p>
+<p>另外，动态规划还有一些其他应用，比如 <a class="link" href="/reading/algorithm-lcs.html" >最长公共子序列</a>，可以进一步学习动态规划的应用。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-lcs/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">算法学习笔记-最长公共子序列</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/probability-double-color/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">双色球必胜秘籍</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">告警优化实践总结</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SWIG 跨语言调用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/management-training-sentiment/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">腾讯-育龙培训感悟</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

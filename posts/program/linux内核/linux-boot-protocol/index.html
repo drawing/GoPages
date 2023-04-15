@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
+Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
+2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
+先来看引导协议部分代码， arch/x86/boot/header.S
+在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
+header.S开始的代码：
+.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.'>
+<title>Linux内核笔记-启动协议</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-启动协议'>
+<meta property='og:description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
+Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
+2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
+先来看引导协议部分代码， arch/x86/boot/header.S
+在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
+header.S开始的代码：
+.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-22T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-22T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux内核笔记-启动协议">
+<meta name="twitter:description" content="Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
+Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
+2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
+先来看引导协议部分代码， arch/x86/boot/header.S
+在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
+header.S开始的代码：
+.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">Linux内核笔记-启动协议</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 22, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。</p>
+<p>我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。</p>
+<p>Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。</p>
+<p>2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。</p>
+<p>先来看引导协议部分代码， arch/x86/boot/header.S</p>
+<p>在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。</p>
+<p>header.S开始的代码：</p>
+<pre><code>	.code16
+	.section &quot;.bstext&quot;, &quot;ax&quot;
+
+	.global bootsect_start
+bootsect_start:
+
+	# Normalize the start address
+	ljmp	$BOOTSEG, $start2
+
+start2:
+	movw	%cs, %ax
+	movw	%ax, %ds
+	movw	%ax, %es
+	movw	%ax, %ss
+	xorw	%sp, %sp
+	sti
+	cld
+
+	movw	$bugger_off_msg, %si
+
+msg_loop:
+	lodsb
+	andb	%al, %al
+	jz	bs_die
+	movb	$0xe, %ah
+	movw	$7, %bx
+	int	$0x10
+	jmp	msg_loop
+
+bs_die:
+	# Allow the user to press a key, then reboot
+	xorw	%ax, %ax
+	int	$0x16
+	int	$0x19
+
+	# int 0x19 should never return.  In case it does anyway,
+	# invoke the BIOS reset code...
+	ljmp	$0xf000,$0xfff0
+
+	.section &quot;.bsdata&quot;, &quot;a&quot;
+bugger_off_msg:
+	.ascii	&quot;Direct booting from floppy is no longer supported.\r\n&quot;
+	.ascii	&quot;Please use a boot loader program instead.\r\n&quot;
+	.ascii	&quot;\n&quot;
+	.ascii	&quot;Remove disk and press any key to reboot . . .\r\n&quot;
+	.byte	0
+
+	# Kernel attributes; used by setup.  This is part 1 of the
+	# header, from the old boot sector.
+
+	.section &quot;.header&quot;, &quot;a&quot;
+	.globl	hdr
+hdr:
+setup_sects:	.byte 0			/* Filled in by build.c */
+root_flags:	.word ROOT_RDONLY
+syssize:	.long 0			/* Filled in by build.c */
+ram_size:	.word 0			/* Obsolete */
+vid_mode:	.word SVGA_MODE
+root_dev:	.word 0			/* Filled in by build.c */
+boot_flag:	.word 0xAA55
+</code></pre>
+<p>这部分是完整的引导区代码，这段代码有三个段，.bstext .bsdata .header，由编译脚本setup.ld可以看到，.header是编译到497地址，除去一些变量，到boot_flag: .word 0xAA55刚好位于512字节，是一个引导扇区的长度。.bsdata 段仅定义了一个字符串，指明boot方式不再支持。</p>
+<p>来看下代码部分 .bstext 段，首先由start2初始化一些变量，<code>msg_loop</code>调用int $0×10输出文字，bs_die部分首先调用int $0×16输入一个字符，然后调用int $0×19重启系统。</p>
+<p>可以看到这里的引导程序并没有做什么操作，也不会被执行到，真正的代码再之后才开始，之前说过内核的引导是靠grub等引导程序，他们之间有一定的协议，协议有一个协议头，再看header.S之后的代码都是一些变量的定义，所以得先看一下协议头到底是什么，在boot.txt文档中有以下内容：</p>
+<pre><code>The header looks like:
+
+Offset	Proto	Name		Meaning
+/Size
+
+01F1/1	ALL(1	setup_sects	The size of the setup in sectors
+01F2/2	ALL	root_flags	If set, the root is mounted readonly
+01F4/4	2.04+(2	syssize		The size of the 32-bit code in 16-byte paras
+01F8/2	ALL	ram_size	DO NOT USE - for bootsect.S use only
+01FA/2	ALL	vid_mode	Video mode control
+01FC/2	ALL	root_dev	Default root device number
+01FE/2	ALL	boot_flag	0xAA55 magic number
+0200/2	2.00+	jump		Jump instruction
+0202/4	2.00+	header		Magic signature &quot;HdrS&quot;
+0206/2	2.00+	version		Boot protocol version supported
+...
+0258/8	2.10+	pref_address	Preferred loading address
+0260/4	2.10+	init_size	Linear memory required during initialization
+</code></pre>
+<p>说的正是协议头的定义，这里的01F1/1前面表示地址，后面表示大小，01F1十进制为497，刚好与.header段的起始地址相同，看来，.header段名副其实，正是启动协议的头部信息，一直到236行的init_size定义为止。头部内容的详细信息在boot.txt文件中已有详细解释，不过现在还不需要知道，头部大部分信息由grub填充，供操作系统使用。后面会看到内核获取这些信息。</p>
+<p>好了，header.S后面的.entrytext段就是真正的内核入口了。</p>
+<pre><code>	movw	$0x0000, %ax		# Reset disk controller
+	movb	$0x80, %dl		# All disks
+	int	$0x13
+</code></pre>
+<p>这里调用BIOS的13号中断重置硬盘。</p>
+<pre><code>	movw	$__bss_start, %di
+	movw	$_end+3, %cx
+	xorl	%eax, %eax
+	subw	%di, %cx
+	shrw	$2, %cx
+	rep; stosl
+</code></pre>
+<p><code>__bss_start</code>是bss段的起始地址，_end为结束位置，这两个符号定义于setup.ld脚本，这段代码既是对此段清零。</p>
+<p>接下来调用main函数 calll main，这里的main是c函数，定义于main.c。</p>
+<p>之后有符号<code>setup_bad</code>，调用puts输出”No setup signature found…\n”，最后定义了一个函数die，执行休息指令hlt的死循环。</p>
+<p>最后再来看main函数中的开始部分代码 linux-2.6.34\arch\x86\boot\main.c</p>
+<pre><code>void main(void)
+{
+	/* First, copy the boot header into the &quot;zeropage&quot; */
+	copy_boot_params();
+
+	/* End of heap check */
+	init_heap();
+	...
+</code></pre>
+<p>可以看到main首先调用copy_boot_params函数，在29行有其定义，其中关键的一句如下：</p>
+<pre><code>memcpy(&amp;boot_params.hdr, &amp;hdr, sizeof hdr);
+</code></pre>
+<p>hdr 是引导协议头部0x1f1地址处，即刚才分析的.header段开始的标号，<code>boot_params</code>为结构体<code>boot_params</code>的实例，存储启动参数相关信息，结构定义于arch/x86/include/asm/bootparam.h:85，成员hdr定义为<code>struct setup_header hdr;</code>而<code>setup_header</code>结构定义于相同文件的24行：</p>
+<pre><code>struct setup_header {
+	__u8	setup_sects;
+	__u16	root_flags;
+	__u32	syssize;
+	__u16	ram_size;
+#define RAMDISK_IMAGE_START_MASK	0x07FF
+#define RAMDISK_PROMPT_FLAG		0x8000
+#define RAMDISK_LOAD_FLAG		0x4000
+	__u16	vid_mode;
+	__u16	root_dev;
+	__u16	boot_flag;
+	__u16	jump;
+	__u32	header;
+	__u16	version;
+	__u32	realmode_swtch;
+	__u16	start_sys;
+	__u16	kernel_version;
+	...
+</code></pre>
+<p>可以看到其中的成员正是引导协议头部，拷贝代码正是把grub填充的启动信息复制到结构实例boot_params.hdr中，以便在c程序中使用。</p>
+<p>最后总结一下grub的引导过程，grub被BIOS载入内存并获得控制权后，读取配置信息/boot/grub.conf，载入实模式代码到0×090000，并根据内核镜像的前512字节中的.header信息，将大内核载入到内存，并交控制权于内核执行。载入内存地址的计算公式为：</p>
+<pre><code>is_bzImage = (protocol &gt;= 0x0200) &amp;&amp; (loadflags &amp; 0x01);
+load_address = is_bzImage ? 0x100000 : 0x10000;
+</code></pre>
+<p>这里通过分析header.S，对引导协议做了一些说明，更详尽的说明在文档 Documentation\x86\boot.txt，可随时对其查阅。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linxu内核笔记-虚拟地址空间</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

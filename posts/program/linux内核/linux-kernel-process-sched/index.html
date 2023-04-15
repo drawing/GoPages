@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
+内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
+进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
+运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
+普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
+进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
+task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
+状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
+当前状态 state state指定了当前状态，可以使用
+TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
+EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
+struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
+rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
+常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。'>
+<title>Linux内核笔记-进程调度</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-进程调度'>
+<meta property='og:description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
+内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
+进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
+运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
+普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
+进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
+task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
+状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
+当前状态 state state指定了当前状态，可以使用
+TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
+EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
+struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
+rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
+常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-23T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-23T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux内核笔记-进程调度">
+<meta name="twitter:description" content="现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
+内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
+进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
+运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
+普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
+进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
+task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
+状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
+当前状态 state state指定了当前状态，可以使用
+TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
+EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
+struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
+rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
+常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#当前状态-state">当前状态 state</a></li>
+    <li><a href="#资源限制-rlimit">资源限制 rlimit</a></li>
+    <li><a href="#进程类型">进程类型</a></li>
+    <li><a href="#命名空间">命名空间</a></li>
+    <li><a href="#进程id号">进程ID号</a></li>
+    <li><a href="#进程关系">进程关系</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#进程复制">进程复制</a></li>
+    <li><a href="#写时复制">写时复制</a></li>
+    <li><a href="#执行系统调用">执行系统调用</a></li>
+    <li><a href="#do_fork-的实现">do_fork 的实现</a></li>
+    <li><a href="#内核线程">内核线程</a></li>
+    <li><a href="#启动新程序-execve">启动新程序 execve</a></li>
+    <li><a href="#退出进程">退出进程</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#概观">概观</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">Linux内核笔记-进程调度</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 23, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。</p>
+<p>内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：</p>
+<ul>
+<li>内核决定各个进程分配多长时间，何时切换到下一个进程；</li>
+<li>进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同；</li>
+</ul>
+<p>这两个任务称之为调度器的内核子系统的职责。</p>
+<h1 id="进程生命周期">进程生命周期</h1>
+<p>进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：</p>
+<ul>
+<li>运行：进程正在运行</li>
+<li>等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程</li>
+<li>睡眠：进程正在睡眠无法运行，正在等待外部事件</li>
+<li>僵尸：进程资源已经释放，但还保留进程表中的项</li>
+<li>终止：进程退出</li>
+</ul>
+<p>Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。</p>
+<ul>
+<li>普通进程总是可能被抢占</li>
+<li>如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用</li>
+<li>中断可以暂停出于用户状态和核心态的进程，中断有最高优先级</li>
+</ul>
+<p>内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。</p>
+<h1 id="进程表示">进程表示</h1>
+<p>Linux内核涉及进程和进程所有算法都围绕一个名为 <code>task_struct</code> 的数据结构建立，该结构定义在 <code>include/sched.h</code> 中，这是系统中重要的一个结构。</p>
+<p><code>task_struct</code> 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：</p>
+<ul>
+<li>状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息</li>
+<li>有关分配的虚拟内存信息</li>
+<li>进程身份凭据，如用户ID，组ID及权限</li>
+<li>使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息</li>
+<li>线程信息记录该进程特定于CPU的运行时间数据</li>
+<li>在与其他应用程序协作时所需的进程间通信有关的信息</li>
+<li>该进程所用的信号处理程序，用于响应到来的信号</li>
+</ul>
+<p><code>task_struct</code> 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。</p>
+<h2 id="当前状态-state">当前状态 state</h2>
+<p><code>state</code>指定了当前状态，可以使用</p>
+<ul>
+<li><code>TASK_RUNNING</code>：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它</li>
+<li><code>TASK_INTERRUPTIBLE</code>：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 <code>TASK_RUNNING</code></li>
+<li><code>TASK_UNINTERRUPTIBLE</code>：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒</li>
+<li><code>TASK_STOPPED</code>：表示进程特意停止运行，例如由调度器暂停</li>
+<li><code>TASK_TRACED</code>：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开</li>
+</ul>
+<p>下面常量可以用于<code>struct task_struct</code>进程状态字段，也可以用于<code>exit_state</code>字段，后者明确地用于退出进程</p>
+<ul>
+<li><code>EXIT_ZOMBIE</code>：僵尸进程</li>
+<li><code>EXIT_DEAD</code>：状态则是指<code>wait</code>系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出<code>wait</code>调用时，才有意义</li>
+</ul>
+<h2 id="资源限制-rlimit">资源限制 rlimit</h2>
+<p>Linux提供资源限制功能，该机制利用了<code>task_struct</code>中的 rlim 数组，数组项类型为 <code>struct rlimit</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">rlimit</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span>   <span class="n">rlim_cur</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span>   <span class="n">rlim_max</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>上述定义可以用于多种不同的资源类型：</p>
+<ul>
+<li><code>rlim_cur</code>：是进程当前资源限制，也称之为软限制</li>
+<li><code>rlim_max</code>：是该限制的最大容许值，称之为硬限制</li>
+</ul>
+<p>系统调用<code>setrlimit</code>来增减当前限制，但不能超过<code>rlim_max</code>指定的值。<code>rlim</code>数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将<code>rlim_max</code>设置为<code>RLIM_INFINITY</code>。以下是几种宏定义：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>常数</th>
+<th>语义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RLIMIT_CPU</td>
+<td>按毫秒计算的最大CPU时间</td>
+</tr>
+<tr>
+<td>RLIMIT_FSIZE</td>
+<td>允许的最大文件长度</td>
+</tr>
+<tr>
+<td>RLIMIT_DATA</td>
+<td>数据段的最大长度</td>
+</tr>
+<tr>
+<td>RLIMIT_STACK</td>
+<td>（用户态）栈最大长度</td>
+</tr>
+<tr>
+<td>RLIMIT_CORE</td>
+<td>内存转储文件最大长度</td>
+</tr>
+<tr>
+<td>RLIMIT_NOFILE</td>
+<td>打开文件最大数目</td>
+</tr>
+<tr>
+<td>RLIMIT_SIGPENDING</td>
+<td>待决信号的最大数目</td>
+</tr>
+<tr>
+<td>RLIMIT_MSGQUEUE</td>
+<td>信息队列最大数目</td>
+</tr>
+</tbody>
+</table></div>
+<p>在<code>proc</code>文件系统中，可以从文件<code>/proc/self/limits</code>查看当前<code>rlimit</code>限制。</p>
+<h2 id="进程类型">进程类型</h2>
+<p>典型的UNIX进程包括：由二进制代码组成的应用程序、单线程、分配给应用程序的一组资源。新进程是由<code>fork</code>和<code>exec</code>系统调用完成的。</p>
+<ul>
+<li>fork 生成当前进程的一个相同副本，成为子进程。</li>
+<li>exec 从一个可执行文件加载另一个应用程序，来代替当前运行的进程。</li>
+<li>clone 工作原理基本与fork相同，但新进程不是独立于父进程的，可以与其共享某些资源，如父进程的内存数据等。</li>
+</ul>
+<p><code>clone</code> 用于实现线程，但仅仅系统调用还不能做到这点，还需要用户空间库才能提供完整实现，如Linuxthreads和Next Generation Posix Threads等。</p>
+<h2 id="命名空间">命名空间</h2>
+<p>命名空间提供了虚拟化的一种轻量级形式，传统上，在Linux以及其他衍生的UINX扁蹄中，许多资源是全局管理的，例如系统中的所有进程按照惯例都是通过PID标识的，这意味着内核必须管理一个全局的PID列表，而且，所有调用者通过uname系统调用返回的系统相关信息都是相同的。用户的管理方式相同，即各个用户是通过一个全局唯一的UID号标识。</p>
+<p>有些情况下，如提供Web主机的提供商给每个用户提供Linux计算机全部访问权限，包括root权限在内，传统上，要为每个用户准备一台计算机，代价很高，使用KVM虚拟机是另一种办法，但资源分配做的不是很好，计算机各个用户都需要一个独立的内核，以及一份完全安装好的用户层应用。</p>
+<p>命名空间提供了一种不同的解决方案，所需资源较少，命令空间只使用一个内核，前述的所有全局资源都通过命令空间抽象起来，这使得可以将一组进程放置到容器中，各个容器彼此隔离，隔离可以使得容器的成员与其他容器毫无关系，但也可以通过允许容器进程一定的共享，来降低容器之间的间隔。例如，容器可以设置为使用自身的PID集合，但仍然与其他容器共享部分文件系统。</p>
+<p>Linux 系统对简单形式的命令空间的支持已经有很长时间了，主要是chroot系统调用，该方法可以将进程限制到文件系统的某一部分。因而是一种简单的命名空间机制，但真正的命名空间能够控制的功能远超文件系统视图。</p>
+<p>新命令空间可以用两种方法创建：</p>
+<ul>
+<li>fork 或 clone 系统调用创建新进程时，有特定选项可以控制是与父进程共享命名空间，还是建立新的命名空间</li>
+<li>unshare 系统调用将进程的某些部分从父进程分离，其中也包括命名空间</li>
+</ul>
+<p>在通过上述两种方式从父进程命名空间分离后，从该进程角度看，改变全局属性不会传播到父进程命名空间，而父进程修改也不会传播到子进程。</p>
+<p>命名空间的实现需要两个部分：每个子系统的命名空间结构，将此前所有的全局组建包装的命名空间中；将给定进程关联到所属各个命名空间的机制。</p>
+<p>子系统此前的全局属性现在封装到命名空间中，每个进程关联到一个选定的命名空间，每个可以感知命名空间的内核子系统都必须提供一个数据结构，将所有通过命名空间形式提供的对象集中起来。<code>struct nsproxy</code>用户汇集指向特定于子系统的命名空间包装器的指针：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">nsproxy</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">atomic_t</span> <span class="n">count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">uts_namespace</span> <span class="o">*</span><span class="n">uts_ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ipc_namespace</span> <span class="o">*</span><span class="n">ipc_ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">mnt_namespace</span> <span class="o">*</span><span class="n">mnt_ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">pid_namespace</span> <span class="o">*</span><span class="n">pid_ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">net</span>           <span class="o">*</span><span class="n">net_ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>当前内核的以下范围可以感知到命名空间：</p>
+<ol>
+<li>UTS（UNIX Timesharing System）命名空间包含了运行内核的名称、版本、底层体系结构类型等信息</li>
+<li>保存在<code>struct ipc_namespace</code> 中的所有与进程间通信IPC有关信息</li>
+<li>已经装载的文件系统的视图，在<code>struct mnt_namespace</code>中给出</li>
+<li>有关进程ID的信息，由<code>struct pid_namespace</code>提供</li>
+<li><code>struct net_ns</code> 包含所有网络相关的命名空间参数</li>
+</ol>
+<p><code>task_struct</code> 结构成员 <code>struct nsproxy *nsproxy</code>保存关联到自身的命名空间视图。因为使用指针，多个进程可以共享一组名字空间，这样，修改给定的命名空间，对所有属于该命名空间的进程都是可见的。</p>
+<p><code>init_nsproxy</code>定义了初始的全局命名空间，其中维护了指向各子系统初始的命名空间对象的指针：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">nsproxy</span> <span class="n">init_nsproxy</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">count</span>  <span class="o">=</span> <span class="nf">ATOMIC_INIT</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">uts_ns</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_uts_ns</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#if defined(CONFIG_POSIX_MQUEUE) || defined(CONFIG_SYSVIPC)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>        <span class="p">.</span><span class="n">ipc_ns</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_ipc_ns</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>        <span class="p">.</span><span class="n">mnt_ns</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">pid_ns</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_pid_ns</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifdef CONFIG_NET
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>        <span class="p">.</span><span class="n">net_ns</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_net</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="p">};</span>
+</span></span></code></pre></div><h2 id="进程id号">进程ID号</h2>
+<p>UNIX进程总会分配一个号码用于在命令空间中唯一的标志它们，该号码被称作PID。用fork和clone产生的每个进程都会由内核自动地分配唯一的新的PID值。</p>
+<p>进程除了PID这个值还有其他的ID，有下列几种可能的类型：</p>
+<ul>
+<li>处于某个线程组中的所有统一的线程组ID（TGID），如果进程没有使用线程，则PID和TGID相同，线程组中的主进程被称作组长。通过clone组建的所有线程<code>task_struct</code>的<code>group_leader</code>成员，会指向组长的<code>task_struct</code>。</li>
+<li>独立进程可以组成进程组（<code>setpgrp</code>系统调用），进程组成员的<code>task_struct</code>成员<code>pgrp</code>属性都相同，即组长PID。</li>
+<li>几个进程组可以合并成一个会话。会话中所有进程都有相同的会话ID，保存在<code>task_struct</code>的<code>session</code>成员中。SID可以使用<code>setsid</code>系统调用设置。</li>
+</ul>
+<h2 id="进程关系">进程关系</h2>
+<p>除了源于ID连接的关系外，内核还负责管理建立在UNIX进程创建模型之上的家族关系：</p>
+<ul>
+<li>如果进程A分支形成进程B，进程A称之为父进程二进程B是子进程</li>
+<li>如果进程B再次分支建立进程C，进程A和进程C之间称之为祖孙关系</li>
+<li>如果进程A分支若干次形成B1，B2&hellip; 各个B进程之间成为兄弟进程</li>
+</ul>
+<p><code>task_struct</code> 数据结构提供了两个链表表头，用于实现这些关系：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">task_struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">children</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">sibling</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h1 id="进程管理相关的系统调用">进程管理相关的系统调用</h1>
+<h2 id="进程复制">进程复制</h2>
+<p>Linux内核提供三个函数复制进程：</p>
+<ul>
+<li><code>fork</code>：这是重量级调用，因为它提供了一个完整副本，然后作为子进程执行，为减少调用相关的工作量，Linux使用了写时复制（copy-on-write）技术</li>
+<li><code>vfork</code>：类似fork，但并不创建父进程数据副本，相反，父子进程之间共享数据，这节省了大量CPU时间，vfork设计用于子进程执行execve系统调用加载新程序的情况，但由于fork函数实现了写时复制功能，所以vfork在性能方面不再有优势，应避免使用</li>
+<li><code>clone</code> 产生线程，可以对父子进程之间的共享、复制进行精确控制</li>
+</ul>
+<h2 id="写时复制">写时复制</h2>
+<p>内核使用写时复制技术，以防止在<code>fork</code>执行时将父进程的所有数据复制到子进程，该技术利用了下述事实，进程通常只使用了其内存页的一小部分，在调用<code>fork</code>时，内核通常会复制父进程的每个内存页，这样有两个不好的负面效应：</p>
+<ul>
+<li>使用了大量的内存</li>
+<li>复制操作耗费很长时间</li>
+</ul>
+<p>如果应用程序在进程复制之后使用<code>exec</code>立即加载程序，那么负面效应会更严重。这意味着，此前复制操作是完全多余的。内核可以使用技巧来规避这个问题，并不复制整个地址空间，而是复制其页表，这样建立了虚拟地址和物理内存页之间的联系。<code>fork</code>之后父子进程地址空间指向相同的物理内存页。</p>
+<p>这时父子进程不能修改彼此的页，这也是两个进程页表对其标志了只读的原因。如果两个进程只读内存页，二者共享空间不会有问题，只要有一个进程试图向复制的内存页写入，处理器会向内核报告缺页异常。内核查看额外的内存管理数据结构，如果是COW页，内核会创建当前进程的副本。这里的实现需要了解内存管理方面的知识。</p>
+<p>COW机制使得内核尽可能延迟内存页复制，当然大多数情况下，可能都不需要复制，节省了大量的时间。</p>
+<h2 id="执行系统调用">执行系统调用</h2>
+<p><code>fork</code>,<code>vfork</code>,<code>clone</code>系统调用的入口分别是<code>sys_fork</code>,<code>sys_vfork</code>,<code>sys_clone</code>函数。其定义依赖于具体的体系结构。上述函数任务是从处理器寄存器中提取用户空间提供的信息，调用体系结构无关的<code>do_fork</code>函数，后者负责进程复制。函数原型如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// kernel/fork.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">long</span> <span class="nf">do_fork</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">clone_flags</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">stack_start</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">stack_size</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="n">parent_tidptr</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="n">child_tidptr</span><span class="p">)</span>
+</span></span></code></pre></div><p>参数如下：</p>
+<ul>
+<li><code>clone_flags</code> 是一个标志集合，用来指定控制复制过程中的一些属性</li>
+<li><code>start_stack</code> 是用户状态下栈的起始地址</li>
+<li><code>regs</code> 是一个指向寄存器集合的指针，其中以原始形式保存了调用参数。该参数使用的数据类型是特定于体系结构的<code>struct pt_regs</code></li>
+<li><code>stack_size</code> 是用户状态下栈的大小，通常没有必要，设置为0</li>
+<li><code>parent_tidptr</code>和<code>child_tidptr</code> 是指向用户空间中地址的两个指针，分别指向父子进程的TID，NPTL（Native Posix Threads Library）库的线程实现需要这两个参数。</li>
+</ul>
+<p>不同的fork变体，主要是通过标志集合区分，多数体系结构上，典型的fork调用实现方式于IA-32处理器相同：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// arch/x86/kernel/process.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">sys_fork</span><span class="p">(</span><span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">do_fork</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">regs</span><span class="o">-&gt;</span><span class="n">sp</span><span class="p">,</span> <span class="n">regs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>使用的唯一标志是 SIGCHLD，这意味着在子进程终止后发送 SIGCHLD 信号通知父进程。如果<code>do_fork</code>成功，则新建进程的PID作为系统调用的结果返回，否则返回负值错误码。</p>
+<p><code>sys_vfork</code>的实现与<code>sys_fork</code>只是略微不同，前者使用了额外的标志<code>CLONE_VFORK</code>和<code>CLONE_VM</code>。</p>
+<p><code>sys_clone</code>的实现方式与上述调用相似，差别在于<code>do_fork</code>调用如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// arch/x86/kernel/process_32.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">long</span> <span class="nf">sys_clone</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">clone_flags</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">newsp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">parent_tid</span><span class="p">,</span> <span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">child_tid</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">newsp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">newsp</span> <span class="o">=</span> <span class="n">regs</span><span class="o">-&gt;</span><span class="n">sp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">do_fork</span><span class="p">(</span><span class="n">clone_flags</span><span class="p">,</span> <span class="n">newsp</span><span class="p">,</span> <span class="n">regs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parent_tid</span><span class="p">,</span> <span class="n">child_tid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>标志不再是硬编码，可以通过各个寄存器参数传递到系统调用。而且，也不再复制父进程的栈，可以指定新的栈地址。</p>
+<h2 id="do_fork-的实现">do_fork 的实现</h2>
+<p>所有三个fork机制最终都调用了<code>do_fork</code>，其代码流程如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">do_fork
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    |----- copy_process
+</span></span><span class="line"><span class="cl">    |----- 确定PID
+</span></span><span class="line"><span class="cl">    |----- 初始化vfork的完成处理程序
+</span></span><span class="line"><span class="cl">    |----- wake_up_new_task
+</span></span><span class="line"><span class="cl">    |----- 是否设置了CLONE_VFORK 标志 -&gt; wait_for_completion
+</span></span></code></pre></div><p><code>do_fork</code>以调用<code>copy_process</code>开始，后者执行生成新进程的实际工作，根据指定标志重用父进程的数据，子进程生成之后，内核必须执行以下收尾操作：</p>
+<p>进程复制<code>do_fork</code>实现如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">copy_process
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    |----- 检查标志
+</span></span><span class="line"><span class="cl">    |----- dup_task_struct
+</span></span><span class="line"><span class="cl">    |----- 检查资源限制
+</span></span><span class="line"><span class="cl">    |----- 初始化 task_struct
+</span></span><span class="line"><span class="cl">    |----- sched_fork
+</span></span><span class="line"><span class="cl">    |----- 复制进程各个部分
+</span></span><span class="line"><span class="cl">                |----- copy_semundo
+</span></span><span class="line"><span class="cl">                |----- copy_files
+</span></span><span class="line"><span class="cl">                |----- copy_fs
+</span></span><span class="line"><span class="cl">                |----- copy_sighand
+</span></span><span class="line"><span class="cl">                |----- copy_signal
+</span></span><span class="line"><span class="cl">                |----- copy_mm
+</span></span><span class="line"><span class="cl">                |----- copy_namespaces
+</span></span><span class="line"><span class="cl">                |----- copy_thread
+</span></span><span class="line"><span class="cl">    |----- 设置各个 ID、进程关系
+</span></span></code></pre></div><p>复制进程的行为受到相当多的标志的控制，clone(2) 的手册详细讲述了这些标志，标志可以参考手册。该函数也需要做一些错误判断，Linux函数有时候会在成功的时候返回结构体指针，失败的情况下返回错误码，但函数只能返回一个值，所以Linux做了一个特殊处理，虽然一般而言指针可以指向内存任何位置，而Linux支持的每个体系结构的虚拟地址从0到4Kib的区域，该区域没有任何有意义的信息，因此内核可以重用此地址范围来编码错误。</p>
+<p>当检查完标志后，使用<code>dup_task_struct</code>来建立父进程<code>task_struct</code>的副本，父进程的<code>task_struct</code>实例只有一个成员不同，新进程分配了一个新的核心态，即<code>task_struct-&gt;stack</code>。通常栈和<code>thread_info</code>一同保存在一个联合之中，<code>thread_info</code>保存了线程所需的所有特定于处理器的底层信息。</p>
+<h2 id="内核线程">内核线程</h2>
+<p>内核线程是直接由内核本身启动的进程，内核线程实际上是将内核函数委托给独立的进程，内核线程经常称之为守护线程，用于执行下列任务：</p>
+<ul>
+<li>周期性的修改内存页与页来源块设备同步</li>
+<li>如果内存页很少使用，写入交换区</li>
+<li>管理延迟动作</li>
+<li>实现文件系统的事务日志</li>
+</ul>
+<p>基本上，有两种类型的内核线程：</p>
+<ul>
+<li>线程启动后一直等待，直至内核请求线程执行某一特定操作</li>
+<li>线程启动后按周期性间隔运行，检测特定资源的使用，在用量超出或低于预期的限制时采取行动。</li>
+</ul>
+<p>调用<code>kernel_thread</code>函数可启动一个内核线程，定义是特定于体系结构的，但原型总是相同的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">kernel_thread</span><span class="p">(</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fn</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span> <span class="n">arg</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">)</span>
+</span></span></code></pre></div><p>产生的线程将执行用fn指针传递的函数，用arg指定的参数自动传个fn，flags可指定CLONE标志。<code>kernel_thread</code>第一个任务是构建一个<code>pt_regs</code>实例，对其中的寄存器指定适当的值，这与普通的<code>fork</code>类似，接下来调用<code>do_fork</code>函数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="nf">do_fork</span><span class="p">(</span><span class="n">flags</span> <span class="o">|</span> <span class="n">CLONE_VM</span> <span class="o">|</span> <span class="n">CLONE_UNTRACED</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span></code></pre></div><p>内核线程可以用两种方法实现，古老的方法内核中一些地方仍然在使用该方法，将一个函数直接传递给<code>kernel_thread</code>，该函数接下来负责帮助内核调用<code>daemonize</code>以转换为守护进程：</p>
+<ol>
+<li>该函数从内核线程释放其父进程的所有资源，不然这些资源会一直锁定到线程结束。这是不可取的，因为守护线程通常运行到系统关机，因为守护进程只操作内核地址区域。</li>
+<li><code>daemonize</code> 阻塞信号的接收。</li>
+<li>将init用作守护进程的父进程。</li>
+</ol>
+<p>内核线程的现代方法是辅助函数<code>kthread_create</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span> <span class="nf">kthread_create</span><span class="p">(</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">threadfn</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">const</span> <span class="kt">char</span> <span class="n">namefmt</span><span class="p">[],</span>
+</span></span><span class="line"><span class="cl">                <span class="p">...);</span>
+</span></span></code></pre></div><p>改函数创建一个新的内核线程，其名称由<code>namefmt</code>给出，最初该线程是停止的，需要使用<code>wake_up_process</code>启动它，此后，会调用threadfn给出的线程函数，而data则作为参数。</p>
+<p>另一个备选方案是宏<code>kthread_run</code>，它会调用<code>kthread_create</code>创建新线程，但立即唤醒它，还可使用<code>kthread_create_cpu</code>代替<code>kthread_create</code>创建内核线程，使之绑定到特定的CPU。</p>
+<p>内核线程会出现在系统进程列表中，在ps的输出中由放括号包围，以便与普通进程区分。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cppbreak@ThinkPad:~$ ps fax
+</span></span><span class="line"><span class="cl">  PID TTY      STAT   TIME COMMAND
+</span></span><span class="line"><span class="cl">    2 ?        S      0:00 [kthreadd]
+</span></span><span class="line"><span class="cl">    3 ?        S      0:00  \_ [ksoftirqd/0]
+</span></span><span class="line"><span class="cl">    6 ?        S      0:02  \_ [migration/0]
+</span></span><span class="line"><span class="cl">    7 ?        S      0:00  \_ [watchdog/0]
+</span></span><span class="line"><span class="cl">    8 ?        S      0:00  \_ [migration/1]
+</span></span><span class="line"><span class="cl">    9 ?        S      0:00  \_ [kworker/1:0]
+</span></span><span class="line"><span class="cl">   10 ?        S      0:00  \_ [ksoftirqd/1]
+</span></span><span class="line"><span class="cl">   12 ?        S      0:00  \_ [watchdog/1]
+</span></span><span class="line"><span class="cl">   13 ?        S      0:01  \_ [migration/2]
+</span></span></code></pre></div><h2 id="启动新程序-execve">启动新程序 execve</h2>
+<p>Linux 通过用新代码替换现存程序，即可启动新程序。Linux提供的 <code>execve</code> 系统调用可实现此功能。该函数的入口点是体系相关的<code>sys_execve</code> 函数，该函数把具体的工作委托给<code>do_execve</code>实现具体功能。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">do_execve</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="k">const</span> <span class="n">__user</span> <span class="o">*</span><span class="n">__argv</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="k">const</span> <span class="n">__user</span> <span class="o">*</span><span class="n">__envp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+</span></span></code></pre></div><p>这里不仅用参数传递了寄存器集合和可执行文件的名称filename，而且还传递了指向程序的参数和环境指针。这里argv和envp都是指针数组，而且指向用户空间，<code>__user</code>注释允许自动化工具检测是否所有处理都正确。</p>
+<p><code>do_execve</code> 代码执行流程如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">do_execv
+</span></span><span class="line"><span class="cl">    |----- 打开可执行文件
+</span></span><span class="line"><span class="cl">    |----- bprm_init
+</span></span><span class="line"><span class="cl">                |----- mm_alloc
+</span></span><span class="line"><span class="cl">                |----- init_new_context
+</span></span><span class="line"><span class="cl">                |----- __bprm_mm_init
+</span></span><span class="line"><span class="cl">    |----- prepare_binprm
+</span></span><span class="line"><span class="cl">    |----- 复制环境和参数数组内容
+</span></span><span class="line"><span class="cl">    |----- search_binary_handler
+</span></span></code></pre></div><p>首先要打开可执行文件，换言之，内核找到相关的inode并生成一个文件描述符，用于寻址文件。</p>
+<p><code>bprm_init</code>接下来处理若干管理性任务：<code>mm_alloc</code>生成一个新的<code>mm_struct</code>实例来管理进程地址空间。<code>init_new_context</code>是一个特定于体系结构的函数，用于初始化该实例，而<code>__bprm_mm_init</code>则建立初始化的栈。</p>
+<p>新进程的各个参数，例如euid，egid，参数列表，环境等等，这里会合并成一个类型为<code>linux_binprm</code>的结构，<code>prepare_binprm</code>用于提供一些父进程相关的值，特别是 UID 和 GID。</p>
+<p>Linux 支持可执行文件的各种不同组织格式，标准格式是ELF。Linux还支持其他不同的二进制格式，通过函数<code>search_binary_handler</code>在<code>do_execve</code>结束时查找一种适当的二进制格式。各种格式根据不同特点（文件开始时的“魔数”）识别。二进制格式处理程序执行以下操作。</p>
+<ol>
+<li>释放原进程所使用的所有资源</li>
+<li>将应用程序映射到虚拟地址空间中。
+<ul>
+<li>text段包含程序的可执行代码，<code>start_code</code>和<code>end_code</code>指定该段在地址空间中驻留的区域</li>
+<li>预先初始化的数据，位于<code>start_data</code>和<code>end_data</code>之间，映射自可执行文件对应段</li>
+<li>堆用户动态内存分配，置于虚拟地址空间中，<code>start_brk</code>和<code>brk</code>指定了其边界</li>
+<li>栈的位置由<code>start_stack</code>定义，大多数计算机的栈都是自动向下增长</li>
+<li>程序的参数和环境也映射到虚拟地址空间中，分别位于<code>arg_start</code>和<code>arg_end</code>之间，以及<code>env_start</code>和<code>env_end</code>之间</li>
+</ul>
+</li>
+<li>设置进程的指令指针和其他特定于体系结构的寄存器，以便在调度器选择该进程时开始执行程序的main函数</li>
+</ol>
+<p>Linux内核中，每种二进制格式都表示为下列数据结构的一个实例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">linux_binfmt</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">struct</span> <span class="n">list_head</span> <span class="n">lh</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">module</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">load_binary</span><span class="p">)(</span><span class="k">struct</span> <span class="n">linux_binprm</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span>  <span class="n">pt_regs</span> <span class="o">*</span> <span class="n">regs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">load_shlib</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">core_dump</span><span class="p">)(</span><span class="k">struct</span> <span class="n">coredump_params</span> <span class="o">*</span><span class="n">cprm</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">min_coredump</span><span class="p">;</span>     <span class="cm">/* minimal dump size */</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>linux支持的部分二进制格式有<code>flat_format</code>, <code>script_format</code>, <code>misc_format</code>, <code>elf_format</code>, <code>elf_fdpic_format</code>, <code>irix_format</code>, <code>som_format</code>, <code>aout_format</code>。每种二进制格式必须提供下面三个函数：</p>
+<ol>
+<li><code>load_binary</code> 用于加载普通程序</li>
+<li><code>load_shlib</code> 用于加载共享库，即动态库</li>
+<li><code>core_dump</code> 用于程序错误的情况下输出内存转储</li>
+</ol>
+<p>每种格式首先必须用<code>register_binfmt</code>向内核注册。该函数的目的是向一个链表增加一个新的二进制格式，该链表的表头是<code>fs/exec.c</code>中的全局变量<code>formats</code>，<code>linux_binfmt</code>实例通过其<code>next</code>成员彼此连接起来。</p>
+<h2 id="退出进程">退出进程</h2>
+<p>进程必须用exit系统调用终止，这使得内核有机会将该进程使用的资源放回系统。该调用的入口点是 <code>sys_exit</code> 函数，需要一个错误码作为其参数，以便退出进程，最终调用<code>do_exit</code>函数实现，该函数实现就是将各个引用计数器减1。如果引用计数器归0就将相应的内存区域返还给内存管理模块。</p>
+<h1 id="调度器的实现">调度器的实现</h1>
+<p>内存中保存了对每个进程的唯一描述，通过若干结构与其他进程连接起来，调度器任务便是程序之间共享CPU时间，创造并执行的错觉，该任务分为两个不同部分：一个涉及调度策略，另一个涉及上下文切换。</p>
+<h2 id="概观">概观</h2>
+<p>内核必须提供一种方法，在进程之间尽可能公平地共享CPU时间，而同时又要考虑不同的任务优先级。<code>schedule</code>函数是理解调度操作的起点，该函数定义在<code>kernel/sched.c</code>中，是内核代码最常用的函数之一。</p>
+<h1 id="完全公平调度类">完全公平调度类</h1>
+<h1 id="实时调度类">实时调度类</h1>
+<h1 id="调度器增强">调度器增强</h1>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linxu内核笔记-虚拟地址空间</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

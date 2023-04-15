@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。
+而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。
+更加详细的内容可查阅Linux内核代码，进程调度。
+线程 线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。
+线程可通过pthread_create创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。
+线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。
+中断 进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统/proc/interrupt查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。
+函数调用 函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。
+函数 性能(次/S) ntohl 2.5亿 memset 1k 150w getppid 1000w getimeofday 30w-400w socket 10w-50w sendto 40w 更详细系统调用相关内容，可参考：系统调用。
+文件系统 文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数fsync可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用fsync把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。
+在&amp;rsquo;/proc/vm&amp;rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。dirty_background_ratio表示脏页占内存多少比例时，开始进行回收。dirty_expire_centisecs表示当脏页存在多长时间以后回收。
+系统指标 Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。
+CPU 判别CPU当前执行效能，可通过以下指标查看：
+CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈 用户态时间：展现了CPU用户态的执行时间 系统时间：展现了内核态执行时间 Waiting：等待时间，如果出现大量的等待，IO可能出现瓶颈 Context switch：上下文切换 Interrupts：中断 Load average：等待CPU的进程队列大小 内存 空闲内存 swap使用大小 Buffer和Cache大小 Slabs 大小 网络 收包和发包量 收包和发包大小 丢包量 磁盘 iowait，CPU等待IO时间 平均等待时间 执行时间 write和read每秒次数 write和read每秒大小 '>
+<title>Linux性能调优之内核篇</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之内核篇'>
+<meta property='og:description' content='进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。
+而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。
+更加详细的内容可查阅Linux内核代码，进程调度。
+线程 线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。
+线程可通过pthread_create创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。
+线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。
+中断 进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统/proc/interrupt查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。
+函数调用 函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。
+函数 性能(次/S) ntohl 2.5亿 memset 1k 150w getppid 1000w getimeofday 30w-400w socket 10w-50w sendto 40w 更详细系统调用相关内容，可参考：系统调用。
+文件系统 文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数fsync可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用fsync把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。
+在&amp;rsquo;/proc/vm&amp;rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。dirty_background_ratio表示脏页占内存多少比例时，开始进行回收。dirty_expire_centisecs表示当脏页存在多长时间以后回收。
+系统指标 Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。
+CPU 判别CPU当前执行效能，可通过以下指标查看：
+CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈 用户态时间：展现了CPU用户态的执行时间 系统时间：展现了内核态执行时间 Waiting：等待时间，如果出现大量的等待，IO可能出现瓶颈 Context switch：上下文切换 Interrupts：中断 Load average：等待CPU的进程队列大小 内存 空闲内存 swap使用大小 Buffer和Cache大小 Slabs 大小 网络 收包和发包量 收包和发包大小 丢包量 磁盘 iowait，CPU等待IO时间 平均等待时间 执行时间 write和read每秒次数 write和read每秒大小 '>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-03T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-03T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux性能调优之内核篇">
+<meta name="twitter:description" content="进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。
+而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。
+更加详细的内容可查阅Linux内核代码，进程调度。
+线程 线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。
+线程可通过pthread_create创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。
+线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。
+中断 进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统/proc/interrupt查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。
+函数调用 函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。
+函数 性能(次/S) ntohl 2.5亿 memset 1k 150w getppid 1000w getimeofday 30w-400w socket 10w-50w sendto 40w 更详细系统调用相关内容，可参考：系统调用。
+文件系统 文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数fsync可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用fsync把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。
+在&amp;rsquo;/proc/vm&amp;rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。dirty_background_ratio表示脏页占内存多少比例时，开始进行回收。dirty_expire_centisecs表示当脏页存在多长时间以后回收。
+系统指标 Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。
+CPU 判别CPU当前执行效能，可通过以下指标查看：
+CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈 用户态时间：展现了CPU用户态的执行时间 系统时间：展现了内核态执行时间 Waiting：等待时间，如果出现大量的等待，IO可能出现瓶颈 Context switch：上下文切换 Interrupts：中断 Load average：等待CPU的进程队列大小 内存 空闲内存 swap使用大小 Buffer和Cache大小 Slabs 大小 网络 收包和发包量 收包和发包大小 丢包量 磁盘 iowait，CPU等待IO时间 平均等待时间 执行时间 write和read每秒次数 write和read每秒大小 ">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#进程">进程</a></li>
+    <li><a href="#线程">线程</a></li>
+    <li><a href="#中断">中断</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#cpu">CPU</a></li>
+    <li><a href="#内存">内存</a></li>
+    <li><a href="#网络">网络</a></li>
+    <li><a href="#磁盘">磁盘</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/">Linux性能调优之内核篇</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 03, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="进程管理">进程管理</h1>
+<h2 id="进程">进程</h2>
+<p>进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为<code>task_struct</code>，包含了进程的所有信息。</p>
+<p>进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。</p>
+<p>而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。</p>
+<p>更加详细的内容可查阅Linux内核代码，<a class="link" href="../linux_kernel/linux-kernel-process-sched/" >进程调度</a>。</p>
+<h2 id="线程">线程</h2>
+<p>线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。</p>
+<p>线程可通过<code>pthread_create</code>创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。</p>
+<p>线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。</p>
+<h2 id="中断">中断</h2>
+<p>进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统<code>/proc/interrupt</code>查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。</p>
+<h1 id="函数调用">函数调用</h1>
+<p>函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>性能(次/S)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ntohl</td>
+<td>2.5亿</td>
+</tr>
+<tr>
+<td>memset 1k</td>
+<td>150w</td>
+</tr>
+<tr>
+<td>getppid</td>
+<td>1000w</td>
+</tr>
+<tr>
+<td>getimeofday</td>
+<td>30w-400w</td>
+</tr>
+<tr>
+<td>socket</td>
+<td>10w-50w</td>
+</tr>
+<tr>
+<td>sendto</td>
+<td>40w</td>
+</tr>
+</tbody>
+</table></div>
+<p>更详细系统调用相关内容，可参考：<a class="link" href="../linux_kernel/reading/linux-kernel-system-call/" >系统调用</a>。</p>
+<h1 id="文件系统">文件系统</h1>
+<p>文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数<code>fsync</code>可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用<code>fsync</code>把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。</p>
+<p>在&rsquo;/proc/vm&rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。<code>dirty_background_ratio</code>表示脏页占内存多少比例时，开始进行回收。<code>dirty_expire_centisecs</code>表示当脏页存在多长时间以后回收。</p>
+<h1 id="系统指标">系统指标</h1>
+<p>Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。</p>
+<h2 id="cpu">CPU</h2>
+<p>判别CPU当前执行效能，可通过以下指标查看：</p>
+<ul>
+<li>CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈</li>
+<li>用户态时间：展现了CPU用户态的执行时间</li>
+<li>系统时间：展现了内核态执行时间</li>
+<li>Waiting：等待时间，如果出现大量的等待，IO可能出现瓶颈</li>
+<li>Context switch：上下文切换</li>
+<li>Interrupts：中断</li>
+<li>Load average：等待CPU的进程队列大小</li>
+</ul>
+<h2 id="内存">内存</h2>
+<ul>
+<li>空闲内存</li>
+<li>swap使用大小</li>
+<li>Buffer和Cache大小</li>
+<li>Slabs 大小</li>
+</ul>
+<h2 id="网络">网络</h2>
+<ul>
+<li>收包和发包量</li>
+<li>收包和发包大小</li>
+<li>丢包量</li>
+</ul>
+<h2 id="磁盘">磁盘</h2>
+<ul>
+<li>iowait，CPU等待IO时间</li>
+<li>平均等待时间</li>
+<li>执行时间</li>
+<li>write和read每秒次数</li>
+<li>write和read每秒大小</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">告警优化实践总结</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux性能调优之硬件篇</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux性能调优之工具篇</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件版本对系统架构的理解</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/everything-under-control/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">一切尽在掌握</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

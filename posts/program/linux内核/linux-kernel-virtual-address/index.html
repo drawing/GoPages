@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
+struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
+内核提供了若干函数对内存映射区域操作：
+查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
+const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
+堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
+堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
+另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
+另外，内核提供了一系列函数从内核空间和用户空间交换数据：
+copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。'>
+<title>Linxu内核笔记-虚拟地址空间</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linxu内核笔记-虚拟地址空间'>
+<meta property='og:description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
+struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
+内核提供了若干函数对内存映射区域操作：
+查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
+const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
+堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
+堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
+另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
+另外，内核提供了一系列函数从内核空间和用户空间交换数据：
+copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-20T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-20T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linxu内核笔记-虚拟地址空间">
+<meta name="twitter:description" content="在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
+struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
+内核提供了若干函数对内存映射区域操作：
+查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
+const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
+堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
+堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
+另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
+另外，内核提供了一系列函数从内核空间和用户空间交换数据：
+copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/">Linxu内核笔记-虚拟地址空间</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 20, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。</p>
+<p>在进程结构 <code>task_struct</code> 中包含一个<code>mm_struct</code>实例，这个实例便保存的进程的虚拟地址空间：</p>
+<pre><code>struct mm_struct {
+        struct vm_area_struct * mmap;           /* list of VMAs */
+        struct rb_root mm_rb;
+        struct vm_area_struct * mmap_cache;     /* last find_vma result */
+        ...
+};
+</code></pre>
+<p><code>vm_area_struct</code>结构中存储映射的虚拟内存细节，每个<code>vm_area_struct</code>节点即存储在单链表mmap中，又存储于红黑树<code>mm_rb</code>中。</p>
+<p>内核提供了若干函数对内存映射区域操作：</p>
+<pre><code>查找给定地址后的第一个区域  find_vma
+确认边界区间是否在一个现存的vma区域 find_vma_intersection
+区域合并 vma_merge
+插入区域 insert_vm_struct
+创建区域 get_unmapped_area
+</code></pre>
+<p>物理内存和虚拟地址的映射通过 <code>vm_area_struct</code>中的函数指针<code>vm_operations_struct</code>来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员<code>address_space</code>来补充，二者通常使用以下方式关联：</p>
+<pre><code>const struct vm_operations_struct generic_file_vm_ops = {
+        .fault          = filemap_fault,
+};
+</code></pre>
+<p>虚拟地址的映射可以通过系统调用 mmap和munmap。</p>
+<p>堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。</p>
+<p>堆是连续的内存空间，扩张自下至上，<code>mm_struct</code>中包含了起始和结束地址<code>start_brk</code>和<code>brk</code>。</p>
+<p>另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。</p>
+<p>另外，内核提供了一系列函数从内核空间和用户空间交换数据：</p>
+<pre><code>copy_from_user
+get_user
+strncopy_from_user
+put_user
+copy_to_user
+</code></pre>
+<p>最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

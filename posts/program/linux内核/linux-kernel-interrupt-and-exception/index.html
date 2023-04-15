@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+为了描述简单，通常称异步中断为中断，同步中断为异常。
+中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
+可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
+Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
+中断描述符表初始化，在start_kernel中：
+异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
+驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
+由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
+Linux内核提供的延时机制分为softirq，tasklet，work queue。
+softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
+系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
+中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
+work queue延时处理：
+内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。'>
+<title>Linux内核笔记-中断和异常</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-中断和异常'>
+<meta property='og:description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+为了描述简单，通常称异步中断为中断，同步中断为异常。
+中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
+可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
+Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
+中断描述符表初始化，在start_kernel中：
+异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
+驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
+由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
+Linux内核提供的延时机制分为softirq，tasklet，work queue。
+softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
+系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
+中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
+work queue延时处理：
+内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-20T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-20T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux内核笔记-中断和异常">
+<meta name="twitter:description" content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+为了描述简单，通常称异步中断为中断，同步中断为异常。
+中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
+可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
+Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
+中断描述符表初始化，在start_kernel中：
+异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
+驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
+由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
+Linux内核提供的延时机制分为softirq，tasklet，work queue。
+softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
+系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
+中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
+work queue延时处理：
+内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 20, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="中断和异常的定义">中断和异常的定义</h1>
+<p>中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。</p>
+<p>为了描述简单，通常称异步中断为中断，同步中断为异常。</p>
+<h1 id="中断分类">中断分类：</h1>
+<pre><code>faults类异常：系统可以恢复，需要重新执行导致异常的指令。
+traps类型异常：系统可以恢复，用户取得系统服务的一种手段。
+abort异常：不可恢复。
+</code></pre>
+<p>中断分类：</p>
+<ul>
+<li>可屏蔽中断</li>
+<li>不可屏蔽中断</li>
+</ul>
+<p>中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。</p>
+<p>Linux内核中中断请求IRQ用数据结构 <code>struct irq_desc</code> 表示。</p>
+<p>中断描述符表初始化，在<code>start_kernel</code>中：</p>
+<pre><code>异常初始化 strap_init
+中断初始化 init_IRQ
+</code></pre>
+<p>中断处理过程：</p>
+<pre><code>驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权
+内核`common_interrrpt`调用`do_IRQ`
+</code></pre>
+<h1 id="异常处理过程">异常处理过程：</h1>
+<pre><code>响应的处理程序执行
+do_trap
+</code></pre>
+<p>延时处理机制</p>
+<p>由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。</p>
+<p>Linux内核提供的延时机制分为softirq，tasklet，work queue。</p>
+<h1 id="softirq机制">softirq机制：</h1>
+<p>softirq在内核中由结构体<code>softirq_action</code>表示，内核预设的softirq存储于<code>softirq_vec</code>数组中，初始化函数为：<code>open_softirq</code>。</p>
+<p>系统运行过程中，会在合适的地方调用<code>local_softirq_pending</code>检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：</p>
+<pre><code>中断处理退出函数irq_exit
+内核线程ksoftirqd
+内核网络子系统显示调用
+local_bh_enable
+</code></pre>
+<h1 id="tasklet延时处理机制">tasklet延时处理机制：</h1>
+<p>tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。</p>
+<p>work queue延时处理：</p>
+<p>内核使用<code>workqueue_struct</code>记录工作队列信息，每个具体work由结构<code>work_struct</code>定义，初始化工作队列可以用函数<code>create_workqueue</code>，激活工作队列使用<code>schedule_work</code>，处理工作队列函数<code>run_workqueue</code>。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linxu内核笔记-虚拟地址空间</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

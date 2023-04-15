@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
+寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
+寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
+通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
+eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
+在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.'>
+<title>汇编语言学习笔记(一)-寄存器</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(一)-寄存器'>
+<meta property='og:description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
+寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
+寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
+通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
+eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
+在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-12T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-12T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(一)-寄存器">
+<meta name="twitter:description" content="一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
+寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
+寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
+通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
+eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
+在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#通用寄存器">通用寄存器</a></li>
+    <li><a href="#段寄存器">段寄存器</a></li>
+    <li><a href="#状态和控制寄存器-eflags">状态和控制寄存器 eflags</a></li>
+    <li><a href="#指令寄存器-eip">指令寄存器 EIP</a></li>
+    <li><a href="#控制寄存器">控制寄存器</a></li>
+    <li><a href="#系统表指针寄存器">系统表指针寄存器</a></li>
+    <li><a href="#任务寄存器tr">任务寄存器tr</a></li>
+    <li><a href="#x87-fpu-寄存器">x87 FPU 寄存器</a></li>
+    <li><a href="#mmx-寄存器">MMX 寄存器</a></li>
+    <li><a href="#xmm-寄存器">XMM 寄存器</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/">汇编语言学习笔记(一)-寄存器</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 12, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。</p>
+<p>寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^</p>
+<h1 id="寄存器分类">寄存器分类</h1>
+<p>IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：</p>
+<ul>
+<li>通用寄存器</li>
+<li>段寄存器</li>
+<li>状态和控制寄存器</li>
+<li>指令寄存器</li>
+</ul>
+<h2 id="通用寄存器">通用寄存器</h2>
+<p>32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：</p>
+<pre><code>eax —— 累加和结果寄存器
+ebx —— 数据指针寄存器
+ecx —— 循环计数器
+edx —— i/o指针
+esi —— 源地址寄存器
+edi —— 目的地址寄存器
+esp —— 堆栈指针
+ebp —— 栈指针寄存器
+</code></pre>
+<p>当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl</p>
+<p>在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d. 在64位模式下，他们被扩展为 rax, rbx, rcx, rdx, rdi, rsi, rbp, rsp, r8 – r15. 其中 r8 – r15 这八个寄存器是64-bit模式下新加入的寄存器。</p>
+<h2 id="段寄存器">段寄存器</h2>
+<p>段寄存器 cs, ds, ss, es, fs, gs, 保存16位的段选择子，一个段选择子指定了一个段在内存的指针，以便再内存中访问段，访问方式与内存模式有关，段模式和平坦模式其代表的意义并不相同。</p>
+<pre><code>cs —— 代码段寄存器
+ds, es, fs, gs —— 数据段寄存器
+ss —— 堆栈段寄存器
+</code></pre>
+<p>在 64-bit 模式下，这6个寄存器并无变化，只是使用上略有区别。</p>
+<h2 id="状态和控制寄存器-eflags">状态和控制寄存器 eflags</h2>
+<p>这个寄存器表示的意义非常丰富，程序中并不直接操作此寄存器，并由此衍生出很多操作指令。</p>
+<p>除去一些保留位，其他每位都代表一个具体的含义，其中 bits 0, 2, 4, 6, 7, 11 是状态位，标识了某此操作后的状态，8, 9, 10 位为控制标识</p>
+<pre><code>CF (bit 0) —— 进位标识，算术操作进行了进位和借位，则此位被设置
+PF (bit 2) —— 奇偶标识，结果包含奇数个1，则设置此位
+AF (bit 4) —— 辅助进位标识，结果的第3位像第4位借位，则此位被设置
+ZF (bit 6) —— 零标识，结果为零，此位设置
+SF (bit 7) —— 符号标识，若为负数则设置此位
+OF (bit 11) —— 溢出标识，结果像最高位符号位进行借位或者进位，此标志被设置
+
+TF (bit 8) —— 陷阱标识，设置进程可以被单步调试
+IF (bit 9) —— 中断标识，设置能够响应中断请求
+DF (bit 10) —— 方向标识，用于标示字符处理过程中指针移动方向。
+</code></pre>
+<p>在64-bit模式下，该寄存器被扩展为64位，rflags，但是其高32位保留未被使用，其低32位所表示含义与32位模式相同。</p>
+<h2 id="指令寄存器-eip">指令寄存器 EIP</h2>
+<p>EIP —— 标志当前进程将要执行指令位置
+在64位模式下扩展为 RIP 64位指令寄存器。</p>
+<h2 id="控制寄存器">控制寄存器</h2>
+<p>cr0, cr2, cr3, cr4</p>
+<h2 id="系统表指针寄存器">系统表指针寄存器</h2>
+<pre><code>idtr —— 中断描述符表信息
+gdtr —— 全局描述符表信息
+ldtr —— 局部描述符表信息
+</code></pre>
+<h2 id="任务寄存器tr">任务寄存器tr</h2>
+<p>保存任务的状态信息 tss</p>
+<p>调试寄存器
+dr0 – dr7
+控制和允许监视进程的调试操作</p>
+<h2 id="x87-fpu-寄存器">x87 FPU 寄存器</h2>
+<p>这组指令专门用过浮点运算，因为浮点运算尤其固有的特性，所以需要使用一组独立寄存器。
+数据寄存器包括 r0 – r7 的8个 80 位寄存器，汇编程序中通过名字 st(x) 引用，另外还有3个16位寄存器，分别是控制寄存器，状态寄存器，标记寄存器。
+这里的省略具体含义的介绍。</p>
+<h2 id="mmx-寄存器">MMX 寄存器</h2>
+<p>MMX 为一种 SIMD 技术，即可通过一条指令执行多个数据运算，共有8个64位寄存器，分别为mm0 – mm7，他与其他普通64位寄存器的区别在于通过它的指令进行运算，可以同时计算2个32位数据，或者4个16位数据等等，可以应用为图像处理过程中图形 颜色的计算。另外需要特别注意的是，MMX并非一种新的寄存器，而是FPU 80位寄存器的低64位，也就是说，使用MMX指令集，会影响浮点运算！</p>
+<h2 id="xmm-寄存器">XMM 寄存器</h2>
+<p>XMM 同 MMX，只是他有 8 个 128 位寄存器，分别为 xmm0 – xmm7，另外还包含计算过程中的状态和控制寄存器</p>
+<p>这篇介绍列举了一些CPU寄存器并对某些寄存器进行了详细介绍，但并非完整详尽的介绍，略去了很多细节，因为寄存器本身只做存储之用，真正理解还需依靠其对应的指令操作，这里仅仅为之后的介绍做一些准备工作，如果有可能，我会努力完善此文。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

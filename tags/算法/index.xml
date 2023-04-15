@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>算法 on 演示站点</title>
+        <link>https://drawing.fancymore.com/tags/%E7%AE%97%E6%B3%95/</link>
+        <description>Recent content in 算法 on 演示站点</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Mon, 02 Jun 2014 01:16:33 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>算法学习笔记-最长公共子序列</title>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-lcs/</link>
+        <pubDate>Mon, 02 Jun 2014 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-lcs/</guid>
+        <description>&lt;h1 id=&#34;概念&#34;&gt;概念&lt;/h1&gt;
+&lt;p&gt;子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。
+公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。
+最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。&lt;/p&gt;
+&lt;h1 id=&#34;定义&#34;&gt;定义&lt;/h1&gt;
+&lt;p&gt;问题描述：给定两个序列&lt;code&gt;X={x1, x2, x3, …, xm}&lt;/code&gt;和&lt;code&gt;Y={y1, y2, y3, …, yn}&lt;/code&gt;，找出X和Y的最长公共子序列。&lt;/p&gt;
+&lt;h1 id=&#34;解决&#34;&gt;解决&lt;/h1&gt;
+&lt;p&gt;解决最长公共子序列一个比较直接暴力的办法是枚举所有X的子序列，检查是否同时是Y的子序列，从公共子序列中找到最长的一个。&lt;/p&gt;
+&lt;p&gt;X中元素有m个，X中的子序列有&lt;code&gt;2^m&lt;/code&gt;个，算法的复杂度需要指数时间，最于长序列来讲耗时过长。&lt;/p&gt;
+&lt;p&gt;另一种比较合理的解决办法是&lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/algorithm-dynamic-programming.html&#34; &gt;动态规划&lt;/a&gt;。LCS具有最优子序列结构：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn} 为两个序列，Z={z1, z2, …, zk} 为X和Y的任意一个LCS。
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	1）如果xm=yn，则 zk=xm=yn而且Z(k-1)是X(m-1)和Y(n-1)的一个LCS。
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	2）如果xm!=yn，则zk!=xm表示Z是X(m-1)和Y的一个LCS。
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	3）如果xm!=yn，则zk!=yn表示Z是X和Y(n-1)的一个LCS。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;最优子结构是使用动态规划的基础，由以上结论便可归纳出具体的计算方法：&lt;/p&gt;
+&lt;p&gt;标记c[i,j]是Xi和Xj的最长公共子序列，则有：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c[i,j] = 0                i=0 or j=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c[i,j] = c[i-1,j-1] + 1             i,j&amp;gt;0 and xi == yj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	c[i,j] =max{c[i,j-1], c[i-1,j]}         i,j&amp;gt;0 and xi != yj
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过递归便可得到所有i,j下最长公共子序列。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	#include &amp;lt;iostream&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	#include &amp;lt;cstring&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	using namespace std;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	#define MAX_ELEM_LEN    100
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	int g_result[MAX_ELEM_LEN][MAX_ELEM_LEN] = {};
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	int find_LCS(int X[], int n, int Y[], int m)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	{
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    for (int i = 0; i &amp;lt;= n; i ++) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	        g_result[i][0] = 0;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    for (int j = 0; j &amp;lt;= m; j ++) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	        g_result[0][j] = 0;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    for (int i = 1; i &amp;lt;= n; i ++) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	        for (int j = 1; j &amp;lt;= m; j ++) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            if (X[i-1] == Y[j-1]) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	                g_result[i][j] = g_result[i-1][j-1] + 1;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            else if (g_result[i-1][j] &amp;gt; g_result[i][j-1]) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	                g_result[i][j] = g_result[i-1][j];
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            else {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	                g_result[i][j] = g_result[i][j-1];
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	            }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	        }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    return g_result[n][m];
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	int main()
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	{
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    int X[] = {1, 2, 5, 6, 8, 3, 4, 7};
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    int Y[] = {2, 6, 3, 7, 5, 4, 8};
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    int n = sizeof(X)/sizeof(int);
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    int m = sizeof(Y)/sizeof(int);
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    int max_elem = find_LCS(X, n, Y, m);
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    cout &amp;lt;&amp;lt; max_elem &amp;lt;&amp;lt; endl;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	    return 0;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果需要得到具体的子序列，可从&lt;code&gt;c[i,j]&lt;/code&gt;回溯，很容易找到最大子序列是什么，从而得到整个序列。&lt;/p&gt;
+&lt;h1 id=&#34;复杂度&#34;&gt;复杂度&lt;/h1&gt;
+&lt;p&gt;这里的空间复杂度和时间复杂度都是O(m+n)，如果只要得到最大公共子序列的大小，而不求具体的序列，可以优化空间复杂度，虽然结果是个二维数组，但使用的时候仅仅用到上一层，这里完全可以优化一下空间复杂度，仅用O(m)便可实现。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>算法学习笔记-动态规划</title>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/</link>
+        <pubDate>Sun, 01 Jun 2014 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/</guid>
+        <description>&lt;p&gt;动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。&lt;/p&gt;
+&lt;h1 id=&#34;分治法&#34;&gt;分治法&lt;/h1&gt;
+&lt;p&gt;分治法几乎学过程序的人都能理解，简而言之就是分而治之，一个问题很复杂很难解决，就设法把大问题转化为若干个小问题，小问题解决经过汇总，大问题也就迎刃而解了。&lt;/p&gt;
+&lt;p&gt;举个例子，在某公司，要设计开发一个大型项目，上百人一窝蜂去解决这个问题效率显然很低，这时CTO会把项目分解成若干子项目，分给各部门总监，总监拿到项目又进行模块分解，分给手下的各个小组，由各个小组负责开发完成具体的模块，在总监指导下完成整合，再由CTO汇总在一起，就合理的分工完成一个大型的项目了。这就是分治法。&lt;/p&gt;
+&lt;p&gt;那动态规划跟分治法有什么关系呢？再说上面的例子，当各个小组负责开发时，发现有些模块是重复的！比如网络框架，如果各个小组各自为战，每个小组都会开发一套自己的网络框架，这显然会造成大量的人员浪费。CTO考虑到这点，就会想，为什么不构建一个所有小组都能通用的公共库呢？当一个小组开发完成一个功能，就放入公共库，其他小组再开发前，先在公共库查找，如果已经有了，就不用再开发了，这就节省了大量的重复工作。&lt;/p&gt;
+&lt;p&gt;其中用一个公共的“Table”记录已经完成的工作，避免重复运算，这种解决问题的思路，就是动态规划了。&lt;/p&gt;
+&lt;h1 id=&#34;动态规划&#34;&gt;动态规划&lt;/h1&gt;
+&lt;p&gt;现在就知道什么是动态规划了，动态规划类似于分治法，适用于分治法有重复的子问题，动态规划使用一个table保存计算结果，确保每个子问题只被运算一次。&lt;/p&gt;
+&lt;p&gt;动态规划被用于解决&amp;quot;最优解&amp;quot;问题，举上面的例子，如果CTO不知道如何分配任务，想知道由哪个小组做哪个模块才能最快，需要进行多次“尝试”，把问题的各种分配方法都试一次，让各小组解决，看如何分配才能最快，这显然其中有很多重复的开发，但如果把某个小组执行某个模块需要多长时间都记录下来，可以最大程度上减少开发。（注意这里的问题已经不是解决这个项目了，而且怎么分解项目能达到最优解，table里存的变成某个小组完成某个模块的时间，求最优解往往要比求一个解复杂很多），这就是求最优解的应用了。&lt;/p&gt;
+&lt;h1 id=&#34;解题步骤&#34;&gt;解题步骤&lt;/h1&gt;
+&lt;p&gt;现在对动态规划有了一个感性的认识，接下来需要看看面对具体的问题该如何解决了，现看看动态规划通用的解题方法。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分析最优解特征&lt;/li&gt;
+&lt;li&gt;递归定义最优解&lt;/li&gt;
+&lt;li&gt;自底向上求解&lt;/li&gt;
+&lt;li&gt;构造最优解&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这只是一个抽象的步骤，接下来通过动态规划一个典型的应用“背包问题”来说明一下具体是如何实现的。&lt;/p&gt;
+&lt;h1 id=&#34;0-1背包问题&#34;&gt;0-1背包问题&lt;/h1&gt;
+&lt;h2 id=&#34;题目&#34;&gt;题目&lt;/h2&gt;
+&lt;p&gt;有N件物品和一个容量为V的背包。第i件物品的重量是c[i]，价值是w[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。&lt;/p&gt;
+&lt;h2 id=&#34;分析最优解特征&#34;&gt;分析最优解特征&lt;/h2&gt;
+&lt;p&gt;如果题目中N件物品都只有一件，就是典型的0-1背包问题，这里先来看看0-1背包问题如何解决。感性的认识一下题目，每个商品只有放入背包和不放入背包两种，如果先挑单体重量价值最大的，也有可能体积太大无法装下其他货物，还不如放两个价值不是最大的划算，乍一看还是挺难解决的。接下来使用动态规划详细分析一下题目。&lt;/p&gt;
+&lt;p&gt;首先什么是一个解，就是一种背包方法，解的值就是背包中物品的最大价值。最优解就是不同的取法中最大的价值，再来看看这个最优解的递归特征，所谓的递归特征，就是如何把大问题化为小问题。这里考虑把N件物品转化为N-1件物品，考虑最后一件物品（索引从0开始）：c[N-1], w[N-1]，只有两种可能：不放入背包和放入背包，如果最优解中没有物品obj(N-1)，那么最优解其实就是N-1个物品的最优解，如果obj(N-1)存在最优解中，那么也可以把这个问题转换为N-1个物品的最优解，只是背包的容量就剩下V-c[N-1]了，这样不论哪种情况，都可以N个物品的问题，转化为N-1个物品的问题。这就是最优解的递归特性。&lt;/p&gt;
+&lt;h2 id=&#34;递归定义最优解&#34;&gt;递归定义最优解&lt;/h2&gt;
+&lt;p&gt;分析完递归特性以后，便很容易定义一个递归公式：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/keep/2014/0_0-1package.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;0-1 package&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;N=1 只有一个物品的时候很容易解决，直接看能不能放下即可，N&amp;gt;1的时候，想办法利用最优解的递归特性转换为N-1，使我们解决的问题少了一个纬度，是解决这类问题的关键。&lt;/p&gt;
+&lt;p&gt;其实如果学过数学归纳法，会发现这个思路很相似，数学归纳法是已知f(0)成立，要证明f(N-1)成立的情况下f(N)成立，解题关键是怎么推导f(N-1)到f(N)，这里的递归结构同理，已知f(0)，要想办法从f(N-1)的解推出f(N)的解。&lt;/p&gt;
+&lt;h2 id=&#34;自底向上求解&#34;&gt;自底向上求解&lt;/h2&gt;
+&lt;p&gt;公式有了，只要用程序实现即可，这里的自底向上，是指从0到N逐个求解，因为公式本身具有递归特性，所以用递归解决这个问题最为直接：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int Package(int N, int c[], int w[], int V)
+{
+	int w_contain = 0;
+	int w_without = 0;
+	
+	if (N == 1 &amp;amp;&amp;amp; c[0] &amp;gt;= V) {
+		return w[0];
+	}
+	if (N == 1 &amp;amp;&amp;amp; c[0] &amp;lt; V) {
+		return 0;
+	}
+	
+	w_without = Package(N-1, c, w, V);
+	w_contain = Package(N-1, c, w, V - c[N-1]) + w[N-1];
+	if (w_contain &amp;gt; w_without) {
+		return w_contain;
+	}
+	else {
+		return w_without;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;那说了半天，动态规划怎么还没用呢？接下来可以看一下这个代码的复杂度，很容易能看出来，每次代码都会走两个分支，复杂度是 O(2^n)，指数级别的复杂度很大，如果n很大的情况下，代码就不具有可行性了。那如何优化呢，这就需要动态规划了，保存什么结果呢，可以看出其中的N和V都是变量，所以需要以这两个为key存储最优解。代码就优化为：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int table[N][V] = {};
+
+int init()
+{
+	for (int i = 0; i &amp;lt; V * N; i++) {
+		table[i] = -1;
+	}
+}
+
+int Package(int N, int c[], int w[], int V)
+{
+	int w_contain = 0;
+	int w_without = 0;
+	
+	if (N == 1 &amp;amp;&amp;amp; c[0] &amp;gt;= V) {
+		return w[0];
+	}
+	if (N == 1 &amp;amp;&amp;amp; c[0] &amp;lt; V) {
+		return 0;
+	}
+	
+	w_without = table[N-1][V];
+	if (w_without == -1) {
+		w_without = Package(N-1, c, w, V);
+		table[N-1][V] = w_without;
+	}
+	
+	w_contain = table[N-1][V - c[N-1]];
+	if (w_contain == -1) {
+		w_contain = Package(N-1, c, w, V - c[N-1]) + w[N-1];
+		table[N-1][V - c[N-1]] = w_contain;
+	}
+	
+	return (w_contain &amp;gt; w_without) ? w_contain : w_without;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;经过动态规划的优化，因为table表里的值最多计算一次，时间复杂度变成O(N&lt;em&gt;V)，当然也增加了O(N&lt;/em&gt;V)的空间复杂度，是典型的用空间换时间做法。&lt;/p&gt;
+&lt;h2 id=&#34;空间优化&#34;&gt;空间优化&lt;/h2&gt;
+&lt;p&gt;如果仔细考虑一下，会发现其实空间还可以进一步优化，因为计算过程中，f(N)依赖于f(N-1)，并不依赖于N-1之前的结果，完全可以在计算过程中，使f(N)覆盖掉f(N-1)的结果，节省空间。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int table[V] = {};
+
+int Package(int N, int c[], int w[], int V)
+{
+	for (int i = 0; i &amp;lt; N; i++) {
+		for (int j = V; j &amp;gt; c[i]; V++) {
+			int w_contain = table[j-c[i]] + w[i];
+			int w_without = table[j];
+			table[j] = (w_contain &amp;gt; w_without) ? w_contain : w_without;
+		}
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;因为需要一层一层计算，所以递归代码改成了迭代。空间复杂度缩小至O(V)，时间复杂度仍然是O(N*V)。&lt;/p&gt;
+&lt;h2 id=&#34;构造最优解&#34;&gt;构造最优解&lt;/h2&gt;
+&lt;p&gt;解了半天，终于能知道最大能背多少价值的东西了，但是如何取才能得到最优解呢？通过优化方法计算，已经没法得知怎么才能是最优解了，因为计算的过程已经被抹杀了，但是使用非空间优化的方法，很容易获取，只需要把最优解table[N-1][V]是怎么计算出来的倒推回去即可。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int table[N][V] = {};
+
+bool result[N] = {};
+
+void ConstructResult(int N, int c[], int w[], int V)
+{
+	for (int i = N-1; i &amp;gt;=0; i++) {
+		if (table[i-1][V] &amp;gt; table[i-1][V-c[i]] + w[i]) {
+			printf(&amp;quot;1\t&amp;quot;);
+			V -= w[i];
+		}
+		else {
+			printf(&amp;quot;0\t&amp;quot;);
+		}
+	}
+	print(&amp;quot;\n&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;按照刚才计算的路程倒推回去，便可知道如何取才能得到最优解，只是按照这种方法打印出来的是倒序，需要调整一下顺序。&lt;/p&gt;
+&lt;h1 id=&#34;有界背包问题&#34;&gt;有界背包问题&lt;/h1&gt;
+&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;
+&lt;p&gt;刚才只是最简单的一种背包问题，0-1背包，其中一个物品只有一个，如果再加一个条件，一个物品可以有有限多个，这个问题就变成了有界背包问题。对于有界背包问题如何解决呢？&lt;/p&gt;
+&lt;h2 id=&#34;算法&#34;&gt;算法&lt;/h2&gt;
+&lt;p&gt;其实有界背包问题可以很容易转换为0-1背包问题，如果一个物品可以选择n次，只需要把一个物品重复n个，就成了n个物品的0-1背包问题。通过动态规划便可顺利解决了。&lt;/p&gt;
+&lt;h1 id=&#34;无界解背包问题&#34;&gt;无界解背包问题&lt;/h1&gt;
+&lt;p&gt;如果把0-1背包的问题再变化一下，没种物品可以无限选择，就不能用有界背包的解法把问题转换为0-1背包了。当然可以借用0-1背包的思路，0-1背包在递归的时候会考虑存在和不存在的情况，从而把问题转换为N-1的子问题，而无界背包问题同样可以考虑这个物品不出现、出现1次、2次。。。等多种情况，把问题降维到N-1。只是要比0-1背包复杂好多。&lt;/p&gt;
+&lt;p&gt;另外，动态规划还有一些其他应用，比如 &lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/algorithm-lcs.html&#34; &gt;最长公共子序列&lt;/a&gt;，可以进一步学习动态规划的应用。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>双色球必胜秘籍</title>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/probability-double-color/</link>
+        <pubDate>Thu, 02 Jun 2011 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/probability-double-color/</guid>
+        <description>&lt;p&gt;几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万，我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。&lt;/p&gt;
+&lt;h1 id=&#34;规则&#34;&gt;规则&lt;/h1&gt;
+&lt;p&gt;双色球买一注需要在33个红球中选择6个，并在16个蓝球中选择1个，每注2块钱，具体的得奖规则如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;奖级&lt;/th&gt;
+&lt;th&gt;中奖条件&lt;/th&gt;
+&lt;th&gt;奖金&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;一等奖&lt;/td&gt;
+&lt;td&gt;红6蓝1&lt;/td&gt;
+&lt;td&gt;500w上下&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;二等奖&lt;/td&gt;
+&lt;td&gt;红6&lt;/td&gt;
+&lt;td&gt;十万级别&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;三等奖&lt;/td&gt;
+&lt;td&gt;红5蓝1&lt;/td&gt;
+&lt;td&gt;3000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;四等奖&lt;/td&gt;
+&lt;td&gt;红5 或 红4蓝1&lt;/td&gt;
+&lt;td&gt;200元&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;五等奖&lt;/td&gt;
+&lt;td&gt;红4 或 红3蓝1&lt;/td&gt;
+&lt;td&gt;10元&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;六等奖&lt;/td&gt;
+&lt;td&gt;蓝1&lt;/td&gt;
+&lt;td&gt;5元&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h1 id=&#34;概率分布&#34;&gt;概率分布&lt;/h1&gt;
+&lt;p&gt;如果全买双色球，需要 &lt;code&gt;C(16, 1) * C(33, 6) = 17721088&lt;/code&gt; 注彩票，所需花费约三千五百万，那么中奖的数量有多少呢？&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;奖级&lt;/th&gt;
+&lt;th&gt;中奖条件&lt;/th&gt;
+&lt;th&gt;数量&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;一等奖&lt;/td&gt;
+&lt;td&gt;中6+1&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;二等奖&lt;/td&gt;
+&lt;td&gt;中6+0&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;三等奖&lt;/td&gt;
+&lt;td&gt;中5+1&lt;/td&gt;
+&lt;td&gt;162&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;四等奖&lt;/td&gt;
+&lt;td&gt;中5+0/4+1&lt;/td&gt;
+&lt;td&gt;7695&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;五等奖&lt;/td&gt;
+&lt;td&gt;中4+0/3+1&lt;/td&gt;
+&lt;td&gt;137475&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;六等奖&lt;/td&gt;
+&lt;td&gt;中2+1/1+1/0+1&lt;/td&gt;
+&lt;td&gt;1043640&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;能够回的本钱大约有 16817950，基本上等于投资的一半！这说明，如果拿10块钱随机买彩票，能获得的收益只有5块钱，记得有一次公司给员工发8w块钱的彩票，最后收益也只有4w，与计算结果相吻合。&lt;/p&gt;
+&lt;p&gt;可以看出如果盲目购买彩票，除非运气很好，按照数学期望，最大可能的情况是没法回本的，那是不是有办法能提升中奖概率呢？&lt;/p&gt;
+&lt;h1 id=&#34;必胜秘籍&#34;&gt;必胜秘籍&lt;/h1&gt;
+&lt;p&gt;如果要玩双色球，首先得承认庄家没有作弊，如果庄家作弊的情况下，赌徒不论怎么计算都没法提高中奖概率的，如果认为开奖有不公环节，最好的选择就是不去玩。&lt;/p&gt;
+&lt;p&gt;一些人喜欢按照过去双色球出号规律来推测下一次是什么号码，但不管怎么总结，都跟概率论的一个经典问题相似，投硬币如果10次都是正面，那么下一次投掷是反面的概率会不会大于50%？答案当然是不会，概率仍然是50%，所以之前出的号码，不管怎么漂亮，都不会影响下一次的号码，所以按照历史记录来“计算”显然是没法提升概率的。&lt;/p&gt;
+&lt;p&gt;如果看奖项设置，最明显的就是如果中一个蓝号，肯定不会亏钱，所以可以从蓝号入手，当然，多次购买的话，总体的盈利得是正的，所以买两次彩票中一次就会盈利1块钱，如果前两次没中，第三次购买需要买两注相同的蓝号，这样猜中蓝号才能盈利，同理，按照这个规律下去，只需要购买相同的蓝号越买越多，总归有一天能实现盈利，可以说立于不败之地，不过这里还需要考虑一下本钱的问题，因为越买越多可能在没有中奖的时候下就会破产。所以需要计算一下中奖概率，以及成本规模：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;连续购买次数&lt;/th&gt;
+&lt;th&gt;中奖概率&lt;/th&gt;
+&lt;th&gt;本次所需购买彩票数&lt;/th&gt;
+&lt;th&gt;需要总成本&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;6.25%&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;12.10%&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;17.60%&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;10&lt;/td&gt;
+&lt;td&gt;47.55%&lt;/td&gt;
+&lt;td&gt;64&lt;/td&gt;
+&lt;td&gt;318&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;62.01%&lt;/td&gt;
+&lt;td&gt;820&lt;/td&gt;
+&lt;td&gt;4098&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;20&lt;/td&gt;
+&lt;td&gt;72.49%&lt;/td&gt;
+&lt;td&gt;10542&lt;/td&gt;
+&lt;td&gt;52708&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;25&lt;/td&gt;
+&lt;td&gt;80.08%&lt;/td&gt;
+&lt;td&gt;135570&lt;/td&gt;
+&lt;td&gt;677848&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;30&lt;/td&gt;
+&lt;td&gt;85.57%&lt;/td&gt;
+&lt;td&gt;1743440&lt;/td&gt;
+&lt;td&gt;8717198&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;可以看到，如果连续10次按照这种方法购买，回本的概率将近有50%，如果连续20次购买，回本的概率有72%，但是需要总成本五万，这还算可以接受，不过如果想连续30次购买，回本的概率有85%，但需要本钱800万，这个成本就相当高了。那盈利呢，这里的计算只是只中蓝号的情况，能实现不亏钱，如果想盈利，还需要靠红号，如果红号中的多，盈利自然也更多。以淘宝投入三千万为例，完全能保证85%的可能不亏钱，中红号还能实现不小的盈利。&lt;/p&gt;
+&lt;p&gt;但是这里的风险不可控，很容易本钱跟不上导致破产，所以要想必胜，只有一种方法，就是“命好”。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

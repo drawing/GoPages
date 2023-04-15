@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
+对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
+.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
+label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
+另外，还有一些有关符号的命令
+.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
+.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
+.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
+对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
+先说其基本类型及其相应的简写：
+byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：'>
+<title>汇编语言学习笔记(三)-数据结构</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(三)-数据结构'>
+<meta property='og:description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
+对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
+.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
+label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
+另外，还有一些有关符号的命令
+.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
+.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
+.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
+对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
+先说其基本类型及其相应的简写：
+byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-14T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-14T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(三)-数据结构">
+<meta name="twitter:description" content="其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
+对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
+.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
+label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
+另外，还有一些有关符号的命令
+.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
+.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
+.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
+对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
+先说其基本类型及其相应的简写：
+byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/">汇编语言学习笔记(三)-数据结构</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 14, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。</p>
+<p>对AT&amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.ascii —— 字符串，但是无\0结尾
+</span></span><span class="line"><span class="cl">	.asciz —— 字符串，自动加入\0
+</span></span><span class="line"><span class="cl">	.byte —— 8位数据
+</span></span><span class="line"><span class="cl">	.double ——　双精度64位
+</span></span><span class="line"><span class="cl">	.float —— 单精度32位
+</span></span><span class="line"><span class="cl">	.int —— 整数32位
+</span></span><span class="line"><span class="cl">	.long —— 长整数32位
+</span></span><span class="line"><span class="cl">	.octa —— 16字节整数
+</span></span><span class="line"><span class="cl">	.quad —— 8字节整数
+</span></span><span class="line"><span class="cl">	.short —— 短整型16位
+</span></span><span class="line"><span class="cl">	.single —— 单精度，同.float
+</span></span></code></pre></div><p>使用这些基本数据类型时，可以用标号命名，例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="nl">label1:</span> <span class="na">.ascii</span> <span class="s">&#34;test data\0&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">label2:</span> <span class="na">.byte</span> <span class="mi">12</span>
+</span></span></code></pre></div><p>这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2</p>
+<p>另外，还有一些有关符号的命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.equ</span> <span class="no">factor</span><span class="p">,</span> <span class="mi">3</span>
+</span></span></code></pre></div><p>这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.comm</span> <span class="no">symbol</span><span class="p">,</span> <span class="no">length</span>
+</span></span></code></pre></div><p>这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.lcomm</span> <span class="no">symbol</span><span class="p">,</span> <span class="no">length</span>
+</span></span></code></pre></div><p>这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用</p>
+<p>对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。</p>
+<p>先说其基本类型及其相应的简写：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	byte 8位无符号 简写db
+</span></span><span class="line"><span class="cl">	sbyte 8位有符号
+</span></span><span class="line"><span class="cl">	word 16位无符号 简写dw
+</span></span><span class="line"><span class="cl">	sword 16位有符号
+</span></span><span class="line"><span class="cl">	dword 32位无符号 简写dd
+</span></span><span class="line"><span class="cl">	sdword 32位有符号
+</span></span><span class="line"><span class="cl">	fword 48位整数
+</span></span><span class="line"><span class="cl">	qword 64位整数 简写dq
+</span></span><span class="line"><span class="cl">	tbyte 80位整数 简写dt
+</span></span><span class="line"><span class="cl">	read4 32位IEEE短实数
+</span></span><span class="line"><span class="cl">	real8 64位IEEE长实数
+</span></span><span class="line"><span class="cl">	real10 80位IEEE扩展精度
+</span></span></code></pre></div><p>定义变量时格式为：
+[name] 指令 初始值 [,初始值 &hellip;]
+例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	value1 byte &#39;A&#39;, &#39;b&#39;
+</span></span><span class="line"><span class="cl">	value2 dd 12345678h
+</span></span><span class="line"><span class="cl">	value3 byte &#34;This is a string&#34;
+</span></span></code></pre></div><p>其中数字后加h位16进制数字，在初始值处也可使用num dup(value)来创建num个value值。</p>
+<p>另外MASM中定义常量也需要equ指令，但是用法却与gas语法不同：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name equ expression
+</span></span><span class="line"><span class="cl">	name equ symbol
+</span></span><span class="line"><span class="cl">	name equ
+</span></span></code></pre></div><p>另外还有指令 textequ，可以被重定义</p>
+<p>另外MASM高级数据类型还有结构，结构其实是基本类型的组合，定义的基本格式如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name struct
+</span></span><span class="line"><span class="cl">	name type initial_value
+</span></span><span class="line"><span class="cl">	name ends
+</span></span></code></pre></div><p>其中初始化数据定义结构成员默认值，可写?表示未定义。</p>
+<p>在初始化结构体时，可使用&lt;&gt;构建初始化列表，若为空则结构初始化为定义的默认值。
+例如</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	; Post结构定义
+</span></span><span class="line"><span class="cl">	Post struct
+</span></span><span class="line"><span class="cl">		IdNum	byte &#34;123456&#34;
+</span></span><span class="line"><span class="cl">		Time	dw	?
+</span></span><span class="line"><span class="cl">		Content	byte 1024 dup(&#39;A&#39;)
+</span></span><span class="line"><span class="cl">	Post ends
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	; Post对象声明
+</span></span><span class="line"><span class="cl">	No1	Post &lt;&gt;
+</span></span><span class="line"><span class="cl">	No2 Post 
+</span></span><span class="line"><span class="cl">	No3 Post 
+</span></span><span class="line"><span class="cl">	No4 Post 
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	; 使用变量时与c无异
+</span></span><span class="line"><span class="cl">	mov Post.Time, eax
+</span></span></code></pre></div><p>其中，结构体内仍可嵌套其他结构体，Masm32在 windows.inc 头文件中定义了Win32 API结构和函数。</p>
+<p>还有一种高级结构为联合，语法声明为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name union
+</span></span><span class="line"><span class="cl">	union-fields
+</span></span><span class="line"><span class="cl">	name ends
+</span></span></code></pre></div><p>其中 union-fields 部分与结构完全相同，这里不再赘述。</p>
+<p>这 里介绍了AT&amp;T的MASM语法的数据类型部分，程序=数据+算法，数据类型并不很难，却是程序的一个重要组成部分。从这里可以看到AT&amp;T数据类型十分之少，没有结构体等高级概念，当然这样定义变量时也不需要事先声明，对他来说，每个变量仅仅是一个地址，如果需要操作结构，还需我 们自己计算结构的偏移；而MASM相对方便了很多，有点类似高级语言的味道，当然语法规则也更为繁琐。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

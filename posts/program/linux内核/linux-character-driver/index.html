@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='什么是字符驱动？ 所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。
+如何实现？ 操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：
+struct file_operations { struct module *owner; loff_t (*llseek) (struct file *, loff_t, int); ssize_t (*read) (struct file *, char __user *, size_t, loff_t *); ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *); ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t); ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t); int (*readdir) (struct file *, void *, filldir_t); unsigned int (*poll) (struct file *, struct poll_table_struct *); int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long); long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long); long (*compat_ioctl) (struct file *, unsigned int, unsigned long); int (*mmap) (struct file *, struct vm_area_struct *); int (*open) (struct inode *, struct file *); int (*flush) (struct file *, fl_owner_t id); int (*release) (struct inode *, struct file *); int (*fsync) (struct file *, struct dentry *, int datasync); int (*aio_fsync) (struct kiocb *, int datasync); int (*fasync) (int, struct file *, int); int (*lock) (struct file *, int, struct file_lock *); ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int); unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long); int (*check_flags)(int); int (*flock) (struct file *, int, struct file_lock *); ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int); ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int); int (*setlease)(struct file *, long, struct file_lock **); }; 作为驱动程序，只需要实现部分回调函数，注册该结构体，用户态进程便可通过系统调用open，read等调用相应回调函数指针。'>
+<title>Linux字符设备驱动开发</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-character-driver/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux字符设备驱动开发'>
+<meta property='og:description' content='什么是字符驱动？ 所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。
+如何实现？ 操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：
+struct file_operations { struct module *owner; loff_t (*llseek) (struct file *, loff_t, int); ssize_t (*read) (struct file *, char __user *, size_t, loff_t *); ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *); ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t); ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t); int (*readdir) (struct file *, void *, filldir_t); unsigned int (*poll) (struct file *, struct poll_table_struct *); int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long); long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long); long (*compat_ioctl) (struct file *, unsigned int, unsigned long); int (*mmap) (struct file *, struct vm_area_struct *); int (*open) (struct inode *, struct file *); int (*flush) (struct file *, fl_owner_t id); int (*release) (struct inode *, struct file *); int (*fsync) (struct file *, struct dentry *, int datasync); int (*aio_fsync) (struct kiocb *, int datasync); int (*fasync) (int, struct file *, int); int (*lock) (struct file *, int, struct file_lock *); ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int); unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long); int (*check_flags)(int); int (*flock) (struct file *, int, struct file_lock *); ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int); ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int); int (*setlease)(struct file *, long, struct file_lock **); }; 作为驱动程序，只需要实现部分回调函数，注册该结构体，用户态进程便可通过系统调用open，read等调用相应回调函数指针。'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-character-driver/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-11T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-11T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Linux字符设备驱动开发">
+<meta name="twitter:description" content="什么是字符驱动？ 所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。
+如何实现？ 操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：
+struct file_operations { struct module *owner; loff_t (*llseek) (struct file *, loff_t, int); ssize_t (*read) (struct file *, char __user *, size_t, loff_t *); ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *); ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t); ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t); int (*readdir) (struct file *, void *, filldir_t); unsigned int (*poll) (struct file *, struct poll_table_struct *); int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long); long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long); long (*compat_ioctl) (struct file *, unsigned int, unsigned long); int (*mmap) (struct file *, struct vm_area_struct *); int (*open) (struct inode *, struct file *); int (*flush) (struct file *, fl_owner_t id); int (*release) (struct inode *, struct file *); int (*fsync) (struct file *, struct dentry *, int datasync); int (*aio_fsync) (struct kiocb *, int datasync); int (*fasync) (int, struct file *, int); int (*lock) (struct file *, int, struct file_lock *); ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int); unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long); int (*check_flags)(int); int (*flock) (struct file *, int, struct file_lock *); ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int); ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int); int (*setlease)(struct file *, long, struct file_lock **); }; 作为驱动程序，只需要实现部分回调函数，注册该结构体，用户态进程便可通过系统调用open，read等调用相应回调函数指针。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-character-driver/">Linux字符设备驱动开发</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 11, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="什么是字符驱动">什么是字符驱动？</h1>
+<p>所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。</p>
+<h1 id="如何实现">如何实现？</h1>
+<p>操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">file_operations</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">loff_t</span> <span class="p">(</span><span class="o">*</span><span class="n">llseek</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">loff_t</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">loff_t</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">loff_t</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">readdir</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="kt">filldir_t</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">unsigned</span> <span class="nf">int</span> <span class="p">(</span><span class="o">*</span><span class="n">poll</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">poll_table_struct</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">unlocked_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">compat_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mmap</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">open</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">fl_owner_t</span> <span class="n">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">release</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fasync</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">lock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">sendpage</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">unsigned</span> <span class="nf">long</span> <span class="p">(</span><span class="o">*</span><span class="n">get_unmapped_area</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">check_flags</span><span class="p">)(</span><span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_write</span><span class="p">)(</span><span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_read</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">setlease</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">**</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">};</span>
+</span></span></code></pre></div><p>作为驱动程序，只需要实现部分回调函数，注册该结构体，用户态进程便可通过系统调用open，read等调用相应回调函数指针。</p>
+<p>首先，系统提供若干宏声明驱动程序的属性，如，入口，作者，描述信息等等。</p>
+<p>初始化程序原型为 <code>static int __init initialization(void);</code>若初始化成功则返回0，否则返回错误码。
+清理函数原型为<code>static void __exit cleanup(void);</code>其中<code>__init __exit</code>是指定代码段属性的宏，当然也可不指定此属性。</p>
+<p>另外宏MODULE_AUTHOR指明作者等等</p>
+<p>实现该函数后便可通过宏指明入口点：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="nf">module_init</span><span class="p">(</span><span class="n">initialization</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">module_exit</span><span class="p">(</span><span class="n">cleanup</span><span class="p">);</span>
+</span></span></code></pre></div><p>最简单的驱动程序就是仅仅实现这两个函数，文件simple.c如下:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="cp">#include</span><span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="cp">#include</span><span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	
+</span></span><span class="line"><span class="cl">	<span class="k">static</span> <span class="kt">int</span> <span class="n">__init</span> <span class="nf">initialization</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34; init simple</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="k">static</span> <span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34; cleanup simple</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="nf">module_init</span><span class="p">(</span><span class="n">initialization</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">module_exit</span><span class="p">(</span><span class="n">cleanup</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="nf">MODULE_AUTHOR</span><span class="p">(</span><span class="s">&#34;alloc cppbreak@gmail.com&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">MODULE_DESCRIPTION</span><span class="p">(</span><span class="s">&#34;A simple linux kernel module&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">MODULE_VERSION</span><span class="p">(</span><span class="s">&#34;V0.1&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;Dual BSD/GPL&#34;</span><span class="p">);</span>
+</span></span></code></pre></div><p>驱动的编译需要写Makefile文件，内容如下
+<code>obj-m := simple.o</code></p>
+<p>编译时需指定Linux内核源码所处位置：
+<code>make -C /usr/src/linux M=$PWD modules</code>
+其中/usr/src/linux为当前内核源码目录，<code>$PWD</code>为驱动程序所处目录，<code>PWD</code>为当前目录。</p>
+<p>执行成功后，会生成<code>simple.ko</code>文件，此文件即为驱动程序。</p>
+<p>加载驱动程序可执行 insmod simple.ko 卸载驱动执行 rmmod simple
+命令 lsmod 可以查看目前系统加载的驱动程序，modinfo simple.ko 查看程序的基本信息，输出即为程序声明信息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">	filename:       simple.ko
+</span></span><span class="line"><span class="cl">	license:        Dual BSD/GPL
+</span></span><span class="line"><span class="cl">	version:        V0.1
+</span></span><span class="line"><span class="cl">	description:    A simple linux kernel module
+</span></span><span class="line"><span class="cl">	author:         alloc cppbreak@gmail.com
+</span></span><span class="line"><span class="cl">	srcversion:     95E3CE3AB899900656E9CAD
+</span></span><span class="line"><span class="cl">	depends:        
+</span></span><span class="line"><span class="cl">	vermagic:       2.6.33.3-85.fc13.x86_64 SMP mod_unload
+</span></span></code></pre></div><p>在程序中调用了两次printk，为内核输出函数，这里的输出不会显示到控制台，只会输出到内核，可以通过读取<code>/proc/kmsg</code>文件查看信息，或者调用dmesg命令查看，此为内核跟踪错误的重要手段。KERN_INFO宏只是一个数字字符串，含义为日志级别，可以通过<code>echo num &gt; /proc/sys/kernel/printk</code> 来控制输出信息的级别。</p>
+<p>当然，只有此两个函数只能正常加载卸载驱动程序，并没有任何意义，下面通过注册回调函数来实现字符设备的功能，只举一个简单的例子，实现<code>open</code>,<code>read</code>,<code>close</code>函数。</p>
+<p>根据file_operations结构成员的原型，这里我们需要实现如下回调：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">open</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">release</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+</span></span></code></pre></div><p>open和close函数为了简单起见不做任何处理，只是简单的输出kernel信息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">simple_open</span><span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span> <span class="n">pnode</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span> <span class="n">pfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;open simple</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">simple_release</span><span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span> <span class="n">pnode</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span> <span class="n">pfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;close simple</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>对于read函数，因为需要把内核态的数据返回到用户态，而二者是具有堆栈隔离的，需要借助几个函数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">copy_from_user</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">to</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">from</span><span class="p">,</span> <span class="kt">long</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">copy_to_user</span><span class="p">(</span><span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">to</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">from</span><span class="p">,</span> <span class="kt">long</span> <span class="n">n</span><span class="p">);</span>
+</span></span></code></pre></div><p>copy_from_user 是把用户态数据from拷贝至内核态内存to中，coyp_to_user与之相反，返回结果为不能被复制的字节数，如果成功，则返回0，对于内核编程，错误处理非常重要，因为一微不足道的错误就可能导致系统崩溃，所以对于函数调用，要异常小心，需要区分每一个传入参数，以及判断每一个函数返回值，read函数可以实现如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="kt">ssize_t</span> <span class="nf">simple_read</span><span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span> <span class="n">pfile</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span> <span class="n">ppos</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="nf">copy_to_user</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;test data</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>到这里回调函数都已实现，但用户态进程如何才能访问驱动呢？这还得从初始化内核时说起，要访问一个设备，需要进行三个基本操作：
+第一，对于一个设备驱动，需要分配一个设备号来唯一标识；
+第二，需要注册回调函数至文件系统，以便上层回调；
+第三，需要创建一个设备节点，挂接至/dev/下，这样用户层就可类似打开文件驱动方式打开设备驱动了。</p>
+<p>由以上三点，重写设备初始化函数如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">static</span> <span class="kt">int</span> <span class="n">__init</span> <span class="nf">initialization</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="cm">/* 分配设备号 */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="nf">alloc_chrdev_region</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devno</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;simple&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="cm">/* 注册回调函数 */</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">cdev_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cdev</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">simple_op</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">result</span> <span class="o">=</span> <span class="nf">cdev_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cdev</span><span class="p">,</span> <span class="n">devno</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="cm">/* 创建设备节点 */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">simple_class</span> <span class="o">=</span> <span class="nf">class_create</span><span class="p">(</span><span class="n">THIS_MODULE</span><span class="p">,</span> <span class="s">&#34;simple&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">device_create</span><span class="p">(</span><span class="n">simple_class</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">devno</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;simple&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="nf">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34; init simple</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>当然，在exit函数中，需要对分配的资源逐一释放，整理之后代码如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	#include&lt;linux/init.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;linux/module.h&gt;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	#include&lt;linux/fs.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;linux/types.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;linux/cdev.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;linux/mm.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;linux/sched.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;asm/io.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;asm/uaccess.h&gt;
+</span></span><span class="line"><span class="cl">	#include&lt;asm/system.h&gt;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	#include&lt;linux/device.h&gt;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	dev_t devno;
+</span></span><span class="line"><span class="cl">	struct class * simple_class;
+</span></span><span class="line"><span class="cl">	static struct cdev cdev;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	ssize_t simple_read(struct file * pfile,
+</span></span><span class="line"><span class="cl">		char __user * buf, size_t size, loff_t * ppos)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		if (copy_to_user(buf, &#34;test data\n&#34;, 10))
+</span></span><span class="line"><span class="cl">			return -EFAULT;
+</span></span><span class="line"><span class="cl">		else
+</span></span><span class="line"><span class="cl">			return 10;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	int simple_open(struct inode * pnode, struct file * pfile)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		printk(KERN_INFO &#34;open simple\n&#34;);
+</span></span><span class="line"><span class="cl">		return 0;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	int simple_release(struct inode * pnode, struct file * pfile)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		printk(KERN_INFO &#34;close simple\n&#34;);
+</span></span><span class="line"><span class="cl">		return 0;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	static struct file_operations simple_op = 
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		.owner = THIS_MODULE,
+</span></span><span class="line"><span class="cl">		.read = simple_read,
+</span></span><span class="line"><span class="cl">		.open = simple_open,
+</span></span><span class="line"><span class="cl">		.release = simple_release,
+</span></span><span class="line"><span class="cl">	};
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	static int __init initialization(void)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		int result;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		result = alloc_chrdev_region(&amp;devno, 0, 1, &#34;simple&#34;);
+</span></span><span class="line"><span class="cl">		if (result &lt; 0)
+</span></span><span class="line"><span class="cl">			return result;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		cdev_init(&amp;cdev, &amp;simple_op);
+</span></span><span class="line"><span class="cl">		result = cdev_add(&amp;cdev, devno, 1);
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		simple_class = class_create(THIS_MODULE, &#34;simple&#34;);
+</span></span><span class="line"><span class="cl">		device_create(simple_class, NULL, devno, NULL, &#34;simple&#34;);
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		printk(KERN_INFO &#34; init simple\n&#34;);
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		return result;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	static void __exit cleanup(void)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		device_destroy(simple_class, devno);
+</span></span><span class="line"><span class="cl">		class_destroy(simple_class);
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		cdev_del(&amp;cdev);
+</span></span><span class="line"><span class="cl">		unregister_chrdev_region(devno, 1);
+</span></span><span class="line"><span class="cl">		printk(KERN_INFO &#34; cleanup simple\n&#34;);
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	module_init(initialization);
+</span></span><span class="line"><span class="cl">	module_exit(cleanup);
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	MODULE_AUTHOR(&#34;alloc cppbreak@gmail.com&#34;);
+</span></span><span class="line"><span class="cl">	MODULE_DESCRIPTION(&#34;A simple linux kernel module&#34;);
+</span></span><span class="line"><span class="cl">	MODULE_VERSION(&#34;V0.1&#34;);
+</span></span><span class="line"><span class="cl">	MODULE_LICENSE(&#34;Dual BSD/GPL&#34;);
+</span></span></code></pre></div><p>编译加载驱动后，<code>ls /dev/</code> 可查看到simple节点，调用 <code>cat /dev/simple</code> 命令，发现会不停输出 <code>test data</code>，原因是cat命令会输出文件所有内容，但此时的驱动只要调用read就会返回数据，不会到达文件结尾，会无休止输出，毕竟这是一个很简单的驱动，去除了影响理解框架的逻辑信息。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

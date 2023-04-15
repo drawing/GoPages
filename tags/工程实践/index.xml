@@ -8,10 +8,10 @@
         <language>zh-cn</language>
         <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>告警优化实践总结</title>
-        <link>https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</link>
         <pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</guid>
         <description>&lt;h2 id=&#34;一背景&#34;&gt;一、背景&lt;/h2&gt;
 &lt;p&gt;对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。&lt;/p&gt;
 &lt;p&gt;如何提升告警的有效性，准确识别问题，同时又不至于淹没在大量的无效告警中，正是本文所探讨的内容。&lt;/p&gt;
@@ -28,10 +28,10 @@
 &lt;li&gt;&lt;strong&gt;MTTR (Mean Time To Repair，平均修复时间）&lt;/strong&gt;：指系统从发生故障到维修结束之间的时间段的平均值。MTTR = ∑(T2+T3) / N&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;MTBF (Mean Time Between Failure，平均失效间隔）&lt;/strong&gt;：指系统两次故障发生时间之间的时间段的平均值。 MTBF = ∑(T2+T3+T1) / N&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28.png&#34;
 	width=&#34;2042&#34;
 	height=&#34;570&#34;
-	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu5a979aaa5aa33332aba320e38221ddbf_52476_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;可用性指标&#34;
@@ -55,10 +55,10 @@
 &lt;p&gt;监控系统应该解决两个问题：什么东西出故障了，以及为什么会出故障。其中“什么东西出故障了”即为现象，“为什么”则代表了原因（可能是中间原因）。现象和原因的区分是构建信噪比高的监控系统时最重要的概念。&lt;/p&gt;
 &lt;p&gt;在实践中，想绝对做到这两点几乎不可能，但我们可以无限趋向于理想模型。&lt;/p&gt;
 &lt;p&gt;告警一般是通过“现象”来判断，而是否有问题要看产生现象的原因判断。相同的现象引起的原因可能不同，这种“可能性”是导致误告警的最核心原因。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21.png&#34;
 	width=&#34;766&#34;
 	height=&#34;388&#34;
-	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu29ccfe0fe53ecdda0c1c2921c343f048_22316_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -68,10 +68,10 @@
 	
 &gt;&lt;/p&gt;
 &lt;p&gt;举个例子，请求失败告警，原因可能是请求内容有问题，也可能上游机器异常，或者是我们自身的服务处理异常。理想的情况肯定是期望告警有着唯一的原因，但实际上由于现实的复杂性，未必能够做到精准的区分。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50.png&#34;
 	width=&#34;916&#34;
 	height=&#34;510&#34;
-	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu2327c1f7372db7e1ba915d7be734e90c_37459_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -113,10 +113,10 @@
 &lt;/ul&gt;
 &lt;p&gt;以请求失败举例，告警平台是否可以区分不同原因类型告警，是否可以统计成功率告警，是否可以配置持续多久告警，是否可以配置环比同比条件告警；以及不同类型的阈值区分配置，不同条件下的短信，还是电话告警，短信一段时间未处理是否可以转换为电话通知，是否可以屏蔽重复告警等等。所有的特性都有利于我们设置一个精准的告警条件。&lt;/p&gt;
 &lt;p&gt;另外平台提供的统计和趋势，有利于我们进行针对性优化，查看每天每周的 TopN 告警是什么，整体的趋势是什么样的，从而进行针对性优化。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22.png&#34;
 	width=&#34;2806&#34;
 	height=&#34;938&#34;
-	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu1a79e1ab61b2888b041ef445b26705e5_89046_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -128,10 +128,10 @@
 &lt;h2 id=&#34;七告警处理流程&#34;&gt;七、告警处理流程&lt;/h2&gt;
 &lt;p&gt;前面提到了告警的优化是一个持续的过程，不存在一劳永逸的事情。需要每天或者每周安排值班人员负责告警事宜，这点上确实是需要一定的投入。值班同学需要持续关注告警的有效性，对于出现的无效告警，分析清楚原因，持续优化阈值或者告警策略。&lt;/p&gt;
 &lt;p&gt;合理的告警流转流程：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33.png&#34;
 	width=&#34;1688&#34;
 	height=&#34;174&#34;
-	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_480x0_resize_box_3.png 480w, https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hufbba04e51165607b71185eee78ffde0b_33700_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -155,6 +155,778 @@
 《一篇文章了解监控告警》：https://zhuanlan.zhihu.com/p/60416209
 《准确率、精度和召回率》：https://www.cnblogs.com/xuexuefirst/p/8858274.html
 《告警配置的一些原则和经验》http://wsfdl.com/devops/2018/02/07/configure_alarm.html&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux性能调优之内核篇</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/</link>
+        <pubDate>Thu, 03 Jul 2014 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/</guid>
+        <description>&lt;h1 id=&#34;进程管理&#34;&gt;进程管理&lt;/h1&gt;
+&lt;h2 id=&#34;进程&#34;&gt;进程&lt;/h2&gt;
+&lt;p&gt;进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为&lt;code&gt;task_struct&lt;/code&gt;，包含了进程的所有信息。&lt;/p&gt;
+&lt;p&gt;进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。&lt;/p&gt;
+&lt;p&gt;而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。&lt;/p&gt;
+&lt;p&gt;更加详细的内容可查阅Linux内核代码，&lt;a class=&#34;link&#34; href=&#34;../linux_kernel/linux-kernel-process-sched/&#34; &gt;进程调度&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;线程&#34;&gt;线程&lt;/h2&gt;
+&lt;p&gt;线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。&lt;/p&gt;
+&lt;p&gt;线程可通过&lt;code&gt;pthread_create&lt;/code&gt;创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。&lt;/p&gt;
+&lt;p&gt;线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。&lt;/p&gt;
+&lt;h2 id=&#34;中断&#34;&gt;中断&lt;/h2&gt;
+&lt;p&gt;进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统&lt;code&gt;/proc/interrupt&lt;/code&gt;查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。&lt;/p&gt;
+&lt;h1 id=&#34;函数调用&#34;&gt;函数调用&lt;/h1&gt;
+&lt;p&gt;函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;性能(次/S)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;ntohl&lt;/td&gt;
+&lt;td&gt;2.5亿&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;memset 1k&lt;/td&gt;
+&lt;td&gt;150w&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;getppid&lt;/td&gt;
+&lt;td&gt;1000w&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;getimeofday&lt;/td&gt;
+&lt;td&gt;30w-400w&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;socket&lt;/td&gt;
+&lt;td&gt;10w-50w&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;sendto&lt;/td&gt;
+&lt;td&gt;40w&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;更详细系统调用相关内容，可参考：&lt;a class=&#34;link&#34; href=&#34;../linux_kernel/reading/linux-kernel-system-call/&#34; &gt;系统调用&lt;/a&gt;。&lt;/p&gt;
+&lt;h1 id=&#34;文件系统&#34;&gt;文件系统&lt;/h1&gt;
+&lt;p&gt;文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数&lt;code&gt;fsync&lt;/code&gt;可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用&lt;code&gt;fsync&lt;/code&gt;把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。&lt;/p&gt;
+&lt;p&gt;在&amp;rsquo;/proc/vm&amp;rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。&lt;code&gt;dirty_background_ratio&lt;/code&gt;表示脏页占内存多少比例时，开始进行回收。&lt;code&gt;dirty_expire_centisecs&lt;/code&gt;表示当脏页存在多长时间以后回收。&lt;/p&gt;
+&lt;h1 id=&#34;系统指标&#34;&gt;系统指标&lt;/h1&gt;
+&lt;p&gt;Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。&lt;/p&gt;
+&lt;h2 id=&#34;cpu&#34;&gt;CPU&lt;/h2&gt;
+&lt;p&gt;判别CPU当前执行效能，可通过以下指标查看：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈&lt;/li&gt;
+&lt;li&gt;用户态时间：展现了CPU用户态的执行时间&lt;/li&gt;
+&lt;li&gt;系统时间：展现了内核态执行时间&lt;/li&gt;
+&lt;li&gt;Waiting：等待时间，如果出现大量的等待，IO可能出现瓶颈&lt;/li&gt;
+&lt;li&gt;Context switch：上下文切换&lt;/li&gt;
+&lt;li&gt;Interrupts：中断&lt;/li&gt;
+&lt;li&gt;Load average：等待CPU的进程队列大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;内存&#34;&gt;内存&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;空闲内存&lt;/li&gt;
+&lt;li&gt;swap使用大小&lt;/li&gt;
+&lt;li&gt;Buffer和Cache大小&lt;/li&gt;
+&lt;li&gt;Slabs 大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;网络&#34;&gt;网络&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;收包和发包量&lt;/li&gt;
+&lt;li&gt;收包和发包大小&lt;/li&gt;
+&lt;li&gt;丢包量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;磁盘&#34;&gt;磁盘&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;iowait，CPU等待IO时间&lt;/li&gt;
+&lt;li&gt;平均等待时间&lt;/li&gt;
+&lt;li&gt;执行时间&lt;/li&gt;
+&lt;li&gt;write和read每秒次数&lt;/li&gt;
+&lt;li&gt;write和read每秒大小&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux性能调优之硬件篇</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/</link>
+        <pubDate>Wed, 02 Jul 2014 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/</guid>
+        <description>&lt;h1 id=&#34;cpu性能&#34;&gt;CPU性能&lt;/h1&gt;
+&lt;p&gt;早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。&lt;/p&gt;
+&lt;p&gt;经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。&lt;/p&gt;
+&lt;p&gt;SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。&lt;/p&gt;
+&lt;p&gt;NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。&lt;/p&gt;
+&lt;h1 id=&#34;io-总线&#34;&gt;IO 总线&lt;/h1&gt;
+&lt;p&gt;很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。&lt;/p&gt;
+&lt;h1 id=&#34;磁盘&#34;&gt;磁盘&lt;/h1&gt;
+&lt;p&gt;磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间+数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。&lt;/p&gt;
+&lt;p&gt;固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。&lt;/p&gt;
+&lt;p&gt;不同存储的对比如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;IOPS&lt;/th&gt;
+&lt;th&gt;每GB价格（元）&lt;/th&gt;
+&lt;th&gt;随机读取&lt;/th&gt;
+&lt;th&gt;随机写入&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;内存&lt;/td&gt;
+&lt;td&gt;千万&lt;/td&gt;
+&lt;td&gt;150&lt;/td&gt;
+&lt;td&gt;友好&lt;/td&gt;
+&lt;td&gt;友好&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SSD盘&lt;/td&gt;
+&lt;td&gt;35000&lt;/td&gt;
+&lt;td&gt;20&lt;/td&gt;
+&lt;td&gt;友好&lt;/td&gt;
+&lt;td&gt;写入放大&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SAS磁盘&lt;/td&gt;
+&lt;td&gt;180&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;磁盘寻道&lt;/td&gt;
+&lt;td&gt;磁盘寻道&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SATA磁盘&lt;/td&gt;
+&lt;td&gt;90&lt;/td&gt;
+&lt;td&gt;0.5&lt;/td&gt;
+&lt;td&gt;磁盘寻道&lt;/td&gt;
+&lt;td&gt;磁盘寻道&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h1 id=&#34;网络&#34;&gt;网络&lt;/h1&gt;
+&lt;p&gt;传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。&lt;/p&gt;
+&lt;p&gt;为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。&lt;/p&gt;
+&lt;p&gt;单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。&lt;/p&gt;
+&lt;h1 id=&#34;性能参数&#34;&gt;性能参数&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;延迟&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;访问 L1 Cache&lt;/td&gt;
+&lt;td&gt;0.5ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;分支预测失败&lt;/td&gt;
+&lt;td&gt;5ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;访问 L2 Cache&lt;/td&gt;
+&lt;td&gt;7ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Mutex锁操作&lt;/td&gt;
+&lt;td&gt;100ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;内存访问&lt;/td&gt;
+&lt;td&gt;100ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;千兆网络发送1MB数据&lt;/td&gt;
+&lt;td&gt;10ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;从内存顺序读取1MB数据&lt;/td&gt;
+&lt;td&gt;0.25 ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;机房内网络来回&lt;/td&gt;
+&lt;td&gt;0.5ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;异地机房来回&lt;/td&gt;
+&lt;td&gt;30-100ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SATA磁盘寻道&lt;/td&gt;
+&lt;td&gt;10ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;从SATA磁盘顺序读取 1MB 数据&lt;/td&gt;
+&lt;td&gt;20ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;固态SSD访问延迟&lt;/td&gt;
+&lt;td&gt;01-0.2ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux性能调优之工具篇</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/</link>
+        <pubDate>Tue, 01 Jul 2014 01:16:33 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/</guid>
+        <description>&lt;p&gt;在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。&lt;/p&gt;
+&lt;p&gt;先来看一张各种工具的图谱，要想了解这张图中所有工具的确切含义，需要对Linux操作系统，以及内核实现有着一定的了解，所有的工具，都可以man具体的使用细节。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://i.imgur.com/pKopgkk.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;323&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;top&#34;&gt;top&lt;/h1&gt;
+&lt;p&gt;top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;top - 20:40:53 up 411 days,  2:55,  1 user,  load average: 2.75, 2.65, 2.43
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Tasks: 233 total,   1 running, 232 sleeping,   0 stopped,   0 zombie
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Cpu(s): 19.9%us,  4.0%sy,  0.0%ni, 71.9%id,  2.7%wa,  0.0%hi,  1.5%si,  0.0%st
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Mem:   8052640k total,  8001296k used,    51344k free,    51668k buffers
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Swap:  2104504k total,    25832k used,  2078672k free,  6776596k cached
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;18161 mqq       20   0 3796m 1.7g 927m S  166 22.1   9171:12 IphonePushServi
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  830 mqq       20   0  342m 199m 198m S   23  2.5  49542:15 VideoRelay
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 1342 admin     20   0     0    0    0 D    1  0.0 209:54.07 flush-8:0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;32390 mqq       20   0  502m 5164 2524 S    1  0.1 162:26.01 tafnode
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;16238 mqq       20   0  5664 1320  876 R    0  0.0   0:00.02 top
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;各行含义如下：&lt;/p&gt;
+&lt;h2 id=&#34;第一行系统信息&#34;&gt;第一行：系统信息&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;20:40:53：系统当前时间&lt;/li&gt;
+&lt;li&gt;up 411 days,  2:55：系统已经启动时间&lt;/li&gt;
+&lt;li&gt;1 user：当前登陆的用户数&lt;/li&gt;
+&lt;li&gt;load average：当前机器负载，三个数分别是1分钟、5分钟、15分钟的负载情况，程序每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;第二行进程信息&#34;&gt;第二行：进程信息&lt;/h2&gt;
+&lt;p&gt;依次分别是，总进成数，运行进程数，sleep进程数，stop进程数，还有僵尸进程数&lt;/p&gt;
+&lt;h2 id=&#34;第三行cpu信息&#34;&gt;第三行：cpu信息&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;us：用户空间占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;sy：内核空间占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;ni：改变过优先级的进程占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;id：空闲CPU百分比&lt;/li&gt;
+&lt;li&gt;wa：IO等待占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;hi：硬中断（Hardware IRQ）占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;si：软中断（Software Interrupts）占用CPU的百分比&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;第四行内存信息&#34;&gt;第四行：内存信息&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;total：总内存大小&lt;/li&gt;
+&lt;li&gt;used：已经使用内存大小&lt;/li&gt;
+&lt;li&gt;free：空闲内存大小&lt;/li&gt;
+&lt;li&gt;buffers：缓存内存大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;第五行交换区信息&#34;&gt;第五行：交换区信息&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;total：总交换区大小&lt;/li&gt;
+&lt;li&gt;used：已经使用交换区大小&lt;/li&gt;
+&lt;li&gt;free：空闲交换区大小&lt;/li&gt;
+&lt;li&gt;cached：cached缓存大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;列含义&#34;&gt;列含义&lt;/h2&gt;
+&lt;p&gt;各列含义如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PID：进程ID&lt;/li&gt;
+&lt;li&gt;USER：创建者&lt;/li&gt;
+&lt;li&gt;PRI：进程优先级&lt;/li&gt;
+&lt;li&gt;NI：nick level，负值表示高优先级&lt;/li&gt;
+&lt;li&gt;VIRT：进程使用的虚拟内存总量，单位kb（VIRT=SWAP+RES）&lt;/li&gt;
+&lt;li&gt;RES：进程使用的、未被换出的物理内存大小，单位kb（RES=CODE+DATA）&lt;/li&gt;
+&lt;li&gt;SHR：共享内存大小，单位kb&lt;/li&gt;
+&lt;li&gt;S：进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程&lt;/li&gt;
+&lt;li&gt;%CPU：上次更新到现在的CPU时间占用百分比&lt;/li&gt;
+&lt;li&gt;%MEM：进程使用的物理内存百分比&lt;/li&gt;
+&lt;li&gt;TIME+：进程使用的CPU时间总计，单位1/100秒&lt;/li&gt;
+&lt;li&gt;COMMAND：进程名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，按&lt;code&gt;1&lt;/code&gt;可以显示各个cpu情况，&lt;code&gt;top -H&lt;/code&gt;可以显示各个线程情况。&lt;/p&gt;
+&lt;h1 id=&#34;vmstat&#34;&gt;vmstat&lt;/h1&gt;
+&lt;p&gt;vmstat 可以查看进程、内存、分页、IO和CPU等信息，执行&lt;code&gt;vmstat 2&lt;/code&gt;(2秒统计一次)，输出如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;procs -----------memory---------- ---swap-- -----io---- -system-- -----cpu------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 4  0  25832  50440  52928 6841116    0    0   125   192    0    0  6  2 91  0  0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 2  0  25832  50440  52932 6839432    0    0     0     0 48744 61153 19  6 76  0  0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 2  0  25832  53176  52944 6836144    0    0     0   370 48132 63201 19  6 75  0  0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 2  0  25832  52184  52952 6836428    0    0     0    30 48525 63944 19  5 75  0  0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意：第一行数据显示系统上次启动后到现在的平均负载，需要排除在外。&lt;/p&gt;
+&lt;h2 id=&#34;procs&#34;&gt;procs&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;r：等待执行的进程数（显示cpu正在执行和等待cpu资源的进程数，该数字大于cpu个数，可能出现cpu性能瓶颈）&lt;/li&gt;
+&lt;li&gt;b：等待IO的进程数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;memory&#34;&gt;memory&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;swpd：正在使用的虚拟内存大小&lt;/li&gt;
+&lt;li&gt;free：空闲内存大小&lt;/li&gt;
+&lt;li&gt;buff：已用的 buff 大小，对块设备的读写进行缓冲&lt;/li&gt;
+&lt;li&gt;cache：文件系统缓存 cache 大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;swap&#34;&gt;swap&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;si：每秒从交换区写入内存的大小（kb/s）&lt;/li&gt;
+&lt;li&gt;so：每秒从内存写到交换区的大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;io&#34;&gt;io&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;bi：每秒读取的块数（读磁盘）&lt;/li&gt;
+&lt;li&gt;bo：每秒写入的块数（写磁盘）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;system&#34;&gt;system&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;in：每秒中断数，包括时钟中断&lt;/li&gt;
+&lt;li&gt;cs：每秒上下文切换数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;cpu&#34;&gt;cpu&lt;/h2&gt;
+&lt;p&gt;含义见 top-cpu信息&lt;/p&gt;
+&lt;h1 id=&#34;uptime&#34;&gt;uptime&lt;/h1&gt;
+&lt;p&gt;见 top 第一行：系统信息&lt;/p&gt;
+&lt;h1 id=&#34;free&#34;&gt;free&lt;/h1&gt;
+&lt;p&gt;free 命令主要查看内存的使用情况：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;             total       used       free     shared    buffers     cached
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Mem:       8052640    8000400      52240          0      52872    6853252
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-/+ buffers/cache:    1094276    6958364
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Swap:      2104504      25832    2078672
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;第二行含义：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;total：总物理内存大小&lt;/li&gt;
+&lt;li&gt;used：已使用内存大小（包括系统cache）&lt;/li&gt;
+&lt;li&gt;free：空闲内存大小&lt;/li&gt;
+&lt;li&gt;shared：多个进程共享的内存大小&lt;/li&gt;
+&lt;li&gt;buffers：buffer大小（块设备缓存）&lt;/li&gt;
+&lt;li&gt;cached：cache大小（文件系统缓存）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;第三行：&lt;/p&gt;
+&lt;p&gt;used/free：已使用内存大小和空闲内存大小，跟第二行相同字段的区别在于减去了buffer和cache，buffer和cache从操作系统角度来讲是已经使用的内存，但当系统可用内存不足时，操作系统会释放buffer和cache，对进程来讲，这部分内存也是可用的。&lt;/p&gt;
+&lt;p&gt;第四行：参考 top&lt;/p&gt;
+&lt;h1 id=&#34;iostat&#34;&gt;iostat&lt;/h1&gt;
+&lt;p&gt;此命令用户输出cpu和磁盘io相关的统计信息，默认不加参数输出的是系统启动后到现在的统计情况，一般当系统启动很长时间以后，不具有太大的参考意义：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Linux 2.6.32.43-tlinux-1.0.8-state (10_135_11_35_kqq)   01/13/2015      _x86_64_
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;           5.64    0.49    2.84    0.41    0.00   91.20
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda              25.64      2006.79      3075.79 71288307775 109262888974
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda1              0.99        14.09         5.05  500582972  179528792
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda2              0.00         0.00         0.00      13182     142936
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda3              3.54        25.77        80.34  915263981 2853850978
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda4             21.11      1966.93      2990.39 69872425096 106229366268
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;字段含义如下：&lt;/p&gt;
+&lt;h2 id=&#34;cpu-1&#34;&gt;cpu&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;%user: 在用户级别运行所使用的CPU的百分比&lt;/li&gt;
+&lt;li&gt;%nice: nice操作所使用的CPU的百分比&lt;/li&gt;
+&lt;li&gt;%sys: 在系统级别(kernel)运行所使用CPU的百分比&lt;/li&gt;
+&lt;li&gt;%iowait: CPU等待硬件I/O时,所占用CPU百分比&lt;/li&gt;
+&lt;li&gt;%idle: CPU空闲时间的百分比&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;device&#34;&gt;Device&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;tps: 每秒钟发送到的I/O请求数&lt;/li&gt;
+&lt;li&gt;Blk_read /s: 每秒读取的block数&lt;/li&gt;
+&lt;li&gt;Blk_wrtn/s: 每秒写入的block数&lt;/li&gt;
+&lt;li&gt;Blk_read:   读入的block总数&lt;/li&gt;
+&lt;li&gt;Blk_wrtn:  写入的block总数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外，iostate可以加入一些参数执行更为丰富的功能：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;iostat -d 2&lt;/code&gt;：每隔两秒统计一次（注：第一行仍然显示系统启动至今的统计）
+&lt;code&gt;iostat -x -d 2&lt;/code&gt;：显示更加详细的信息，2秒统计一次
+&lt;code&gt;iostat -d 2 6&lt;/code&gt;：两秒统计一次，统计6次&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;-x&lt;/code&gt;参数显示详细信息，具体字段如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Device:         rrqm/s   wrqm/s     r/s     w/s   rsec/s   wsec/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await  svctm  %util
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda               0.50     0.00   19.50    4.50   332.00  1772.00   166.00   886.00    87.67     0.27   77.67   3.08   7.40
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;解释：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;rrqm/s（wrqm/s）：将读（写）入请求合并后,每秒发送到设备的读（写）入请求数&lt;/li&gt;
+&lt;li&gt;r/s（w/s）：每秒发送到设备的读（写）入请求数&lt;/li&gt;
+&lt;li&gt;rsec/s（wsec/s）：每秒从设备读（写）入的扇区数&lt;/li&gt;
+&lt;li&gt;rkB/s（wkB/s）：每秒从设备读（写）入的数据量,单位为K&lt;/li&gt;
+&lt;li&gt;avgrq-sz：发送到设备的请求的平均大小，单位是扇区&lt;/li&gt;
+&lt;li&gt;avgqu-sz： 发送到设备的请求的平均队列长度&lt;/li&gt;
+&lt;li&gt;await：I/O请求平均执行时间，包括发送请求和执行的时间，单位是毫秒&lt;/li&gt;
+&lt;li&gt;svctm：发送到设备的I/O请求的平均执行时间，单位是毫秒&lt;/li&gt;
+&lt;li&gt;%util：在I/O请求发送到设备期间，占用CPU时间的百分比（此值越大，表示设备占用率越高，100时表示设备已占满）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;sar&#34;&gt;sar&lt;/h1&gt;
+&lt;p&gt;sar 可以显示多种系统资源，具体命令格式：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sar [options] [-A] [-o file] t [n]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在命令行中，n 和 t 两个参数组合起来定义采样间隔和次数，t为采样间隔，是必须有的参数，n为采样次数，是可选的，默认值是1，-o file表示将命令结果以二进制格式存放在文件中，file 在此处不是关键字，是文件名。options 为命令行选项。&lt;/p&gt;
+&lt;p&gt;sar 常用的命令选项有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-A：所有报告的总和&lt;/li&gt;
+&lt;li&gt;-u：CPU利用率&lt;/li&gt;
+&lt;li&gt;-v：进程、I节点、文件和锁表状态&lt;/li&gt;
+&lt;li&gt;-d：硬盘使用报告&lt;/li&gt;
+&lt;li&gt;-r：没有使用的内存页面和硬盘块&lt;/li&gt;
+&lt;li&gt;-g：串口I/O的情况&lt;/li&gt;
+&lt;li&gt;-b：缓冲区使用情况&lt;/li&gt;
+&lt;li&gt;-a：文件读写情况&lt;/li&gt;
+&lt;li&gt;-c：系统调用情况&lt;/li&gt;
+&lt;li&gt;-R：进程的活动情况&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;iotop&#34;&gt;iotop&lt;/h1&gt;
+&lt;p&gt;有时机器磁盘使用率过高，想知道哪个进程占用磁盘过大，可使用 iotop 命令：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;iotop –b –n 3 –d 5&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-h, &amp;ndash;help				#显示帮助信息&lt;/li&gt;
+&lt;li&gt;-o, &amp;ndash;only				#显示进程或者线程实际上正在做的I/O，而不是全部的，可以随时切换按o&lt;/li&gt;
+&lt;li&gt;-b, &amp;ndash;batch				#运行在非交互式的模式&lt;/li&gt;
+&lt;li&gt;-n NUM, &amp;ndash;iter=NUM		#在非交互式模式下，设置显示的次数，&lt;/li&gt;
+&lt;li&gt;-d SEC, &amp;ndash;delay=SEC		#设置显示的间隔秒数，支持非整数值&lt;/li&gt;
+&lt;li&gt;-p PID, &amp;ndash;pid=PID			#只显示指定PID的信息&lt;/li&gt;
+&lt;li&gt;-u USER, &amp;ndash;user=USER		#显示指定的用户的进程的信息&lt;/li&gt;
+&lt;li&gt;-P, &amp;ndash;processes			#只显示进程，一般为显示所有的线程&lt;/li&gt;
+&lt;li&gt;-a, &amp;ndash;accumulated			#显示从iotop启动后每个线程完成了的IO总数&lt;/li&gt;
+&lt;li&gt;-k, &amp;ndash;kilobytes			#以千字节显示&lt;/li&gt;
+&lt;li&gt;-t, &amp;ndash;time				#在每一行前添加一个当前的时间&lt;/li&gt;
+&lt;li&gt;-q, &amp;ndash;quiet				#suppress some lines of header (implies &amp;ndash;batch). This option can be specified up to three times to remove header lines.&lt;/li&gt;
+&lt;li&gt;-q     					# column names are only printed on the first iteration,&lt;/li&gt;
+&lt;li&gt;-qq    					# column names are never printed,&lt;/li&gt;
+&lt;li&gt;-qqq   					# the I/O summary is never printed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;mpstat&#34;&gt;mpstat&lt;/h1&gt;
+&lt;p&gt;mpstat 主要显示cpu相关信息，跟 vmstat 相比优点在于可以分别显示各个cpu的情况。执行&lt;code&gt;mpstat -P ALL 1&lt;/code&gt;，显示所有CPU状态，采样间隔1s。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:44 PM  CPU    %user   %nice    %sys %iowait    %irq   %soft  %steal  %idle    %intr/s    %guest
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:45 PM  all   19.43    0.00    4.86    3.86    0.00    1.99    0.00   69.86   50984.00    0.00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:45 PM    0   33.33    0.00    5.05    0.00    0.00    2.02    0.00   59.60    4623.00    0.00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:45 PM    1   27.72    0.00    4.95    0.00    0.00    0.99    0.00   66.34    5771.00    0.00
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;参数含义：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;%user：表示处理用户进程所使用 CPU 的百分比&lt;/li&gt;
+&lt;li&gt;%nice：表示使用 nice 命令对进程进行降级时 CPU 的百分比&lt;/li&gt;
+&lt;li&gt;%sys：表示内核进程使用的 CPU 百分比&lt;/li&gt;
+&lt;li&gt;%iowait：表示等待进行 I/O 所使用的 CPU 时间百分比&lt;/li&gt;
+&lt;li&gt;%irq：表示用于处理系统中断的 CPU 百分比&lt;/li&gt;
+&lt;li&gt;%soft：表示用于软件中断的 CPU 百分比&lt;/li&gt;
+&lt;li&gt;%steal：管理程序维护另一个虚拟处理器时，虚拟CPU的无意识等待时间百分比&lt;/li&gt;
+&lt;li&gt;%idle：显示 CPU 的空闲时间&lt;/li&gt;
+&lt;li&gt;%intr/s：显示每秒 CPU 接收的中断总数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;pmap&#34;&gt;pmap&lt;/h1&gt;
+&lt;p&gt;pmap 用于查看进程的内存映像信息。使用方式：&lt;code&gt;pmap -d &amp;lt;pid&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;18161: IphonePushServi
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;START               SIZE     RSS     PSS   DIRTY    SWAP PERM OFFSET   DEVICE MAPPING
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0000000000400000   7292K   3252K   3252K      0K      0K r-xp 0000000000000000 08:04  IphonePushService
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0000000000c1f000    116K     92K     92K     44K      0K rw-p 000000000071f000 08:04  IphonePushService
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;字段含义如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;START: 内存开始地址&lt;/li&gt;
+&lt;li&gt;SIZE: 占用内存的字节数（KB）&lt;/li&gt;
+&lt;li&gt;RSS: 保留内存的字节数（KB）&lt;/li&gt;
+&lt;li&gt;Dirty: 脏页的字节数（包括共享和私有的）&lt;/li&gt;
+&lt;li&gt;PERM: 内存的权限&lt;/li&gt;
+&lt;li&gt;Offset: 文件偏移&lt;/li&gt;
+&lt;li&gt;Device: 设备名 (major:minor)&lt;/li&gt;
+&lt;li&gt;MAPPING: 对应的映像文件名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;netstat&#34;&gt;netstat&lt;/h1&gt;
+&lt;p&gt;netstat 是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。&lt;/p&gt;
+&lt;p&gt;该命令的一般形式：&lt;code&gt;netstat [-a][-e][-n][-o][-p Protocol][-r][-s][Interval]&lt;/code&gt;，执行 &lt;code&gt;netstat -anop&lt;/code&gt; 显示信息：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name Timer
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN      -                off (0.00/0/0)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      -                off (0.00/0/0)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcp        0      0 127.0.0.1:8088          0.0.0.0:*               LISTEN      24346/tunnel     off (0.00/0/0)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中需要关注&lt;code&gt;Recv-Q&lt;/code&gt;，&lt;code&gt;Send-Q&lt;/code&gt;，分别表示发送队列和接受队列大小，当&lt;code&gt;Recv-Q&lt;/code&gt;过大，意味着当前程序无法及时接收数据包，&lt;code&gt;Send-Q&lt;/code&gt;过大，表示对端网络状况不好或者达到对端性能瓶颈。&lt;/p&gt;
+&lt;h1 id=&#34;tcpdump&#34;&gt;tcpdump&lt;/h1&gt;
+&lt;p&gt;tcpdump 可以截获网络数据包，对于网络协议的联调和测试有很大的辅助作用。&lt;/p&gt;
+&lt;p&gt;tcpdump 它的命令格式为：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcpdump [-adeflnNOpqStvx] [-c 数量] [-F filename] [-i 网络接口] [-r 文件名] [ -s snaplen ] [ -T 类型 ] [ -w 文件名 ] [表达式]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;选项说明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-a 将网络地址和广播地址转变成名字&lt;/li&gt;
+&lt;li&gt;-d 　将匹配信息包的代码以人们能够理解的汇编格式给出&lt;/li&gt;
+&lt;li&gt;-dd 　将匹配信息包的代码以c语言程序段的格式给出&lt;/li&gt;
+&lt;li&gt;-ddd 　将匹配信息包的代码以十进制的形式给出&lt;/li&gt;
+&lt;li&gt;-e 　在输出行打印出数据链路层的头部信息&lt;/li&gt;
+&lt;li&gt;-f 　将外部的Internet地址以数字的形式打印出来&lt;/li&gt;
+&lt;li&gt;-l 　使标准输出变为缓冲行形式&lt;/li&gt;
+&lt;li&gt;-n 　不把网络地址转换成名字&lt;/li&gt;
+&lt;li&gt;-t 　在输出的每一行不打印时间戳&lt;/li&gt;
+&lt;li&gt;-v 　输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息&lt;/li&gt;
+&lt;li&gt;-vv 　输出详细的报文信息&lt;/li&gt;
+&lt;li&gt;-c 　在收到指定的包的数目后，tcpdump就会停止&lt;/li&gt;
+&lt;li&gt;-F 　从指定的文件中读取表达式，忽略其它的表达式&lt;/li&gt;
+&lt;li&gt;-i 　指定监听的网络接口&lt;/li&gt;
+&lt;li&gt;-r 　从指定的文件中读取包(这些包一般通过-w选项产生)&lt;/li&gt;
+&lt;li&gt;-w 　直接将包写入文件中，并不分析和打印出来&lt;/li&gt;
+&lt;li&gt;-T 　将监听到的包直接解释为指定的类型的报文，常见的类型有 rpc 和 snmp&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;strace&#34;&gt;strace&lt;/h1&gt;
+&lt;p&gt;strace 可以查看一个进程所调用的系统api情况，在某些情况下，知道系统所调用的api，可以判断程序运行时的一些状态，该命令使用方式：&lt;code&gt;strace -p &amp;lt;PID&amp;gt;&lt;/code&gt;。可以查看调用的api和参数。&lt;/p&gt;
+&lt;h1 id=&#34;lsof&#34;&gt;lsof&lt;/h1&gt;
+&lt;p&gt;lsof 是一个列出当前系统打开文件的工具。在linux环境下，任何事物都以 文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。所以如传输控制协议(TCP)和用户数据报协议(UDP)套接字等，系统在后台都为该应用程序分配了一个文件描述符，通过lsof工具能够查看这个列表的详细信息。&lt;/p&gt;
+&lt;p&gt;lsof 的使用方法可以参考这里。这里列出几种常见的用法。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;查看文件系统阻塞 &lt;code&gt;lsof /boot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;查看端口号被哪个进程占用 &lt;code&gt;lsof -i :3306&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;查看用户打开哪些文件 &lt;code&gt;lsof -u username&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;查看进程打开哪些文件 &lt;code&gt;lsof -p 4838&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;查看远程已打开的网络链接&lt;code&gt; lsof -i @192.168.34.128&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;proc文件系统&#34;&gt;proc文件系统&lt;/h1&gt;
+&lt;p&gt;在Linux上&lt;code&gt;/proc/&lt;/code&gt;是很特殊的文件系统，存储了内核当前运行状态的虚拟文件系统&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/proc/meminfo&lt;/code&gt;：当前系统内存状态&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/proc/cpuinfo&lt;/code&gt;：cpu状态&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/proc/&amp;lt;PID&amp;gt;&lt;/code&gt;：PID进程信息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/proc/&amp;lt;PID&amp;gt;/cmdline&lt;/code&gt;：进程执行命令行信息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/proc/&amp;lt;PID&amp;gt;/exe&lt;/code&gt;：软链接，指向当前执行进程&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/proc/sys/net/ipv4/tcp_wmem&lt;/code&gt;：tcp write buffer值，分别表示：最小，默认，最大&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;benchmark&#34;&gt;Benchmark&lt;/h1&gt;
+&lt;p&gt;除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，有时候通过测试系统固有的特定，是一个好的选择。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lmbench&lt;/td&gt;
+&lt;td&gt;反应时间测评工具，上下文切换，网络：连接的建立，管道，文件系统的建立和删除，内存读入反应时间等等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;IOzone&lt;/td&gt;
+&lt;td&gt;测试不同的操作系统中文件系统的读写性能&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;netperf&lt;/td&gt;
+&lt;td&gt;测试网络的性能&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;bonnie&lt;/td&gt;
+&lt;td&gt;磁盘IO和文件系统测试&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;iperf&lt;/td&gt;
+&lt;td&gt;网络测试&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ab(Apache)&lt;/td&gt;
+&lt;td&gt;web server 测试&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;其中 Lmbench 可以测试读写内存，网络建立，上下文切换等性能，这可以提供给我们很好的参考，作为架构师，一定需要了解各种性能指标，甚至主要api调用性能，才能更合理的使用。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>软件版本对系统架构的理解</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/</link>
+        <pubDate>Wed, 01 Jun 2011 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/</guid>
+        <description>&lt;p&gt;之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。&lt;/p&gt;
+&lt;p&gt;一个软件，其构架是否合理，没有相关的经验是比较难领悟的，但一个开源软件的精华往往在于其构架，学习其构架可以通过仔细阅读其中某一个版本，但是更好的方式是去关注不同版本中的变化，构架的合理性只有通过不断的演变才能体现出来，好的设计在不断演化中仍旧能保持很好的韧性，差的设计就需要不断做出大的变更才能适应变化的需求，而版本的更替最能有效的看到这种衍化，也能更深层理解设计。&lt;/p&gt;
+&lt;p&gt;构建一个系统并不难，所有的难度都在于随着时间的推移，系统在不断的演化，可能是需求在不断变更，也可能是开始无法把所有细节考虑周全，在系统发生变化的时候，往往为了便利而破坏开始的设计，可能是为了获取一个配置而打破原有的封装，可能是为了复用一段工具代码而更改原本私有的方法，在实践中原本的封装，往往不是那么显而易见，而且重构代码的成本往往超出我们预估，以致时常为了一时的便利让代码结构变得混乱。如何维持清晰的层次结构，除了经验，还需要一点“洁癖”。&lt;/p&gt;
+&lt;p&gt;另一个极端就是设计过度，记得我维护一个同事的代码，发现他把 XML 的每一项都抽象成了接口，每在 XML 里加一项，就必须对他复杂的类层次增加一个接口，XML 的易扩展特性完全无法体现，那开始的时候为什么要用 XML 呢？其实说过度设计完全是抬举这种做法，这种做法完全就是错误的设计，接口的作用就是封装变化，而他相反，把最容易变化的部分抽象成了接口，很是无语，如果不对这段代码进行维护，他可能会觉得自己的设计分离了 XML 的实现，是很完美的面向对象体现（看他注释经常出现这是面向对象的 XX 之类）。所以设计好与坏，可能当时没有感觉，但在实践中演化，所有的利弊便一览无余，演化是检验设计的唯一标准啊。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>一切尽在掌握</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/everything-under-control/</link>
+        <pubDate>Wed, 12 Jan 2011 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/everything-under-control/</guid>
+        <description>&lt;blockquote&gt;
+&lt;p&gt;长兄于病视神，未有形而除之，故名不出于家。中兄治病，其在毫毛，故名不出于闾。若扁鹊者，镵血脉，投毒药，副肌肤，闲而名出闻于诸侯。———— 扁鹊&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;对于一个&lt;code&gt;7*24&lt;/code&gt;小时对外服务的架构，一定要对服务的各个方面极致的掌控，做到“一切尽在掌握”，面对服务心中不是模糊的、可能的，而是确定的。下面通过各个方面来说明如何做到一切尽在掌握。&lt;/p&gt;
+&lt;p&gt;下面从一个设计一个服务的各个方面来简单介绍一下如何做到尽在掌握，开发一个服务，分为几个阶段，每个阶段都有自身着重需要关注的点，这里从 设计之初-&amp;gt;开发过程-&amp;gt;发布过程-&amp;gt;上线运营几个方面来介绍，其实开发阶段能够掌控的非常有限，大多数的问题和要点都需要在设计之初关注，而且可以发现，这篇文章所介绍的要点大都是防御性方法，可能会让人觉得谨小慎微，但对重要的服务而言，正需要开发者怀着敬畏之心。&lt;/p&gt;
+&lt;h1 id=&#34;性能&#34;&gt;性能&lt;/h1&gt;
+&lt;p&gt;对于一个Server，很多人都会觉得性能是一个服务最重要的方面，有时甚至会认为写一个服务就是尽可能提升性能，性能越好，服务就被评价为写的越好。但其实不然，首先在当前的硬件水平和操作系统提供的优化的基础上，想要实现一个不错的性能的服务，是轻而易举的，而且目前开源框架非常成熟，选择一个适合自身服务的也非常容易；其次，出现性能问题往往在于架构的设计上，而不是单机所能处理的性能，在互联网时代，基本上不存在只有单机的服务；再者，如果想提升一倍的性能需要很多人力很长时间，但是如果服务设计能够水平扩展，想提升一倍性能只要增加一倍机器即可；最后，虽然每个人都希望服务的性能尽可能好，但真正需要很高性能的服务却并不多，并不一定性能越高越好，适合业务需要的性能才是最好的设计，设计一个服务要做到低成本高可用。&lt;/p&gt;
+&lt;p&gt;但是性能是不是不重要呢？当然不是，尤其是面对海量用户的服务，比如任何一个模块都上百台机器，增加一倍的性能成本消耗是非常可观的成本，大多数开发者都会写Demo进行性能验证，但其实在设计之初，就应该对服务的性能情况了如指掌。&lt;/p&gt;
+&lt;p&gt;对性能时常有个误解，通过测试数据去优化，但是性能测试往往滞后，其实要在设计之初做好规划，要对系统、组件、依赖的性能都了如指掌，未必要了解期代码，但必须了解其实现。&lt;/p&gt;
+&lt;p&gt;比如&lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/linux-performance-kernel.html#toc_4&#34; &gt;性能调优之函数调用&lt;/a&gt;和&lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/linux-performance-hardware.html#toc_4&#34; &gt;硬件性能参数&lt;/a&gt;两张表，一些常用的操作或者逻辑性能，需要了然于胸，这样在设计服务的时候，可以快速的在脑海中定位到性能瓶颈，并预知到服务所能处理的请求量。比如锁操作，每秒只可以执行10000000次，远大于所能处理的请求量，真正应该担心的不是锁造成的开销，而是某一资源的竞态。&lt;/p&gt;
+&lt;p&gt;设计一个服务，在设计阶段需要预先计算以下指标：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;延迟：每个请求预计的耗时，这里主要计算网络耗时和磁盘耗时&lt;/li&gt;
+&lt;li&gt;每秒处理能力：需要考虑服务的性能瓶颈，预算处理能力，这个指标也是衡量一个服务的最重要指标&lt;/li&gt;
+&lt;li&gt;容量：一台机器能够存储多少用户数据，总共需要多少存储，能够存储几天，增长曲线如何等&lt;/li&gt;
+&lt;li&gt;吞吐量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;架构设计&#34;&gt;架构设计&lt;/h1&gt;
+&lt;h2 id=&#34;缓存&#34;&gt;缓存&lt;/h2&gt;
+&lt;p&gt;缓存是服务性能的加速器，一个好的缓存方案能够极大的提升服务性能，设计缓存需要考虑几个方面：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;缓存的命中率：对某些运算结果进行缓存或者某些数据缓存，在设计的时候要预估命中率&lt;/li&gt;
+&lt;li&gt;缓存的更新：缓存的数据是否能够得到及时更新，更新时延是否能够满足业务需求&lt;/li&gt;
+&lt;li&gt;缓存重启：当大面积缓存机器重启时，是否会对后端服务造成很大压力导致雪崩&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;缓存具体的设计方案与业务息息相关，需要针对不同的情况缓存合理的数据。&lt;/p&gt;
+&lt;h2 id=&#34;伸缩性&#34;&gt;伸缩性&lt;/h2&gt;
+&lt;p&gt;服务提供方也许经常会由于做活动，或者某些爆发事件导致请求量急剧增长，面对这类服务，要考虑很好的伸缩性，在需要扩容的时候，扩容的时延级别是什么样的，分钟级、小时级、还是天级。&lt;/p&gt;
+&lt;p&gt;对于无状态服务，扩容往往很简单，增加机器并部署即可，区别在于这个过程是否需要手工干预，但对于有状态服务，扩容时需要把数据进行分片复制，除非是做分布式存储的业务，否则建议尽量使用适合业务模型的可以动态扩容的分布式存储。对于业务方，更需要考虑缓存的动态扩容，比如使用一致性Hash，尽量减少增删机器时缓存的失效比率。&lt;/p&gt;
+&lt;p&gt;另外根据业务的不同，有些业务可能会瞬时的请求量暴增，比如QQ业务，在除夕夜会造成请求量突增，但由于原本体量过大，不会有很多倍的暴涨。但对于微博则不同，预留几倍的性能空间是非常必要的，又比如秒杀业务，瞬时请求又会高的惊人。事先考虑伸缩性以及预留足够的扩容时延空间，可以很好的应对请求量和用户量迅速上涨的情况。&lt;/p&gt;
+&lt;h2 id=&#34;重试过载保护&#34;&gt;重试/过载保护&lt;/h2&gt;
+&lt;p&gt;在调用一个服务接口时，会出现三种情况，成功、失败、超时，其中成功和失败相对容易处理，但对于超时，可能对方已经操作成功，只是还未来得及回包，或者处理失败，对于调用者来说无法知道是哪种情况，而且为了服务质量，提升成功率，必须要做重试处理，当然，有了重试就需要去重，服务提供方需要有机制确保同样的请求调用多次不会出现问题。&lt;/p&gt;
+&lt;p&gt;当然，如果服务提供方由于请求量暴涨，或者内部处理异常的原因导致无法处理当前的请求量，比如服务一秒钟只能处理8k请求量，当请求量达到1w时，表面上看起来有2k请求量无法处理，不过由于请求方重试，导致下一秒请求量增长到1w2，而服务还在处理上一秒的2k请求，这样会导致处理方永远处理的是已经超时的请求，而且随着请求方重试，又会导致请求量不断上涨，造成“雪崩”，所以在设计服务的时候，需要考虑雪崩情况下的过载保护，由于处理能力已经跟不上请求量，造成2k/s的请求失败是必然的，要果断抛弃不能正常处理的请求，起码能够服务百分之80的用户。&lt;/p&gt;
+&lt;h2 id=&#34;冷热分离&#34;&gt;冷热分离&lt;/h2&gt;
+&lt;p&gt;有些情况下为了提升性能，又需要把冷数据和热的数据分离，根据需要可以对最近的经常使用的数据保存在内存或者SSD磁盘，对很久之前的访问量较少的数据保存在磁盘，当然相关的策略都需要根据业务进行决策。当然设计冷热数据交互沉淀的系统复杂度较高，没有十分的必要，尽量使用缓存的方式。&lt;/p&gt;
+&lt;h1 id=&#34;自动测试&#34;&gt;自动测试&lt;/h1&gt;
+&lt;p&gt;自动化测试对于开发来讲并不是必须的，但如果有自动测试的服务，稳定性会的到质的提升，关于自动测试可以参考文章&lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/thinking-in-unit-tests.html&#34; &gt;单元测试的思考&lt;/a&gt;。&lt;/p&gt;
+&lt;h1 id=&#34;灰度染色&#34;&gt;灰度染色&lt;/h1&gt;
+&lt;p&gt;所谓灰度，就是指介于黑和白之间，比如新功能发布过程中，先找一部分灰度用户试用，根据反馈情况再决定是进一步扩大还是做一些调整，在发布过程中也可以使用灰度策略，先发布部分机器或者用户，可以及早的在小范围内发现问题，及时修复。&lt;/p&gt;
+&lt;p&gt;灰度的粒度可大可小，往小了说可以只对某些人生效，比如开发人员和产品人员；再扩大可以为全公司内部人员；或者可以灰度某个号段或者活跃/非活跃用户。&lt;/p&gt;
+&lt;p&gt;灰度可以用在开发、发布、运营的不同阶段，下面逐一举例：&lt;/p&gt;
+&lt;h2 id=&#34;功能灰度&#34;&gt;功能灰度&lt;/h2&gt;
+&lt;p&gt;产品上开发了某个新功能，但不知道功能的效果如何，比如优化了某种算法，分别对不同的用户使用不同的算法，对比其反馈效果，这也就是常说的AB Test，可以通过试错的方式快速迭代产品。另外从开发的角度，可能重构了部分模块代码，或者新功能尚不稳定，可以先开放给内部用户使用，通过数据上报或者人工反馈的方式，在开放给外部用户之前，预先通过实践检验代码是否有问题。&lt;/p&gt;
+&lt;p&gt;实现上讲，需要通过一个机制可以快速判断一个用户是否灰度用户，可以通过本地Hash+远程定时同步的方式来做，另外是否灰度，灰度号码，或是按照号段灰度，或是全量。&lt;/p&gt;
+&lt;h2 id=&#34;发布灰度&#34;&gt;发布灰度&lt;/h2&gt;
+&lt;p&gt;从发布角度，因为90%以上的事故都是发布引起的，即使遵循严格发布规范，仍然可能存在隐藏的代码BUG，出现BUG或者事故不可避免，但是需要通过一系列机制保证事故的影响范围尽可能小，其中一项就是灰度发布，如果模块存在大量的机器，需要预先发布其中一台，根据风险程度进行不同时长的观察，确认无误后再逐渐扩大范围。&lt;/p&gt;
+&lt;h2 id=&#34;染色运营&#34;&gt;染色运营&lt;/h2&gt;
+&lt;p&gt;线上的大多数问题，都需要日志来确定原因，但是线上环境如果打印过于详细的日志，会导致性能的急剧下降，如果打印很精简又不容易查找问题，面对两难情况，一个解决办法就是使用染色号码，并不针对所有用户都打印详细的日志，只对某一些染色的号码打印详细日志，如果有用户出现问题，可以对这些号码染色，一旦复现问题，便可以轻而易举定位，同时，也不会造成系统性能下降。当然，对于一些重要服务和重要节点，全量的日志也不可避免。&lt;/p&gt;
+&lt;p&gt;当然这一切都需要快速的染色号码查找和同步机制，以及灵活的配置系统所支撑，构建相应的基础设置是非常值得的。&lt;/p&gt;
+&lt;h1 id=&#34;日志&#34;&gt;日志&lt;/h1&gt;
+&lt;p&gt;日志的重要性不必多说，多数线上问题，以及一些对账机制，都依赖完善的日志系统，多数的日志组件，都会打印到本地，但是面对几百台机器，想检索到某个具体用户的日志流水，是比较困难的，这时就需要远程日志组件。在打印日志的同时，把某些级别或者某些用户的日志打印到远程机器，通过Web页面搜索日志，再统一某种格式，即使非模块的开发者，也可以通过阅读日志了解用户发生了什么。&lt;/p&gt;
+&lt;h1 id=&#34;监控&#34;&gt;监控&lt;/h1&gt;
+&lt;p&gt;监控可能多数服务都会配备，从最基本的讲，需要监控进程是否存在，机器的当前内存占用、磁盘占用、CPU占用率，这也是大多数情况需要了解的，但对于业务的监控，也是重中之重，你是否能够了解所负责服务过去一段时间每分钟所处理的最大业务包量、每天什么时间请求量最高、不同的处理接口调用比率、处理延迟数据，当依赖接口的失败率上涨、或者未知原因请求量暴涨，你是否能够第一时间感知？如果一时说不上来，这就需要在监控上多下功夫了，在业务开发过程中，需要针对业务的关键点，进行数据上报，由单独的模块汇总，绘制曲线，一定要可视化处理，运营过程中，需要根据情况调整告警阈值，设置最大值、最小值、波动、比率等告警，一旦出现异常，可以第一时间感知并处理，主动发现问题。&lt;/p&gt;
+&lt;p&gt;另外在每天都需扫一遍核心数据，检查数据是否有异常，同比如何，对自己的服务做到心中有数，掌握每一个变化。&lt;/p&gt;
+&lt;p&gt;实现上小米的开源监控组件&lt;a class=&#34;link&#34; href=&#34;http://open-falcon.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Open-Falcon&lt;/a&gt;是一个值得尝试的方案。&lt;/p&gt;
+&lt;h1 id=&#34;柔性可用&#34;&gt;柔性可用&lt;/h1&gt;
+&lt;p&gt;柔性可用也很容易被人忽略，虽然理想情况下要做到所有服务的可用性，但是在极端情况下，比如用户量超出预期的暴增、某个机房的网络被切断、大面积断电停机等，设计服务架构时，需要深刻理解用户的核心价值，在不能满足用户的所有诉求的时候，尽量满足最核心的诉求，在异常极端情况下，在不能满足所有功能的情况下，优先保证核心功能的可用性。&lt;/p&gt;
+&lt;p&gt;举个例子，对于QQ的APNs推送服务，推送的消息需要用户的群名片、备注等信息，但是遇到异常没有额外的性能拉取信息，可以选择忽略这些信息，对用户来说，真正的核心诉求是收到消息的提醒，能够提供其他额外信息增强用户体验甚好，如果实在难以达到，也尽量保证推送的触答。&lt;/p&gt;
+&lt;p&gt;这需要架构师对业务的核心价值有着很清晰的理解，敢于设计柔性系统。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>做最好的架构-范式和总结</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/do-best-system-design-using-paradigm/</link>
+        <pubDate>Tue, 11 Jan 2011 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/do-best-system-design-using-paradigm/</guid>
+        <description>&lt;h1 id=&#34;武侠中的境界&#34;&gt;武侠中的境界&lt;/h1&gt;
+&lt;p&gt;《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？&lt;/p&gt;
+&lt;p&gt;事实却恰恰相反，郭靖武功大进是在桃花岛山洞，周伯通教授九阴真经开始，九阴真经中的武功包罗万象，如九阴白骨抓，移魂大法，大伏魔拳法，易筋锻骨等等，每种武学实际都有很大差别。后周伯通又教授了空明拳，左右互博，在洪七公、欧阳锋和黄药师比拼音律的时候又学习攻守进退之法，又经常与裘千仞欧阳锋等过招比拼，后又受一灯大师指点，内外精修方才窥视武学至高境界，成为旷世高手。&lt;/p&gt;
+&lt;p&gt;不过郭靖资质平平，武学也就止于此，而杨过则更进一步，机缘下学习了林朝英和王重阳的武功，后学习了部分九阴真经，还有从小学习的蛤蟆功，后来又学了打狗棒法和东邪黄药师的武功，最后又在神雕帮助下学习了独孤求败的武学。基本上学全了当时最厉害的武学，集大成后创了黯然销魂掌，三拳五脚便干掉了老顽童等三人合力拿下的金轮法王。&lt;/p&gt;
+&lt;p&gt;金庸武学中，要想窥视武学的最高境界，必须在机缘下学习很多不同的武学，相互印证，至少也需要不断跟其他高手过招。反观天下第一的王重阳教出的徒弟，虽然不至于很弱，但难以成为高手，归根结底还是因为只学习重阳宫一种武学。再看少林寺，一直成为武林至尊，在于少林本身一派就有很强的七十二种绝技，所谓他山之石可以攻玉，虽然练成多种的人很少，却能做一些参考。但七十二种每一种都不是当时顶尖的武学，所以少林靠自身的武功一直没有绝顶的高手。&lt;/p&gt;
+&lt;p&gt;总结一下，要想成为一个高手，当然至少需要精通一门顶级的武学，另外还需要不断涉猎至少是需要了解其他顶级的武学，了解越多，才能相互印证自身的武学，眼界才能更上一层楼。&lt;/p&gt;
+&lt;h1 id=&#34;一专多长&#34;&gt;一专多长&lt;/h1&gt;
+&lt;p&gt;放到编程领域，同样需要如此。从最基本的编程语言来讲，经常在一些人简历上看到各种语言学全了，其实往往哪个都没学好，就好比爬山，一个山头爬了一半，根本不知道山顶的样子，也不知道其他山有多高，再去爬其他的山，爬了一半也以为到顶了；另外，如果精通一门语言，可以说是一个好的程序员，但如果想更进一步，还需要了解其他语言的优缺点。有一门自身喜爱并精通的语言，又可以了然其他语言的设计原则，像 lisp，erlang 等很有特色的语言，虽然不一定会用，有所了解往往能开阔自身眼界，用自己熟悉的语言时，理解会更深。&lt;/p&gt;
+&lt;p&gt;又比如设计一个业务的存储系统，可能比较精通公司用的某一种很出色的存储，再去写新的存储时，当然不会写的太差，但未必会成为当时这种情况下最合适的存储。可能会有其他设计迥异但又很合适的方案，只因为自己没有见过，很难想出，即使想出来，也不如别人经过若干年的检验来的细致。&lt;/p&gt;
+&lt;p&gt;程序代码的设计更是如此，GOF 总结了 23 种设计模式，就是为了使我们更快速的了解前人不同场景下合理的设计，不过也就常说的那句话，没有写过或者维护过类似的系统，是无法很好的理解设计模式的，每种模式背后都有大量的故事，总结这 23 种模式的人是牛人，学习这 23 种模式的人未必会成为牛人，其实设计模式远远不止 23 种，何止成千上万种，大量的模式需要在实践中慢慢摸索学习，不过同样的，当对某一种或者几种模式有了深刻的理解和教训，再去看其他模式，多少也能理解更加深入。&lt;/p&gt;
+&lt;p&gt;所以，不论做哪方面设计，精通一种出色的设计是必须的，但同时需要尽可能了解更多更出色的设计，这样再遇到新的挑战时才能自然而然相处最合适的方案。&lt;/p&gt;
+&lt;h1 id=&#34;范式&#34;&gt;范式&lt;/h1&gt;
+&lt;p&gt;引用 &lt;a class=&#34;link&#34; href=&#34;http://baike.baidu.com/subview/26218/6845453.htm#viewPageContent&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;百度百科&lt;/a&gt; 解释：范式（paradigm）的概念和理论是美国著名科学哲学家托马斯·库恩 (Thomas,Kuhn) 提出并在《科学革命的结构》(The Structure of Scientific Revolutions)（1962）中系统阐述的，它指的是一个共同体成员所共享的信仰、价值、技术等等的集合。指常规科学所赖以运作的理论基础和实践规范，是从事某一科学的研究者群体所共同遵从的世界观和行为方式。&lt;/p&gt;
+&lt;p&gt;这个定义说的也很清楚，范式就是成熟的一些套路，遵循这些套路便能做出不错的设计，这也是走向好的架构必经的节点。比如存储设计，有如 MySQL 这种使用 B+ 树的模式，也有 leveldb 这种 LSM tree 的模式，还有 Redis 这种 Hash+dump 的方式。每种设计又有通用或者特有的一些防止数据丢失和修复的操作。精通其中之一可能会很好的完成一个新的存储设计，但同时了解其他范式，则能更加合理和全面的做出更符合需要的设计，而且通过相互之间的对比，会加深对设计的理解。&lt;/p&gt;
+&lt;h1 id=&#34;世界观和方法论&#34;&gt;世界观和方法论&lt;/h1&gt;
+&lt;p&gt;虽说，熟读唐诗三百首，不会作诗也会吟，当了解领域内的不同设计范式以后，还可以更进一步，归纳总结不同设计的特点，抽象自身的世界观和方法论，甚至设计更好的方案。其实世界观和方法论总体来讲比较虚，有点形而上学的意思。&lt;/p&gt;
+&lt;p&gt;学习的境界就好比佛家三境界，看山是山，看水是水；看山不是山，看水不是水；看山还是山，看水还是水。就拿设计模式举例，设计模式背后的世界观和方法论就是几种设计原则，初学者看这些原则的时候，往往觉得很容易理解，这就看山是山的境界；当深入的学习设计的模式和原理以后，会发现这几种原则不是那么简单，每个都蕴含着千万的道理在其中，这就是看山不是山的境界；再学到后来，各种设计模式融会贯通，建立自己的世界观和方法论，发现其实设计也就这几种原理，无需什么模式便能做出优秀的设计，这就是看山还是山的境界了。&lt;/p&gt;
+&lt;p&gt;学习的路径很漫长，但归根结底就是学习前人的范式，总结自己的方法论，先继承，再创新。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>如何阅读源代码</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/how-to-understand-open-source-code/</link>
+        <pubDate>Mon, 10 Jan 2011 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/how-to-understand-open-source-code/</guid>
+        <description>&lt;h1 id=&#34;为什么阅读源码&#34;&gt;为什么阅读源码&lt;/h1&gt;
+&lt;p&gt;最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &amp;ldquo;多写&amp;rdquo; 的大有人在，但真正做到 &amp;ldquo;多看&amp;rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。&lt;/p&gt;
+&lt;p&gt;在《STL源码剖析》中，侯捷写道：源码之前，了无秘密。想要理解一个开源软件，而不去阅读源码，往往流于表面，远远谈不上深入理解。只有熟悉其源码，这款软件才算真正展示在你的面前。&lt;/p&gt;
+&lt;p&gt;常言道，熟读唐诗三百首，不会作诗也会吟。通过阅读高质量的源码，能够开阔眼界，随时可以把别人优秀的设计思路引入到自己的程序当中，见多识广，写出的代码也更能经受时间的考验。&lt;/p&gt;
+&lt;h1 id=&#34;源码阅读难在哪&#34;&gt;源码阅读难在哪&lt;/h1&gt;
+&lt;p&gt;阅读源码既然是很重要的，那为什么大多数人不想阅读代码呢。首先，相对文学作品，阅读源码的时候需要更多的思考，即烧脑作品，但本身又很枯燥，当然这样的文学作品和电影也不少，简直让人坐立不安；另外，源码并不像电影，循序渐进的讲述一个故事，更多的是逻辑的跳转、调用等，可能一直窥一斑，无法见全豹，时间一长也便没有耐性看下去了；最后每个人都有自己的想法和思路，看代码仅仅看到的局部，难以了解整体思路，猜测别人的想法也是件痛苦的事情。&lt;/p&gt;
+&lt;h1 id=&#34;阅读源码之前&#34;&gt;阅读源码之前&lt;/h1&gt;
+&lt;p&gt;在阅读源码之前，尽可能的了解程序，至少应该懂得如何使用，功能是什么，怎么编译、部署、调用，这是最基本的了解，如果连这些都不清楚，直接看代码是难以快速找到切入点的。&lt;/p&gt;
+&lt;p&gt;另外，如果是成熟的软件，很多人都会进行源码的分析，虽然大多数人讲解可能只是为了记录，未必适合自己，但能够方便了解代码结构和大体架构。&lt;/p&gt;
+&lt;p&gt;比如，阅读Redis代码，可以参阅&lt;a class=&#34;link&#34; href=&#34;http://redisbook.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Redis 设计与实现&lt;/a&gt;，可以看到Redis模块划分比较清晰，通过 &lt;strong&gt;数据结构&lt;/strong&gt;，&lt;strong&gt;对象&lt;/strong&gt;，&lt;strong&gt;事件模型&lt;/strong&gt;，等，可以方便把Redis代码拆解成小部分，每一个部分都是独立的，这样便很容易阅读和理解。当然，很多情况下没有想尽的参考，只能一步步分析学习。&lt;/p&gt;
+&lt;p&gt;另外一个需要确定的问题是，阅读源码的目的，要去参与开发，还是只是了解，是要借鉴其中某一种设计思想，还是好奇某个特性是如何实现？怀着不同的目的，方法也必然不同。类似文章阅读的精读和粗读，精读可以详尽了解某软件的实现细节，粗读可以迅速扩展视野。大多数情况下，无法做到精读，了解即可，但有时需要精读一些感兴趣的项目。&lt;/p&gt;
+&lt;h1 id=&#34;代码分解&#34;&gt;代码分解&lt;/h1&gt;
+&lt;p&gt;阅读代码首先要了解代码的组成结构，可以通过参考资料，文件名，初步判断文件的作用（这时就体现出来起一个好名字的作用了）。另外可以看一下头文件，通过类名，函数名，大致了解一下，有些可能不知其可，但没有关系，能猜多少算多少。&lt;/p&gt;
+&lt;p&gt;接下来有两种方式，一个是能判断出来文件或类的作用，而且比较独立，精读的话可以先把独立的部分看懂，粗读的话至少需要看一遍主要接口的实现，然后分离出去，这部分代码就不会影响以后的阅读。比如Redis的集中数据结构，字符串，list等，都可以分离出来。&lt;/p&gt;
+&lt;p&gt;在阅读源码过程中，一定要重视&lt;strong&gt;接口&lt;/strong&gt;的作用，可能一时不大了解实现，但没关系，只要看懂了接口，这部分代码就可以先略过去，不影响以后的阅读。接口是代码之间的粘合剂，通过合理的分离接口，便能把代码分解成不同功能的部分，这也是代码架构必须考虑的问题。只要能够把代码分解，阅读代码便会很轻松了。当然，项目架构过程中，能够合理的把代码分解，也是项目成功的必要因素。&lt;/p&gt;
+&lt;p&gt;当然，有时一些有趣的功能，虽然能够分解，但接口使用等等不易理解。一个好的方法就是为这些代码写一些测试程序，尝试通过接口去使用这些代码，便能深刻了解这些接口的含义，当然这需要耗费一些时间，但对理解代码是值得的。比如，Redis的事件驱动，通过尝试写&lt;a class=&#34;link&#34; href=&#34;https://drawing.fancymore.com/reading/source-analysis-redis-event-model.html&#34; &gt;测试代码&lt;/a&gt;，能够快速掌握接口的使用，因为更为熟练，所以在后续的源码阅读过程中，也会感觉更清晰。不管是对某个接口，某个模块，还是对整个项目，熟练使用对代码的理解意义非常大。&lt;/p&gt;
+&lt;h1 id=&#34;骨架&#34;&gt;骨架&lt;/h1&gt;
+&lt;p&gt;对于一个网络Server，网络事件处理框架，往往就是这个项目的骨架。对于存储，数据结构往往是个关键，每个程序都有最核心的代码，通过熟悉其使用，猜测核心部分，然后再通过入口，增加日志等等，找到实现原理，再剥离这部分，往更深一层探索。掌握一个项目的骨架，即使很多没看过的地方，也很容易找到对应功能的代码。&lt;/p&gt;
+&lt;h1 id=&#34;善于动手&#34;&gt;善于动手&lt;/h1&gt;
+&lt;p&gt;不管是自己负责的项目，还是一些开源项目，如果只是看，即使看的很熟练，往往也是有个模糊的印象，但如果出现一个bug让自己去改，带着这个问题，往往比较容易快速的了解相关的代码。所以，带着一个问题去阅读，往往能起到事半功倍的效果。&lt;/p&gt;
+&lt;p&gt;对于开源项目，可能没有那么多修改的机会（但也可以尝试去查看官网的Bug列表，挑一些简单的练手）。可以自己尝试做一些修改，包括写一些接口测试代码，尝试修改成一种奇怪又有趣的运行方式，比如阅读Linux进程代码，可以尝试写一个简单的进程调度算法，或者如果出现某个进程，强制执行完成等等。尝试一些类似Hacker的工作，既有趣又能很深刻的掌握相关代码，也是一些可以尝试的方法。&lt;/p&gt;
+&lt;p&gt;另外，执行过程中进行调试，或者增加一些日志，也是很好的弄懂某个问题的方法。总之一句话，要动手去改，才能发现真实的项目。&lt;/p&gt;
+&lt;h1 id=&#34;善于总结&#34;&gt;善于总结&lt;/h1&gt;
+&lt;p&gt;代码阅读完成，可能一段时间便会遗忘，所以要做一些总结和分享，一个有效的方法就是绘制UML图，画一些类图，以及相互之间的关系，画一些时序图，记录代码运行过程。像Redis虽然是c实现，但其中也尽是面向对象方法，不难用UML绘制。另外一项就是分享，可以写一些博客，或者面对面分享，在相互交流中很可能想到之前一直没有想过的问题。&lt;/p&gt;
+&lt;p&gt;另外，很多开源的项目有着类似的架构和设计思想，通过提炼总结，下次阅读代码时，会更加有效的找到自己想要了解的部分，以及一个功能最应该考虑的部分是什么，比如自己曾经写过或者读过一个网络框架程序，再次遇到类似程序，可以把之前项目中一些不是很清楚的，或者性能的瓶颈，或者实现不优雅的部分，对应到当前项目中，相互对比学习，也能更快的掌握代码的核心。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>大并发程序设计的思考</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/large-concurrent-software-design/</link>
+        <pubDate>Sun, 09 Jan 2011 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/large-concurrent-software-design/</guid>
+        <description>&lt;p&gt;之前设计 VPN 大并发时候，第一次听到大并发的时候，心头一片迷茫，不知道如何设计才算是大并发的，网上找了很多资料，基本都没有对此进行过详细的说明，可能需要一些经验，或者阅读更为出色的代码才能得知，但在大并发 VPN 的设计当中，我总结了很多，当然，这些东西并非是一个准则，我对这个方面也只是初学而已，只是记录一些心得，使自己学到的东西更为系统，也方便日后阅读其他优秀设计的时候参照，不论方法是对是错，总得有个自己的感悟。&lt;/p&gt;
+&lt;p&gt;在我设计的时候，第一个问题就是什么是大并发？其实这个概念很简单，就是同一时间能够响应尽可能多的用户，比如同时在线用户为 1w 人，如果并发性不足，可能后 5k 人就直接被拒绝掉了。对于 UDP 来说，如果你的线程正在处理其他数据，而没有即时的调用 recvfrom，很容易致使 UDP 内核缓冲区满，再有新的数据包将会被无情的丢弃，这样会导致后来的 5k 人所发的 UDP 包很容易丢失以致无法连接。而对于 TCP 来讲，如果没有及时 accept，连接将会丢失。&lt;/p&gt;
+&lt;p&gt;如此一来，对于 TCP 来讲，只要单独分出一个线程拼命 accept 和收取数据，增加并发数不成问题；对于 UDP 应用，也是分离出线程拼命调用 recvfrom，把数据先缓存到用户态，也能够增加并发。但随之而来会有一个新问题，如何处理数据，如果处理不过来，那虽然接受下来也无济于事，仍然需要客户端无止境的等待，所以这里又涉及到一个吞吐量的问题。如何快速的处理数据。如果能够尽可能多的接受连接而又能尽可能快的处理数据，增加并发量将会是水到渠成的。可以把接受数据部分称为前端，处理数据称为后端，前端直接决定并发量，后端决定吞吐量，当然二者是有相当大的关联性的。&lt;/p&gt;
+&lt;p&gt;其实说了半天，只是理论上这样，如何实现还需针对具体情况，但这个可以当做一个指导方针，对于收取连接而言，linux 下可以使用 epoll 模型，windows 下可以使用 iocp 模型，都可以最大限度的接受连接，当然这里需要注意的是不要把耗时的操作放到这里，比如收取到数据以后，放入队列，而处理数据线程取队列中的数据，这个过程不能造成频繁的竞态，否则会损失前端接受数据的性能。&lt;/p&gt;
+&lt;p&gt;至于后端而言，提高效率需要理解处理流程中的瓶颈。&lt;/p&gt;
+&lt;p&gt;首先不能开启太多的线程，如果使用最简单的多线程模型，一个链接上来开启一个线程处理，似乎很高校，但由于系统需要不断的切换如此多的线程，切换线程时需要保存源线程环境，恢复目标线程环境，是一个相当耗时的操作，如果需要相应 1w 并发，使用 1w 甚至 5k 线程处理是相当不明智的做法。理论上讲，如果有 2 个 cpu，使用 2 个线程，一个 cpu 处理一个线程，不进行切换最为高效，不过由于进行处理数据不是时刻需要使用 cpu，比如读文件或数据库，将可能会有系统等待发生，一个线程不可能跑满整个 cpu，所以适当的提高线程数，尽可能多的压榨 cpu 的每一点性能。&lt;/p&gt;
+&lt;p&gt;而且在处理数据的过程中，尽可能不要出现长时间等待的状况，比如某个非常耗时的系统调用。这里的等待，也包括线程之间的竞态，如果所有的线程都需要从一个核心 data 中读写数据，可能读写这个数据时需要互斥，这样可能会造成很多线程等待同一个数据的读写，这种情况线程多了反而效果不佳，需要考虑调整程序的整体结构，尽可能的消除线程间的竞态。争取分离消耗 cpu 而且计算过程互不侵犯的部分为多线程，比如对数据包的加解密过程。&lt;/p&gt;
+&lt;p&gt;另外一个效率消耗在于内存管理，对 VPN 而言，每个用户的 IP 包过来都需要为之创建一个存储单元，如果对于每一个数据包的传递过程都多一次复制，那复制的代价是非常可观的。而且对于通用的 malloc 而言，需要兼顾各种情况，对于某一个具体应用，效率并非很高，比如如果传递的数据都是定长的，可以实现分配一定量的空间串成链表，这样分配和释放都只需要几次有限的操作便可，效率比之 malloc 提升很多，这里对于 IP 包数据而言，由于需要经过分片，所以长度限制在 1500 左右，适当的分配一个定长的大空间虽然会造成一写空间的浪费，但却用空间换取了时间上的优势。&lt;/p&gt;
+&lt;p&gt;另外一个值得注意的问题就是内存碎片，对于一个需要运行几年的服务器程序而言，看似微小的碎片，会逐渐造成大量不可用内存。所以一般需要长时间运行的程序都会自己实现特定情形的内存管理，尽量减少内存碎片的产生，他的危害虽然不如内存泄露严重，但却非常不易防止。&lt;/p&gt;
+&lt;p&gt;对于具体实现会有具体的效率提升方式，不过通用的方法就是理解程序运行流程，分离出耗时不耗时的操作，哪里的代码可以并发运行，哪里的代码只需要单线程便可，整个程序的瓶颈在哪等等。尽量减少等待，减少锁竞态，减少内存复制，前端可以尽可能多的接受连接，后端可以尽可能快的处理数据，使用 epoll 或者异步模型处理等待事件，便可很大限度的增加并发访问。&lt;/p&gt;
+&lt;p&gt;对于大并发的程序，还有一个重要的方面就是测试，不要相信测试人员会对你的程序做出一个合理的评判，性能真正的展现在于在真实环境中运行，大量用户访问的时候。在开发过程中需要考虑的问题便是如何进行测试，只有能够尽可能真实的模拟应用环境，才能让开发者了解自己程序的性能，从而不断的调整，这些测试数据直接成为修改程序流程或者构架的理由，除非对此经验丰富，否则不要去想当然的以为程序将会怎样，真实的数据才是唯一的性能标准。&lt;/p&gt;
+&lt;p&gt;而且测试过程中的现象直接成为改进程序的理由，如果在访问极限的时候，CPU 还未层充分利用，则可能程序过多挂起在等待过程中，就要通过现象思考等待在何处，哪里成为性能瓶颈，从而为增加 IO 缓存、提高网卡性能指标等等提供依据。当然这个过程也是非常复杂而不易把握的。同样需要经验和对处理过程的充分理解，还需依据合理的代码设计。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>指令队列设计</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/message-queue-development/</link>
+        <pubDate>Sat, 20 Nov 2010 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/message-queue-development/</guid>
+        <description>&lt;p&gt;最近有时间赶紧开始NC项目的开发，今天刚写到指令队列的处理，我的最初的设计是让整个VPN系统能够自动运转，分多个线程不断的处理数据，类似流水线工厂，外界通过压入数据包供处理线程加解密，或者压入指令包，处理线程识别并且执行，方便服务器客户端之间互相控制，也可在本地直接压入指令包控制，当时觉得这种设计是非常和谐的，而现在看来这样虽然能让系统更易扩展，但却不利于即时控制。&lt;/p&gt;
+&lt;p&gt;这种方法给我的感觉是我无法接触核心的控制，外界只是简单的send几个指令包而已，对外界调用是方便很多，而且扩展性更强，不过有种拿不住核心的感觉，调用send指令包函数返回，所要执行的功能并未立即实现，而是有一定的延时性，这种延时性会造成几个问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;系统反应迟钝，因为不是函数返回就会即时生效，而且甚至都不知道何时开始生效；&lt;/li&gt;
+&lt;li&gt;如果执行功能出错，虽然有重试机制，但不可预知的错误随时可能发生，最终结果如何也未可知；&lt;/li&gt;
+&lt;li&gt;增加了系统的不可预知性，因为有延时存在，如果同时执行若干命令，相互之间是否会有影响；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当然，这样处理的优点就是简洁性，所有事件的处理过程都经过统一的分发处理，像一个命令处理工厂，不断的接受命令，执行命令即可，不用抽取各种操作接口，命令本身也更易扩展，而且不用区分是本地指令还是服务器指令或者客户端之间点对点协议，想来这种设计的优点还是大于缺点的，要看如何处理各种让人纠结的问题了。现在感觉项目处于悬浮状态，是易扩展还是易崩溃，就得看这里的实现如何了。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>软件设计的思考</title>
+        <link>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/thinking-of-software-design/</link>
+        <pubDate>Fri, 05 Nov 2010 22:50:04 +0800</pubDate>
+        
+        <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/thinking-of-software-design/</guid>
+        <description>&lt;p&gt;最近回想之前写烂的程序，对软件设计方式进行了一些思考，经历了迷茫的过度之后，多少也有了一些认识，不管认识是否正确，人总是在思考中前进的。引用毕加索的话：画乃我思所获，非我见所得。&lt;/p&gt;
+&lt;p&gt;之前一家公司项目经理极度强调设计，他所言都是书上所讲，我无法辩驳，况且关注软件设计并不能说是坏事，但现今回想，感觉他所说的理论都过于理论，照本宣科而已，我不知道他是否有过成功或者失败的大型项目设计经验。软件的设计是一门实践课，不是读书能学来的能力。&lt;/p&gt;
+&lt;p&gt;关于面向对象，从开始学习面向对象开始，就被java的一切皆对象的思想误导了，c++不是java。所谓的面向过程还是面向对象，为了解决软件危机而引出的，但谁也不会认为一个扫雷的程序会引发软件危机，所以系统级别的面向对象才是真的面向对象，比如Linux内核，一切皆文件的思想，谁也不能否认这是非常完美的面向对象思想，可Linux内核全部用c语言实现，并没有一个C++所谓的“类”存在。所以正如软件工程所强调的，面向对象仅仅是一种思想，而不是某个具体的实现，如果写扫雷的时候其中充斥着面向对象，弄的一切皆对象，反而违背了面向对象的真正含义，这种面向对象的经验也不能用于大型项目。&lt;/p&gt;
+&lt;p&gt;之前公司的项目为了隔离ICE，几乎把每个应该是结构的地方都弄成了类，不止于此，还把每个这样的类抽象出接口，几乎一个存储操作也得走好几个接口才可实现，类过于繁杂，层次过深。虽然其中每个地方都符合软件设计的规范，也符合设计模式，但这简直是对面向对象的滥用，再好的理论也不能防止人滥用。&lt;/p&gt;
+&lt;p&gt;软件工程是一门大开大合的理论，为了解决软件生产随规模增大复杂度增大的问题，目的为了大规模项目具有可控性，犹如关羽的大刀，只有恢弘的战场上才可展现其威力，而对于被大刀划分出来的细微模块，犹豫巷战，还不如匕首来的轻巧，巷战时使用大刀，无非是自我束缚。一直在想，程序中没有类，没有继承，没有多态，那程序是不是就一定不是面向对象了呢？类似面向对象这种软件工程思想，类似于从战局上把握全局，而具体每一个功能实现，都是小小的战斗，战斗和战略本是两种不同的理论，能够从战略上做出很好决策的不一定也适用于战斗（失街亭的马谡就是个例子^_^）。所以把面向对象、各种设计模式用于某一个结构体的实现，完全是对软件工程的曲解。软件工程不是写几个小程序就能领悟得了的，如果有人给你讲面向对象，你先问他，设计过近百万行的项目么？&lt;/p&gt;
+&lt;p&gt;所以在全局上使用软件工程的相关理论把握项目不能失控，在某一细微功能实现上，应该尽力保持简洁，5行的代码远比50行的容易维护，不管你使用什么高深的理论都是如此。从细小的代码上应用“一切皆对象”，代码量将为了这些设施成倍增长，为后来人的维护造成极大的麻烦，但若从全局上划分面向对象，仅仅是一种划分方式，并不会对代码量造成多大影响，我想，这才符合软件工程的初衷，也符合“简单即完美”。Unix和Linux秉承这一思想，影响至今。&lt;/p&gt;
+&lt;p&gt;再来讨论C++这门语言，首先这门语言非常复杂，是对智力的考验，有些语法非常出色，极大简化了程序开发，但是他所造成的结果并不如他所期待的那样，C++是为了大型软件所设计的，开发小规模项目并不见得轻松，而大型软件所使用的面向对象却应是全局的划分，而C++却是从最细小的地方提供面向对象的语法支持，这不是与软件工程相违背么！而且C++这种机制还容易误导人们从最小的地方使用类的思想，而且，C++提供的机制是为了让防止别人滥用类，提供了一些私有机制，不过这种机制越来越复杂，反而更容易让人滥用。还是那句话，多好的理论和多好的机制都不能防止别人滥用，会C++语法的人很多，但是最终懂面向对象的人很少，滥用的人越来越多，这就是最好的证明，C++的各种语法都不能促人做出更好的设计！！！&lt;/p&gt;
+&lt;p&gt;而且C++一些看似很自动化的语法，恰恰使人麻痹，相反使用c虽然得自己“手工处理”，但却能警醒人们更加合理的使用。无怪乎Linux内核好几百万的代码全部使用纯c来开发，仍然保持着近乎完美的设计！c够轻巧也更不容易滥用。这里倒不是说哪种语言更好，只是说软件设计的思想。&lt;/p&gt;
+&lt;p&gt;再说局部开发的goto，任何教科书上都讲，不可使用goto，似乎每个人都有这样的意识不去用goto，但存在即合理，在c函数中如果有多处返回的错误处理部分，goto恰恰使代码更为简洁合理，这是goto的正确用法之一，如果不滥用goto，它能使代码更为清晰，比之前项目经理所说的do {} while(false) 更加合理，所以照本宣科的去学用什么不用什么，而不去想这么做的目的，将会带领项目最终走向地狱。在局部编码中，一切规则都是为了让人易懂易改，一切与之违背的即使经典理论也应摒弃。&lt;/p&gt;
+&lt;p&gt;在前项目经理推荐阅读《代码大全》，其中类和接口设计部分所言，类继承不可超过三层！否则徒增复杂度，他没有阅读此书么？&lt;/p&gt;
+&lt;p&gt;另外还有一些编码规范的解释，不过这点虽然重要但不是关键，最好的编码规范也不能保证你的代码易于理解（但最烂的规范却必定能使你的代码不能理解）。代码容不容易理解关键要看代码的组织方式，能不能达到“自说明”的程度。乍一看有板有眼但不能理解的代码比比皆是，无论做什么，都只有一个目的，让读代码的人“易读易改”。&lt;/p&gt;
+&lt;p&gt;最后感谢两个说我代码烂的人，第一个人说的很对，代码很烂，我自己都读不懂了，我也在迷茫思考，不过别人看不懂在于设计，那么复杂的设计即使我能写出来别人也不容易看懂，设计不是我的，我也没有太负责的去纠正这些，导致代码烂有多方面因素，我后来已经思考。但另一个说我代码烂的人，我也承认代码写的不好，因为我正在转型，但是他承认我的代码一眼就能看懂，也非常容易改，那还要奢求什么呢？难道非得如他一般一个小问题都继承多态扩增好几倍的代码量别人都不懂才算写的好么？请尊重软件工程，不要滥用。&lt;/p&gt;
+&lt;p&gt;另外，NC大并发是我第一个设计的项目，一天未离开公司，我都会根据我所体会到的经验，修正之前的设计以达完美，自己能够掌控一个项目，应该说是比较幸福的事情，也应为这个项目负全责！&lt;/p&gt;
+&lt;p&gt;有些东西，看过不如改过，改过不如写过。一个项目总是看但不参与修改，也只能懂个皮毛，修修改改对一些细节理解的比较清楚，如果一直参与开发项目，得到东西就会很多。一个项目在初期或者重构期，总是能很学到最多的东西；一旦这个项目成型，需要改改Bug，这时参与进去的人便不会学到很多构架方面的东西了；当项目已经完成，这时参与进去的开发人员学到的东西便少的可怜了。&lt;/p&gt;
+&lt;p&gt;当然不能否认，看一些优秀的代码也能学到很多东西，但往往这些东西不会对自己造成深刻的影响，除非自己曾经已经构建过相似的东西，以此引起共鸣，比如有apache经验再去看nginx，可以在很短的时间领悟其精髓。每次看开源的代码，都在想，如果看完了，抛弃这些东西，让我从头去写一个类似的东西，我能够完全构建出来么？开源软件看的比较多的除了以前工作中需要用的openvpn，就是nginx了，看过以后对它的架构有一定的感悟，但让我重写一个，想想都有点发怵，即使再多看几遍，照猫画虎的仿出来，也不明白为什么这么写比较好，为什么就不能用其他方法么，我只能看到作者的重点，却看不到作者所走的弯路。这也就是为什么代码只是项目的一部分，另一部分在于代码的演进，而人往往能看到代码的价值，却忽略代码演进的价值。代码可以很容易看到，代码演进即使有svn，git版本维护，也难让人理解精髓，这里的演进就是一个人的经验所在了。&lt;/p&gt;
 </description>
         </item>
         

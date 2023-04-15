@@ -9,7 +9,7 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
 适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。'>
 <title>SWIG 跨语言调用</title>
 
-<link rel='canonical' href='https://drawing.fancymore.com/posts/program/swig_cross_language_call/'>
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='SWIG 跨语言调用'>
 <meta property='og:description' content='一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
@@ -18,7 +18,7 @@ Web 流派：PhoneGap
 语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
 Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
 适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。'>
-<meta property='og:url' content='https://drawing.fancymore.com/posts/program/swig_cross_language_call/'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/'>
 <meta property='og:site_name' content='演示站点'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2023-04-10T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2023-04-10T22:40:04&#43;08:00'/>
 <meta name="twitter:title" content="SWIG 跨语言调用">
@@ -28,6 +28,18 @@ Web 流派：PhoneGap
 语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
 Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
 适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
     </head>
     <body class="
     article-page
@@ -220,7 +232,7 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/posts/program/swig_cross_language_call/">SWIG 跨语言调用</a>
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/">SWIG 跨语言调用</a>
         </h2>
     
         
@@ -537,12 +549,64 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
             
                 
 <article class="">
-    <a href="/posts/program/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">告警优化实践总结</h2>
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
         </div>
     </a>
 </article>

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
+这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
+epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
+::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
+SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).'>
+<title>tun/tap 驱动源码分析</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='tun/tap 驱动源码分析'>
+<meta property='og:description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
+这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
+epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
+::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
+SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-13T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-13T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="tun/tap 驱动源码分析">
+<meta name="twitter:description" content="select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
+这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
+epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
+::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
+SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/">tun/tap 驱动源码分析</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 13, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。</p>
+<p>这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：</p>
+<pre><code>epoll_create(size);
+
+while (...)
+{
+	/* 等待就绪连接 */
+	epoll_wait( ... );
+
+	/* 如有新连接，构造epoll_event结构体后 */
+	epoll_ctl( ... EPOLL_CTL_ADD ... );
+	/* 如有断开连接 */
+	epoll_ctl( ... EPOLL_CTL_DEL ... );
+}
+</code></pre>
+<p>从使用角度出发，先来看<code>epoll_create</code>函数的实现，用户态声明<code>int epoll_create(int size);</code>对应的系统调用代码：</p>
+<pre><code>:::
+SYSCALL_DEFINE1(epoll_create, int, size)
+{
+	if (size
+</code></pre>
+<p>可以看到，<code>sys_epoll_create</code>仅仅检测size是否小于0，之后直接调用<code>sys_epoll_create1</code>，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现<code>sys_epoll_create1</code>是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于<code>sys_epoll_create1</code>。</p>
+<pre><code>SYSCALL_DEFINE1(epoll_create1, int, flags)
+{
+	int error;
+	struct eventpoll *ep = NULL;
+
+	/* Check the EPOLL_* constant for consistency.  */
+	BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
+
+	if (flags &amp; ~EPOLL_CLOEXEC)
+		return -EINVAL;
+	/*
+	 * Create the internal data structure (&quot;struct eventpoll&quot;).
+	 */
+	error = ep_alloc(&amp;ep);
+	if (error &lt; 0)
+		return error;
+	/*
+	 * Creates all the items needed to setup an eventpoll file. That is,
+	 * a file structure and a free file descriptor.
+	 */
+	error = anon_inode_getfd(&quot;[eventpoll]&quot;, &amp;eventpoll_fops, ep,
+				 O_RDWR | (flags &amp; O_CLOEXEC));
+	if (error &lt; 0)
+		ep_free(ep);
+
+	return error;
+}
+</code></pre>
+<p>代码结构比较清晰，调用<code>ep_alloc</code>分配一个eventpoll结构，调用<code>anon_inode_getfd</code>创建一个文件节点和文件描述符，并返回文件描述符，这个文件描述符供epoll自己使用。</p>
+<pre><code>SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+		struct epoll_event __user *, event)
+{
+	int error;
+	struct file *file, *tfile;
+	struct eventpoll *ep;
+	struct epitem *epi;
+	struct epoll_event epds;
+
+	...
+	/* 从file结构私有数据取出ep_alloc分配的结构 */
+	ep = file-&gt;private_data;
+
+	mutex_lock(&amp;ep-&gt;mtx);
+
+	/*
+	 * Try to lookup the file inside our RB tree, Since we grabbed &quot;mtx&quot;
+	 * above, we can be sure to be able to use the item looked up by
+	 * ep_find() till we release the mutex.
+	 */
+	epi = ep_find(ep, tfile, fd);
+
+	error = -EINVAL;
+	switch (op) {
+	case EPOLL_CTL_ADD:
+		if (!epi) {
+			epds.events |= POLLERR | POLLHUP;
+			error = ep_insert(ep, &amp;epds, tfile, fd);
+		} else
+			error = -EEXIST;
+		break;
+	case EPOLL_CTL_DEL:
+		if (epi)
+			error = ep_remove(ep, epi);
+		else
+			error = -ENOENT;
+		break;
+	case EPOLL_CTL_MOD:
+		if (epi) {
+			epds.events |= POLLERR | POLLHUP;
+			error = ep_modify(ep, epi, &amp;epds);
+		} else
+			error = -ENOENT;
+		break;
+	}
+	mutex_unlock(&amp;ep-&gt;mtx);
+
+error_tgt_fput:
+	fput(tfile);
+error_fput:
+	fput(file);
+error_return:
+
+	return error;
+}
+</code></pre>
+<p>去除错误检测，剩下的代码也比较清晰，首先取出<code>epoll_create1</code>分配的eventpoll结构ep，然后使用<code>ep_find</code>在ep中查找当前操作的文件描述符，接下来有个判断，分不同操作进行，如果是<code>EPOLL_CTL_ADD</code>，则调<code>ep_insert</code>插入文件描述符，如果是<code>EPOLL_CTL_DEL</code>则调用<code>ep_remove</code>删除文件描述符，修改则用<code>ep_modify</code>。</p>
+<p>姑且先忽略ep操作的函数，直接去看epoll_wait的实现，以明确流程。
+<code>epoll_wait</code>实现与1321行，不过其中所作操作非常简单：从file结构中取出eventpoll结构，直接调用<code>ep_poll</code>，我们需要着重分析<code>ep_poll</code>。</p>
+<pre><code>static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+		   int maxevents, long timeout)
+{
+	int res, eavail;
+	unsigned long flags;
+	long jtimeout;
+	wait_queue_t wait;
+
+	...
+
+	res = 0;
+	if (list_empty(&amp;ep-&gt;rdllist)) {
+		/*
+		 * We don't have any available event to return to the caller.
+		 * We need to sleep here, and we will be wake up by
+		 * ep_poll_callback() when events will become available.
+		 */
+		init_waitqueue_entry(&amp;wait, current);
+		wait.flags |= WQ_FLAG_EXCLUSIVE;
+		__add_wait_queue(&amp;ep-&gt;wq, &amp;wait);
+
+		for (;;) {
+			/*
+			 * We don't want to sleep if the ep_poll_callback() sends us
+			 * a wakeup in between. That's why we set the task state
+			 * to TASK_INTERRUPTIBLE before doing the checks.
+			 */
+			set_current_state(TASK_INTERRUPTIBLE);
+			if (!list_empty(&amp;ep-&gt;rdllist) || !jtimeout)
+				break;
+			if (signal_pending(current)) {
+				res = -EINTR;
+				break;
+			}
+
+			spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+			jtimeout = schedule_timeout(jtimeout);
+			spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+		}
+		__remove_wait_queue(&amp;ep-&gt;wq, &amp;wait);
+
+		set_current_state(TASK_RUNNING);
+	}
+
+	...
+
+	if (!res &amp;&amp; eavail &amp;&amp;
+	    !(res = ep_send_events(ep, events, maxevents)) &amp;&amp; jtimeout)
+		goto retry;
+
+	return res;
+}
+</code></pre>
+<p>由于篇幅限制去除一些不影响大致流程的代码，剩下的居然异常简单，首先用<code>list_empty</code>判断<code>ep-&gt;rdllist</code>链表是否为空，rdllist是就绪的文件链表，如果不为空可以直接返回给上层，如果不为空，则等待，等待的方式也比较清晰，把自己加入到ep-&gt;wq等待队列中，然后<code>schedule_timeout(jtimeout);</code>放弃运行权即可，完成后使用<code>ep_send_events</code>把结果返回给上层。</p>
+<p>原本以为epoll会同select一样，把核心代码放到wait函数中，想不到此函数草草了事，除了查看链表是否为空和休息，基本什么也没有做，看来epoll之所以比select效率高的原因尽在于此。但现在的问题是，谁去填充队列rdllist，谁去唤醒该进程？看来还得从之前忽略了的ep_insert函数入手。</p>
+<pre><code>static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
+		     struct file *tfile, int fd)
+{
+	int error, revents, pwake = 0;
+	unsigned long flags;
+	struct epitem *epi;
+	struct ep_pqueue epq;
+
+	if (unlikely(atomic_read(&amp;ep-&gt;user-&gt;epoll_watches) &gt;=
+		     max_user_watches))
+		return -ENOSPC;
+	if (!(epi = kmem_cache_alloc(epi_cache, GFP_KERNEL)))
+		return -ENOMEM;
+
+	/* Item initialization follow here ... */
+	INIT_LIST_HEAD(&amp;epi-&gt;rdllink);
+	INIT_LIST_HEAD(&amp;epi-&gt;fllink);
+	INIT_LIST_HEAD(&amp;epi-&gt;pwqlist);
+	epi-&gt;ep = ep;
+	ep_set_ffd(&amp;epi-&gt;ffd, tfile, fd);
+	epi-&gt;event = *event;
+	epi-&gt;nwait = 0;
+	epi-&gt;next = EP_UNACTIVE_PTR;
+
+	/* Initialize the poll table using the queue callback */
+	epq.epi = epi;
+	init_poll_funcptr(&amp;epq.pt, ep_ptable_queue_proc);
+
+	/*
+	 * Attach the item to the poll hooks and get current event bits.
+	 * We can safely use the file* here because its usage count has
+	 * been increased by the caller of this function. Note that after
+	 * this operation completes, the poll callback can start hitting
+	 * the new item.
+	 */
+	revents = tfile-&gt;f_op-&gt;poll(tfile, &amp;epq.pt);
+
+	/*
+	 * We have to check if something went wrong during the poll wait queue
+	 * install process. Namely an allocation for a wait queue failed due
+	 * high memory pressure.
+	 */
+	error = -ENOMEM;
+	if (epi-&gt;nwait &lt; 0) 		goto error_unregister; 	/* Add the current item to the list of active epoll hook for this file */ 	spin_lock(&amp;tfile-&gt;f_lock);
+	list_add_tail(&amp;epi-&gt;fllink, &amp;tfile-&gt;f_ep_links);
+	spin_unlock(&amp;tfile-&gt;f_lock);
+
+	/*
+	 * Add the current item to the RB tree. All RB tree operations are
+	 * protected by &quot;mtx&quot;, and ep_insert() is called with &quot;mtx&quot; held.
+	 */
+	ep_rbtree_insert(ep, epi);
+
+	/* We have to drop the new item inside our item list to keep track of it */
+	spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+
+	/* If the file is already &quot;ready&quot; we drop it inside the ready list */
+	if ((revents &amp; event-&gt;events) &amp;&amp; !ep_is_linked(&amp;epi-&gt;rdllink)) {
+		list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);
+
+		/* Notify waiting tasks that events are available */
+		if (waitqueue_active(&amp;ep-&gt;wq))
+			wake_up_locked(&amp;ep-&gt;wq);
+		if (waitqueue_active(&amp;ep-&gt;poll_wait))
+			pwake++;
+	}
+
+	spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+
+	atomic_inc(&amp;ep-&gt;user-&gt;epoll_watches);
+
+	/* We have to call this outside the lock */
+	if (pwake)
+		ep_poll_safewake(&amp;ep-&gt;poll_wait);
+
+	return 0;
+
+error_unregister:
+	...	/* 清理代码 */
+	return error;
+}
+</code></pre>
+<p>这里首先使用 <code>kmem_cache_alloc</code> 分配了一个 <code>epitem *epi</code> 结构，<code>epi-&gt;ep = ep;</code>并把ep指针赋值给它的成员，紧接着，又使用<code>epq.epi = epi;</code>把epi赋值给<code>ep_pqueue epq;</code>结构成员。这里嵌套了几层结构，ep-&gt;epi-&gt;epq，关系比较复杂，我们只关心核心的东西，分析流程。</p>
+<p>后面init_poll_funcptr(&amp;epq.pt, ep_ptable_queue_proc);函数定义于include/linux/poll.h文件，代码如下</p>
+<pre><code>static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
+{
+	pt-&gt;qproc = qproc;
+	pt-&gt;key   = ~0UL; /* all events enabled */
+}
+</code></pre>
+<p>仅仅是给epq的pt成员设置回调函数，千万注意这里的回调应用，epoll的实现就是依赖于内核和驱动的层层回调，后面将会说到。</p>
+<p>再来看<code>ep_insert</code>的代码，之后紧接着调用了目标文件驱动的poll回调，把刚才设置好的epq.pt传入驱动之中：<code>tfile-&gt;f_op-&gt;poll(tfile,&amp;epq.pt)</code>。如果再这里停止跟进，往下进行，发现该函数之后的代码无非是错误判断或者各种结构之间的纠结。唯一一点有用的代码就是这句：<code>wake_up_locked(&amp;ep-&gt;wq)</code>。其中<code>ep-&gt;wq</code>正是<code>epoll_wait</code>函数等待的队列，不过此情况仅仅是在驱动poll函数直接返回数据的情况下。真正触发点应该还在驱动对epq.pt的操作。</p>
+<p>之前的文章写过驱动中对poll的实现，无非调用 <code>poll_wait</code> 函数，实现如下：</p>
+<pre><code>static inline void poll_wait(struct file * filp, wait_queue_head_t * wait_address, poll_table *p)
+{
+	if (p &amp;&amp; wait_address)
+	p-&gt;qproc(filp, wait_address, p);
+}
+</code></pre>
+<p>对照<code>init_poll_funcptr</code>的代码，我们可以很清楚的发现，其实最终驱动是回调了<code>init_poll_funcptr</code>中设置的qproc函数！返回到<code>ep_insert</code>中，可以看到设置的qproc函数名为 <code>ep_ptable_queue_proc</code>，所以还是不得不再分析此函数。</p>
+<pre><code>static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead,
+				 poll_table *pt)
+{
+	struct epitem *epi = ep_item_from_epqueue(pt);
+	struct eppoll_entry *pwq;
+
+	if (epi-&gt;nwait &gt;= 0 &amp;&amp; (pwq = kmem_cache_alloc(pwq_cache, GFP_KERNEL))) {
+		init_waitqueue_func_entry(&amp;pwq-&gt;wait, ep_poll_callback);
+		pwq-&gt;whead = whead;
+		pwq-&gt;base = epi;
+		add_wait_queue(whead, &amp;pwq-&gt;wait);
+		list_add_tail(&amp;pwq-&gt;llink, &amp;epi-&gt;pwqlist);
+		epi-&gt;nwait++;
+	} else {
+		/* We have to signal that an error occurred */
+		epi-&gt;nwait = -1;
+	}
+}
+</code></pre>
+<p>乍一看函数代码并不多，不过又创建出一个结构<code>eppoll_entry</code>，并调用<code>init_waitqueue_func_entry</code>初始化等待的回调函数。再使用<code>pwq-&gt;base = epi</code>保存了epi地址，接下来执行正常的<code>add_wait_queue</code>操作，加入等待队列。期待的结果就是设备数据就绪时，驱动<code>wake_up</code>等待队列，可以回调加入的函数<code>ep_poll_callback</code>，要想进一步研究，可以查看相关代码：</p>
+<pre><code>/* 函数init_waitqueue_func_entry仅仅初始化func回调函数 */
+static inline void init_waitqueue_func_entry(wait_queue_t *q,
+				wait_queue_func_t func)
+{
+	q-&gt;flags = 0;
+	q-&gt;private = NULL;
+	q-&gt;func = func;
+}
+
+#define wake_up(x)                      __wake_up(x, TASK_NORMAL, 1, NULL)
+
+void __wake_up(wait_queue_head_t *q, unsigned int mode,
+			int nr_exclusive, void *key)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&amp;q-&gt;lock, flags);
+	__wake_up_common(q, mode, nr_exclusive, 0, key);
+	spin_unlock_irqrestore(&amp;q-&gt;lock, flags);
+}
+
+static void __wake_up_common(wait_queue_head_t *q, unsigned int mode,
+			int nr_exclusive, int wake_flags, void *key)
+{
+	wait_queue_t *curr, *next;
+
+	list_for_each_entry_safe(curr, next, &amp;q-&gt;task_list, task_list) {
+		unsigned flags = curr-&gt;flags;
+
+		/* 最终到达这里调用刚才设置的回调函数 */
+		if (curr-&gt;func(curr, mode, wake_flags, key) &amp;&amp;
+				(flags &amp; WQ_FLAG_EXCLUSIVE) &amp;&amp; !--nr_exclusive)
+			break;
+	}
+}
+</code></pre>
+<p>现在可以知道的是，<code>epoll_wait</code>处于等待并且设备准备完成，会调用<code>ep_poll_callback</code>函数，一切的矛头都指向<code>ep_poll_callback</code>，大致可以猜测，增加就绪队列rdllist元素、唤醒<code>epoll_wait</code>函数都应在此函数中实现。</p>
+<pre><code>static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key)
+{
+	int pwake = 0;
+	unsigned long flags;
+	struct epitem *epi = ep_item_from_wait(wait);
+	struct eventpoll *ep = epi-&gt;ep;
+
+	spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+
+	...
+
+	/* If this file is already in the ready list we exit soon */
+	if (!ep_is_linked(&amp;epi-&gt;rdllink))
+		list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);
+
+	/*
+	 * Wake up ( if active ) both the eventpoll wait list and the -&gt;poll()
+	 * wait list.
+	 */
+	if (waitqueue_active(&amp;ep-&gt;wq))
+		wake_up_locked(&amp;ep-&gt;wq);
+	if (waitqueue_active(&amp;ep-&gt;poll_wait))
+		pwake++;
+
+out_unlock:
+	spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+
+	/* We have to call this outside the lock */
+	if (pwake)
+		ep_poll_safewake(&amp;ep-&gt;poll_wait);
+
+	return 1;
+}
+</code></pre>
+<p>粗略看下代码感觉此函数不负众望，首先<code>struct epitem *epi = ep_item_from_wait(wait)</code>从wait中获取epi结构，并取得ep，<code>list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);</code>把加入到ep的就绪队列rdllist中，而后<code>wake_up_locked(&amp;ep-&gt;wq)</code>唤醒<code>epoll_wait</code>。</p>
+<p>这里还有些细节，如果记得清楚，刚才是把wait变量赋值到结构epi的成员，这里确从wait中取出结构体的地址，这是Linux内核常用手段，依赖于宏container_of，此宏定义于include/linux/kernel.h，代码如下：</p>
+<pre><code>#define container_of(ptr, type, member) ({                      \
+        const typeof( ((type *)0)-&gt;member ) *__mptr = (ptr);    \
+        (type *)( (char *)__mptr - offsetof(type,member) );})
+</code></pre>
+<p>对c语言来说，结构体并没有太多的秘密，无非是内存的组合，typeof( ((type *)0)-&gt;member ) 在编译期构造一个member成员类型，指针指向ptr，之后减去member在类型type中的偏移即为type结构地址。</p>
+<p>分析到这里，我们可以看到，epoll模型并没有对每一个文件描述符遍历，仅仅当描述符对应设备就绪时，回调epoll，加入就绪队列唤醒epoll_wait，当文件描述符增多时，效率不会同select一样线性下降，由于select会轮询所有设备，可能大多数设备是没有数据的，在文件描述符较少情况下倒是显不出什么，当有成千上万描述符并且大量描述符处于空闲状态时，对效率的损耗是相当惊人的。所以epoll为我们提供了一种更加有效便捷的方式去管理如此多的描述符。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux%E5%86%85%E6%A0%B8/">Linux内核</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">overcommit 对 fork 的影响</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-进程调度</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-启动协议</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-VFS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

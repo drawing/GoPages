@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='AT&amp;amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
+系统加电启动时，BIOS首先获得控制权，由它首先进行硬件检测，这个过程称为加点自检(POST)，通常POST检测cpu、内存、磁盘、主板等等，一旦发现问题，便会提示信息或者鸣笛警告。
+BIOS另外一个职责便是引导系统，BIOS加电自检完毕之后，读取CMOS中的设备引导信息，从引导设备中读取0柱面0磁头1扇区的512字节，若 512字节以55 AA（2字节）结束，则认为是引导扇区（Boot Sector），BIOS便会装载此段到地址0x7C00，执行此程序，以后的引导工作边交由引导扇区处理，BIOS便退居幕后，为系统提供基本的服务。 在汇编中通过int指令产生中断，可请求BIOS服务，这篇先来介绍BIOS中断请求，不过需注意的是BIOS中断请求必须在16位实模式，或者虚拟 8086模式下才可运行，进入保护模式后，中断的处理方式发生变化。
+BIOS中断请求通过指令int Num，Num是中断号，不同的中断号负责不同的功能，比如0×10控制视频，0×16键盘中断等等。BIOS中断非常之多，不可能全部记忆，好在调用方式相同，另有相关手册参考，我觅得一份，可以在 这里 下载，或者浏览 网页版本，或者在Railf Brown 的主页 下载。
+这里以0×10号中断为例说明控制显示视频，先来看手册中0×10号中断部分：
+INT 10 - VIDEO; CPU-generated (80286&#43;) INT 10 ---- - CPU-generated (80286&#43;) - COPROCESSOR ERROR INT 10h---- - LIRVGA19 - CHAR HEIGHT HOOK INT 10 00-- - VIDEO - SET VIDEO MODE INT 10 0070 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET 看到 INT 10 00 是设置显示模式，查看其输入参数：'>
+<title>汇编语言练习-AT&amp;T汇编win32窗口</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言练习-AT&amp;T汇编win32窗口'>
+<meta property='og:description' content='AT&amp;amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
+系统加电启动时，BIOS首先获得控制权，由它首先进行硬件检测，这个过程称为加点自检(POST)，通常POST检测cpu、内存、磁盘、主板等等，一旦发现问题，便会提示信息或者鸣笛警告。
+BIOS另外一个职责便是引导系统，BIOS加电自检完毕之后，读取CMOS中的设备引导信息，从引导设备中读取0柱面0磁头1扇区的512字节，若 512字节以55 AA（2字节）结束，则认为是引导扇区（Boot Sector），BIOS便会装载此段到地址0x7C00，执行此程序，以后的引导工作边交由引导扇区处理，BIOS便退居幕后，为系统提供基本的服务。 在汇编中通过int指令产生中断，可请求BIOS服务，这篇先来介绍BIOS中断请求，不过需注意的是BIOS中断请求必须在16位实模式，或者虚拟 8086模式下才可运行，进入保护模式后，中断的处理方式发生变化。
+BIOS中断请求通过指令int Num，Num是中断号，不同的中断号负责不同的功能，比如0×10控制视频，0×16键盘中断等等。BIOS中断非常之多，不可能全部记忆，好在调用方式相同，另有相关手册参考，我觅得一份，可以在 这里 下载，或者浏览 网页版本，或者在Railf Brown 的主页 下载。
+这里以0×10号中断为例说明控制显示视频，先来看手册中0×10号中断部分：
+INT 10 - VIDEO; CPU-generated (80286&#43;) INT 10 ---- - CPU-generated (80286&#43;) - COPROCESSOR ERROR INT 10h---- - LIRVGA19 - CHAR HEIGHT HOOK INT 10 00-- - VIDEO - SET VIDEO MODE INT 10 0070 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET 看到 INT 10 00 是设置显示模式，查看其输入参数：'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/'>
+<meta property='og:site_name' content='演示站点'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-28T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-28T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言练习-AT&amp;T汇编win32窗口">
+<meta name="twitter:description" content="AT&amp;amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
+系统加电启动时，BIOS首先获得控制权，由它首先进行硬件检测，这个过程称为加点自检(POST)，通常POST检测cpu、内存、磁盘、主板等等，一旦发现问题，便会提示信息或者鸣笛警告。
+BIOS另外一个职责便是引导系统，BIOS加电自检完毕之后，读取CMOS中的设备引导信息，从引导设备中读取0柱面0磁头1扇区的512字节，若 512字节以55 AA（2字节）结束，则认为是引导扇区（Boot Sector），BIOS便会装载此段到地址0x7C00，执行此程序，以后的引导工作边交由引导扇区处理，BIOS便退居幕后，为系统提供基本的服务。 在汇编中通过int指令产生中断，可请求BIOS服务，这篇先来介绍BIOS中断请求，不过需注意的是BIOS中断请求必须在16位实模式，或者虚拟 8086模式下才可运行，进入保护模式后，中断的处理方式发生变化。
+BIOS中断请求通过指令int Num，Num是中断号，不同的中断号负责不同的功能，比如0×10控制视频，0×16键盘中断等等。BIOS中断非常之多，不可能全部记忆，好在调用方式相同，另有相关手册参考，我觅得一份，可以在 这里 下载，或者浏览 网页版本，或者在Railf Brown 的主页 下载。
+这里以0×10号中断为例说明控制显示视频，先来看手册中0×10号中断部分：
+INT 10 - VIDEO; CPU-generated (80286&#43;) INT 10 ---- - CPU-generated (80286&#43;) - COPROCESSOR ERROR INT 10h---- - LIRVGA19 - CHAR HEIGHT HOOK INT 10 00-- - VIDEO - SET VIDEO MODE INT 10 0070 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET 看到 INT 10 00 是设置显示模式，查看其输入参数：">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-33458688-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">演示站点</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一立即数优化">一、立即数优化</a></li>
+    <li><a href="#二地址优化">二、地址优化</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 28, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="att-bios模式">AT&amp;T BIOS模式</h1>
+<p>BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。</p>
+<p>系统加电启动时，BIOS首先获得控制权，由它首先进行硬件检测，这个过程称为加点自检(POST)，通常POST检测cpu、内存、磁盘、主板等等，一旦发现问题，便会提示信息或者鸣笛警告。</p>
+<p>BIOS另外一个职责便是引导系统，BIOS加电自检完毕之后，读取CMOS中的设备引导信息，从引导设备中读取0柱面0磁头1扇区的512字节，若 512字节以55 AA（2字节）结束，则认为是引导扇区（Boot Sector），BIOS便会装载此段到地址0x7C00，执行此程序，以后的引导工作边交由引导扇区处理，BIOS便退居幕后，为系统提供基本的服务。 在汇编中通过int指令产生中断，可请求BIOS服务，这篇先来介绍BIOS中断请求，不过需注意的是BIOS中断请求必须在16位实模式，或者虚拟 8086模式下才可运行，进入保护模式后，中断的处理方式发生变化。</p>
+<p>BIOS中断请求通过指令int Num，Num是中断号，不同的中断号负责不同的功能，比如0×10控制视频，0×16键盘中断等等。BIOS中断非常之多，不可能全部记忆，好在调用方式相同，另有相关手册参考，我觅得一份，可以在 这里 下载，或者浏览 网页版本，或者在Railf Brown 的主页 下载。</p>
+<p>这里以0×10号中断为例说明控制显示视频，先来看手册中0×10号中断部分：</p>
+<pre><code>INT 10 - VIDEO; CPU-generated (80286+)
+INT 10 ---- - CPU-generated (80286+) - COPROCESSOR ERROR
+INT 10h---- - LIRVGA19 - CHAR HEIGHT HOOK
+INT 10 00-- - VIDEO - SET VIDEO MODE
+INT 10 0070 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET
+</code></pre>
+<p>看到 INT 10 00 是设置显示模式，查看其输入参数：</p>
+<pre><code>Inp.:
+	AH = 00h
+	AL = desired video mode (see #00010)
+</code></pre>
+<p>看到AH为功能号00h，AL为需要设置的模式，再通过手册查找模式号：</p>
+<pre><code>Table 00010
+
+Values for video mode:
+
+     text/ text pixel	pixel	colors disply scrn  system
+     grph resol	 box  resolution       pages  addr
+ 00h = T  40x25	 8x8   320x200	16gray	  8   B800 CGA,PCjr,Tandy
+     = T  40x25	 8x14  320x350	16gray	  8   B800 EGA
+     = T  40x25	 8x16  320x400	 16	  8   B800 MCGA
+     = T  40x25	 9x16  360x400	 16	  8   B800 VGA
+ 01h = T  40x25	 8x8   320x200	 16	  8   B800 CGA,PCjr,Tandy
+     = T  40x25	 8x14  320x350	 16	  8   B800 EGA
+     = T  40x25	 8x16  320x400	 16	  8   B800 MCGA
+
+     = T  40x25	 9x16  360x400	 16	  8   B800 VGA
+ 02h = T  80x25	 8x8   640x200	16gray	  4   B800 CGA,PCjr,Tandy
+</code></pre>
+<p>看到 00h 为 40×25 字符，到这里大致清楚了功能号00（设置显示模式的使用），AH存放功能号00，AL存放字符显示模式，便可调用int 10h来调用BIOS设置显示模式。</p>
+<p>设置显示模式后来查看显示字符串的调用，0×10号中断的0×13功能号，还是来看手册中的描述：</p>
+<pre><code>Inp.:
+	AH = 13h
+	AL = write mode
+	   bit 0: update cursor after writing
+	   bit 1: string contains alternating characters and attributes
+	   bits 2-7: reserved (0)
+	BH = page number
+	BL = attribute if string contains only characters
+	CX = number of characters in string
+	DH,DL = row,column at which to start writing
+	ES:BP -&gt; string to write
+</code></pre>
+<p>这里说一下BL，字体的属性，使用BIOS手册索引查找Attribute bits，得到屏幕颜色信息：</p>
+<pre><code>Screen colors.
+
+ Normal colors       Bright colors          Attribute bits
+ 0 00 Black          8 08 Dark grey         7 normal    Foreground blink
+ 1 01 Blue           9 09 Light blue        7 alternate Background bright
+ 2 02 Green         10 0A Light green       6-4         Background color
+ 3 03 Cyan          11 0B Light cyan        3 normal    Foreground bright
+ 4 04 Red           12 0C Light red         3 alternate Alternate char. set
+
+ 5 05 Magenta       13 0D Light magenta     2-0         Foreground color
+ 6 06 Brown         14 0E Yellow
+ 7 07 White (grey)  15 0F Bright (white)
+</code></pre>
+<p>BL的0-2位表示前景色，3位表示高亮，4-6位表示背景色，7位表示前景闪烁。如果使用蓝色背景，红色前景，BL值应为 00011100 即 0x1c。</p>
+<p>接下来我们写一个BIOS调用输出字符串的例子：</p>
+<pre><code>.code16
+.text
+	movw %cs, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %ss
+
+	movb $0, %ah
+	movb $0, %al
+	int $0x10
+
+	movb $0x13, %ah
+	movb $0, %al
+	movb $0, %bh
+	movb $0x1c, %bl
+	movw $13, %cx
+	movb $2, %dh
+	movb $1, %dl
+	movw $outstring, %bp
+	int $0x10
+	jmp .
+outstring:
+	.asciz &quot;BIOS 10H 13H\n&quot;
+</code></pre>
+<p>程序开始使用.code16来指定16位代码段，第一个int $0×10设置字符显示模式为40×25，接着调用0×13号中断输出字符串，这里的参数设置可以参考手册，程序最后调用jmp . 跳转到当前位置，即形成一个死循环。最终结果便是显示蓝底红字的”BIOS 10H 13H”字串，同时单个cpu跑满。</p>
+<p>因为这里使用了 16位汇编，所以编译时也需要做相应改变，代码编译成16位实模式代码。因为BIOS调用只能处于实模式，所以在windows和linux上都无法使 用，好在windows兼容dos方式的虚拟8086模式，可以运行16位实模式程序，类似一个DOS的虚拟机，现在我们把代码编译成.com二进制文 件，由于.com是需要加载到0×100地址，所以我们仿照AT&amp;T创建窗口的程序，写一个简单的ld链接脚本，指定加载地址为0×100：</p>
+<pre><code>SECTIONS
+{
+. = 0x0100;
+.text : {*(.text)}
+}
+</code></pre>
+<p>编译命令如下：</p>
+<pre><code>:::bash
+as bios.s -o bios.o
+ld bios.o -Tbios.lds
+objcopy.exe -R .pdr -R .comment -R .note -S -O binary a.exe bios.com
+</code></pre>
+<p>首先用as编译汇编代码到目标文件，接着使用ld进行连接，指定脚本名bios.lds，连接之后称为a.exe，是windows下 的PE可执行格式，还需要使用objcopy命令去掉无用段信息成为二进制格式bios.com，如此，执行bios.com便可看到效果。如果用二进制 工具打开bios.com可以看到，文件中的二进制几乎与我们写的程序是一一对应的，完全可以在生成目标文件之后，直接使用 objcopy.exe -O binary bios.o bios.com 命令把目标文件拷成二进制文件，程序仍然可以执行，但是因为没有指定 0×0100起始地址，最终movw $outstring, %bp这里无法定位字符串，致使输出乱码，objcopy命令本身也可指定起始地址，只不过一直没有试验成功，不知应如何设置，这里暂且使用前者，虽然比 较繁琐，但毕竟能用。</p>
+<p>在本篇开始已经提到，BIOS加电自检以后会读取启动磁盘，如果发现第一扇区512字节以，55 AA结尾，则认为是引导区，会把这512字节载入到0x7c00地址处执行，根据这个说明，我们很容易做一个简单的引导区例子：</p>
+<pre><code>.code16
+.text
+	movw %cs, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %ss
+
+	movb $0, %ah
+	movb $0, %al
+	int $0x10
+
+	movb $0x13, %ah
+	movb $0, %al
+	movb $0, %bh
+	movb $0x1c, %bl
+	movw $13, %cx
+	movb $2, %dh
+	movb $1, %dl
+	movw $outstring, %bp
+	int $0x10
+	jmp .
+outstring:
+	.asciz &quot;BIOS 10H 13H\n&quot;
+
+.org 510, 0
+	.short 0xAA55
+</code></pre>
+<p>其实这段代码跟虚拟8086显示字符的代码基本相同，只是末尾加入了.org宏，指示汇编器直接到510字节开始汇编，中间空出的字符 补0，最后以0xAA55结尾，因为内存中是大端方式存储数据。接下来需要修改的地方是连接脚本的0×0100，因为这里的程序需要加载至0x7c00， 所以修改这个地址，最后objcopy命令 bios.com 换成 bios.img，后缀只是为了让虚拟机识别。虚拟机会把img识别当软盘载入，之后的事情可以预料到了，BIOS会认为我们的这512字节文件是引导 区，并执行。</p>
+<p>使用二进制工具打开bios.img，检验一下，文件刚好512字节，并且以55 AA结尾。说明我们编译过程是没有问题的，接着使用virtual box或者VMware等虚拟机，配置软盘为bios.img，并且设置软盘为第一启动介质。接着开机，便可看到蓝底红字的BIOS 10H 13H！而且我们这里的代码完全独立于操作系统，是在裸机上执行的。</p>
+<p>这里的引导区可作为操作系统的前导，用于引导操作系统，Linux内核中也有一份类似代码，不过由于Linux使用了lilo或者grub这些专业的启动管理程序，内核引导代码便早已废弃。</p>
+<h1 id="bios视频映射内存">BIOS视频映射内存</h1>
+<p>之前说过BIOS的视频控制，仅仅说明的是字符显示，其实显卡可以设置两种模式，一种是图形模式，一种是字符模式，在BIOS中断10h ah=0时可以设置模式，在BIOS手册 video mode列表中，第二列有T和G字符，指明此种模式的类别，比如13h便是图形模式，屏幕大小为320×200，另外注意一个属性addr，这里是 A000，也就是说视频是映射至内存A000处，此地址是以后操作映射内存的基础：</p>
+<pre><code>Values for video mode:
+
+     text/ text pixel	pixel	colors disply scrn  system
+     grph resol	 box  resolution       pages  addr
+ 13h = G  40x25	 8x8   320x200	256/256K  .   A000 VGA,MCGA,ATI VIP
+</code></pre>
+<p>接下来我便以此为例进行说明，再设置了显示模式以后，便要看如何绘图，绘图的操作当然也是通过BIOS调用，其中int 10h的0ch功能便是在屏幕上绘制一个像素点：</p>
+<pre><code>Category: V - video
+
+Inp.:
+	AH = 0Ch
+	BH = page number
+	AL = pixel color
+	    if bit 7 set, value is XOR'ed onto screen except in 256-color modes
+	CX = column
+	DX = row
+Return: nothing
+Desc:	set a single pixel on the display in graphics modes
+</code></pre>
+<p>当然，有了绘制像素的功能，便可画线，之后一切的操作以此为基础实现。如果有兴趣可以试试此功能，在这里我并不使用这个调用，因为每次 调用BIOS都需要做很多操作，绘制一个图形需要非常多的像素，其速度可想而知。所以这里使用另外一种方式，就是内存映射，视频卡映射至内存，这样绘制屏 幕的像素可以像操作二维数组一般。</p>
+<p>在开始之前，先来看两条指令，in，out（输入输出指令），MASM语法如下：</p>
+<pre><code>in al/ax/eax, port
+out port, al/ax/eax
+</code></pre>
+<p>来看port，此操作数是硬件映射到cpu的端口，比如视频调色板port为3c8h，扬声器port为61h，当然这些端口值也可通过BIOS手册查找。</p>
+<p>先 来看颜色选择，13h的颜色并不用一个整数表示，而是使用调色板的概念，所谓调色板，可以理解为一个大小256的数组，数组每个元素都是一种颜色，每个颜 色由RGB三个字节组成，可提供256^3种颜色，但由于调色板的限制，每次只能显示256种颜色，调色板的索引0为背景色。视频调色板位于端口 3c8h。</p>
+<p>再看颜色，把颜色设置给对应的调色板，先选择调色板索引，之后再通过颜色选择端口 （3c9h）设置RGB值。</p>
+<p>另外视频的内存映射偏移为 0A000h，320 * 200大小的屏幕每个像素占1个字节，表示调色板的索引值，通过直接往这个地址范围写入调色板索引，便可决定对应像素的颜色，以达到绘制图形的效果。接下来我们通过例子来操作内存映射：</p>
+<pre><code>.model tiny
+.code
+org 7c00h
+
+Video_Pallete_Port equ 3c8h
+Color_Select_Port equ 3c9h
+Video_Base equ 0A000h
+
+Video_Width equ 320
+
+main proc
+	mov ax, Video_Base
+	mov es, ax
+	call SetVideoMode
+	call SetBackgroudColor
+	call DrawSquare
+die:
+	jmp die
+main endp
+
+SetVideoMode proc
+	mov al, 13h
+	mov ah, 0
+	int 10h
+	ret
+SetVideoMode endp
+
+; al : the video mode
+SetBackgroudColor proc
+	mov dx, Video_Pallete_Port
+	mov al, 0
+	out dx, al
+
+	mov dx, Color_Select_Port
+	mov al, 255
+	out dx, al
+	mov al, 0
+	out dx, al
+	out dx, al
+	ret
+SetBackgroudColor endp
+
+DrawSquare proc
+	mov dx, Video_Pallete_Port
+	mov al, 1
+	out dx, al
+
+	mov dx, Color_Select_Port
+	mov al, 0
+	out dx, al
+	out dx, al
+	mov al, 255
+	out dx, al
+
+	;; Set The Squre Row Start
+	mov bx, 30
+	;; Set The Squre Row Num
+	mov cx, 100
+row:
+	mov ax, Video_Width
+	mul bx
+	;; 10 Set Squre Col Start
+	add ax, 10
+	mov di, ax
+
+	push cx
+	;; Set The Squre Col Num
+	mov cx, 100
+col:
+	mov byte ptr es:[di], 1
+	inc di
+	loop col
+	pop cx
+	inc bx
+	loop row
+
+	ret
+DrawSquare endp
+
+fill db (510 - (fill - main)) dup (0)
+db 55h
+db 0AAh
+
+end main
+</code></pre>
+<p>这里代码比较长，首先来看最开始org 7c00h， 指明该程序需要加载至7c00处，即引导程序加载位置。main函数里设置es段寄存器的地址为Video_Base，以便在此段中直接操纵内存，接下来调用了三个函数；</p>
+<p>函数SetVideoMode比较简单，调用int 10h设置显示模式为13h；</p>
+<p>函数SetBackgroudColor包含了调色板的操作，因为调色板索引0为背景，第一个out选择0调色板，接下来调用了三次out dx, al，dx为颜色选择端口，al为色彩值，以R、G、B的方式分别传出3个颜色字节进行设置，设置之后调色板0便为红色。</p>
+<p>函 数DrawSquare看似复杂，其实大部分都与BIOS调用无关，仅仅是计算坐标点，两个循环绘制了一个矩形，关键点有两个，第一个就是颜色设置，这次 设置的是调色板索引1，这里与SetBackgroudColor基本相同，再一个便是设置颜色，关键语句为 mov byte ptr es:[di], 1，如果记得，在main函数中把es设置为Video的机制，di是基址上的偏移，对应屏幕上的像素，这里屏幕像素是320*200，就是当dl为 320时是第二行第一列的像素，这里与二维数组的意义相同，第二个操作数1为刚才设置的调色板索引，综合来看，这句话的含义便是把内存位置（对应显存）设 置为调色板索引1的颜色。</p>
+<p>编译连接程序为 video.img，设置为虚拟机的软盘，并设置成第一启动介质，打开虚拟机便可看到红色背景上100*100的蓝色矩形。</p>
+<h1 id="bios键盘中断">BIOS键盘中断</h1>
+<p>这里来看一下BIOS中断的键盘控制部分，当用户按下键盘，键盘的扫描码从输入端口进入键盘缓冲，在系统中可以调用BIOS int 16h 来获取缓冲区中的扫描码和ASCII码。</p>
+<p>关于键盘操作的BIOS中断有很多种，接下来介绍一些常用的调用：</p>
+<p>设置击键重复率 03h ，当一直按着某个键，在按键开始重复之前有250~1000ms的延时。击键重复速率取值可以是1Fh（最慢）到0（最快）：</p>
+<pre><code>Inp.:
+	AH = 03h
+	AL = subfunction
+	    00h set default delay and rate (PCjr and some PS/2)
+	    01h increase delay before repeat (PCjr)
+	    02h decrease repeat rate by factor of 2 (PCjr)
+	    03h increase delay and decrease repeat rate (PCjr)
+	    04h turn off typematic repeat (PCjr and some PS/2)
+	    05h set repeat rate and delay (AT,PS)
+		BH = delay value (00h = 250ms to 03h = 1000ms)
+		BL = repeat rate (00h=30/sec to 0Ch=10/sec [def] to 1Fh=2/sec)
+
+    06h get current typematic rate and delay (newer PS/2s)
+		Return: BL = repeat rate (above)
+			BH = delay (above)
+</code></pre>
+<p>可以看到，当ah = 03h, al = 05h时设置速率，bh为重复率。</p>
+<p>等待按键，这是一个非常有用的功能，当键盘缓冲有按键时，删除按键并返回按键，没有时等待用户按键，以阻塞的方式运行，而且其参数非常简单，只需设置ah，返回ah为扫描码，al为ASCII码：</p>
+<pre><code>Inp.:
+	AH = 10h
+Return: AH = BIOS scan code
+	AL = ASCII character
+</code></pre>
+<p>另外，还有可能有时不想等待，指向查看是否按键，没有按键便返回处理其他事情，这时功能11h便非常有用了，这个功能以非阻塞的方式返回按键，如果没有按键则ZF被设置：</p>
+<pre><code>Inp.:
+	AH = 11h
+Return: ZF set if no keystroke available
+	ZF clear if keystroke available
+	    AH = BIOS scan code
+	    AL = ASCII character
+</code></pre>
+<p>BIOS的16h功能全部用来处理键盘，另外还有检测按键状态等等，可查阅手册获知细节。</p>
+<p>这里改善上篇写的绘图程序，最终不以死循环结束程序，而是等待按键，根据按键做一些操作：</p>
+<pre><code>.model tiny
+.code
+org 7c00h
+
+Video_Pallete_Port equ 3c8h
+Color_Select_Port equ 3c9h
+Video_Base equ 0A000h
+
+Video_Width equ 320
+
+main proc
+	mov ax, Video_Base
+	mov es, ax
+	call SetVideoMode
+	call SetBackgroudColor
+
+die:
+	mov ah, 10h
+	int 16h
+	cmp al, 's'
+	jz shutdown
+	cmp al, 'd'
+	jnz die
+	call DrawSquare
+	jmp die
+shutdown:
+	mov ax, 5301h
+	xor bx, bx
+	int 15h
+
+	mov ax, 530eh
+	mov cx, 0102h
+	int 15h
+
+	mov ax, 5307h
+	mov bx, 1h
+	mov cx, 03h
+	int 15h
+
+main endp
+
+SetVideoMode proc
+	mov al, 13h
+	mov ah, 0
+	int 10h
+	ret
+SetVideoMode endp
+
+SetBackgroudColor proc
+	mov dx, Video_Pallete_Port
+	mov al, 0
+	out dx, al
+
+	mov dx, Color_Select_Port
+	mov al, 255
+	out dx, al
+	mov al, 0
+	out dx, al
+	out dx, al
+	ret
+SetBackgroudColor endp
+
+DrawSquare proc
+	mov dx, Video_Pallete_Port
+	mov al, 1
+	out dx, al
+
+	mov dx, Color_Select_Port
+	mov al, 0
+	out dx, al
+	out dx, al
+	mov al, 255
+	out dx, al
+
+	mov bx, 30
+	mov cx, 100
+row:
+	mov ax, Video_Width
+	mul bx
+	add ax, 10
+	mov di, ax
+
+	push cx
+	mov cx, 100
+col:
+	mov byte ptr es:[di], 1
+	inc di
+	loop col
+	pop cx
+	inc bx
+	loop row
+
+	ret
+DrawSquare endp
+
+fill db (510 - (fill - main)) dup (0)
+db 55h
+db 0AAh
+
+end main
+</code></pre>
+<p>这里修改的东西并不多，在程序启动时不进行绘图，而是调用int 16h来获取按键，检测按键为d时进行绘图，并且按键为s时调用了三组int 15h中断，15h调用掌管系统状态，当ax为5307h时可以关闭设备电源等，这三组int 15h功能是关闭计算机，其中细节可以通过手册获取。其实中断调用除了图形映射内存这种有一定背景的功能外，其他功能相对独立，使用时可能不知道改使用哪 个中断，一旦得知所使用的中断号，通过手册很容易掌握中断。</p>
+<pre><code>Inp.:
+	AX = 5307h
+	BX = device ID (see #00474)
+	CX = system state ID (see #00475)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,03h,09h,0Ah,0Bh,60h) (see #00473)
+
+Table 00474
+Values for APM device IDs:
+ 0000h	system BIOS
+ 0001h	all devices for which the system BIOS manages power
+ 01xxh	display (01FFh for all attached display devices)
+
+Table 00475
+Values for system state ID:
+ 0000h	ready (not supported for device ID 0001h)
+ 0001h	stand-by
+ 0002h	suspend
+ 0003h	off (not supported for device ID 0001h in APM v1.0)
+</code></pre>
+<p>编译后可在虚拟机上查看效果，由于增加了键盘等待，程序不会空耗cpu资源，而且可以关机，也不用使用暴力的方式断电关机。</p>
+<h1 id="汇编优化执行文件大小">汇编优化执行文件大小</h1>
+<p>闲来无事写了一个点灯小游戏，记得当年在文曲星上玩过，现在使用BIOS中断在引导区实现，其实整个游戏实现起来并不复杂，无非是一些BIOS调 用，图形显示等等，但是最让人郁闷的事情是引导程序仅仅有512字节，当然有方法突破这个限制，但这仅仅是个小程序，没有必要再去载入文件到内存。不过这 个以后倒可以试试。</p>
+<p>这里的代码不少，我会附到文后，不过我想也没有人去研究如此杂乱的代码。不过程序还有不少问题，BIOS刷新屏幕的部分，我重绘背景，这样导致刷新时会闪 屏，也不算很大的bug，我也没有花精力去解决这个问题，还有一个问题是填充的问题，最后填充时总是说长度不能为负，不过实际计算长度远不足512，不知 道什么机制导致这种错误，不过最后我编译好程序刚刚好512字节，也不存在填充的问题了，只是扩展不易。</p>
+<p>其实编译结果为512字节并非巧合，开始写完程序时文件有680多字节，经过调整代码，压缩，最终才缩小至512字节，能让系统正常引导。这里说下压缩可执行文件大小的经验：</p>
+<h2 id="一立即数优化">一、立即数优化</h2>
+<p>程 序中经常有 mov ax, 0 类似的指令，目的是把一个寄存器清零，别看这里的0是很小的数字，他占用的大小与 0ffffh 无异，都是根据Intel立即数的大小而定的，其他的比如ax和mov仅仅是intel的一个索引，所需字节很少，所以如非必要，尽力避免立即数的使用， 寄存器清零可使用 xor ax, ax 指令实现。相同的原理 cmp ax, 0 可用 test ax, ax 实现。
+还是如果给寄存器加2，直接写成 add bp, 2 甚至比两个inc bp还要大。</p>
+<h2 id="二地址优化">二、地址优化</h2>
+<p>时 常会出现使用 address 寻址变量的情况，如果一个变量寻址多次，mov ax, word ptr[address]就会出现多次，address在16位平台大小16位，这样累计也是很客观的大小，这种情况可以使用mov si, offset address 指令，刚才提到，si寄存器仅仅是一个索引，所以mov ax, word ptr[si] 会比刚才要小，如果相同代码很多，则可节省不少空间。</p>
+<p>另外，还有函数的调用，有些代码放到函数中可减少重复代码，但如果函数很小call address占用的空间便会很大；
+如果要保存一个寄存器待执行完毕后恢复，使用push cx, pop cx要比先存储与其他寄存器事后再恢复要小很多。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十二)-浮点指令</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 演示站点
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
