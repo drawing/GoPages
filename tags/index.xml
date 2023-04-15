@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Tags on 演示站点</title>
-        <link>https://example.com/tags/</link>
+        <link>https://drawing.fancymore.com/tags/</link>
         <description>Recent content in Tags on 演示站点</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="https://example.com/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>工程实践</title>
-        <link>https://example.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link>
+        <link>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link>
         <pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
         
-        <guid>https://example.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid>
+        <guid>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid>
         <description></description>
         </item>
         <item>
         <title>编程语言</title>
-        <link>https://example.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
+        <link>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
         <pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
         
-        <guid>https://example.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</guid>
+        <guid>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</guid>
         <description></description>
         </item>
         

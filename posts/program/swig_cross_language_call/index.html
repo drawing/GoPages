@@ -9,7 +9,7 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
 适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。'>
 <title>SWIG 跨语言调用</title>
 
-<link rel='canonical' href='https://example.com/posts/program/swig_cross_language_call/'>
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/swig_cross_language_call/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='SWIG 跨语言调用'>
 <meta property='og:description' content='一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
@@ -18,7 +18,7 @@ Web 流派：PhoneGap
 语言之间转换：Java-OC（J2ObjC） Haxe：中间语言，本身不能编译运行，只能转换为其他语言，支持 JavaScript, C&#43;&#43;, C#, Java, JVM, Python, Lua, PHP, Flash 多种语言，以对应语言原生代码运行 编译流派：C/C&#43;&#43;，Go
 Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SWIG 是什么 C/C&#43;&#43;库提供给不同平台和不同语言使用，存在的一些问题
 适配层工作量较大：取决于 API 数量 易错：涉及底层数据类型的转换 不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等 SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C&#43;&#43; 编写的程序与各种高级编程语言连接起来。'>
-<meta property='og:url' content='https://example.com/posts/program/swig_cross_language_call/'>
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/swig_cross_language_call/'>
 <meta property='og:site_name' content='演示站点'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2023-04-10T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2023-04-10T22:40:04&#43;08:00'/>
 <meta name="twitter:title" content="SWIG 跨语言调用">
@@ -71,7 +71,7 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
                     
                     
                         
-                        <img src="/img/avatar_huda2458f72ce188392d75c5d51cd8e24e_373_300x0_resize_box_3.png" width="300"
+                        <img src="/images/avatar_hu9038390099a582a55a27b00120890f1e_654287_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -542,7 +542,7 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
         
 
         <div class="article-details">
-            <h2 class="article-title">无效告警优化实践总结</h2>
+            <h2 class="article-title">告警优化实践总结</h2>
         </div>
     </a>
 </article>
@@ -555,47 +555,51 @@ Golang（gobind） C/C&#43;&#43;（java: jni，go: cgo, python: ctypes) 二、SW
      
     
         
-    <div class="disqus-container">
-    <div id="disqus_thread"></div>
-<script type="application/javascript">
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
 
 <style>
-    .disqus-container {
-        background-color: var(--card-background);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--shadow-l1);
-        padding: var(--card-padding);
+    .utterances {
+        max-width: unset;
     }
 </style>
 
 <script>
-    window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
-            DISQUS.reset({
-                reload: true
-            });
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
         }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
     })
 </script>
+
 
     
 

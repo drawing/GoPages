@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>编程语言 on 演示站点</title>
-        <link>https://example.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
+        <link>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
         <description>Recent content in 编程语言 on 演示站点</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 10 Apr 2023 22:40:04 +0800</lastBuildDate><atom:link href="https://example.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 10 Apr 2023 22:40:04 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>SWIG 跨语言调用</title>
-        <link>https://example.com/posts/program/swig_cross_language_call/</link>
+        <link>https://drawing.fancymore.com/posts/program/swig_cross_language_call/</link>
         <pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
         
-        <guid>https://example.com/posts/program/swig_cross_language_call/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/swig_cross_language_call/</guid>
         <description>&lt;h2 id=&#34;一跨平台调用&#34;&gt;一、跨平台调用&lt;/h2&gt;
 &lt;p&gt;在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Web 流派&lt;/strong&gt;：PhoneGap&lt;/p&gt;
