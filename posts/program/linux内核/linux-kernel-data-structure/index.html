@@ -1,36 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
-// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
-来看一个简单的例子：
-struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
-答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
-// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平'>
 <title>Linux内核数据结构</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核数据结构'>
-<meta property='og:description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
-// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
-来看一个简单的例子：
-struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
-答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
-// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.'>
+<meta property='og:description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-17T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-17T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核数据结构">
-<meta name="twitter:description" content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-概览 先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：
-// include/linux/types.h struct list_head { struct list_head *next, *prev; }; 这里的定义有些奇怪，因为仅有前后节点的指针，并没有数据，就像一串链子，只有线没有线上的珠子，肯定是无法使用，那Linux内核如何把这些“珠子”附着到线上的呢？
-来看一个简单的例子：
-struce simple { int data; struct list_head list; }; simple结构体的list成员指向下一个或者上一个simple的list，这样便把节点串联起来了，data作为“珠子”附着在list线上，但这样仍然有一个问题，list成员仅仅指向下一个simple的list成员，那从list成员如何得到simple节点的地址呢？
-答案是根据list成员的地址以及list成员在simple的位置便可以计算出simple对象的地址，这样有些繁琐，Linux提供了一个宏，可以简化这个过程：
-// include/linux/list.h /** * list_entry - get the struct for this entry * @ptr: the &amp;amp;struct list_head pointer. * @type: the type of the struct this is embedded in. * @member: the name of the list_struct within the struct. */ #define list_entry(ptr, type, member) \ container_of(ptr, type, member) // include/linux/kernel.">
+<meta name="twitter:description" content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -92,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -287,7 +269,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 8 分钟
+                    阅读时长: 10 分钟
                 </time>
             </div>
         
@@ -1021,7 +1003,7 @@ void *radix_tree_lookup(struct radix_tree_root *root, unsigned long index)
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

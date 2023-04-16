@@ -1,39 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
-sse提供了xmm寄存器，xmm一组8个128位的寄存器，分别名为xmm0-xmm7，sse构架提供对打包单精度浮点数的SIMD支持。
-sse提供了两个版本的指令，其一以后缀ps结尾，这组指令对打包单精度浮点值执行类似mmx操作运算，而第二种后缀ss，这些指令对一个量标单精度浮点 值进行运算操作，这些指令不对打包值中的所有浮点值操作，而只对打包值中的低位双字节执行操作，源操作数中剩余的3个值直接传送给结果。
-指令 说明 movaps 把4个对准的单精度值传送到xmm寄存器或者内存 movups 把4个不对准的单精度值传送到xmm寄存器或者内存 movss 把1个单精度值传送到内存或者寄存器的低位双字 movlps 把2个单精度值传送到内存或者寄存器的低四字 movhps 把2个单精度值传送到内存或者寄存器的高四字 movlhps 把2个单精度值从低四字传送到高四字 movhlps 把2个单精度值从高四字传送到低四字 其中对准操作movaps要求数据在内存中对准16字节的边界，以提交效率，否则应使用movups传送数据。
-运算指令：
-指令 说明 addps 将两个打包值相加 subps 将两个打包值相减 mulps 将两个打包值相乘 divps 将两个打包值相除 rcpps 计算打包值的倒数 sqrtps 计算打包值的平方根 rsqrtps 计算打包值的平方根倒数 maxps 计算两个打包值中的最大值 minps 计算两个打包值中的最小值 andps 计算两个打包值的按位逻辑与 andnps 计算两个打包值的按位逻辑非 orps 计算两个打包值的按位逻辑或 xorps 计算两个打包值的按位逻辑异或 以上指令都是用两个操作数：源操作数可以是128位内存或者xmm寄存器，目标操作数必须是xmm寄存器。
-这里举一个简单的例子，使用gdb查看最后结果：
-.section .data value1: .float 12.12, 34.89, 56.23, 78.45 value2: .float 31.12, 57.124, 234.23, 67.246 .section .'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。 sse提供了xm'>
 <title>汇编语言学习笔记(十四)-SSE指令集</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十四)-SSE指令集'>
-<meta property='og:description' content='本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
-sse提供了xmm寄存器，xmm一组8个128位的寄存器，分别名为xmm0-xmm7，sse构架提供对打包单精度浮点数的SIMD支持。
-sse提供了两个版本的指令，其一以后缀ps结尾，这组指令对打包单精度浮点值执行类似mmx操作运算，而第二种后缀ss，这些指令对一个量标单精度浮点 值进行运算操作，这些指令不对打包值中的所有浮点值操作，而只对打包值中的低位双字节执行操作，源操作数中剩余的3个值直接传送给结果。
-指令 说明 movaps 把4个对准的单精度值传送到xmm寄存器或者内存 movups 把4个不对准的单精度值传送到xmm寄存器或者内存 movss 把1个单精度值传送到内存或者寄存器的低位双字 movlps 把2个单精度值传送到内存或者寄存器的低四字 movhps 把2个单精度值传送到内存或者寄存器的高四字 movlhps 把2个单精度值从低四字传送到高四字 movhlps 把2个单精度值从高四字传送到低四字 其中对准操作movaps要求数据在内存中对准16字节的边界，以提交效率，否则应使用movups传送数据。
-运算指令：
-指令 说明 addps 将两个打包值相加 subps 将两个打包值相减 mulps 将两个打包值相乘 divps 将两个打包值相除 rcpps 计算打包值的倒数 sqrtps 计算打包值的平方根 rsqrtps 计算打包值的平方根倒数 maxps 计算两个打包值中的最大值 minps 计算两个打包值中的最小值 andps 计算两个打包值的按位逻辑与 andnps 计算两个打包值的按位逻辑非 orps 计算两个打包值的按位逻辑或 xorps 计算两个打包值的按位逻辑异或 以上指令都是用两个操作数：源操作数可以是128位内存或者xmm寄存器，目标操作数必须是xmm寄存器。
-这里举一个简单的例子，使用gdb查看最后结果：
-.section .data value1: .float 12.12, 34.89, 56.23, 78.45 value2: .float 31.12, 57.124, 234.23, 67.246 .section .'>
+<meta property='og:description' content='本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。 sse提供了xm'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-25T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-25T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十四)-SSE指令集">
-<meta name="twitter:description" content="本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
-sse提供了xmm寄存器，xmm一组8个128位的寄存器，分别名为xmm0-xmm7，sse构架提供对打包单精度浮点数的SIMD支持。
-sse提供了两个版本的指令，其一以后缀ps结尾，这组指令对打包单精度浮点值执行类似mmx操作运算，而第二种后缀ss，这些指令对一个量标单精度浮点 值进行运算操作，这些指令不对打包值中的所有浮点值操作，而只对打包值中的低位双字节执行操作，源操作数中剩余的3个值直接传送给结果。
-指令 说明 movaps 把4个对准的单精度值传送到xmm寄存器或者内存 movups 把4个不对准的单精度值传送到xmm寄存器或者内存 movss 把1个单精度值传送到内存或者寄存器的低位双字 movlps 把2个单精度值传送到内存或者寄存器的低四字 movhps 把2个单精度值传送到内存或者寄存器的高四字 movlhps 把2个单精度值从低四字传送到高四字 movhlps 把2个单精度值从高四字传送到低四字 其中对准操作movaps要求数据在内存中对准16字节的边界，以提交效率，否则应使用movups传送数据。
-运算指令：
-指令 说明 addps 将两个打包值相加 subps 将两个打包值相减 mulps 将两个打包值相乘 divps 将两个打包值相除 rcpps 计算打包值的倒数 sqrtps 计算打包值的平方根 rsqrtps 计算打包值的平方根倒数 maxps 计算两个打包值中的最大值 minps 计算两个打包值中的最小值 andps 计算两个打包值的按位逻辑与 andnps 计算两个打包值的按位逻辑非 orps 计算两个打包值的按位逻辑或 xorps 计算两个打包值的按位逻辑异或 以上指令都是用两个操作数：源操作数可以是128位内存或者xmm寄存器，目标操作数必须是xmm寄存器。
-这里举一个简单的例子，使用gdb查看最后结果：
-.section .data value1: .float 12.12, 34.89, 56.23, 78.45 value2: .float 31.12, 57.124, 234.23, 67.246 .section .">
+<meta name="twitter:description" content="本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。 sse提供了xm">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -95,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -238,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -814,7 +793,7 @@ $1 = {v4_float = {43.2400017, 92.0139999, 290.459991, 145.695999},
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

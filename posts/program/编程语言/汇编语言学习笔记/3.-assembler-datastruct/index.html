@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
-对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
-.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
-label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
-另外，还有一些有关符号的命令
-.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
-.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
-.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
-对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
-先说其基本类型及其相应的简写：
-byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕'>
 <title>汇编语言学习笔记(三)-数据结构</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(三)-数据结构'>
-<meta property='og:description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
-对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
-.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
-label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
-另外，还有一些有关符号的命令
-.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
-.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
-.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
-对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
-先说其基本类型及其相应的简写：
-byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：'>
+<meta property='og:description' content='其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-14T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-14T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(三)-数据结构">
-<meta name="twitter:description" content="其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。
-对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：
-.ascii —— 字符串，但是无\0结尾 .asciz —— 字符串，自动加入\0 .byte —— 8位数据 .double ——　双精度64位 .float —— 单精度32位 .int —— 整数32位 .long —— 长整数32位 .octa —— 16字节整数 .quad —— 8字节整数 .short —— 短整型16位 .single —— 单精度，同.float 使用这些基本数据类型时，可以用标号命名，例如：
-label1: .ascii &amp;#34;test data\0&amp;#34; label2: .byte 12 这样便可使用label2直接引用12这块内存，当然要取12这块内存的地址应使用$label2
-另外，还有一些有关符号的命令
-.equ factor, 3 这里是定义常量，定义factor为3，如果还记得上一篇的内容，如果想使用此标号，应该写为 $factor
-.comm symbol, length 这里定义在.bss段，表示在symbol处分配length长度的空间，通用符号
-.lcomm symbol, length 这里定义在.bss段，表示sysmol处将会分配有length长度的空间，不过符号只能在本文件内使用
-对比MASM，数据类型要复杂的多，甚至有高级语言所谓的结构体。
-先说其基本类型及其相应的简写：
-byte 8位无符号 简写db sbyte 8位有符号 word 16位无符号 简写dw sword 16位有符号 dword 32位无符号 简写dd sdword 32位有符号 fword 48位整数 qword 64位整数 简写dq tbyte 80位整数 简写dt read4 32位IEEE短实数 real8 64位IEEE长实数 real10 80位IEEE扩展精度 定义变量时格式为： [name] 指令 初始值 [,初始值 &amp;hellip;] 例如：">
+<meta name="twitter:description" content="其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -104,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -247,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -509,7 +479,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,42 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。 最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。
-定义 问题描述：给定两个序列X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}，找出X和Y的最长公共子序列。
-解决 解决最长公共子序列一个比较直接暴力的办法是枚举所有X的子序列，检查是否同时是Y的子序列，从公共子序列中找到最长的一个。
-X中元素有m个，X中的子序列有2^m个，算法的复杂度需要指数时间，最于长序列来讲耗时过长。
-另一种比较合理的解决办法是动态规划。LCS具有最优子序列结构：
-X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn} 为两个序列，Z={z1, z2, …, zk} 为X和Y的任意一个LCS。 1）如果xm=yn，则 zk=xm=yn而且Z(k-1)是X(m-1)和Y(n-1)的一个LCS。 2）如果xm!=yn，则zk!=xm表示Z是X(m-1)和Y的一个LCS。 3）如果xm!=yn，则zk!=yn表示Z是X和Y(n-1)的一个LCS。 最优子结构是使用动态规划的基础，由以上结论便可归纳出具体的计算方法：
-标记c[i,j]是Xi和Xj的最长公共子序列，则有：
-c[i,j] = 0 i=0 or j=0 c[i,j] = c[i-1,j-1] &#43; 1 i,j&amp;gt;0 and xi == yj c[i,j] =max{c[i,j-1], c[i-1,j]} i,j&amp;gt;0 and xi != yj 通过递归便可得到所有i,j下最长公共子序列。
-#include &amp;lt;iostream&amp;gt; #include &amp;lt;cstring&amp;gt; using namespace std; #define MAX_ELEM_LEN 100 int g_result[MAX_ELEM_LEN][MAX_ELEM_LEN] = {}; int find_LCS(int X[], int n, int Y[], int m) { for (int i = 0; i &amp;lt;= n; i &#43;&#43;) { g_result[i][0] = 0; } for (int j = 0; j &amp;lt;= m; j &#43;&#43;) { g_result[0][j] = 0; } for (int i = 1; i &amp;lt;= n; i &#43;&#43;) { for (int j = 1; j &amp;lt;= m; j &#43;&#43;) { if (X[i-1] == Y[j-1]) { g_result[i][j] = g_result[i-1][j-1] &#43; 1; } else if (g_result[i-1][j] &amp;gt; g_result[i][j-1]) { g_result[i][j] = g_result[i-1][j]; } else { g_result[i][j] = g_result[i][j-1]; } } } return g_result[n][m]; } int main() { int X[] = {1, 2, 5, 6, 8, 3, 4, 7}; int Y[] = {2, 6, 3, 7, 5, 4, 8}; int n = sizeof(X)/sizeof(int); int m = sizeof(Y)/sizeof(int); int max_elem = find_LCS(X, n, Y, m); cout &amp;lt;&amp;lt; max_elem &amp;lt;&amp;lt; endl; return 0; } 如果需要得到具体的子序列，可从c[i,j]回溯，很容易找到最大子序列是什么，从而得到整个序列。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既'>
 <title>算法学习笔记-最长公共子序列</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-lcs/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='算法学习笔记-最长公共子序列'>
-<meta property='og:description' content='概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。 最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。
-定义 问题描述：给定两个序列X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}，找出X和Y的最长公共子序列。
-解决 解决最长公共子序列一个比较直接暴力的办法是枚举所有X的子序列，检查是否同时是Y的子序列，从公共子序列中找到最长的一个。
-X中元素有m个，X中的子序列有2^m个，算法的复杂度需要指数时间，最于长序列来讲耗时过长。
-另一种比较合理的解决办法是动态规划。LCS具有最优子序列结构：
-X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn} 为两个序列，Z={z1, z2, …, zk} 为X和Y的任意一个LCS。 1）如果xm=yn，则 zk=xm=yn而且Z(k-1)是X(m-1)和Y(n-1)的一个LCS。 2）如果xm!=yn，则zk!=xm表示Z是X(m-1)和Y的一个LCS。 3）如果xm!=yn，则zk!=yn表示Z是X和Y(n-1)的一个LCS。 最优子结构是使用动态规划的基础，由以上结论便可归纳出具体的计算方法：
-标记c[i,j]是Xi和Xj的最长公共子序列，则有：
-c[i,j] = 0 i=0 or j=0 c[i,j] = c[i-1,j-1] &#43; 1 i,j&amp;gt;0 and xi == yj c[i,j] =max{c[i,j-1], c[i-1,j]} i,j&amp;gt;0 and xi != yj 通过递归便可得到所有i,j下最长公共子序列。
-#include &amp;lt;iostream&amp;gt; #include &amp;lt;cstring&amp;gt; using namespace std; #define MAX_ELEM_LEN 100 int g_result[MAX_ELEM_LEN][MAX_ELEM_LEN] = {}; int find_LCS(int X[], int n, int Y[], int m) { for (int i = 0; i &amp;lt;= n; i &#43;&#43;) { g_result[i][0] = 0; } for (int j = 0; j &amp;lt;= m; j &#43;&#43;) { g_result[0][j] = 0; } for (int i = 1; i &amp;lt;= n; i &#43;&#43;) { for (int j = 1; j &amp;lt;= m; j &#43;&#43;) { if (X[i-1] == Y[j-1]) { g_result[i][j] = g_result[i-1][j-1] &#43; 1; } else if (g_result[i-1][j] &amp;gt; g_result[i][j-1]) { g_result[i][j] = g_result[i-1][j]; } else { g_result[i][j] = g_result[i][j-1]; } } } return g_result[n][m]; } int main() { int X[] = {1, 2, 5, 6, 8, 3, 4, 7}; int Y[] = {2, 6, 3, 7, 5, 4, 8}; int n = sizeof(X)/sizeof(int); int m = sizeof(Y)/sizeof(int); int max_elem = find_LCS(X, n, Y, m); cout &amp;lt;&amp;lt; max_elem &amp;lt;&amp;lt; endl; return 0; } 如果需要得到具体的子序列，可从c[i,j]回溯，很容易找到最大子序列是什么，从而得到整个序列。'>
+<meta property='og:description' content='概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-lcs/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='算法' /><meta property='article:published_time' content='2014-06-02T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-06-02T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="算法学习笔记-最长公共子序列">
-<meta name="twitter:description" content="概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。 最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。
-定义 问题描述：给定两个序列X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}，找出X和Y的最长公共子序列。
-解决 解决最长公共子序列一个比较直接暴力的办法是枚举所有X的子序列，检查是否同时是Y的子序列，从公共子序列中找到最长的一个。
-X中元素有m个，X中的子序列有2^m个，算法的复杂度需要指数时间，最于长序列来讲耗时过长。
-另一种比较合理的解决办法是动态规划。LCS具有最优子序列结构：
-X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn} 为两个序列，Z={z1, z2, …, zk} 为X和Y的任意一个LCS。 1）如果xm=yn，则 zk=xm=yn而且Z(k-1)是X(m-1)和Y(n-1)的一个LCS。 2）如果xm!=yn，则zk!=xm表示Z是X(m-1)和Y的一个LCS。 3）如果xm!=yn，则zk!=yn表示Z是X和Y(n-1)的一个LCS。 最优子结构是使用动态规划的基础，由以上结论便可归纳出具体的计算方法：
-标记c[i,j]是Xi和Xj的最长公共子序列，则有：
-c[i,j] = 0 i=0 or j=0 c[i,j] = c[i-1,j-1] &#43; 1 i,j&amp;gt;0 and xi == yj c[i,j] =max{c[i,j-1], c[i-1,j]} i,j&amp;gt;0 and xi != yj 通过递归便可得到所有i,j下最长公共子序列。
-#include &amp;lt;iostream&amp;gt; #include &amp;lt;cstring&amp;gt; using namespace std; #define MAX_ELEM_LEN 100 int g_result[MAX_ELEM_LEN][MAX_ELEM_LEN] = {}; int find_LCS(int X[], int n, int Y[], int m) { for (int i = 0; i &amp;lt;= n; i &#43;&#43;) { g_result[i][0] = 0; } for (int j = 0; j &amp;lt;= m; j &#43;&#43;) { g_result[0][j] = 0; } for (int i = 1; i &amp;lt;= n; i &#43;&#43;) { for (int j = 1; j &amp;lt;= m; j &#43;&#43;) { if (X[i-1] == Y[j-1]) { g_result[i][j] = g_result[i-1][j-1] &#43; 1; } else if (g_result[i-1][j] &amp;gt; g_result[i][j-1]) { g_result[i][j] = g_result[i-1][j]; } else { g_result[i][j] = g_result[i][j-1]; } } } return g_result[n][m]; } int main() { int X[] = {1, 2, 5, 6, 8, 3, 4, 7}; int Y[] = {2, 6, 3, 7, 5, 4, 8}; int n = sizeof(X)/sizeof(int); int m = sizeof(Y)/sizeof(int); int max_elem = find_LCS(X, n, Y, m); cout &amp;lt;&amp;lt; max_elem &amp;lt;&amp;lt; endl; return 0; } 如果需要得到具体的子序列，可从c[i,j]回溯，很容易找到最大子序列是什么，从而得到整个序列。">
+<meta name="twitter:description" content="概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -98,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -484,7 +460,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
-首先mmx指令集需要cpu的支持，但不是所有cpu都支持，不然也不会称之为高级特性 了，所以在使用之前需要检测，检测指令为cpuid，获得cpu的特性，cpuid虽然只有一条指令，但是其隐含的内容太多，这里仅仅介绍检测SIMD指 令集所需要的部分，其他一些信息可参阅Intel 手册获得。
-当eax为1时，cpuid指令返回cpu签名信息，放入ecx和edx寄存器中，相应位为1表示支持。检测SIMD指令集的结果如下：
-寄存器 位 特性 EDX 23 支持MMX EDX 25 支持SSE EDX 26 支持SSE2 ECX 0 支持SSE3 具体检测代码如下(AT&amp;amp;T 语法)：
-.section .data mmxstring: .asciz &amp;quot;支持mmx指令集\n&amp;quot; ssestring: .asciz &amp;quot;支持sse指令集\n&amp;quot; sse2string: .asciz &amp;quot;支持sse2指令集\n&amp;quot; sse3string: .asciz &amp;quot;支持sse3指令集\n&amp;quot; .section .text .globl _main _main: movl $1, %eax cpuid mmxop: test $0x800000, %edx jz sseop pushl $mmxstring call _printf sseop: test $0x2000000, %edx jz sse2op pushl $ssestring call _printf sse2op: test $0x4000000, %edx jz sse3op pushl $sse2string call _printf sse3op: test $0x01, %ecx jz end pushl $sse3string call _printf end: pushl $0 call _exit 下面正式开始mmx指令集的介绍，使用mmx需要三个步骤：'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在'>
 <title>汇编语言学习笔记(十三)-MMX指令集</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十三)-MMX指令集'>
-<meta property='og:description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
-首先mmx指令集需要cpu的支持，但不是所有cpu都支持，不然也不会称之为高级特性 了，所以在使用之前需要检测，检测指令为cpuid，获得cpu的特性，cpuid虽然只有一条指令，但是其隐含的内容太多，这里仅仅介绍检测SIMD指 令集所需要的部分，其他一些信息可参阅Intel 手册获得。
-当eax为1时，cpuid指令返回cpu签名信息，放入ecx和edx寄存器中，相应位为1表示支持。检测SIMD指令集的结果如下：
-寄存器 位 特性 EDX 23 支持MMX EDX 25 支持SSE EDX 26 支持SSE2 ECX 0 支持SSE3 具体检测代码如下(AT&amp;amp;T 语法)：
-.section .data mmxstring: .asciz &amp;quot;支持mmx指令集\n&amp;quot; ssestring: .asciz &amp;quot;支持sse指令集\n&amp;quot; sse2string: .asciz &amp;quot;支持sse2指令集\n&amp;quot; sse3string: .asciz &amp;quot;支持sse3指令集\n&amp;quot; .section .text .globl _main _main: movl $1, %eax cpuid mmxop: test $0x800000, %edx jz sseop pushl $mmxstring call _printf sseop: test $0x2000000, %edx jz sse2op pushl $ssestring call _printf sse2op: test $0x4000000, %edx jz sse3op pushl $sse2string call _printf sse3op: test $0x01, %ecx jz end pushl $sse3string call _printf end: pushl $0 call _exit 下面正式开始mmx指令集的介绍，使用mmx需要三个步骤：'>
+<meta property='og:description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-24T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-24T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十三)-MMX指令集">
-<meta name="twitter:description" content="这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
-首先mmx指令集需要cpu的支持，但不是所有cpu都支持，不然也不会称之为高级特性 了，所以在使用之前需要检测，检测指令为cpuid，获得cpu的特性，cpuid虽然只有一条指令，但是其隐含的内容太多，这里仅仅介绍检测SIMD指 令集所需要的部分，其他一些信息可参阅Intel 手册获得。
-当eax为1时，cpuid指令返回cpu签名信息，放入ecx和edx寄存器中，相应位为1表示支持。检测SIMD指令集的结果如下：
-寄存器 位 特性 EDX 23 支持MMX EDX 25 支持SSE EDX 26 支持SSE2 ECX 0 支持SSE3 具体检测代码如下(AT&amp;amp;T 语法)：
-.section .data mmxstring: .asciz &amp;quot;支持mmx指令集\n&amp;quot; ssestring: .asciz &amp;quot;支持sse指令集\n&amp;quot; sse2string: .asciz &amp;quot;支持sse2指令集\n&amp;quot; sse3string: .asciz &amp;quot;支持sse3指令集\n&amp;quot; .section .text .globl _main _main: movl $1, %eax cpuid mmxop: test $0x800000, %edx jz sseop pushl $mmxstring call _printf sseop: test $0x2000000, %edx jz sse2op pushl $ssestring call _printf sse2op: test $0x4000000, %edx jz sse3op pushl $sse2string call _printf sse3op: test $0x01, %ecx jz end pushl $sse3string call _printf end: pushl $0 call _exit 下面正式开始mmx指令集的介绍，使用mmx需要三个步骤：">
+<meta name="twitter:description" content="这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -86,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -229,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -708,7 +696,7 @@ _main:
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

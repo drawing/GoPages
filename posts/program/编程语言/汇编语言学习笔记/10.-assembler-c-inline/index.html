@@ -1,39 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。
-语法规则 一般来讲，MASM的语法规则较多，也比较复杂，不过内联汇编却相当的方便，相反，AT&amp;amp;T的内联汇编语法规非常复杂，这里先介绍简单的MASM内联。
-vc环境下内联汇编语法规则如下：
-__asm statement __asm { statement-1 statement-2 ... statement-n } 这里的指令即MASM程序，但是有一些限制如下：
-不能使用数据定义伪指令 不能定义结构等复杂数据类型 不能使用宏，或宏操作符 不能引用段名 当然这里只是简单的介绍一下，其中的细节只能在实践中体会了，接下来举一个简单的例子来说明内联汇编的使用：
-#include &amp;lt;stdio.h&amp;gt; /** 计算两个参数的积 */ int testAssembler(int p1, int p2) { __asm { mov eax, p1 mul p2 } } int main() { int result; testAssembler(3, 5); __asm mov result, eax; printf(&amp;#34;result is %d\n&amp;#34;, result); return 0; } 这里 testAssembler 函数中使用内联汇编计算了参数的积，调用点并未接受其返回值，因为函数返回值是由eax寄存器返回，则再次使用内联汇编可以取到返回值。
-可以看到MASM内联汇编是十分简单的，接下来看gcc的内联语法：
-asm ( 语句模板 : 输出部分 : 输入部分 : 破坏描述 ) 先来说语句模板，这里的语句即为AT&amp;amp;T的基本语法，与MASM不同的是这里不能直接使用局部变量，倒是可以引用全局变量，指 令之间使用;, \n, \n\t 分割，后面的部分是可选的，如果只介绍到这里，可如vc一样的方式去使用内联，不过这便损失了gcc更为强大的功能。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇'>
 <title>汇编语言学习笔记(十)-内联汇编</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十)-内联汇编'>
-<meta property='og:description' content='这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。
-语法规则 一般来讲，MASM的语法规则较多，也比较复杂，不过内联汇编却相当的方便，相反，AT&amp;amp;T的内联汇编语法规非常复杂，这里先介绍简单的MASM内联。
-vc环境下内联汇编语法规则如下：
-__asm statement __asm { statement-1 statement-2 ... statement-n } 这里的指令即MASM程序，但是有一些限制如下：
-不能使用数据定义伪指令 不能定义结构等复杂数据类型 不能使用宏，或宏操作符 不能引用段名 当然这里只是简单的介绍一下，其中的细节只能在实践中体会了，接下来举一个简单的例子来说明内联汇编的使用：
-#include &amp;lt;stdio.h&amp;gt; /** 计算两个参数的积 */ int testAssembler(int p1, int p2) { __asm { mov eax, p1 mul p2 } } int main() { int result; testAssembler(3, 5); __asm mov result, eax; printf(&amp;#34;result is %d\n&amp;#34;, result); return 0; } 这里 testAssembler 函数中使用内联汇编计算了参数的积，调用点并未接受其返回值，因为函数返回值是由eax寄存器返回，则再次使用内联汇编可以取到返回值。
-可以看到MASM内联汇编是十分简单的，接下来看gcc的内联语法：
-asm ( 语句模板 : 输出部分 : 输入部分 : 破坏描述 ) 先来说语句模板，这里的语句即为AT&amp;amp;T的基本语法，与MASM不同的是这里不能直接使用局部变量，倒是可以引用全局变量，指 令之间使用;, \n, \n\t 分割，后面的部分是可选的，如果只介绍到这里，可如vc一样的方式去使用内联，不过这便损失了gcc更为强大的功能。'>
+<meta property='og:description' content='这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-21T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-21T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十)-内联汇编">
-<meta name="twitter:description" content="这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。
-语法规则 一般来讲，MASM的语法规则较多，也比较复杂，不过内联汇编却相当的方便，相反，AT&amp;amp;T的内联汇编语法规非常复杂，这里先介绍简单的MASM内联。
-vc环境下内联汇编语法规则如下：
-__asm statement __asm { statement-1 statement-2 ... statement-n } 这里的指令即MASM程序，但是有一些限制如下：
-不能使用数据定义伪指令 不能定义结构等复杂数据类型 不能使用宏，或宏操作符 不能引用段名 当然这里只是简单的介绍一下，其中的细节只能在实践中体会了，接下来举一个简单的例子来说明内联汇编的使用：
-#include &amp;lt;stdio.h&amp;gt; /** 计算两个参数的积 */ int testAssembler(int p1, int p2) { __asm { mov eax, p1 mul p2 } } int main() { int result; testAssembler(3, 5); __asm mov result, eax; printf(&amp;#34;result is %d\n&amp;#34;, result); return 0; } 这里 testAssembler 函数中使用内联汇编计算了参数的积，调用点并未接受其返回值，因为函数返回值是由eax寄存器返回，则再次使用内联汇编可以取到返回值。
-可以看到MASM内联汇编是十分简单的，接下来看gcc的内联语法：
-asm ( 语句模板 : 输出部分 : 输入部分 : 破坏描述 ) 先来说语句模板，这里的语句即为AT&amp;amp;T的基本语法，与MASM不同的是这里不能直接使用局部变量，倒是可以引用全局变量，指 令之间使用;, \n, \n\t 分割，后面的部分是可选的，如果只介绍到这里，可如vc一样的方式去使用内联，不过这便损失了gcc更为强大的功能。">
+<meta name="twitter:description" content="这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c&#43;&#43;的语法，虽然c/c&#43;&#43;是有标准参考的，但是不同编译器使用的 汇">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -95,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -270,7 +249,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -626,7 +605,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

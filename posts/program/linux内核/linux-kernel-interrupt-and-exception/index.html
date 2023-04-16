@@ -1,60 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-为了描述简单，通常称异步中断为中断，同步中断为异常。
-中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
-可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
-Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
-中断描述符表初始化，在start_kernel中：
-异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
-驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
-由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
-Linux内核提供的延时机制分为softirq，tasklet，work queue。
-softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
-系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
-中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
-work queue延时处理：
-内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，'>
 <title>Linux内核笔记-中断和异常</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-中断和异常'>
-<meta property='og:description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-为了描述简单，通常称异步中断为中断，同步中断为异常。
-中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
-可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
-Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
-中断描述符表初始化，在start_kernel中：
-异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
-驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
-由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
-Linux内核提供的延时机制分为softirq，tasklet，work queue。
-softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
-系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
-中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
-work queue延时处理：
-内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。'>
+<meta property='og:description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-20T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-20T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-中断和异常">
-<meta name="twitter:description" content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-为了描述简单，通常称异步中断为中断，同步中断为异常。
-中断分类： faults类异常：系统可以恢复，需要重新执行导致异常的指令。 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。 abort异常：不可恢复。 中断分类：
-可屏蔽中断 不可屏蔽中断 中断描述符表IDT用于存放中断和异常处理函数信息，其中中断描述符表中的每个表项由8个字节组成，叫门描述符。
-Linux内核中中断请求IRQ用数据结构 struct irq_desc 表示。
-中断描述符表初始化，在start_kernel中：
-异常初始化 strap_init 中断初始化 init_IRQ 中断处理过程：
-驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权 内核`common_interrrpt`调用`do_IRQ` 异常处理过程： 响应的处理程序执行 do_trap 延时处理机制
-由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。
-Linux内核提供的延时机制分为softirq，tasklet，work queue。
-softirq机制： softirq在内核中由结构体softirq_action表示，内核预设的softirq存储于softirq_vec数组中，初始化函数为：open_softirq。
-系统运行过程中，会在合适的地方调用local_softirq_pending检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：
-中断处理退出函数irq_exit 内核线程ksoftirqd 内核网络子系统显示调用 local_bh_enable tasklet延时处理机制： tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。
-work queue延时处理：
-内核使用workqueue_struct记录工作队列信息，每个具体work由结构work_struct定义，初始化工作队列可以用函数create_workqueue，激活工作队列使用schedule_work，处理工作队列函数run_workqueue。">
+<meta name="twitter:description" content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -116,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -255,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -478,7 +436,7 @@ local_bh_enable
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

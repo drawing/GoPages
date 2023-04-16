@@ -1,51 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。
-对于AT&amp;amp;T和MASM两种语法，最大的差别就从此开始了，因为二者的源、目的操作数是相反的！
-在AT&amp;amp;T里mov的语法结构为：
-movx source, destination 其中x为操作数的宽度，有l，w，b，q等，例如movl操作数的宽度为32位，movb操作数宽度为8位，例如：
-movl $0, %eax movl $0, %al 这里另一个不同是寄存器的写法，在AT&amp;amp;T里使用寄存器要在寄存器前加%符号，在MASM中则不用。另外MASM可以自动识别操作数大小，如果有些仅仅传入内存，无法识别操作数大小，则必须使用 dword ptr[] 语法，这里在寻址部分会有涉及。
-在MASM中，mov语言的规则为：
-mov destination, source 这里千万注意二者的操作数是相反的！
-对于MOV指令还有一些规则如下：
-两个操作数尺寸必须相同 两个操作数不可同为内存 目的操作数不可为CS，EIP和IP 立即数不可直接传送至段寄存器 这些规则对AT&amp;amp;T语法也同样适用，why？因为二者编译都会编译成相同的二进制代码，这些规则是cpu的规则，而不是某种语法的规则。
-以上说的是基本的mov指令，另外为了方便或者效率，还有些相应的扩展指令： 扩展移动，因为mov指令的操作数大小必须相同，所以如果需要把一个较小值ax移动到较大值ebx中，则需要两步：
-mov ebx, 0 mov bx, ax 如果ax为负数，需要把ebx高位扩展为全1，mov ebx, FFFFFFFFh，好在intel支持了相关的扩展指令，movzx和movsx movzx为零扩展，即高位补零，movsx为符号扩展，即高位补符号位，一般有符号数适用movsx。此指令目标操作数必须为寄存器，源操作数可以为内存和寄存器。 写一个简单的例子：
-.section .data num1: .byte 0x12 num2: .byte 0xf2 .section .text .globl _main _main: mov num1, %al movzx num1, %eax movsx num1, %ebx movzx num2, %ecx movsx num2, %edx pushl $0 call _exit 编译时使用 gcc -g hello.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量'>
 <title>汇编语言学习笔记(四)-MOV指令</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.-assembler-mov-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(四)-MOV指令'>
-<meta property='og:description' content='汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。
-对于AT&amp;amp;T和MASM两种语法，最大的差别就从此开始了，因为二者的源、目的操作数是相反的！
-在AT&amp;amp;T里mov的语法结构为：
-movx source, destination 其中x为操作数的宽度，有l，w，b，q等，例如movl操作数的宽度为32位，movb操作数宽度为8位，例如：
-movl $0, %eax movl $0, %al 这里另一个不同是寄存器的写法，在AT&amp;amp;T里使用寄存器要在寄存器前加%符号，在MASM中则不用。另外MASM可以自动识别操作数大小，如果有些仅仅传入内存，无法识别操作数大小，则必须使用 dword ptr[] 语法，这里在寻址部分会有涉及。
-在MASM中，mov语言的规则为：
-mov destination, source 这里千万注意二者的操作数是相反的！
-对于MOV指令还有一些规则如下：
-两个操作数尺寸必须相同 两个操作数不可同为内存 目的操作数不可为CS，EIP和IP 立即数不可直接传送至段寄存器 这些规则对AT&amp;amp;T语法也同样适用，why？因为二者编译都会编译成相同的二进制代码，这些规则是cpu的规则，而不是某种语法的规则。
-以上说的是基本的mov指令，另外为了方便或者效率，还有些相应的扩展指令： 扩展移动，因为mov指令的操作数大小必须相同，所以如果需要把一个较小值ax移动到较大值ebx中，则需要两步：
-mov ebx, 0 mov bx, ax 如果ax为负数，需要把ebx高位扩展为全1，mov ebx, FFFFFFFFh，好在intel支持了相关的扩展指令，movzx和movsx movzx为零扩展，即高位补零，movsx为符号扩展，即高位补符号位，一般有符号数适用movsx。此指令目标操作数必须为寄存器，源操作数可以为内存和寄存器。 写一个简单的例子：
-.section .data num1: .byte 0x12 num2: .byte 0xf2 .section .text .globl _main _main: mov num1, %al movzx num1, %eax movsx num1, %ebx movzx num2, %ecx movsx num2, %edx pushl $0 call _exit 编译时使用 gcc -g hello.'>
+<meta property='og:description' content='汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.-assembler-mov-instruct/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-15T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-15T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(四)-MOV指令">
-<meta name="twitter:description" content="汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。
-对于AT&amp;amp;T和MASM两种语法，最大的差别就从此开始了，因为二者的源、目的操作数是相反的！
-在AT&amp;amp;T里mov的语法结构为：
-movx source, destination 其中x为操作数的宽度，有l，w，b，q等，例如movl操作数的宽度为32位，movb操作数宽度为8位，例如：
-movl $0, %eax movl $0, %al 这里另一个不同是寄存器的写法，在AT&amp;amp;T里使用寄存器要在寄存器前加%符号，在MASM中则不用。另外MASM可以自动识别操作数大小，如果有些仅仅传入内存，无法识别操作数大小，则必须使用 dword ptr[] 语法，这里在寻址部分会有涉及。
-在MASM中，mov语言的规则为：
-mov destination, source 这里千万注意二者的操作数是相反的！
-对于MOV指令还有一些规则如下：
-两个操作数尺寸必须相同 两个操作数不可同为内存 目的操作数不可为CS，EIP和IP 立即数不可直接传送至段寄存器 这些规则对AT&amp;amp;T语法也同样适用，why？因为二者编译都会编译成相同的二进制代码，这些规则是cpu的规则，而不是某种语法的规则。
-以上说的是基本的mov指令，另外为了方便或者效率，还有些相应的扩展指令： 扩展移动，因为mov指令的操作数大小必须相同，所以如果需要把一个较小值ax移动到较大值ebx中，则需要两步：
-mov ebx, 0 mov bx, ax 如果ax为负数，需要把ebx高位扩展为全1，mov ebx, FFFFFFFFh，好在intel支持了相关的扩展指令，movzx和movsx movzx为零扩展，即高位补零，movsx为符号扩展，即高位补符号位，一般有符号数适用movsx。此指令目标操作数必须为寄存器，源操作数可以为内存和寄存器。 写一个简单的例子：
-.section .data num1: .byte 0x12 num2: .byte 0xf2 .section .text .globl _main _main: mov num1, %al movzx num1, %eax movsx num1, %ebx movzx num2, %ecx movsx num2, %edx pushl $0 call _exit 编译时使用 gcc -g hello.">
+<meta name="twitter:description" content="汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -107,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -250,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 6 分钟
                 </time>
             </div>
         
@@ -572,7 +539,7 @@ lahf指令将eflags寄存器的低字节复制到ah寄存器，sahf把ah寄存�
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

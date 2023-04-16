@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>工程实践 on 演示站点</title>
+        <title>工程实践 on 讲故事的人</title>
         <link>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link>
-        <description>Recent content in 工程实践 on 演示站点</description>
+        <description>Recent content in 工程实践 on 讲故事的人</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml" /><item>
@@ -257,14 +257,14 @@
         <pubDate>Wed, 02 Jul 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/</guid>
-        <description>&lt;h1 id=&#34;cpu性能&#34;&gt;CPU性能&lt;/h1&gt;
+        <description>&lt;h2 id=&#34;cpu性能&#34;&gt;CPU性能&lt;/h2&gt;
 &lt;p&gt;早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。&lt;/p&gt;
 &lt;p&gt;经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。&lt;/p&gt;
 &lt;p&gt;SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。&lt;/p&gt;
 &lt;p&gt;NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。&lt;/p&gt;
-&lt;h1 id=&#34;io-总线&#34;&gt;IO 总线&lt;/h1&gt;
+&lt;h2 id=&#34;io-总线&#34;&gt;IO 总线&lt;/h2&gt;
 &lt;p&gt;很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。&lt;/p&gt;
-&lt;h1 id=&#34;磁盘&#34;&gt;磁盘&lt;/h1&gt;
+&lt;h2 id=&#34;磁盘&#34;&gt;磁盘&lt;/h2&gt;
 &lt;p&gt;磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间+数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。&lt;/p&gt;
 &lt;p&gt;固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。&lt;/p&gt;
 &lt;p&gt;不同存储的对比如下：&lt;/p&gt;
@@ -309,11 +309,11 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h1 id=&#34;网络&#34;&gt;网络&lt;/h1&gt;
+&lt;h2 id=&#34;网络&#34;&gt;网络&lt;/h2&gt;
 &lt;p&gt;传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。&lt;/p&gt;
 &lt;p&gt;为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。&lt;/p&gt;
 &lt;p&gt;单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。&lt;/p&gt;
-&lt;h1 id=&#34;性能参数&#34;&gt;性能参数&lt;/h1&gt;
+&lt;h2 id=&#34;性能参数&#34;&gt;性能参数&lt;/h2&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -392,7 +392,7 @@
 	
 	
 &gt;&lt;/p&gt;
-&lt;h1 id=&#34;top&#34;&gt;top&lt;/h1&gt;
+&lt;h2 id=&#34;top&#34;&gt;top&lt;/h2&gt;
 &lt;p&gt;top 工具是查看进程信息的常用工具，默认情况下，进程显示会按照cpu负载排序，也可以按照pid，time和内存使用率进行排序。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;top - 20:40:53 up 411 days,  2:55,  1 user,  load average: 2.75, 2.65, 2.43
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Tasks: 233 total,   1 running, 232 sleeping,   0 stopped,   0 zombie
@@ -407,16 +407,16 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;32390 mqq       20   0  502m 5164 2524 S    1  0.1 162:26.01 tafnode
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;16238 mqq       20   0  5664 1320  876 R    0  0.0   0:00.02 top
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;各行含义如下：&lt;/p&gt;
-&lt;h2 id=&#34;第一行系统信息&#34;&gt;第一行：系统信息&lt;/h2&gt;
+&lt;h3 id=&#34;第一行系统信息&#34;&gt;第一行：系统信息&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;20:40:53：系统当前时间&lt;/li&gt;
 &lt;li&gt;up 411 days,  2:55：系统已经启动时间&lt;/li&gt;
 &lt;li&gt;1 user：当前登陆的用户数&lt;/li&gt;
 &lt;li&gt;load average：当前机器负载，三个数分别是1分钟、5分钟、15分钟的负载情况，程序每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;第二行进程信息&#34;&gt;第二行：进程信息&lt;/h2&gt;
+&lt;h3 id=&#34;第二行进程信息&#34;&gt;第二行：进程信息&lt;/h3&gt;
 &lt;p&gt;依次分别是，总进成数，运行进程数，sleep进程数，stop进程数，还有僵尸进程数&lt;/p&gt;
-&lt;h2 id=&#34;第三行cpu信息&#34;&gt;第三行：cpu信息&lt;/h2&gt;
+&lt;h3 id=&#34;第三行cpu信息&#34;&gt;第三行：cpu信息&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;us：用户空间占用CPU的百分比&lt;/li&gt;
 &lt;li&gt;sy：内核空间占用CPU的百分比&lt;/li&gt;
@@ -426,21 +426,21 @@
 &lt;li&gt;hi：硬中断（Hardware IRQ）占用CPU的百分比&lt;/li&gt;
 &lt;li&gt;si：软中断（Software Interrupts）占用CPU的百分比&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;第四行内存信息&#34;&gt;第四行：内存信息&lt;/h2&gt;
+&lt;h3 id=&#34;第四行内存信息&#34;&gt;第四行：内存信息&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;total：总内存大小&lt;/li&gt;
 &lt;li&gt;used：已经使用内存大小&lt;/li&gt;
 &lt;li&gt;free：空闲内存大小&lt;/li&gt;
 &lt;li&gt;buffers：缓存内存大小&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;第五行交换区信息&#34;&gt;第五行：交换区信息&lt;/h2&gt;
+&lt;h3 id=&#34;第五行交换区信息&#34;&gt;第五行：交换区信息&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;total：总交换区大小&lt;/li&gt;
 &lt;li&gt;used：已经使用交换区大小&lt;/li&gt;
 &lt;li&gt;free：空闲交换区大小&lt;/li&gt;
 &lt;li&gt;cached：cached缓存大小&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;列含义&#34;&gt;列含义&lt;/h2&gt;
+&lt;h3 id=&#34;列含义&#34;&gt;列含义&lt;/h3&gt;
 &lt;p&gt;各列含义如下：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;PID：进程ID&lt;/li&gt;
@@ -457,7 +457,7 @@
 &lt;li&gt;COMMAND：进程名&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;另外，按&lt;code&gt;1&lt;/code&gt;可以显示各个cpu情况，&lt;code&gt;top -H&lt;/code&gt;可以显示各个线程情况。&lt;/p&gt;
-&lt;h1 id=&#34;vmstat&#34;&gt;vmstat&lt;/h1&gt;
+&lt;h2 id=&#34;vmstat&#34;&gt;vmstat&lt;/h2&gt;
 &lt;p&gt;vmstat 可以查看进程、内存、分页、IO和CPU等信息，执行&lt;code&gt;vmstat 2&lt;/code&gt;(2秒统计一次)，输出如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;procs -----------memory---------- ---swap-- -----io---- -system-- -----cpu------
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
@@ -466,38 +466,38 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 2  0  25832  53176  52944 6836144    0    0     0   370 48132 63201 19  6 75  0  0
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 2  0  25832  52184  52952 6836428    0    0     0    30 48525 63944 19  5 75  0  0
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意：第一行数据显示系统上次启动后到现在的平均负载，需要排除在外。&lt;/p&gt;
-&lt;h2 id=&#34;procs&#34;&gt;procs&lt;/h2&gt;
+&lt;h3 id=&#34;procs&#34;&gt;procs&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;r：等待执行的进程数（显示cpu正在执行和等待cpu资源的进程数，该数字大于cpu个数，可能出现cpu性能瓶颈）&lt;/li&gt;
 &lt;li&gt;b：等待IO的进程数&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;memory&#34;&gt;memory&lt;/h2&gt;
+&lt;h3 id=&#34;memory&#34;&gt;memory&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;swpd：正在使用的虚拟内存大小&lt;/li&gt;
 &lt;li&gt;free：空闲内存大小&lt;/li&gt;
 &lt;li&gt;buff：已用的 buff 大小，对块设备的读写进行缓冲&lt;/li&gt;
 &lt;li&gt;cache：文件系统缓存 cache 大小&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;swap&#34;&gt;swap&lt;/h2&gt;
+&lt;h3 id=&#34;swap&#34;&gt;swap&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;si：每秒从交换区写入内存的大小（kb/s）&lt;/li&gt;
 &lt;li&gt;so：每秒从内存写到交换区的大小&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;io&#34;&gt;io&lt;/h2&gt;
+&lt;h3 id=&#34;io&#34;&gt;io&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;bi：每秒读取的块数（读磁盘）&lt;/li&gt;
 &lt;li&gt;bo：每秒写入的块数（写磁盘）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;system&#34;&gt;system&lt;/h2&gt;
+&lt;h3 id=&#34;system&#34;&gt;system&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;in：每秒中断数，包括时钟中断&lt;/li&gt;
 &lt;li&gt;cs：每秒上下文切换数&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;cpu&#34;&gt;cpu&lt;/h2&gt;
+&lt;h3 id=&#34;cpu&#34;&gt;cpu&lt;/h3&gt;
 &lt;p&gt;含义见 top-cpu信息&lt;/p&gt;
-&lt;h1 id=&#34;uptime&#34;&gt;uptime&lt;/h1&gt;
+&lt;h2 id=&#34;uptime&#34;&gt;uptime&lt;/h2&gt;
 &lt;p&gt;见 top 第一行：系统信息&lt;/p&gt;
-&lt;h1 id=&#34;free&#34;&gt;free&lt;/h1&gt;
+&lt;h2 id=&#34;free&#34;&gt;free&lt;/h2&gt;
 &lt;p&gt;free 命令主要查看内存的使用情况：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;             total       used       free     shared    buffers     cached
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Mem:       8052640    8000400      52240          0      52872    6853252
@@ -515,7 +515,7 @@
 &lt;p&gt;第三行：&lt;/p&gt;
 &lt;p&gt;used/free：已使用内存大小和空闲内存大小，跟第二行相同字段的区别在于减去了buffer和cache，buffer和cache从操作系统角度来讲是已经使用的内存，但当系统可用内存不足时，操作系统会释放buffer和cache，对进程来讲，这部分内存也是可用的。&lt;/p&gt;
 &lt;p&gt;第四行：参考 top&lt;/p&gt;
-&lt;h1 id=&#34;iostat&#34;&gt;iostat&lt;/h1&gt;
+&lt;h2 id=&#34;iostat&#34;&gt;iostat&lt;/h2&gt;
 &lt;p&gt;此命令用户输出cpu和磁盘io相关的统计信息，默认不加参数输出的是系统启动后到现在的统计情况，一般当系统启动很长时间以后，不具有太大的参考意义：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Linux 2.6.32.43-tlinux-1.0.8-state (10_135_11_35_kqq)   01/13/2015      _x86_64_
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
@@ -529,7 +529,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda3              3.54        25.77        80.34  915263981 2853850978
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sda4             21.11      1966.93      2990.39 69872425096 106229366268
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;字段含义如下：&lt;/p&gt;
-&lt;h2 id=&#34;cpu-1&#34;&gt;cpu&lt;/h2&gt;
+&lt;h3 id=&#34;cpu-1&#34;&gt;cpu&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;%user: 在用户级别运行所使用的CPU的百分比&lt;/li&gt;
 &lt;li&gt;%nice: nice操作所使用的CPU的百分比&lt;/li&gt;
@@ -537,7 +537,7 @@
 &lt;li&gt;%iowait: CPU等待硬件I/O时,所占用CPU百分比&lt;/li&gt;
 &lt;li&gt;%idle: CPU空闲时间的百分比&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;device&#34;&gt;Device&lt;/h2&gt;
+&lt;h3 id=&#34;device&#34;&gt;Device&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;tps: 每秒钟发送到的I/O请求数&lt;/li&gt;
 &lt;li&gt;Blk_read /s: 每秒读取的block数&lt;/li&gt;
@@ -564,7 +564,7 @@
 &lt;li&gt;svctm：发送到设备的I/O请求的平均执行时间，单位是毫秒&lt;/li&gt;
 &lt;li&gt;%util：在I/O请求发送到设备期间，占用CPU时间的百分比（此值越大，表示设备占用率越高，100时表示设备已占满）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;sar&#34;&gt;sar&lt;/h1&gt;
+&lt;h2 id=&#34;sar&#34;&gt;sar&lt;/h2&gt;
 &lt;p&gt;sar 可以显示多种系统资源，具体命令格式：&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;sar [options] [-A] [-o file] t [n]&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;在命令行中，n 和 t 两个参数组合起来定义采样间隔和次数，t为采样间隔，是必须有的参数，n为采样次数，是可选的，默认值是1，-o file表示将命令结果以二进制格式存放在文件中，file 在此处不是关键字，是文件名。options 为命令行选项。&lt;/p&gt;
@@ -581,7 +581,7 @@
 &lt;li&gt;-c：系统调用情况&lt;/li&gt;
 &lt;li&gt;-R：进程的活动情况&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;iotop&#34;&gt;iotop&lt;/h1&gt;
+&lt;h2 id=&#34;iotop&#34;&gt;iotop&lt;/h2&gt;
 &lt;p&gt;有时机器磁盘使用率过高，想知道哪个进程占用磁盘过大，可使用 iotop 命令：&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;iotop –b –n 3 –d 5&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -597,11 +597,11 @@
 &lt;li&gt;-k, &amp;ndash;kilobytes			#以千字节显示&lt;/li&gt;
 &lt;li&gt;-t, &amp;ndash;time				#在每一行前添加一个当前的时间&lt;/li&gt;
 &lt;li&gt;-q, &amp;ndash;quiet				#suppress some lines of header (implies &amp;ndash;batch). This option can be specified up to three times to remove header lines.&lt;/li&gt;
-&lt;li&gt;-q     					# column names are only printed on the first iteration,&lt;/li&gt;
-&lt;li&gt;-qq    					# column names are never printed,&lt;/li&gt;
-&lt;li&gt;-qqq   					# the I/O summary is never printed.&lt;/li&gt;
+&lt;li&gt;-q     					## column names are only printed on the first iteration,&lt;/li&gt;
+&lt;li&gt;-qq    					## column names are never printed,&lt;/li&gt;
+&lt;li&gt;-qqq   					## the I/O summary is never printed.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;mpstat&#34;&gt;mpstat&lt;/h1&gt;
+&lt;h2 id=&#34;mpstat&#34;&gt;mpstat&lt;/h2&gt;
 &lt;p&gt;mpstat 主要显示cpu相关信息，跟 vmstat 相比优点在于可以分别显示各个cpu的情况。执行&lt;code&gt;mpstat -P ALL 1&lt;/code&gt;，显示所有CPU状态，采样间隔1s。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:44 PM  CPU    %user   %nice    %sys %iowait    %irq   %soft  %steal  %idle    %intr/s    %guest
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;09:52:45 PM  all   19.43    0.00    4.86    3.86    0.00    1.99    0.00   69.86   50984.00    0.00
@@ -619,7 +619,7 @@
 &lt;li&gt;%idle：显示 CPU 的空闲时间&lt;/li&gt;
 &lt;li&gt;%intr/s：显示每秒 CPU 接收的中断总数&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;pmap&#34;&gt;pmap&lt;/h1&gt;
+&lt;h2 id=&#34;pmap&#34;&gt;pmap&lt;/h2&gt;
 &lt;p&gt;pmap 用于查看进程的内存映像信息。使用方式：&lt;code&gt;pmap -d &amp;lt;pid&amp;gt;&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;18161: IphonePushServi
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;START               SIZE     RSS     PSS   DIRTY    SWAP PERM OFFSET   DEVICE MAPPING
@@ -636,7 +636,7 @@
 &lt;li&gt;Device: 设备名 (major:minor)&lt;/li&gt;
 &lt;li&gt;MAPPING: 对应的映像文件名&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;netstat&#34;&gt;netstat&lt;/h1&gt;
+&lt;h2 id=&#34;netstat&#34;&gt;netstat&lt;/h2&gt;
 &lt;p&gt;netstat 是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。&lt;/p&gt;
 &lt;p&gt;该命令的一般形式：&lt;code&gt;netstat [-a][-e][-n][-o][-p Protocol][-r][-s][Interval]&lt;/code&gt;，执行 &lt;code&gt;netstat -anop&lt;/code&gt; 显示信息：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name Timer
@@ -644,7 +644,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      -                off (0.00/0/0)
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcp        0      0 127.0.0.1:8088          0.0.0.0:*               LISTEN      24346/tunnel     off (0.00/0/0)
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中需要关注&lt;code&gt;Recv-Q&lt;/code&gt;，&lt;code&gt;Send-Q&lt;/code&gt;，分别表示发送队列和接受队列大小，当&lt;code&gt;Recv-Q&lt;/code&gt;过大，意味着当前程序无法及时接收数据包，&lt;code&gt;Send-Q&lt;/code&gt;过大，表示对端网络状况不好或者达到对端性能瓶颈。&lt;/p&gt;
-&lt;h1 id=&#34;tcpdump&#34;&gt;tcpdump&lt;/h1&gt;
+&lt;h2 id=&#34;tcpdump&#34;&gt;tcpdump&lt;/h2&gt;
 &lt;p&gt;tcpdump 可以截获网络数据包，对于网络协议的联调和测试有很大的辅助作用。&lt;/p&gt;
 &lt;p&gt;tcpdump 它的命令格式为：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tcpdump [-adeflnNOpqStvx] [-c 数量] [-F filename] [-i 网络接口] [-r 文件名] [ -s snaplen ] [ -T 类型 ] [ -w 文件名 ] [表达式]
@@ -668,9 +668,9 @@
 &lt;li&gt;-w 　直接将包写入文件中，并不分析和打印出来&lt;/li&gt;
 &lt;li&gt;-T 　将监听到的包直接解释为指定的类型的报文，常见的类型有 rpc 和 snmp&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;strace&#34;&gt;strace&lt;/h1&gt;
+&lt;h2 id=&#34;strace&#34;&gt;strace&lt;/h2&gt;
 &lt;p&gt;strace 可以查看一个进程所调用的系统api情况，在某些情况下，知道系统所调用的api，可以判断程序运行时的一些状态，该命令使用方式：&lt;code&gt;strace -p &amp;lt;PID&amp;gt;&lt;/code&gt;。可以查看调用的api和参数。&lt;/p&gt;
-&lt;h1 id=&#34;lsof&#34;&gt;lsof&lt;/h1&gt;
+&lt;h2 id=&#34;lsof&#34;&gt;lsof&lt;/h2&gt;
 &lt;p&gt;lsof 是一个列出当前系统打开文件的工具。在linux环境下，任何事物都以 文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。所以如传输控制协议(TCP)和用户数据报协议(UDP)套接字等，系统在后台都为该应用程序分配了一个文件描述符，通过lsof工具能够查看这个列表的详细信息。&lt;/p&gt;
 &lt;p&gt;lsof 的使用方法可以参考这里。这里列出几种常见的用法。&lt;/p&gt;
 &lt;ul&gt;
@@ -680,7 +680,7 @@
 &lt;li&gt;查看进程打开哪些文件 &lt;code&gt;lsof -p 4838&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;查看远程已打开的网络链接&lt;code&gt; lsof -i @192.168.34.128&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;proc文件系统&#34;&gt;proc文件系统&lt;/h1&gt;
+&lt;h2 id=&#34;proc文件系统&#34;&gt;proc文件系统&lt;/h2&gt;
 &lt;p&gt;在Linux上&lt;code&gt;/proc/&lt;/code&gt;是很特殊的文件系统，存储了内核当前运行状态的虚拟文件系统&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;/proc/meminfo&lt;/code&gt;：当前系统内存状态&lt;/li&gt;
@@ -690,7 +690,7 @@
 &lt;li&gt;&lt;code&gt;/proc/&amp;lt;PID&amp;gt;/exe&lt;/code&gt;：软链接，指向当前执行进程&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;/proc/sys/net/ipv4/tcp_wmem&lt;/code&gt;：tcp write buffer值，分别表示：最小，默认，最大&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;benchmark&#34;&gt;Benchmark&lt;/h1&gt;
+&lt;h2 id=&#34;benchmark&#34;&gt;Benchmark&lt;/h2&gt;
 &lt;p&gt;除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，有时候通过测试系统固有的特定，是一个好的选择。&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;

@@ -1,39 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
-我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
-Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
-2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
-先来看引导协议部分代码， arch/x86/boot/header.S
-在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
-header.S开始的代码：
-.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读'>
 <title>Linux内核笔记-启动协议</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-启动协议'>
-<meta property='og:description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
-我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
-Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
-2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
-先来看引导协议部分代码， arch/x86/boot/header.S
-在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
-header.S开始的代码：
-.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.'>
+<meta property='og:description' content='Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-22T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-22T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-启动协议">
-<meta name="twitter:description" content="Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
-我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。
-Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。
-2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。
-先来看引导协议部分代码， arch/x86/boot/header.S
-在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。
-header.S开始的代码：
-.code16 .section &amp;quot;.bstext&amp;quot;, &amp;quot;ax&amp;quot; .global bootsect_start bootsect_start: # Normalize the start address ljmp	$BOOTSEG, $start2 start2: movw	%cs, %ax movw	%ax, %ds movw	%ax, %es movw	%ax, %ss xorw	%sp, %sp sti cld movw	$bugger_off_msg, %si msg_loop: lodsb andb	%al, %al jz	bs_die movb	$0xe, %ah movw	$7, %bx int	$0x10 jmp	msg_loop bs_die: # Allow the user to press a key, then reboot xorw	%ax, %ax int	$0x16 int	$0x19 # int 0x19 should never return.">
+<meta name="twitter:description" content="Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -95,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -234,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -561,7 +540,7 @@ load_address = is_bzImage ? 0x100000 : 0x10000;
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

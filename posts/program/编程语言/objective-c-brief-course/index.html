@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
-基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
-Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
-注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
-导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
-基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
-数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
-字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
-数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
-插入操作：
-NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。 基础 C语言的扩展 Objective-C很大程度上兼容'>
 <title>Objective-C 简明教程</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/objective-c-brief-course/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Objective-C 简明教程'>
-<meta property='og:description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
-基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
-Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
-注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
-导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
-基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
-数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
-字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
-数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
-插入操作：
-NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：'>
+<meta property='og:description' content='本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。 基础 C语言的扩展 Objective-C很大程度上兼容'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/objective-c-brief-course/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2011-04-10T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2011-04-10T22:40:04&#43;08:00'/>
 <meta name="twitter:title" content="Objective-C 简明教程">
-<meta name="twitter:description" content="本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
-基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写C/C&#43;&#43;是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C&#43;&#43;的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。
-Hello World #import &amp;lt;Foundatioin/Foundation.h&amp;gt; int main(int argc, const char * argv[]) { NSLog(@&amp;#34;Hello, World!&amp;#34;); return (0); } Objective-C头文件以.h结尾，源文件以.m结尾。
-注释 Objective-C 注释与 C&#43;&#43; 相同，符号： // 或者 /* */
-导入 与C语言中的 #include &amp;lt;&amp;gt; 相对应的导入 #import &amp;lt;&amp;gt;
-基本类型 Objective-C 中的基本类型同C，包括 bool, char, int, long, float, double, int 等。另外，在Foundation库中，这些类型还定义了别名，NSInteger对应有符号整数，NSUInteger对应无符号整数，CGFloat对应浮点数，BOOL对应布尔值。
-数字对应的对象还有 NSNumber，可以跟基本的数字类型相互转化，详细信息可参阅 NSNumber Class Reference。
-字符串 常量字符串可以用@&amp;quot;&amp;quot;结构表示，另外变量使用NSString表示不可变字符串 ，NSMutableString表示可变字符串。具体NSString和普通C字符串的转换，可参阅NSString Class Reference
-数组 之前提到的，在Objective-C中可以无障碍使用C语言的数据，不过OC还提供了数组类 NSArray和NSMutableArray，前者是不能修改的数组，后者支持增删操作，具体用法示例如下。
-插入操作：
-NSMutableArray * array = [NSMutableArray arrayWithCapacity:50]; [array addObject:[NSNumber numberWithUnsignedLongLong:123]]; [array addObject:[NSNumber numberWithUnsignedLongLong:456]]; 遍历操作：">
+<meta name="twitter:description" content="本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。 基础 C语言的扩展 Objective-C很大程度上兼容">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -104,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -295,7 +265,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -668,7 +638,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,51 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
-经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。
-SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。
-NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。
-IO 总线 很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。
-磁盘 磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间&#43;数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。
-固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。
-不同存储的对比如下：
-类别 IOPS 每GB价格（元） 随机读取 随机写入 内存 千万 150 友好 友好 SSD盘 35000 20 友好 写入放大 SAS磁盘 180 3 磁盘寻道 磁盘寻道 SATA磁盘 90 0.5 磁盘寻道 磁盘寻道 网络 传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。
-为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。
-单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。
-性能参数 类别 延迟 访问 L1 Cache 0.5ns 分支预测失败 5ns 访问 L2 Cache 7ns Mutex锁操作 100ns 内存访问 100ns 千兆网络发送1MB数据 10ms 从内存顺序读取1MB数据 0.25 ms 机房内网络来回 0.5ms 异地机房来回 30-100ms SATA磁盘寻道 10ms 从SATA磁盘顺序读取 1MB 数据 20ms 固态SSD访问延迟 01-0.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于'>
 <title>Linux性能调优之硬件篇</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之硬件篇'>
-<meta property='og:description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
-经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。
-SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。
-NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。
-IO 总线 很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。
-磁盘 磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间&#43;数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。
-固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。
-不同存储的对比如下：
-类别 IOPS 每GB价格（元） 随机读取 随机写入 内存 千万 150 友好 友好 SSD盘 35000 20 友好 写入放大 SAS磁盘 180 3 磁盘寻道 磁盘寻道 SATA磁盘 90 0.5 磁盘寻道 磁盘寻道 网络 传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。
-为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。
-单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。
-性能参数 类别 延迟 访问 L1 Cache 0.5ns 分支预测失败 5ns 访问 L2 Cache 7ns Mutex锁操作 100ns 内存访问 100ns 千兆网络发送1MB数据 10ms 从内存顺序读取1MB数据 0.25 ms 机房内网络来回 0.5ms 异地机房来回 30-100ms SATA磁盘寻道 10ms 从SATA磁盘顺序读取 1MB 数据 20ms 固态SSD访问延迟 01-0.'>
+<meta property='og:description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-02T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-02T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux性能调优之硬件篇">
-<meta name="twitter:description" content="CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
-经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。
-SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。
-NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。
-IO 总线 很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。
-磁盘 磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间&#43;数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。
-固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。
-不同存储的对比如下：
-类别 IOPS 每GB价格（元） 随机读取 随机写入 内存 千万 150 友好 友好 SSD盘 35000 20 友好 写入放大 SAS磁盘 180 3 磁盘寻道 磁盘寻道 SATA磁盘 90 0.5 磁盘寻道 磁盘寻道 网络 传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。
-为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。
-单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。
-性能参数 类别 延迟 访问 L1 Cache 0.5ns 分支预测失败 5ns 访问 L2 Cache 7ns Mutex锁操作 100ns 内存访问 100ns 千兆网络发送1MB数据 10ms 从内存顺序读取1MB数据 0.25 ms 机房内网络来回 0.5ms 异地机房来回 30-100ms SATA磁盘寻道 10ms 从SATA磁盘顺序读取 1MB 数据 20ms 固态SSD访问延迟 01-0.">
+<meta name="twitter:description" content="CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -107,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -190,7 +157,42 @@ if (!doNotTrack) {
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#cpu性能">CPU性能</a></li>
+    <li><a href="#io-总线">IO 总线</a></li>
+    <li><a href="#磁盘">磁盘</a></li>
+    <li><a href="#网络">网络</a></li>
+    <li><a href="#性能参数">性能参数</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
     <article class="main-article">
@@ -246,7 +248,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -261,14 +263,14 @@ if (!doNotTrack) {
     <section class="article-content">
     
     
-    <h1 id="cpu性能">CPU性能</h1>
+    <h2 id="cpu性能">CPU性能</h2>
 <p>早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。</p>
 <p>经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。</p>
 <p>SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。</p>
 <p>NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。</p>
-<h1 id="io-总线">IO 总线</h1>
+<h2 id="io-总线">IO 总线</h2>
 <p>很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。</p>
-<h1 id="磁盘">磁盘</h1>
+<h2 id="磁盘">磁盘</h2>
 <p>磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间+数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。</p>
 <p>固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。</p>
 <p>不同存储的对比如下：</p>
@@ -313,11 +315,11 @@ if (!doNotTrack) {
 </tr>
 </tbody>
 </table></div>
-<h1 id="网络">网络</h1>
+<h2 id="网络">网络</h2>
 <p>传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。</p>
 <p>为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。</p>
 <p>单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。</p>
-<h1 id="性能参数">性能参数</h1>
+<h2 id="性能参数">性能参数</h2>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -542,7 +544,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,27 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h
-#define TASK_RUNNING 0 #define TASK_INTERRUPTIBLE 1 #define TASK_UNINTERRUPTIBLE 2 ... 内核只会调用标志是 TASK_RUNNING 的进程，如果需要等待资源，可以设置自己的进程标志为 TASK_INTERRUPTIBLE （可中断）或者 TASK_UNINTERRUPTIBLE （不可中断），然后调用 schedule();放弃CPU，此进程就不会被内核调度了，但随之而来的问题是，如果进程所需资源可以使用，如何唤醒进程呢，这就要依赖于等待队列了，进程在放弃控制权之前，把自己加入一个队列中，当所需条件满足，其他进程便可wakeup该队列，修改进程状态为 TASK_RUNNING，等待进程便可顺利往下执行了。
-与等待队列相关的操作有如下几种：
-/* 等待队列头声明 */ wait_queue_head_t simple_queue; /* 初始化等待队列头 */ init_waitqueue_head(&amp;amp;simple_queue); /* 定义等待队列项 */ DECLARE_WAITQUEUE (name, tsk); /* 添加删除等待项 */ void fastcall add_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); void fastcall remove_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); /* 唤醒等待头中的所有项 */ void wake_up(wait_queue_head_t * queue); void wake_up_interruptible(wait_queue_head_t * queue); 结合这些函数，再往simple驱动里添加一些简单的机制支持等待。在 simple_read 函数中修改当前进程状态，加入等待队列后，放弃控制权，另加入 simple_write 函数唤醒队列。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配'>
 <title>Linux 内核等待队列解析</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-waiting-queue/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 内核等待队列解析'>
-<meta property='og:description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h
-#define TASK_RUNNING 0 #define TASK_INTERRUPTIBLE 1 #define TASK_UNINTERRUPTIBLE 2 ... 内核只会调用标志是 TASK_RUNNING 的进程，如果需要等待资源，可以设置自己的进程标志为 TASK_INTERRUPTIBLE （可中断）或者 TASK_UNINTERRUPTIBLE （不可中断），然后调用 schedule();放弃CPU，此进程就不会被内核调度了，但随之而来的问题是，如果进程所需资源可以使用，如何唤醒进程呢，这就要依赖于等待队列了，进程在放弃控制权之前，把自己加入一个队列中，当所需条件满足，其他进程便可wakeup该队列，修改进程状态为 TASK_RUNNING，等待进程便可顺利往下执行了。
-与等待队列相关的操作有如下几种：
-/* 等待队列头声明 */ wait_queue_head_t simple_queue; /* 初始化等待队列头 */ init_waitqueue_head(&amp;amp;simple_queue); /* 定义等待队列项 */ DECLARE_WAITQUEUE (name, tsk); /* 添加删除等待项 */ void fastcall add_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); void fastcall remove_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); /* 唤醒等待头中的所有项 */ void wake_up(wait_queue_head_t * queue); void wake_up_interruptible(wait_queue_head_t * queue); 结合这些函数，再往simple驱动里添加一些简单的机制支持等待。在 simple_read 函数中修改当前进程状态，加入等待队列后，放弃控制权，另加入 simple_write 函数唤醒队列。'>
+<meta property='og:description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-waiting-queue/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-14T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-14T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux 内核等待队列解析">
-<meta name="twitter:description" content="在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h
-#define TASK_RUNNING 0 #define TASK_INTERRUPTIBLE 1 #define TASK_UNINTERRUPTIBLE 2 ... 内核只会调用标志是 TASK_RUNNING 的进程，如果需要等待资源，可以设置自己的进程标志为 TASK_INTERRUPTIBLE （可中断）或者 TASK_UNINTERRUPTIBLE （不可中断），然后调用 schedule();放弃CPU，此进程就不会被内核调度了，但随之而来的问题是，如果进程所需资源可以使用，如何唤醒进程呢，这就要依赖于等待队列了，进程在放弃控制权之前，把自己加入一个队列中，当所需条件满足，其他进程便可wakeup该队列，修改进程状态为 TASK_RUNNING，等待进程便可顺利往下执行了。
-与等待队列相关的操作有如下几种：
-/* 等待队列头声明 */ wait_queue_head_t simple_queue; /* 初始化等待队列头 */ init_waitqueue_head(&amp;amp;simple_queue); /* 定义等待队列项 */ DECLARE_WAITQUEUE (name, tsk); /* 添加删除等待项 */ void fastcall add_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); void fastcall remove_wait_queue(wait_queue_head_t * q, wait_queue_t * wait); /* 唤醒等待头中的所有项 */ void wake_up(wait_queue_head_t * queue); void wake_up_interruptible(wait_queue_head_t * queue); 结合这些函数，再往simple驱动里添加一些简单的机制支持等待。在 simple_read 函数中修改当前进程状态，加入等待队列后，放弃控制权，另加入 simple_write 函数唤醒队列。">
+<meta name="twitter:description" content="在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -83,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -551,7 +542,7 @@ cool            ---&gt;    echo &quot;cool&quot; &gt; /dev/simple
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

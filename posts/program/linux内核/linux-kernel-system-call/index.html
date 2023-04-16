@@ -1,33 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
-在用户态通过API接口编程如下：
-#include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; int main() { return printf(&amp;quot;pid is %d\n&amp;quot;, getpid()) &amp;gt; 0; } getpid 为应用编程接口(API)函数，提供统一标准接口，实现是通过系统调用获得进程ID。 系统调用函数由唯一的调用号标识，x86构架下在文件 arch/x86/include/asm/unistd.h 指定，实现文件根据32位系统与64为系统的不同分别实现在相同目录的unistd_32.h和unistd_64.h文件，现通过64位系统分析，32位系统原理相同。
-#define __NR_getpid 39 __SYSCALL(__NR_getpid, sys_getpid) 可以看到getpid系统调用号为 39， 当然这在不同的系统上并不一定相同，getpid API函数的封装正是封装了种种不同。
-系统初始化时创建名为 sys_call_table 的表项，其中存储了系统调用函数，而__NR_*调用号正是表项索引，sys_call_table的定义 32构架位于 arch/x86/kernel/syscall_table_32.S，sys_call_table 为起始地址依次存储一系列函数地址。
-::: ENTRY(sys_call_table) .long sys_restart_syscall	/* 0 - old &amp;quot;setup()&amp;quot; system call, used for restarting */ .long sys_exit .long ptregs_fork .long sys_read .long sys_write .long sys_open	/* 5 */ .long sys_close .long sys_waitpid .'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变'>
 <title>Linux系统调用</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-system-call/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux系统调用'>
-<meta property='og:description' content='操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
-在用户态通过API接口编程如下：
-#include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; int main() { return printf(&amp;quot;pid is %d\n&amp;quot;, getpid()) &amp;gt; 0; } getpid 为应用编程接口(API)函数，提供统一标准接口，实现是通过系统调用获得进程ID。 系统调用函数由唯一的调用号标识，x86构架下在文件 arch/x86/include/asm/unistd.h 指定，实现文件根据32位系统与64为系统的不同分别实现在相同目录的unistd_32.h和unistd_64.h文件，现通过64位系统分析，32位系统原理相同。
-#define __NR_getpid 39 __SYSCALL(__NR_getpid, sys_getpid) 可以看到getpid系统调用号为 39， 当然这在不同的系统上并不一定相同，getpid API函数的封装正是封装了种种不同。
-系统初始化时创建名为 sys_call_table 的表项，其中存储了系统调用函数，而__NR_*调用号正是表项索引，sys_call_table的定义 32构架位于 arch/x86/kernel/syscall_table_32.S，sys_call_table 为起始地址依次存储一系列函数地址。
-::: ENTRY(sys_call_table) .long sys_restart_syscall	/* 0 - old &amp;quot;setup()&amp;quot; system call, used for restarting */ .long sys_exit .long ptregs_fork .long sys_read .long sys_write .long sys_open	/* 5 */ .long sys_close .long sys_waitpid .'>
+<meta property='og:description' content='操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-system-call/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-16T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-16T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux系统调用">
-<meta name="twitter:description" content="操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
-在用户态通过API接口编程如下：
-#include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; int main() { return printf(&amp;quot;pid is %d\n&amp;quot;, getpid()) &amp;gt; 0; } getpid 为应用编程接口(API)函数，提供统一标准接口，实现是通过系统调用获得进程ID。 系统调用函数由唯一的调用号标识，x86构架下在文件 arch/x86/include/asm/unistd.h 指定，实现文件根据32位系统与64为系统的不同分别实现在相同目录的unistd_32.h和unistd_64.h文件，现通过64位系统分析，32位系统原理相同。
-#define __NR_getpid 39 __SYSCALL(__NR_getpid, sys_getpid) 可以看到getpid系统调用号为 39， 当然这在不同的系统上并不一定相同，getpid API函数的封装正是封装了种种不同。
-系统初始化时创建名为 sys_call_table 的表项，其中存储了系统调用函数，而__NR_*调用号正是表项索引，sys_call_table的定义 32构架位于 arch/x86/kernel/syscall_table_32.S，sys_call_table 为起始地址依次存储一系列函数地址。
-::: ENTRY(sys_call_table) .long sys_restart_syscall	/* 0 - old &amp;quot;setup()&amp;quot; system call, used for restarting */ .long sys_exit .long ptregs_fork .long sys_read .long sys_write .long sys_open	/* 5 */ .long sys_close .long sys_waitpid .">
+<meta name="twitter:description" content="操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -89,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -228,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -495,7 +480,7 @@ int main()
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
-那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
-unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
-unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
-#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层'>
 <title>Linux 设备驱动轮询编程</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-driver-select-implement/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 设备驱动轮询编程'>
-<meta property='og:description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
-那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
-unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
-unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
-#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.'>
+<meta property='og:description' content='Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-driver-select-implement/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-15T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-15T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux 设备驱动轮询编程">
-<meta name="twitter:description" content="Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。
-那在驱动层面是如何支持select的呢？驱动需要实现file_operations结构中的poll函数指针，其实现也非常简单，只是poll_wait函数的调用，原型如下：
-unsigned int (*poll) (struct file *, struct poll_table_struct *); void poll_wait(struct file *filp, wait_queue_head_t *queue, poll_table * wait); 需要注意的是poll_wait函数不会像它名字一样处于wait状态，仅供上层查询之用。其编程基本框架也比较固定，现修改 字符驱动 中的simple程序，实现poll回调函数如下：
-unsigned int simple_poll (struct file * filp, struct poll_table_struct * wait) { unsigned int mask = 0; poll_wait(filp, &amp;amp;simple_queue, wait); if (len &amp;gt; 0) { mask |= POLLIN | POLLRDNORM; } return mask; } 在每次read之后都把len赋值为0，调用write把len赋值为数据长，poll中只需判断len，如果len大于0，则返回可读，整理之后，整个程序代码如下：
-#include &amp;lt;linux/init.h&amp;gt; #include &amp;lt;linux/module.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/types.h&amp;gt; #include &amp;lt;linux/cdev.h&amp;gt; #include &amp;lt;linux/mm.h&amp;gt; #include &amp;lt;linux/sched.">
+<meta name="twitter:description" content="Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -86,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -647,7 +635,7 @@ simple can read
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

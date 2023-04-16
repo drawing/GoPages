@@ -1,60 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
-内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
-内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
-进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
-运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
-普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
-进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
-task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
-状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
-当前状态 state state指定了当前状态，可以使用
-TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
-EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
-struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
-rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
-常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉'>
 <title>Linux内核笔记-进程调度</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-进程调度'>
-<meta property='og:description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
-内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
-内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
-进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
-运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
-普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
-进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
-task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
-状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
-当前状态 state state指定了当前状态，可以使用
-TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
-EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
-struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
-rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
-常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。'>
+<meta property='og:description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-23T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-23T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-进程调度">
-<meta name="twitter:description" content="现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
-内核在各个进程切换过程中，必须做到进程之间不能互相干扰，而且需要CPU时间必须在各种应用程序中尽可能公平的共享，进程管理和调度有两个主要任务：
-内核决定各个进程分配多长时间，何时切换到下一个进程； 进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同； 这两个任务称之为调度器的内核子系统的职责。
-进程生命周期 进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：
-运行：进程正在运行 等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程 睡眠：进程正在睡眠无法运行，正在等待外部事件 僵尸：进程资源已经释放，但还保留进程表中的项 终止：进程退出 Linux进程管理还需另外两种状态选项：用户状态和核心态。用户态受到各种限制，内核态却有无上的权利。进程通常处于用户状态，只能访问自身数据，无法干扰其他进程。如果进程想要访问系统数据或者功能，必须切换到核心态，用户态切换到核心态有两种方法，第一种是系统调用(系统调用)[/reading/linux-kernel-system-call.html]，另一种是通过中断。内核的抢占调度模型建立了一个层次结构，用户判断哪些进程状态可以由其他状态抢占。
-普通进程总是可能被抢占 如果进程处于核心态并在处理系统调用，那么其他进程是无法抢占，但中断可以终止系统调用 中断可以暂停出于用户状态和核心态的进程，中断有最高优先级 内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。
-进程表示 Linux内核涉及进程和进程所有算法都围绕一个名为 task_struct 的数据结构建立，该结构定义在 include/sched.h 中，这是系统中重要的一个结构。
-task_struct 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：
-状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息 有关分配的虚拟内存信息 进程身份凭据，如用户ID，组ID及权限 使用的文件包含程序代码的二进制文件，以及进程所处理的所有文件的文件系统信息 线程信息记录该进程特定于CPU的运行时间数据 在与其他应用程序协作时所需的进程间通信有关的信息 该进程所用的信号处理程序，用于响应到来的信号 task_struct 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。
-当前状态 state state指定了当前状态，可以使用
-TASK_RUNNING：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它 TASK_INTERRUPTIBLE：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 TASK_RUNNING TASK_UNINTERRUPTIBLE：用于因内核指示而停用的睡眠进程，他们不能由外部信号唤醒，只能由内核亲自唤醒 TASK_STOPPED：表示进程特意停止运行，例如由调度器暂停 TASK_TRACED：本来不是进程状态，用于从停止的进程中，将当前被调试的那些与常规的进程区分开 下面常量可以用于struct task_struct进程状态字段，也可以用于exit_state字段，后者明确地用于退出进程
-EXIT_ZOMBIE：僵尸进程 EXIT_DEAD：状态则是指wait系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出wait调用时，才有意义 资源限制 rlimit Linux提供资源限制功能，该机制利用了task_struct中的 rlim 数组，数组项类型为 struct rlimit：
-struct rlimit { unsigned long rlim_cur; unsigned long rlim_max; }; 上述定义可以用于多种不同的资源类型：
-rlim_cur：是进程当前资源限制，也称之为软限制 rlim_max：是该限制的最大容许值，称之为硬限制 系统调用setrlimit来增减当前限制，但不能超过rlim_max指定的值。rlim数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将rlim_max设置为RLIM_INFINITY。以下是几种宏定义：
-常数 语义 RLIMIT_CPU 按毫秒计算的最大CPU时间 RLIMIT_FSIZE 允许的最大文件长度 RLIMIT_DATA 数据段的最大长度 RLIMIT_STACK （用户态）栈最大长度 RLIMIT_CORE 内存转储文件最大长度 RLIMIT_NOFILE 打开文件最大数目 RLIMIT_SIGPENDING 待决信号的最大数目 RLIMIT_MSGQUEUE 信息队列最大数目 在proc文件系统中，可以从文件/proc/self/limits查看当前rlimit限制。">
+<meta name="twitter:description" content="现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -116,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -305,7 +263,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 18 分钟
                 </time>
             </div>
         
@@ -846,7 +804,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
-在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
-struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
-内核提供了若干函数对内存映射区域操作：
-查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
-const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
-堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
-堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
-另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
-另外，内核提供了一系列函数从内核空间和用户空间交换数据：
-copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地'>
 <title>Linxu内核笔记-虚拟地址空间</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linxu内核笔记-虚拟地址空间'>
-<meta property='og:description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
-在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
-struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
-内核提供了若干函数对内存映射区域操作：
-查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
-const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
-堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
-堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
-另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
-另外，内核提供了一系列函数从内核空间和用户空间交换数据：
-copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。'>
+<meta property='og:description' content='在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-virtual-address/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-20T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-20T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linxu内核笔记-虚拟地址空间">
-<meta name="twitter:description" content="在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
-在进程结构 task_struct 中包含一个mm_struct实例，这个实例便保存的进程的虚拟地址空间：
-struct mm_struct { struct vm_area_struct * mmap; /* list of VMAs */ struct rb_root mm_rb; struct vm_area_struct * mmap_cache; /* last find_vma result */ ... }; vm_area_struct结构中存储映射的虚拟内存细节，每个vm_area_struct节点即存储在单链表mmap中，又存储于红黑树mm_rb中。
-内核提供了若干函数对内存映射区域操作：
-查找给定地址后的第一个区域 find_vma 确认边界区间是否在一个现存的vma区域 find_vma_intersection 区域合并 vma_merge 插入区域 insert_vm_struct 创建区域 get_unmapped_area 物理内存和虚拟地址的映射通过 vm_area_struct中的函数指针vm_operations_struct来对应，这里的映射函数不了解设备的具体信息，需要file的一个成员address_space来补充，二者通常使用以下方式关联：
-const struct vm_operations_struct generic_file_vm_ops = { .fault = filemap_fault, }; 虚拟地址的映射可以通过系统调用 mmap和munmap。
-堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。
-堆是连续的内存空间，扩张自下至上，mm_struct中包含了起始和结束地址start_brk和brk。
-另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。
-另外，内核提供了一系列函数从内核空间和用户空间交换数据：
-copy_from_user get_user strncopy_from_user put_user copy_to_user 最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。">
+<meta name="twitter:description" content="在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -104,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -243,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -458,7 +428,7 @@ copy_to_user
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

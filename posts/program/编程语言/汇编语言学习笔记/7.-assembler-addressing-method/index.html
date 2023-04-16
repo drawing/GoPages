@@ -1,36 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
-对于实模式，处理器可以寻址20位的地址空间，但是寄存器只有16位，为了能达到20位的寻址，需要使用 段：偏移 这样的方式寻址，格式为 segreg:offset，计算出的直接偏移地址为 segreg * 16 &#43; offset，相当于段基址左移4位后加上偏移，这样刚好有20位的地址，可以达到2M内存寻址。 在平坦内存模式下，寻址类似于c的指针，一个基址加上偏移。
-对AT&amp;amp;T来说，寻址方式比较怪异，但又非常简洁，语法格式如下：
-segreg:base_address(offset_address, index, size) ;例子 movl %eax, label1(, $2, $4) movl %ebx, (label2, $2,) movl %ecx, (%esp) 其效果为 segreg:base_address &#43; offset_address &#43; index * size segreg为分段模式下段寄存器，base_address为基址，offset_address 为偏移，index * size决定了第几个元素，其中size为元素长度，只能为1,2,4,8等等，这些元素都是可选的，index默认为0，size默认为1。
-对于MASM，表达相同含义的语法如下：
-segreg:[base_address &#43; index * scale &#43; offset_address] ;例子 mov label1[2 * 4], eax mov [label2 &#43; 2], ebx mov [esp], ecx 对MASM，有些指令并不知道寻址以后是该取1字节还是多字节，也就是说需要制定寻址以后数据的长度，这个长度可由ptr操作符声明，比如：
-movzx eax, word ptr [base &#43; 2]; 这样指定在base &#43; 2地址处读取word宽度字节。而在AT&amp;amp;T中，由于指令可跟w,l等后缀，无需再次指令，这里可以看到AT&amp;amp;T简洁之处。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，'>
 <title>汇编语言学习笔记(七)-寻址方式</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.-assembler-addressing-method/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(七)-寻址方式'>
-<meta property='og:description' content='寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
-对于实模式，处理器可以寻址20位的地址空间，但是寄存器只有16位，为了能达到20位的寻址，需要使用 段：偏移 这样的方式寻址，格式为 segreg:offset，计算出的直接偏移地址为 segreg * 16 &#43; offset，相当于段基址左移4位后加上偏移，这样刚好有20位的地址，可以达到2M内存寻址。 在平坦内存模式下，寻址类似于c的指针，一个基址加上偏移。
-对AT&amp;amp;T来说，寻址方式比较怪异，但又非常简洁，语法格式如下：
-segreg:base_address(offset_address, index, size) ;例子 movl %eax, label1(, $2, $4) movl %ebx, (label2, $2,) movl %ecx, (%esp) 其效果为 segreg:base_address &#43; offset_address &#43; index * size segreg为分段模式下段寄存器，base_address为基址，offset_address 为偏移，index * size决定了第几个元素，其中size为元素长度，只能为1,2,4,8等等，这些元素都是可选的，index默认为0，size默认为1。
-对于MASM，表达相同含义的语法如下：
-segreg:[base_address &#43; index * scale &#43; offset_address] ;例子 mov label1[2 * 4], eax mov [label2 &#43; 2], ebx mov [esp], ecx 对MASM，有些指令并不知道寻址以后是该取1字节还是多字节，也就是说需要制定寻址以后数据的长度，这个长度可由ptr操作符声明，比如：
-movzx eax, word ptr [base &#43; 2]; 这样指定在base &#43; 2地址处读取word宽度字节。而在AT&amp;amp;T中，由于指令可跟w,l等后缀，无需再次指令，这里可以看到AT&amp;amp;T简洁之处。'>
+<meta property='og:description' content='寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.-assembler-addressing-method/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-18T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-18T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(七)-寻址方式">
-<meta name="twitter:description" content="寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
-对于实模式，处理器可以寻址20位的地址空间，但是寄存器只有16位，为了能达到20位的寻址，需要使用 段：偏移 这样的方式寻址，格式为 segreg:offset，计算出的直接偏移地址为 segreg * 16 &#43; offset，相当于段基址左移4位后加上偏移，这样刚好有20位的地址，可以达到2M内存寻址。 在平坦内存模式下，寻址类似于c的指针，一个基址加上偏移。
-对AT&amp;amp;T来说，寻址方式比较怪异，但又非常简洁，语法格式如下：
-segreg:base_address(offset_address, index, size) ;例子 movl %eax, label1(, $2, $4) movl %ebx, (label2, $2,) movl %ecx, (%esp) 其效果为 segreg:base_address &#43; offset_address &#43; index * size segreg为分段模式下段寄存器，base_address为基址，offset_address 为偏移，index * size决定了第几个元素，其中size为元素长度，只能为1,2,4,8等等，这些元素都是可选的，index默认为0，size默认为1。
-对于MASM，表达相同含义的语法如下：
-segreg:[base_address &#43; index * scale &#43; offset_address] ;例子 mov label1[2 * 4], eax mov [label2 &#43; 2], ebx mov [esp], ecx 对MASM，有些指令并不知道寻址以后是该取1字节还是多字节，也就是说需要制定寻址以后数据的长度，这个长度可由ptr操作符声明，比如：
-movzx eax, word ptr [base &#43; 2]; 这样指定在base &#43; 2地址处读取word宽度字节。而在AT&amp;amp;T中，由于指令可跟w,l等后缀，无需再次指令，这里可以看到AT&amp;amp;T简洁之处。">
+<meta name="twitter:description" content="寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -92,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -235,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -528,7 +510,7 @@ segreg为分段模式下段寄存器，<code>base_address</code>为基址，<cod
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。
-GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。
-下面看一下hello world程序，因为GAS汇编文件以.s后缀，所以文件名定为hello.s：
-.section .data out_text: .asciz &amp;#34;hello world\n&amp;#34; .section .text .globl _main _main: pushl $out_text call _printf pushl $0 call _exit 为了方便输出，忽略程序细节，其中引用了c函数库，可以使用 gcc hello.s -o hello 来编译此程序，运行hello后输出hello world字串。
-至 此完成了最为简单的程序，从main开始，先调用printf输出out_text处的字串，之后调用exit程序结束程序，从代码调用的函数名可以很清 楚理解这个过程，但是汇编最需注重的是细节，任何一个细节都可能导致程序的崩溃。
-GAS程序说明 下面我对以上涉及到的细节做一些说明：
-函数入口 对于c来说，毫无疑问是main函数作为入口，但这也只是表象，之所以要指定入口，是因为连接器把目标文件组织成可执行文件时需要把入口代码放到代码 段最开始的位置，只要编译器告诉连接器把哪个部分放在入口处即可，所以入口仅仅是一个符号，一个程序可以完全不写main函数，直接修改连接器ld的连接 脚本或者参数，自定义一个入口点。
-汇编程序也是如此，因为直接使用的gcc编译器，gcc把main作为入口点，但其实gcc并不是编译汇编的主体，汇编编译器其实是as，它默认入口点是 start。可以把以上程序_main修改为_start，使用as进行编译，编译成目标文件之后再使用ld进行链接，之所以这里用gcc编译，完全是为 了简单，它可以自动进行编译连接，并在连接时加入c库。
-C库调用 另一个问题是main，printf函数都有个下划线，问题便出来了，到底这个 是printf还是_printf呢？这里完全是Windows下的规则，Windows的标准c函数，在连接时符号都是加入下划线的，在vc里写入 printf，编译时被修改为_printf进行连接，这里由于是汇编，没有c编译器处理这些细节，只能由我们直接写出最终的连接符号。这里有必要一提的 是，对于stdcall类型函数，比如Win32 API，连接符号后会有“@参数总长度 ” 这样的后缀，比如上层的MessageBox函数，在编译时便会转变成_MessageBoxA@16，后面所加的A是使用的窄字符版本，这里并不是编译 器所作，而是Windows.h头文件中使用宏分离的不同字符集下的符号，作为汇编，一切工作都得由我们做了，可以看到使用GAS来处理Windows程 序甚为繁琐，因为没有很好的支持，后面可以看到MASM的一个封装，MASM32，作者本身定义了很多的宏以方便调用。当然，如果在linux下编程，便 可省去这烦人的下弧线了。
-数据段和代码段 接下来该进入正题了，就是语法，由于最终程序是要分成若干段，比如代码段，数据段，这些c编译器可以帮忙指定，对于汇编，还是需要我们自己说明，这里的.section指令便是指明段的属性
-.data —— 初始化数据段，其中的数据在编译期间便已经占用了指定了空间 .bss —— 与.data对应，是未初始化数据段，也就是这里的数据是未初始化的，在程序运行时才分配的空间 .rodata —— 只读数据段，相当于常量区，其中的数据不可修改 .text —— 代码段，此段具有可执行属性，只读 标签 另外，out_text为标签，因为gas汇编并没有变量名的概念，只能在内存地址的其实位置定义一个标签，方便以后引用此位置。.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。 GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个'>
 <title>汇编语言学习笔记(二)-代码框架</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(二)-代码框架'>
-<meta property='og:description' content='前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。
-GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。
-下面看一下hello world程序，因为GAS汇编文件以.s后缀，所以文件名定为hello.s：
-.section .data out_text: .asciz &amp;#34;hello world\n&amp;#34; .section .text .globl _main _main: pushl $out_text call _printf pushl $0 call _exit 为了方便输出，忽略程序细节，其中引用了c函数库，可以使用 gcc hello.s -o hello 来编译此程序，运行hello后输出hello world字串。
-至 此完成了最为简单的程序，从main开始，先调用printf输出out_text处的字串，之后调用exit程序结束程序，从代码调用的函数名可以很清 楚理解这个过程，但是汇编最需注重的是细节，任何一个细节都可能导致程序的崩溃。
-GAS程序说明 下面我对以上涉及到的细节做一些说明：
-函数入口 对于c来说，毫无疑问是main函数作为入口，但这也只是表象，之所以要指定入口，是因为连接器把目标文件组织成可执行文件时需要把入口代码放到代码 段最开始的位置，只要编译器告诉连接器把哪个部分放在入口处即可，所以入口仅仅是一个符号，一个程序可以完全不写main函数，直接修改连接器ld的连接 脚本或者参数，自定义一个入口点。
-汇编程序也是如此，因为直接使用的gcc编译器，gcc把main作为入口点，但其实gcc并不是编译汇编的主体，汇编编译器其实是as，它默认入口点是 start。可以把以上程序_main修改为_start，使用as进行编译，编译成目标文件之后再使用ld进行链接，之所以这里用gcc编译，完全是为 了简单，它可以自动进行编译连接，并在连接时加入c库。
-C库调用 另一个问题是main，printf函数都有个下划线，问题便出来了，到底这个 是printf还是_printf呢？这里完全是Windows下的规则，Windows的标准c函数，在连接时符号都是加入下划线的，在vc里写入 printf，编译时被修改为_printf进行连接，这里由于是汇编，没有c编译器处理这些细节，只能由我们直接写出最终的连接符号。这里有必要一提的 是，对于stdcall类型函数，比如Win32 API，连接符号后会有“@参数总长度 ” 这样的后缀，比如上层的MessageBox函数，在编译时便会转变成_MessageBoxA@16，后面所加的A是使用的窄字符版本，这里并不是编译 器所作，而是Windows.h头文件中使用宏分离的不同字符集下的符号，作为汇编，一切工作都得由我们做了，可以看到使用GAS来处理Windows程 序甚为繁琐，因为没有很好的支持，后面可以看到MASM的一个封装，MASM32，作者本身定义了很多的宏以方便调用。当然，如果在linux下编程，便 可省去这烦人的下弧线了。
-数据段和代码段 接下来该进入正题了，就是语法，由于最终程序是要分成若干段，比如代码段，数据段，这些c编译器可以帮忙指定，对于汇编，还是需要我们自己说明，这里的.section指令便是指明段的属性
-.data —— 初始化数据段，其中的数据在编译期间便已经占用了指定了空间 .bss —— 与.data对应，是未初始化数据段，也就是这里的数据是未初始化的，在程序运行时才分配的空间 .rodata —— 只读数据段，相当于常量区，其中的数据不可修改 .text —— 代码段，此段具有可执行属性，只读 标签 另外，out_text为标签，因为gas汇编并没有变量名的概念，只能在内存地址的其实位置定义一个标签，方便以后引用此位置。.'>
+<meta property='og:description' content='前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。 GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-13T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-13T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(二)-代码框架">
-<meta name="twitter:description" content="前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。
-GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。
-下面看一下hello world程序，因为GAS汇编文件以.s后缀，所以文件名定为hello.s：
-.section .data out_text: .asciz &amp;#34;hello world\n&amp;#34; .section .text .globl _main _main: pushl $out_text call _printf pushl $0 call _exit 为了方便输出，忽略程序细节，其中引用了c函数库，可以使用 gcc hello.s -o hello 来编译此程序，运行hello后输出hello world字串。
-至 此完成了最为简单的程序，从main开始，先调用printf输出out_text处的字串，之后调用exit程序结束程序，从代码调用的函数名可以很清 楚理解这个过程，但是汇编最需注重的是细节，任何一个细节都可能导致程序的崩溃。
-GAS程序说明 下面我对以上涉及到的细节做一些说明：
-函数入口 对于c来说，毫无疑问是main函数作为入口，但这也只是表象，之所以要指定入口，是因为连接器把目标文件组织成可执行文件时需要把入口代码放到代码 段最开始的位置，只要编译器告诉连接器把哪个部分放在入口处即可，所以入口仅仅是一个符号，一个程序可以完全不写main函数，直接修改连接器ld的连接 脚本或者参数，自定义一个入口点。
-汇编程序也是如此，因为直接使用的gcc编译器，gcc把main作为入口点，但其实gcc并不是编译汇编的主体，汇编编译器其实是as，它默认入口点是 start。可以把以上程序_main修改为_start，使用as进行编译，编译成目标文件之后再使用ld进行链接，之所以这里用gcc编译，完全是为 了简单，它可以自动进行编译连接，并在连接时加入c库。
-C库调用 另一个问题是main，printf函数都有个下划线，问题便出来了，到底这个 是printf还是_printf呢？这里完全是Windows下的规则，Windows的标准c函数，在连接时符号都是加入下划线的，在vc里写入 printf，编译时被修改为_printf进行连接，这里由于是汇编，没有c编译器处理这些细节，只能由我们直接写出最终的连接符号。这里有必要一提的 是，对于stdcall类型函数，比如Win32 API，连接符号后会有“@参数总长度 ” 这样的后缀，比如上层的MessageBox函数，在编译时便会转变成_MessageBoxA@16，后面所加的A是使用的窄字符版本，这里并不是编译 器所作，而是Windows.h头文件中使用宏分离的不同字符集下的符号，作为汇编，一切工作都得由我们做了，可以看到使用GAS来处理Windows程 序甚为繁琐，因为没有很好的支持，后面可以看到MASM的一个封装，MASM32，作者本身定义了很多的宏以方便调用。当然，如果在linux下编程，便 可省去这烦人的下弧线了。
-数据段和代码段 接下来该进入正题了，就是语法，由于最终程序是要分成若干段，比如代码段，数据段，这些c编译器可以帮忙指定，对于汇编，还是需要我们自己说明，这里的.section指令便是指明段的属性
-.data —— 初始化数据段，其中的数据在编译期间便已经占用了指定了空间 .bss —— 与.data对应，是未初始化数据段，也就是这里的数据是未初始化的，在程序运行时才分配的空间 .rodata —— 只读数据段，相当于常量区，其中的数据不可修改 .text —— 代码段，此段具有可执行属性，只读 标签 另外，out_text为标签，因为gas汇编并没有变量名的概念，只能在内存地址的其实位置定义一个标签，方便以后引用此位置。.">
+<meta name="twitter:description" content="前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。 GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -104,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -282,7 +252,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -540,7 +510,7 @@ link 为连接命令，<code>/SUBSYSTEM:WINDOWS</code> 指定为窗口程序</p>
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

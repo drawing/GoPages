@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
-这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
-epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
-::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
-SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).'>
-<title>tun/tap 驱动源码分析</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器'>
+<title>select/poll 源码分析</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='tun/tap 驱动源码分析'>
-<meta property='og:description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
-这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
-epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
-::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
-SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).'>
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='select/poll 源码分析'>
+<meta property='og:description' content='select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-13T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-13T01:16:33&#43;08:00'/>
-<meta name="twitter:title" content="tun/tap 驱动源码分析">
-<meta name="twitter:description" content="select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。
-这里先简略说明一下epoll的使用流程，其使用或许比select模型更为简洁：
-epoll_create(size); while (...) { /* 等待就绪连接 */ epoll_wait( ... ); /* 如有新连接，构造epoll_event结构体后 */ epoll_ctl( ... EPOLL_CTL_ADD ... ); /* 如有断开连接 */ epoll_ctl( ... EPOLL_CTL_DEL ... ); } 从使用角度出发，先来看epoll_create函数的实现，用户态声明int epoll_create(int size);对应的系统调用代码：
-::: SYSCALL_DEFINE1(epoll_create, int, size) { if (size 可以看到，sys_epoll_create仅仅检测size是否小于0，之后直接调用sys_epoll_create1，也就是说size在2.6.34版本中是没有使用的，通过查阅代码，发现sys_epoll_create1是在2.6.27版本中加入的，但是之前的几个版本也仅仅只是输出日志时使用，没有回溯查看真正废弃改值是在哪个版本，总之真正的实现是位于sys_epoll_create1。
-SYSCALL_DEFINE1(epoll_create1, int, flags) { int error; struct eventpoll *ep = NULL; /* Check the EPOLL_* constant for consistency. */ BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC); if (flags &amp;amp; ~EPOLL_CLOEXEC) return -EINVAL; /* * Create the internal data structure (&amp;quot;struct eventpoll&amp;quot;).">
+<meta name="twitter:title" content="select/poll 源码分析">
+<meta name="twitter:description" content="select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -86,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -188,7 +176,7 @@ if (!doNotTrack) {
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/">tun/tap 驱动源码分析</a>
+            <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/">select/poll 源码分析</a>
         </h2>
     
         
@@ -225,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 6 分钟
+                    阅读时长: 9 分钟
                 </time>
             </div>
         
@@ -770,7 +758,7 @@ out_unlock:
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

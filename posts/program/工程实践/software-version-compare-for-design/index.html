@@ -1,27 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。
-一个软件，其构架是否合理，没有相关的经验是比较难领悟的，但一个开源软件的精华往往在于其构架，学习其构架可以通过仔细阅读其中某一个版本，但是更好的方式是去关注不同版本中的变化，构架的合理性只有通过不断的演变才能体现出来，好的设计在不断演化中仍旧能保持很好的韧性，差的设计就需要不断做出大的变更才能适应变化的需求，而版本的更替最能有效的看到这种衍化，也能更深层理解设计。
-构建一个系统并不难，所有的难度都在于随着时间的推移，系统在不断的演化，可能是需求在不断变更，也可能是开始无法把所有细节考虑周全，在系统发生变化的时候，往往为了便利而破坏开始的设计，可能是为了获取一个配置而打破原有的封装，可能是为了复用一段工具代码而更改原本私有的方法，在实践中原本的封装，往往不是那么显而易见，而且重构代码的成本往往超出我们预估，以致时常为了一时的便利让代码结构变得混乱。如何维持清晰的层次结构，除了经验，还需要一点“洁癖”。
-另一个极端就是设计过度，记得我维护一个同事的代码，发现他把 XML 的每一项都抽象成了接口，每在 XML 里加一项，就必须对他复杂的类层次增加一个接口，XML 的易扩展特性完全无法体现，那开始的时候为什么要用 XML 呢？其实说过度设计完全是抬举这种做法，这种做法完全就是错误的设计，接口的作用就是封装变化，而他相反，把最容易变化的部分抽象成了接口，很是无语，如果不对这段代码进行维护，他可能会觉得自己的设计分离了 XML 的实现，是很完美的面向对象体现（看他注释经常出现这是面向对象的 XX 之类）。所以设计好与坏，可能当时没有感觉，但在实践中演化，所有的利弊便一览无余，演化是检验设计的唯一标准啊。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种'>
 <title>软件版本对系统架构的理解</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='软件版本对系统架构的理解'>
-<meta property='og:description' content='之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。
-一个软件，其构架是否合理，没有相关的经验是比较难领悟的，但一个开源软件的精华往往在于其构架，学习其构架可以通过仔细阅读其中某一个版本，但是更好的方式是去关注不同版本中的变化，构架的合理性只有通过不断的演变才能体现出来，好的设计在不断演化中仍旧能保持很好的韧性，差的设计就需要不断做出大的变更才能适应变化的需求，而版本的更替最能有效的看到这种衍化，也能更深层理解设计。
-构建一个系统并不难，所有的难度都在于随着时间的推移，系统在不断的演化，可能是需求在不断变更，也可能是开始无法把所有细节考虑周全，在系统发生变化的时候，往往为了便利而破坏开始的设计，可能是为了获取一个配置而打破原有的封装，可能是为了复用一段工具代码而更改原本私有的方法，在实践中原本的封装，往往不是那么显而易见，而且重构代码的成本往往超出我们预估，以致时常为了一时的便利让代码结构变得混乱。如何维持清晰的层次结构，除了经验，还需要一点“洁癖”。
-另一个极端就是设计过度，记得我维护一个同事的代码，发现他把 XML 的每一项都抽象成了接口，每在 XML 里加一项，就必须对他复杂的类层次增加一个接口，XML 的易扩展特性完全无法体现，那开始的时候为什么要用 XML 呢？其实说过度设计完全是抬举这种做法，这种做法完全就是错误的设计，接口的作用就是封装变化，而他相反，把最容易变化的部分抽象成了接口，很是无语，如果不对这段代码进行维护，他可能会觉得自己的设计分离了 XML 的实现，是很完美的面向对象体现（看他注释经常出现这是面向对象的 XX 之类）。所以设计好与坏，可能当时没有感觉，但在实践中演化，所有的利弊便一览无余，演化是检验设计的唯一标准啊。'>
+<meta property='og:description' content='之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2011-06-01T22:50:04&#43;08:00'/><meta property='article:modified_time' content='2011-06-01T22:50:04&#43;08:00'/>
 <meta name="twitter:title" content="软件版本对系统架构的理解">
-<meta name="twitter:description" content="之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。
-一个软件，其构架是否合理，没有相关的经验是比较难领悟的，但一个开源软件的精华往往在于其构架，学习其构架可以通过仔细阅读其中某一个版本，但是更好的方式是去关注不同版本中的变化，构架的合理性只有通过不断的演变才能体现出来，好的设计在不断演化中仍旧能保持很好的韧性，差的设计就需要不断做出大的变更才能适应变化的需求，而版本的更替最能有效的看到这种衍化，也能更深层理解设计。
-构建一个系统并不难，所有的难度都在于随着时间的推移，系统在不断的演化，可能是需求在不断变更，也可能是开始无法把所有细节考虑周全，在系统发生变化的时候，往往为了便利而破坏开始的设计，可能是为了获取一个配置而打破原有的封装，可能是为了复用一段工具代码而更改原本私有的方法，在实践中原本的封装，往往不是那么显而易见，而且重构代码的成本往往超出我们预估，以致时常为了一时的便利让代码结构变得混乱。如何维持清晰的层次结构，除了经验，还需要一点“洁癖”。
-另一个极端就是设计过度，记得我维护一个同事的代码，发现他把 XML 的每一项都抽象成了接口，每在 XML 里加一项，就必须对他复杂的类层次增加一个接口，XML 的易扩展特性完全无法体现，那开始的时候为什么要用 XML 呢？其实说过度设计完全是抬举这种做法，这种做法完全就是错误的设计，接口的作用就是封装变化，而他相反，把最容易变化的部分抽象成了接口，很是无语，如果不对这段代码进行维护，他可能会觉得自己的设计分离了 XML 的实现，是很完美的面向对象体现（看他注释经常出现这是面向对象的 XX 之类）。所以设计好与坏，可能当时没有感觉，但在实践中演化，所有的利弊便一览无余，演化是检验设计的唯一标准啊。">
+<meta name="twitter:description" content="之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -83,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -222,7 +213,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -407,7 +398,7 @@ if (!doNotTrack) {
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

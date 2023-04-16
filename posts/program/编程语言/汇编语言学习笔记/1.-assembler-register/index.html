@@ -1,33 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
-寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
-寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
-通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
-eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
-在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA'>
 <title>汇编语言学习笔记(一)-寄存器</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(一)-寄存器'>
-<meta property='og:description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
-寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
-寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
-通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
-eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
-在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.'>
+<meta property='og:description' content='一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-12T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-12T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(一)-寄存器">
-<meta name="twitter:description" content="一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。
-寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^
-寄存器分类 IA-32构架提供了16个基本寄存器，这16个基本寄存器可以归纳为如下几类：
-通用寄存器 段寄存器 状态和控制寄存器 指令寄存器 通用寄存器 32位通用寄存器有八个，eax, ebx, ecx, edx, esi, edi, ebp, esp，他们主要用作逻辑运算、地址计算和内存指针，具体功能如下：
-eax —— 累加和结果寄存器 ebx —— 数据指针寄存器 ecx —— 循环计数器 edx —— i/o指针 esi —— 源地址寄存器 edi —— 目的地址寄存器 esp —— 堆栈指针 ebp —— 栈指针寄存器 当然，以上功能并未限制寄存器的使用，特殊情况为了效率也可作其他用途。这八个寄存器低16位分别有一个引用别名 ax, bx, cx, dx, bp, si, di, sp, 其中 ax, bx, cx, dx, 的高8位又引用至 ah, bh, ch, dh，低八位引用至 al, bl, cl, dl
-在 64-bit 模式下，有16个通用寄存器，但是这16个寄存器是兼容32位模式的，32位方式下寄存器名分别为 eax, ebx, ecx, edx, edi, esi, ebp, esp, r8d – r15d.">
+<meta name="twitter:description" content="一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -89,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -272,7 +257,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -524,7 +509,7 @@ dr0 – dr7
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">

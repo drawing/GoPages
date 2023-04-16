@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
-先来看MASM中宏的语法规范：
-macroname macro parameter1, parameter2, ... statement-list endm ; 调用 macroname parameter1, parameter2, ... 看上去跟结构体的声明差不多，只是endm时不需要宏名，这里的参数是在调用点传递，预处理器只做替换，与c的宏有相同的含义，不过这里调用点的参数个数可以不与宏定义的参数个数相同，如果调用点个数多余定义，汇编器会产生一个警告，如果少于，则未传递的参数为空。
-接下来举一个简单的例子进行说明：
-.386 .model flat,stdcall option casemap:none include	windows.inc include	kernel32.inc includelib	kernel32.lib includelib	msvcrt.lib .data outstring	db &amp;quot;result is %d&amp;quot;, 0ah, 0dh, 0 result dd 0 .code printf proto c s:dword, i:dword addTwo macro a, b, result mov eax, a add eax, b mov result, eax endm start: addTwo 12, 14, result invoke printf, addr outstring, result addTwo result, 14, result invoke printf, addr outstring, result invoke ExitProcess, NULL end start 通过反汇编此程序，可以看到宏被扩展了两份，与函数调用不同。'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的'>
 <title>汇编语言学习笔记(十一)-预编译宏</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十一)-预编译宏'>
-<meta property='og:description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
-先来看MASM中宏的语法规范：
-macroname macro parameter1, parameter2, ... statement-list endm ; 调用 macroname parameter1, parameter2, ... 看上去跟结构体的声明差不多，只是endm时不需要宏名，这里的参数是在调用点传递，预处理器只做替换，与c的宏有相同的含义，不过这里调用点的参数个数可以不与宏定义的参数个数相同，如果调用点个数多余定义，汇编器会产生一个警告，如果少于，则未传递的参数为空。
-接下来举一个简单的例子进行说明：
-.386 .model flat,stdcall option casemap:none include	windows.inc include	kernel32.inc includelib	kernel32.lib includelib	msvcrt.lib .data outstring	db &amp;quot;result is %d&amp;quot;, 0ah, 0dh, 0 result dd 0 .code printf proto c s:dword, i:dword addTwo macro a, b, result mov eax, a add eax, b mov result, eax endm start: addTwo 12, 14, result invoke printf, addr outstring, result addTwo result, 14, result invoke printf, addr outstring, result invoke ExitProcess, NULL end start 通过反汇编此程序，可以看到宏被扩展了两份，与函数调用不同。'>
+<meta property='og:description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/'>
-<meta property='og:site_name' content='演示站点'>
+<meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-22T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-22T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十一)-预编译宏">
-<meta name="twitter:description" content="在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
-先来看MASM中宏的语法规范：
-macroname macro parameter1, parameter2, ... statement-list endm ; 调用 macroname parameter1, parameter2, ... 看上去跟结构体的声明差不多，只是endm时不需要宏名，这里的参数是在调用点传递，预处理器只做替换，与c的宏有相同的含义，不过这里调用点的参数个数可以不与宏定义的参数个数相同，如果调用点个数多余定义，汇编器会产生一个警告，如果少于，则未传递的参数为空。
-接下来举一个简单的例子进行说明：
-.386 .model flat,stdcall option casemap:none include	windows.inc include	kernel32.inc includelib	kernel32.lib includelib	msvcrt.lib .data outstring	db &amp;quot;result is %d&amp;quot;, 0ah, 0dh, 0 result dd 0 .code printf proto c s:dword, i:dword addTwo macro a, b, result mov eax, a add eax, b mov result, eax endm start: addTwo 12, 14, result invoke printf, addr outstring, result addTwo result, 14, result invoke printf, addr outstring, result invoke ExitProcess, NULL end start 通过反汇编此程序，可以看到宏被扩展了两份，与函数调用不同。">
+<meta name="twitter:description" content="在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的">
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
@@ -86,21 +74,21 @@ if (!doNotTrack) {
                 
                 </a>
                 
-                    <span class="emoji">🍥</span>
+                    <span class="emoji">📖</span>
                 
             </figure>
             
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">演示站点</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
+            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
         </div>
     </header><ol class="social-menu">
             
                 <li>
                     <a 
-                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        href='https://github.com/drawing/'
                         target="_blank"
                         title="GitHub"
                         rel="me"
@@ -229,7 +217,7 @@ if (!doNotTrack) {
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -611,7 +599,7 @@ _main:
         
             2020 - 
         
-        2023 演示站点
+        2023 讲故事的人
     </section>
     
     <section class="powerby">
