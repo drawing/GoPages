@@ -283,25 +283,25 @@ if (!doNotTrack) {
 <li>不能引用段名</li>
 </ul>
 <p>当然这里只是简单的介绍一下，其中的细节只能在实践中体会了，接下来举一个简单的例子来说明内联汇编的使用：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;stdio.h&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/** 计算两个参数的积 */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">testAssembler</span><span class="p">(</span><span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">p1</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mul</span> <span class="n">p2</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">/** 计算两个参数的积 */
-</span></span><span class="line"><span class="cl">int testAssembler(int p1, int p2)
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	__asm {
-</span></span><span class="line"><span class="cl">		mov eax, p1
-</span></span><span class="line"><span class="cl">		mul p2
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	int result;
-</span></span><span class="line"><span class="cl">	testAssembler(3, 5);
-</span></span><span class="line"><span class="cl">	__asm mov result, eax;
-</span></span><span class="line"><span class="cl">	printf(&#34;result is %d\n&#34;, result);
-</span></span><span class="line"><span class="cl">	return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">testAssembler</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span> <span class="n">mov</span> <span class="n">result</span><span class="p">,</span> <span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;result is %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>这里 testAssembler 函数中使用内联汇编计算了参数的积，调用点并未接受其返回值，因为函数返回值是由eax寄存器返回，则再次使用内联汇编可以取到返回值。</p>
 <p>可以看到MASM内联汇编是十分简单的，接下来看gcc的内联语法：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">asm (
@@ -394,21 +394,21 @@ if (!doNotTrack) {
 </table></div>
 <p>gcc 内联汇编规范最后一个部分是破坏描述，不论做什么操作，基本都需要寄存器的参与，对于只有c代码的程序，编译器保护寄存器不会被不同模块写乱，但是对于内 联汇编，我们可能修改某些寄存器而破坏了gcc原本保护的寄存器，所以内联汇编时我们需要告诉编译器哪些寄存器使我们所需要改变的，这里破坏描述符由逗号 隔开的字符串组成，每个字符串描述一种情况，一般是寄存器名，另外还有”memory”-内存破坏描述符，内存描述符为了将寄存器保存的变量内容及时写回 到内存中去，避免在寄存器中存有多份不同拷贝，与c++关键字volatile类似。</p>
 <p>到这里简要介绍了gcc内联汇编的部分语法，接下来举例说明此用法：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;stdio.h&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">var1</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">var2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>	<span class="s">&#34;movl %1, %0</span><span class="se">\n\t</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl">					<span class="s">&#34;addl %2, %0</span><span class="se">\n\t</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="o">:</span><span class="s">&#34;+a&#34;</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">:</span><span class="s">&#34;r&#34;</span><span class="p">(</span><span class="n">var1</span><span class="p">),</span> <span class="s">&#34;r&#34;</span><span class="p">(</span><span class="n">var2</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	int sum = 0;
-</span></span><span class="line"><span class="cl">	int var1 = 20;
-</span></span><span class="line"><span class="cl">	int var2 = 15;
-</span></span><span class="line"><span class="cl">	asm volatile(	&#34;movl %1, %0\n\t&#34;
-</span></span><span class="line"><span class="cl">					&#34;addl %2, %0\n\t&#34;
-</span></span><span class="line"><span class="cl">		:&#34;+a&#34;(sum)
-</span></span><span class="line"><span class="cl">		:&#34;r&#34;(var1), &#34;r&#34;(var2));
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	printf(&#34;result is %d\n&#34;, sum);
-</span></span><span class="line"><span class="cl">	return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;result is %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>可以看到，在语句模板部分出现了占位符，其中 0,1,2 根据变量出现的次数依次为sum, var1, var2，所以，movl %1, %0 表示把var1存入sum，addl %2, %0表示把var2与sum相加结果存入sum，后面描述部分都比较简单，因为addl语句的关系，需要对%0先读其值后计算，所以需要使用描述 符”+”。</p>
 <p>当然，内联汇编只是汇编跟c结合的一种方式，还有一种就是直接把汇编编译成目标文件，再跟c直接链接到一起，这里并没有什么新的东西，仅仅写一个AT&amp;T汇编的例子：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#file Assembler.s
@@ -425,17 +425,17 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">	popl %ebp
 </span></span><span class="line"><span class="cl">	ret
 </span></span></code></pre></div><p>这里汇编仅仅实现一个函数，并通过.globl导出符号，这里加下划线的原因是因为Windows的符号规则，之前已有说明。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">/* file testAssembler.c*/
-</span></span><span class="line"><span class="cl">#include &lt;stdio.h&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* file testAssembler.c*/</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/** 由于c必须声明，这里仅仅对汇编函数做一个c声明 */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">mulTwo</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">/** 由于c必须声明，这里仅仅对汇编函数做一个c声明 */
-</span></span><span class="line"><span class="cl">int mulTwo(int, int);
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	printf(&#34;%d\n&#34;, mulTwo(3, 5));
-</span></span><span class="line"><span class="cl">	return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="nf">mulTwo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>测试的c代码只需要定义一个汇编的函数声明即可使用。编译命令可以分别编译成目标文件再链接，也可直接使用 gcc testAssembler.c Assembler.s 编译之，对于反过来回调，汇编代码调用c代码，因为之前在汇编结尾已多次使用exit函数，这里便不再举例，同时，MASM语法的原理也相同，仅换了一套 编译命令而已。</p>
 
 </section>

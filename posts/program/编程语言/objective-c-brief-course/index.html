@@ -337,15 +337,15 @@ if (!doNotTrack) {
     >NSMutableArray Class Reference</a>。</p>
 <h1 id="面向对象">面向对象</h1>
 <h2 id="interface">interface</h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle : NSObject
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">    ShapeColor fillColor;
-</span></span><span class="line"><span class="cl">}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="cl"><span class="err">@</span><span class="n">interface</span> <span class="n">Circle</span> <span class="p">:</span> <span class="n">NSObject</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ShapeColor</span> <span class="n">fillColor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">- (void) setFillColor : (ShapeColor) fillColor;
-</span></span><span class="line"><span class="cl">- (void) draw;
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">setFillColor</span> <span class="p">:</span> <span class="p">(</span><span class="n">ShapeColor</span><span class="p">)</span> <span class="n">fillColor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">draw</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">@end
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="n">end</span>
 </span></span></code></pre></div><ul>
 <li>程序开始 <code>@interface</code> 表示C的扩展语法，表示接口，继承自<code>NSObject</code></li>
 <li><code>ShapeColor fillColor;</code> 声明了成员</li>
@@ -366,19 +366,19 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">BOOL result = [myData writeToFile:@&#34;/tmp/log.txt&#34; atomically:NO];
 </span></span></code></pre></div><h2 id="implementation">implementation</h2>
 <p>之前的<code>interface</code>只是声明了接口，具体的实现如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@implementation Circle
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="cl"><span class="err">@</span><span class="n">implementation</span> <span class="n">Circle</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">- (void) setFillColor: (ShapeColor) c
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">    fillColor = c;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">setFillColor</span><span class="p">:</span> <span class="p">(</span><span class="n">ShapeColor</span><span class="p">)</span> <span class="n">c</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fillColor</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">- (void) draw
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">    NSLog(@&#34;drawing&#34;);
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">draw</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">NSLog</span><span class="p">(</span><span class="err">@</span><span class="s2">&#34;drawing&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">@end
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="n">end</span>
 </span></span></code></pre></div><p>解释：</p>
 <ul>
 <li>开始 <code>@implementation Circle</code> 表示为某个类提供代码。</li>
@@ -432,13 +432,13 @@ if (!doNotTrack) {
 <p>对象的实例化：<code>shape = [Circle new];</code></p>
 <h2 id="私有成员">私有成员</h2>
 <p>对于私有变量，可以在 <code>.m</code>文件中声明一个 <code>name</code> 私有变量：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle (){
-</span></span><span class="line"><span class="cl">    NSString* name;
-</span></span><span class="line"><span class="cl">}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="cl"><span class="err">@</span><span class="n">interface</span> <span class="n">Circle</span> <span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">NSString</span><span class="o">*</span> <span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>对于私有方法，可以实现为：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle (Private)
-</span></span><span class="line"><span class="cl">- (NSString*) GetName;
-</span></span><span class="line"><span class="cl">@end
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="cl"><span class="err">@</span><span class="n">interface</span> <span class="n">Circle</span> <span class="p">(</span><span class="n">Private</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="p">(</span><span class="n">NSString</span><span class="o">*</span><span class="p">)</span> <span class="n">GetName</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="n">end</span>
 </span></span></code></pre></div><h2 id="class">@class</h2>
 <p>当两个类有循环依赖，如A类引用到B，B类又引用到A，import的时候没办法把两个类都放到自身前面，无法编译通过，这事可以A类中使用<code>@class B</code>来声明有一个类B，具体实现在其他地方，来解决循环依赖问题。</p>
 <h1 id="高级特性">高级特性</h1>

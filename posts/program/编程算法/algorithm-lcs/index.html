@@ -248,49 +248,49 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">	c[i,j] = c[i-1,j-1] + 1             i,j&gt;0 and xi == yj
 </span></span><span class="line"><span class="cl">	c[i,j] =max{c[i,j-1], c[i-1,j]}         i,j&gt;0 and xi != yj
 </span></span></code></pre></div><p>通过递归便可得到所有i,j下最长公共子序列。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	#include &lt;iostream&gt;
-</span></span><span class="line"><span class="cl">	#include &lt;cstring&gt;
-</span></span><span class="line"><span class="cl">	using namespace std;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	#define MAX_ELEM_LEN    100
-</span></span><span class="line"><span class="cl">	int g_result[MAX_ELEM_LEN][MAX_ELEM_LEN] = {};
+</span></span><span class="line"><span class="cl">	<span class="cp">#define MAX_ELEM_LEN    100
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="kt">int</span> <span class="n">g_result</span><span class="p">[</span><span class="n">MAX_ELEM_LEN</span><span class="p">][</span><span class="n">MAX_ELEM_LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	int find_LCS(int X[], int n, int Y[], int m)
-</span></span><span class="line"><span class="cl">	{
-</span></span><span class="line"><span class="cl">	    for (int i = 0; i &lt;= n; i ++) {
-</span></span><span class="line"><span class="cl">	        g_result[i][0] = 0;
-</span></span><span class="line"><span class="cl">	    }
-</span></span><span class="line"><span class="cl">	    for (int j = 0; j &lt;= m; j ++) {
-</span></span><span class="line"><span class="cl">	        g_result[0][j] = 0;
-</span></span><span class="line"><span class="cl">	    }
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">find_LCS</span><span class="p">(</span><span class="kt">int</span> <span class="n">X</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">Y</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">	    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	        <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	        <span class="n">g_result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	    for (int i = 1; i &lt;= n; i ++) {
-</span></span><span class="line"><span class="cl">	        for (int j = 1; j &lt;= m; j ++) {
-</span></span><span class="line"><span class="cl">	            if (X[i-1] == Y[j-1]) {
-</span></span><span class="line"><span class="cl">	                g_result[i][j] = g_result[i-1][j-1] + 1;
-</span></span><span class="line"><span class="cl">	            }
-</span></span><span class="line"><span class="cl">	            else if (g_result[i-1][j] &gt; g_result[i][j-1]) {
-</span></span><span class="line"><span class="cl">	                g_result[i][j] = g_result[i-1][j];
-</span></span><span class="line"><span class="cl">	            }
-</span></span><span class="line"><span class="cl">	            else {
-</span></span><span class="line"><span class="cl">	                g_result[i][j] = g_result[i][j-1];
-</span></span><span class="line"><span class="cl">	            }
-</span></span><span class="line"><span class="cl">	        }
-</span></span><span class="line"><span class="cl">	    }
-</span></span><span class="line"><span class="cl">	    return g_result[n][m];
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	            <span class="k">if</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	            <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_result</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	    <span class="k">return</span> <span class="n">g_result</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">m</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	int main()
-</span></span><span class="line"><span class="cl">	{
-</span></span><span class="line"><span class="cl">	    int X[] = {1, 2, 5, 6, 8, 3, 4, 7};
-</span></span><span class="line"><span class="cl">	    int Y[] = {2, 6, 3, 7, 5, 4, 8};
-</span></span><span class="line"><span class="cl">	    int n = sizeof(X)/sizeof(int);
-</span></span><span class="line"><span class="cl">	    int m = sizeof(Y)/sizeof(int);
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">	    <span class="kt">int</span> <span class="n">X</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	    <span class="kt">int</span> <span class="n">Y</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	    <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	    int max_elem = find_LCS(X, n, Y, m);
-</span></span><span class="line"><span class="cl">	    cout &lt;&lt; max_elem &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">	    return 0;
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	    <span class="kt">int</span> <span class="n">max_elem</span> <span class="o">=</span> <span class="n">find_LCS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">m</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">max_elem</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span></code></pre></div><p>如果需要得到具体的子序列，可从<code>c[i,j]</code>回溯，很容易找到最大子序列是什么，从而得到整个序列。</p>
 <h1 id="复杂度">复杂度</h1>
 <p>这里的空间复杂度和时间复杂度都是O(m+n)，如果只要得到最大公共子序列的大小，而不求具体的序列，可以优化空间复杂度，虽然结果是个二维数组，但使用的时候仅仅用到上一层，这里完全可以优化一下空间复杂度，仅用O(m)便可实现。</p>

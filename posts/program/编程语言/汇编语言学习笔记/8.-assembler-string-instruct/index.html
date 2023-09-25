@@ -397,16 +397,16 @@ if (!doNotTrack) {
 </tbody>
 </table></div>
 <p>这里举一个简单的strlen例子：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	#include &lt;string.h&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">ss</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;test data&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	char ss[100] = &#34;test data&#34;;
-</span></span><span class="line"><span class="cl">	int len = 0;
-</span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	int main()
-</span></span><span class="line"><span class="cl">	{
-</span></span><span class="line"><span class="cl">		len = strlen(ss);
-</span></span><span class="line"><span class="cl">		return 0;
-</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">len</span> <span class="o">=</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">ss</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span></code></pre></div><p>对应的MASM汇编如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
 </span></span><span class="line"><span class="cl">	.model flat,stdcall

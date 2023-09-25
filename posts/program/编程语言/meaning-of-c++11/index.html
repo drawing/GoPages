@@ -353,20 +353,20 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>另外一种用法是模板的返回值类型推断，需要结合decltype使用。</p>
 <h2 id="decltype">decltype</h2>
 <p>通过使用 decltype 语法，可以在编译期间获得auto或者其他变量的类型，进行定义同类型的新变量。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;vector&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">using namespace std;
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vec</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">vec</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        vector&lt;int&gt; vec;
-</span></span><span class="line"><span class="cl">        vec.push_back(1);
+</span></span><span class="line"><span class="cl">        <span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">decltype</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">j</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        auto i = vec.begin();
-</span></span><span class="line"><span class="cl">        decltype(i) j = vec.end();
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>使用decltype的其中一个好处，正如auto的好处，不用关心具体的类型，另外一个也是用在模板，通过非成员begin来说明。</p>
 <h2 id="非成员begin--end">非成员begin &amp; end</h2>
 <p>经常使用stl的人应该很熟悉成员begin和end，分别表示起始和结束的迭代器，这也是标准库的统一接口。在C++11中引入了非成员begin和end，用法如下：</p>
@@ -513,12 +513,12 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><h2 id="nullptr">nullptr</h2>
 <p>nullptr 的出现主要是为了替换NULL，为什么需要一个 nullptr 呢？那就得看下NULL在使用过程中会有什么问题。NULL在C/C++中只是一个宏：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#ifdef __cplusplus
-</span></span><span class="line"><span class="cl">#define NULL 0
-</span></span><span class="line"><span class="cl">#else
-</span></span><span class="line"><span class="cl">#define NULL ((void *)0)
-</span></span><span class="line"><span class="cl">#endif
-</span></span></code></pre></div><p>在C++中之所以定义成0，因为C++是强类型语言，<code>void *</code>不能隐式复制给其他类型，要想实现<code>int * p = NULL;</code>这样的表达式，只能定义成0。在C++中建议使用0来表示空指针而不是NULL，因为C++的重载：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#ifdef __cplusplus
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define NULL 0
+</span></span></span><span class="line"><span class="cl"><span class="cp">#else
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define NULL ((void *)0)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span></code></pre></div><p>在C++中之所以定义成0，因为C++是强类型语言，<code>void *</code>不能隐式复制给其他类型，要想实现<code>int * p = NULL;</code>这样的表达式，只能定义成0。在C++中建议使用0来表示空指针而不是NULL，因为C++的重载：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void func(int *p);
 </span></span><span class="line"><span class="cl">void func(int i);
 </span></span></code></pre></div><p>调用方使用 <code>func(NULL)</code> 实际上调用的是<code>void func(int i);</code>，但NULL给人的信息是空指针，表意跟实际运行不同，会误导我们以为调用的是<code>void func(int *p);</code>，从而产生隐晦的错误，为了防止这种问题出现，于是 nullptr 被引入了，表示空指针，从而终结了0和NULL的各种说不清道不明的关系。</p>
@@ -644,33 +644,33 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">TestInit a = {1, 3, 5, 7};
 </span></span></code></pre></div><h2 id="reference-wrapper">reference wrapper</h2>
 <p>看一个模板的例子：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;iostream&gt;
-</span></span><span class="line"><span class="cl">#include &lt;functional&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">using namespace std;
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">void inc(int &amp; value)
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        value ++;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">inc</span><span class="p">(</span><span class="kt">int</span> <span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">value</span> <span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">template&lt;typename F, typename P&gt;
-</span></span><span class="line"><span class="cl">void call(F func, P param)
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        func(param);
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">F</span><span class="p">,</span> <span class="k">typename</span> <span class="n">P</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">call</span><span class="p">(</span><span class="n">F</span> <span class="n">func</span><span class="p">,</span> <span class="n">P</span> <span class="n">param</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">func</span><span class="p">(</span><span class="n">param</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        int i = 0;
-</span></span><span class="line"><span class="cl">        call(inc, i);
-</span></span><span class="line"><span class="cl">        cout &lt;&lt; i &lt;&lt; endl;
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span><span class="p">(</span><span class="n">inc</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        call(inc, std::ref(i));
-</span></span><span class="line"><span class="cl">        cout &lt;&lt; i &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">        return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">        <span class="n">call</span><span class="p">(</span><span class="n">inc</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>第一次call调用以后，i值没有变化，因为模板推导时，P自动推导成了int，call的第二个参数是int有一次值拷贝，通过使用<code>std::ref</code>，显示的指定这应该推导为引用，即能修改i的值。</p>
 <h2 id="强类型枚举">强类型枚举</h2>
 <p>在C++中，enum枚举类型与define类似，定义了一个常量，可以与整型相互转换与比较，这样往往违背了enum的初衷，C++11中增加了强类型枚举：</p>
