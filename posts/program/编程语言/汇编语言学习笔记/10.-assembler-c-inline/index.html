@@ -394,19 +394,19 @@ if (!doNotTrack) {
 </table></div>
 <p>gcc 内联汇编规范最后一个部分是破坏描述，不论做什么操作，基本都需要寄存器的参与，对于只有c代码的程序，编译器保护寄存器不会被不同模块写乱，但是对于内 联汇编，我们可能修改某些寄存器而破坏了gcc原本保护的寄存器，所以内联汇编时我们需要告诉编译器哪些寄存器使我们所需要改变的，这里破坏描述符由逗号 隔开的字符串组成，每个字符串描述一种情况，一般是寄存器名，另外还有”memory”-内存破坏描述符，内存描述符为了将寄存器保存的变量内容及时写回 到内存中去，避免在寄存器中存有多份不同拷贝，与c++关键字volatile类似。</p>
 <p>到这里简要介绍了gcc内联汇编的部分语法，接下来举例说明此用法：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">var1</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">var2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">	<span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>	<span class="s">&#34;movl %1, %0</span><span class="se">\n\t</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">					<span class="s">&#34;addl %2, %0</span><span class="se">\n\t</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">		<span class="o">:</span><span class="s">&#34;+a&#34;</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="o">:</span><span class="s">&#34;r&#34;</span><span class="p">(</span><span class="n">var1</span><span class="p">),</span> <span class="s">&#34;r&#34;</span><span class="p">(</span><span class="n">var2</span><span class="p">));</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1">#include &lt;stdio.h&gt;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;result is %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">var1</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">var2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">asm</span> <span class="n">volatile</span><span class="p">(</span>	<span class="s2">&#34;movl %1, %0</span><span class="se">\n\t</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">					<span class="s2">&#34;addl %2, %0</span><span class="se">\n\t</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">:</span><span class="s2">&#34;+a&#34;</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">:</span><span class="s2">&#34;r&#34;</span><span class="p">(</span><span class="n">var1</span><span class="p">),</span> <span class="s2">&#34;r&#34;</span><span class="p">(</span><span class="n">var2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s2">&#34;result is </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>可以看到，在语句模板部分出现了占位符，其中 0,1,2 根据变量出现的次数依次为sum, var1, var2，所以，movl %1, %0 表示把var1存入sum，addl %2, %0表示把var2与sum相加结果存入sum，后面描述部分都比较简单，因为addl语句的关系，需要对%0先读其值后计算，所以需要使用描述 符”+”。</p>

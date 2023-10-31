@@ -255,8 +255,8 @@ segreg为分段模式下段寄存器，<code>base_address</code>为基址，<cod
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	movzx eax, word ptr [base + 2];
 </span></span></code></pre></div><p>这样指定在base + 2地址处读取word宽度字节。而在AT&amp;T中，由于指令可跟w,l等后缀，无需再次指令，这里可以看到AT&amp;T简洁之处。</p>
 <p>另外，对AT&amp;T，如果需要取全局符号的地址，可以使用$var（见框架），对于MASM，还需另外一个操作符：offset，相同的功能可写为offset var。当然也可使用lea指令，lea指令为取地址指令，语法如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	mov eax, offset var
-</span></span><span class="line"><span class="cl">	lea eax, [var]
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">offset</span> <span class="k">var</span>
+</span></span><span class="line"><span class="cl">	<span class="n">lea</span> <span class="n">eax</span><span class="p">,</span> <span class="p">[</span><span class="k">var</span><span class="p">]</span>
 </span></span></code></pre></div><p>这里跟offset的区别在于，offset在编译期间可以指定全局变量的位置，无需运行时计算，但是offset无法取得局部变量的 地址，因为局部变量位于堆栈，是在运行时才可得知其地址，而lea指令与之相反，是在运行时计算变量（可为全局和局部变量）的地址，二者的另一个区别在于 lea为cpu指令，AT&amp;T同样有与之对应的指令（同其他指令一样，操作数相反，且指令可跟长度后缀），而offset仅仅为编译器指令，编译 成机器码之后只有一个地址，没有offset的影子。</p>
 <p>下面举一个简单的例子，仍然是翻译c代码到汇编：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	void swap(int * a, int * b)

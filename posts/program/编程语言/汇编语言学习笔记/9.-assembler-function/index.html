@@ -271,11 +271,11 @@ if (!doNotTrack) {
 <p>为了方便理解，这里用一图示来展现函数堆栈的分布，当然这一图示是静态的，难以表示整个函数调用过程中动态增衰的过程，还需更多的思考：</p>
 <p>由图可以清楚的看到堆栈状态，这样我们甚至可以直接修改返回地址为另外一个函数，来改变整个调用的流程！甚至这个过程可以用c语言指针操作来完成，有兴趣的可以一试。</p>
 <p>MASM为了方便参数的读取（不必计算偏移）而制定了参数列表，为了方便局部变量的读取而指令了local指令，语法如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name proc [uses reg1 reg2 ...]
-</span></span><span class="line"><span class="cl">		local var:byte
-</span></span><span class="line"><span class="cl">		local array[10]:dword
-</span></span><span class="line"><span class="cl">		...
-</span></span><span class="line"><span class="cl">	name endp
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">proc</span> <span class="p">[</span><span class="n">uses</span> <span class="n">reg1</span> <span class="n">reg2</span> <span class="o">...</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="k">var</span><span class="p">:</span><span class="n">byte</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="n">array</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">endp</span>
 </span></span></code></pre></div><p>如此，在程序中便可直接使用var来直接引用byte局部变量。</p>
 <p>另外由于函数的开始和结尾都是定式，intel又提供了两个指令来简化操作，enter指令，有两个操作数，第一个位局部变量大小，第二个暂时填写0即可，leave指令无操作数，上面函数框架也可写作：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name proc
@@ -346,35 +346,35 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">		pushl $0
 </span></span><span class="line"><span class="cl">		call _exit
 </span></span></code></pre></div><p>这里需要注意的是，_Function这个函数符合c编程的规范，也就是说c语言也可直接调用此函数，这种方式再下篇会有提及。对于 MASM，也适用这种写法，不过为了介绍简化过程的伪指令，现把此程序改为由伪指令简化过的形式，注意（enter虽然简化过程，但是intel的指令， 不算伪指令）：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
-</span></span><span class="line"><span class="cl">	.model flat, stdcall
-</span></span><span class="line"><span class="cl">	option casemap:none
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="o">.</span><span class="mi">386</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">model</span> <span class="n">flat</span><span class="p">,</span> <span class="n">stdcall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">option</span> <span class="n">casemap</span><span class="p">:</span><span class="n">none</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	include    windows.inc
-</span></span><span class="line"><span class="cl">	include    kernel32.inc
-</span></span><span class="line"><span class="cl">	includelib kernel32.lib
-</span></span><span class="line"><span class="cl">	includelib msvcrt.lib
+</span></span><span class="line"><span class="cl">	<span class="n">include</span>    <span class="n">windows</span><span class="o">.</span><span class="n">inc</span>
+</span></span><span class="line"><span class="cl">	<span class="n">include</span>    <span class="n">kernel32</span><span class="o">.</span><span class="n">inc</span>
+</span></span><span class="line"><span class="cl">	<span class="n">includelib</span> <span class="n">kernel32</span><span class="o">.</span><span class="n">lib</span>
+</span></span><span class="line"><span class="cl">	<span class="n">includelib</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">lib</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	.data
-</span></span><span class="line"><span class="cl">		outstring db &#34;result is %d&#34;, 0
-</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">		<span class="n">outstring</span> <span class="n">db</span> <span class="s2">&#34;result is </span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">code</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	printf proto c s:dword, p:dword
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span> <span class="n">proto</span> <span class="n">c</span> <span class="n">s</span><span class="p">:</span><span class="n">dword</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span><span class="n">dword</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	Function proc p1:dword, p2:dword
-</span></span><span class="line"><span class="cl">		local var:dword
-</span></span><span class="line"><span class="cl">		mov ebx, p1
-</span></span><span class="line"><span class="cl">		add ebx, p2
-</span></span><span class="line"><span class="cl">		mov var, ebx
-</span></span><span class="line"><span class="cl">		mov eax, var
-</span></span><span class="line"><span class="cl">		ret 8
-</span></span><span class="line"><span class="cl">	Function endp
+</span></span><span class="line"><span class="cl">	<span class="n">Function</span> <span class="n">proc</span> <span class="n">p1</span><span class="p">:</span><span class="n">dword</span><span class="p">,</span> <span class="n">p2</span><span class="p">:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="k">var</span><span class="p">:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="n">p1</span>
+</span></span><span class="line"><span class="cl">		<span class="n">add</span> <span class="n">ebx</span><span class="p">,</span> <span class="n">p2</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="k">var</span><span class="p">,</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="k">var</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ret</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Function</span> <span class="n">endp</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	start:
-</span></span><span class="line"><span class="cl">		invoke Function, 5, 9
-</span></span><span class="line"><span class="cl">		invoke printf, addr outstring, eax
-</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
-</span></span><span class="line"><span class="cl">	end start
+</span></span><span class="line"><span class="cl">	<span class="n">start</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">invoke</span> <span class="n">Function</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span>
+</span></span><span class="line"><span class="cl">		<span class="n">invoke</span> <span class="n">printf</span><span class="p">,</span> <span class="n">addr</span> <span class="n">outstring</span><span class="p">,</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">invoke</span> <span class="n">ExitProcess</span><span class="p">,</span> <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl">	<span class="n">end</span> <span class="n">start</span>
 </span></span></code></pre></div><p>这里需要做几点说明，由于.model设定了stdcall，所以proc指定的都会是stdcall函数，即堆栈清理由函数自己执 行，所以Function最终使用ret 8来返回。另外，由于指定了函数Function的参数，编译器会自动生成框架，所以无需使用enter和leave，对于printf，没有使用头文 件，而是自己进行了生命，当然，这里并没有使用可变长参数，仅仅写了两个参数，proto后加了函数的类型为c类型。另外，连接期间无需连接成 windows类型，可用命令<code>link /subsystem:console fun.obj</code> 来连接成控制台程序。</p>
 <p>本篇主要介绍了函数堆栈变化，这个过程虽然并不复杂，但是要是讲解清晰还是非常困难。</p>
 

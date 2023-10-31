@@ -518,23 +518,23 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">    |----- 是否设置了CLONE_VFORK 标志 -&gt; wait_for_completion
 </span></span></code></pre></div><p><code>do_fork</code>以调用<code>copy_process</code>开始，后者执行生成新进程的实际工作，根据指定标志重用父进程的数据，子进程生成之后，内核必须执行以下收尾操作：</p>
 <p>进程复制<code>do_fork</code>实现如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">copy_process
-</span></span><span class="line"><span class="cl">    |
-</span></span><span class="line"><span class="cl">    |----- 检查标志
-</span></span><span class="line"><span class="cl">    |----- dup_task_struct
-</span></span><span class="line"><span class="cl">    |----- 检查资源限制
-</span></span><span class="line"><span class="cl">    |----- 初始化 task_struct
-</span></span><span class="line"><span class="cl">    |----- sched_fork
-</span></span><span class="line"><span class="cl">    |----- 复制进程各个部分
-</span></span><span class="line"><span class="cl">                |----- copy_semundo
-</span></span><span class="line"><span class="cl">                |----- copy_files
-</span></span><span class="line"><span class="cl">                |----- copy_fs
-</span></span><span class="line"><span class="cl">                |----- copy_sighand
-</span></span><span class="line"><span class="cl">                |----- copy_signal
-</span></span><span class="line"><span class="cl">                |----- copy_mm
-</span></span><span class="line"><span class="cl">                |----- copy_namespaces
-</span></span><span class="line"><span class="cl">                |----- copy_thread
-</span></span><span class="line"><span class="cl">    |----- 设置各个 ID、进程关系
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">copy_process</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="err">检查标志</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="n">dup_task_struct</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="err">检查资源限制</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="err">初始化</span> <span class="n">task_struct</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="n">sched_fork</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="err">复制进程各个部分</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_semundo</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_files</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_fs</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_sighand</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_signal</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_mm</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_namespaces</span>
+</span></span><span class="line"><span class="cl">                <span class="o">|-----</span> <span class="n">copy_thread</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|-----</span> <span class="err">设置各个</span> <span class="n">ID</span><span class="err">、进程关系</span>
 </span></span></code></pre></div><p>复制进程的行为受到相当多的标志的控制，clone(2) 的手册详细讲述了这些标志，标志可以参考手册。该函数也需要做一些错误判断，Linux函数有时候会在成功的时候返回结构体指针，失败的情况下返回错误码，但函数只能返回一个值，所以Linux做了一个特殊处理，虽然一般而言指针可以指向内存任何位置，而Linux支持的每个体系结构的虚拟地址从0到4Kib的区域，该区域没有任何有意义的信息，因此内核可以重用此地址范围来编码错误。</p>
 <p>当检查完标志后，使用<code>dup_task_struct</code>来建立父进程<code>task_struct</code>的副本，父进程的<code>task_struct</code>实例只有一个成员不同，新进程分配了一个新的核心态，即<code>task_struct-&gt;stack</code>。通常栈和<code>thread_info</code>一同保存在一个联合之中，<code>thread_info</code>保存了线程所需的所有特定于处理器的底层信息。</p>
 <h2 id="内核线程">内核线程</h2>

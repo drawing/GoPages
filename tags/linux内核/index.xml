@@ -293,23 +293,23 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 是否设置了CLONE_VFORK 标志 -&amp;gt; wait_for_completion
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;do_fork&lt;/code&gt;以调用&lt;code&gt;copy_process&lt;/code&gt;开始，后者执行生成新进程的实际工作，根据指定标志重用父进程的数据，子进程生成之后，内核必须执行以下收尾操作：&lt;/p&gt;
 &lt;p&gt;进程复制&lt;code&gt;do_fork&lt;/code&gt;实现如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;copy_process
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 检查标志
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- dup_task_struct
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 检查资源限制
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 初始化 task_struct
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- sched_fork
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 复制进程各个部分
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_semundo
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_files
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_fs
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_sighand
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_signal
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_mm
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_namespaces
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                |----- copy_thread
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- 设置各个 ID、进程关系
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-gdscript3&#34; data-lang=&#34;gdscript3&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;copy_process&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;检查标志&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dup_task_struct&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;检查资源限制&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;初始化&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;task_struct&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sched_fork&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;复制进程各个部分&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_semundo&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_files&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_fs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_sighand&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_signal&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_mm&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_namespaces&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_thread&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;设置各个&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ID&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、进程关系&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;复制进程的行为受到相当多的标志的控制，clone(2) 的手册详细讲述了这些标志，标志可以参考手册。该函数也需要做一些错误判断，Linux函数有时候会在成功的时候返回结构体指针，失败的情况下返回错误码，但函数只能返回一个值，所以Linux做了一个特殊处理，虽然一般而言指针可以指向内存任何位置，而Linux支持的每个体系结构的虚拟地址从0到4Kib的区域，该区域没有任何有意义的信息，因此内核可以重用此地址范围来编码错误。&lt;/p&gt;
 &lt;p&gt;当检查完标志后，使用&lt;code&gt;dup_task_struct&lt;/code&gt;来建立父进程&lt;code&gt;task_struct&lt;/code&gt;的副本，父进程的&lt;code&gt;task_struct&lt;/code&gt;实例只有一个成员不同，新进程分配了一个新的核心态，即&lt;code&gt;task_struct-&amp;gt;stack&lt;/code&gt;。通常栈和&lt;code&gt;thread_info&lt;/code&gt;一同保存在一个联合之中，&lt;code&gt;thread_info&lt;/code&gt;保存了线程所需的所有特定于处理器的底层信息。&lt;/p&gt;
 &lt;h2 id=&#34;内核线程&#34;&gt;内核线程&lt;/h2&gt;

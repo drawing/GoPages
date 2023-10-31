@@ -451,25 +451,25 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">cout &lt;&lt; is_right_reference(elem) &lt;&lt; endl;
 </span></span><span class="line"><span class="cl">cout &lt;&lt; is_right_reference(std::move(elem)) &lt;&lt; endl;
 </span></span></code></pre></div><p>通过重载<code>is_right_reference</code>函数，来识别传入的参数是否是右值（<code>T&amp;&amp;</code>是右值参数），可以看到，第一个输出不是右值，第二个是右值，很容易理解，第三个不是右值，通过<code>std::move</code>却可以识别为右值。通过这种用法，可以写一个右值拷贝构造函数，实现当参数是右值时，把对方的内存空间转移到自身(通过右值引用可以修改右值)，从而完成move操作：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">class Elem {
-</span></span><span class="line"><span class="cl">public:
-</span></span><span class="line"><span class="cl">        Elem(const char * name) : name(strdup(name)) {
-</span></span><span class="line"><span class="cl">                cout &lt;&lt; &#34;Create One Elem: &#34; &lt;&lt; name &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">        Elem(Elem &amp;&amp; rf) {
-</span></span><span class="line"><span class="cl">                free(name);
-</span></span><span class="line"><span class="cl">                name = rf.name;
-</span></span><span class="line"><span class="cl">                rf.name = nullptr;
-</span></span><span class="line"><span class="cl">                cout &lt;&lt; &#34;Create Elem By R-Refer: &#34; &lt;&lt; name &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">public:
-</span></span><span class="line"><span class="cl">        char * name;
-</span></span><span class="line"><span class="cl">};
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">class</span> <span class="n">Elem</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Elem</span><span class="p">(</span><span class="k">const</span> <span class="n">char</span> <span class="o">*</span> <span class="n">name</span><span class="p">)</span> <span class="p">:</span> <span class="n">name</span><span class="p">(</span><span class="n">strdup</span><span class="p">(</span><span class="n">name</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&#34;Create One Elem: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Elem</span><span class="p">(</span><span class="n">Elem</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">free</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">name</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">rf</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">&#34;Create Elem By R-Refer: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">char</span> <span class="o">*</span> <span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Elem elem1 = elem;
-</span></span><span class="line"><span class="cl">Elem elem2 = std::move(elem);
+</span></span><span class="line"><span class="cl"><span class="n">Elem</span> <span class="n">elem1</span> <span class="o">=</span> <span class="n">elem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Elem</span> <span class="n">elem2</span> <span class="o">=</span> <span class="n">std</span><span class="p">::</span><span class="n">move</span><span class="p">(</span><span class="n">elem</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">cout &lt;&lt; (long)elem.name &lt;&lt; endl;
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">long</span><span class="p">)</span><span class="n">elem</span><span class="o">.</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span></code></pre></div><p>可以看到，通过<code>std::move</code>方式，修改了<code>elem</code>地址，完成了<code>move</code>操作。当然，如果原始值以后还有用处，就不要使用move语意，避免出现代码逻辑错误或者理解上的偏差。</p>
 <h2 id="元组">元组</h2>
 <p>C++11标准库提供了<code>std::tuple</code>类，可以方便的把若干不同类型元素集合在一起：</p>
@@ -563,13 +563,13 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">};
 </span></span></code></pre></div><h2 id="委托构造函数">委托构造函数</h2>
 <p>在C++03以前，构造函数不能相互调用，要想重用代码，必须写一个类似Init的函数，不同的构造函数都去调用，在C++11中，构造函数可以相互调用，如下所示：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">class Shape {
-</span></span><span class="line"><span class="cl">public:
-</span></span><span class="line"><span class="cl">	Shape() : Shape(&#34;Default&#34;) {}
-</span></span><span class="line"><span class="cl">	Shape(const string &amp; name) : name(name) {}
-</span></span><span class="line"><span class="cl">private:
-</span></span><span class="line"><span class="cl">	string name;
-</span></span><span class="line"><span class="cl">};
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">class</span> <span class="ne">Shape</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">Shape</span><span class="p">()</span> <span class="p">:</span> <span class="ne">Shape</span><span class="p">(</span><span class="s2">&#34;Default&#34;</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">Shape</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span> <span class="n">name</span><span class="p">)</span> <span class="p">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="n">private</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span></code></pre></div><p>虽然使用起来比较方便，不过到底是使用Init函数集中初始化好呢，还是构造函数相互调用更清晰？这就看具体的问题了。</p>
 <h2 id="使用默认或禁用函数">使用默认或禁用函数</h2>
 <p>C++11允许显式地表明采用或拒用编译器提供的内置函数。例如要求类带有默认构造函数，可以用以下的语法：</p>
@@ -579,12 +579,12 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">  SomeType(OtherType value);
 </span></span><span class="line"><span class="cl">};
 </span></span></code></pre></div><p>也可以禁止编译器自动产生某些函数。如下面的例子，类不可复制：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">struct NonCopyable
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	NonCopyable &amp; operator=(const NonCopyable&amp;) = delete;
-</span></span><span class="line"><span class="cl">	NonCopyable(const NonCopyable&amp;) = delete;
-</span></span><span class="line"><span class="cl">	NonCopyable() = default;
-</span></span><span class="line"><span class="cl">};
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">struct</span> <span class="n">NonCopyable</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NonCopyable</span> <span class="o">&amp;</span> <span class="n">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">NonCopyable</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="n">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NonCopyable</span><span class="p">(</span><span class="k">const</span> <span class="n">NonCopyable</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="n">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NonCopyable</span><span class="p">()</span> <span class="o">=</span> <span class="n">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span></code></pre></div><p>禁止成员函数以特定的形参调用：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">struct NoDouble
 </span></span><span class="line"><span class="cl">{
@@ -593,40 +593,40 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">};
 </span></span></code></pre></div><h2 id="constexpr">constexpr</h2>
 <p>类似const，但比const更加严格，声明为constexpr的变量，取值必须在编译器间获得，否则编译出错。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">constexpr int add(const int a, const int b)
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        return a + b;
-</span></span><span class="line"><span class="cl">}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">constexpr</span> <span class="ne">int</span> <span class="n">add</span><span class="p">(</span><span class="k">const</span> <span class="ne">int</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="ne">int</span> <span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        const int c1 = 100;
-</span></span><span class="line"><span class="cl">        int c2 = 200;
+</span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="ne">int</span> <span class="n">c1</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="ne">int</span> <span class="n">c2</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		// const 运行期间取值
-</span></span><span class="line"><span class="cl">        const int c3 = c2 * 2;
+</span></span><span class="line"><span class="cl">		<span class="o">//</span> <span class="k">const</span> <span class="err">运行期间取值</span>
+</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="ne">int</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        
-</span></span><span class="line"><span class="cl">        // constexpr编译期间取值，编译出错
-</span></span><span class="line"><span class="cl">        // constexpr int c4 = c2 * 2;
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">constexpr编译期间取值</span><span class="err">，编译出错</span>
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">constexpr</span> <span class="ne">int</span> <span class="n">c4</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        
-</span></span><span class="line"><span class="cl">        // 没有问题
-</span></span><span class="line"><span class="cl">        constexpr int c5 = c1 * 2;
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="err">没有问题</span>
+</span></span><span class="line"><span class="cl">        <span class="n">constexpr</span> <span class="ne">int</span> <span class="n">c5</span> <span class="o">=</span> <span class="n">c1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        
-</span></span><span class="line"><span class="cl">        // constexpr 返回值函数，没有问题
-</span></span><span class="line"><span class="cl">        constexpr int c6 = add(10, 20);
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">constexpr</span> <span class="err">返回值函数，没有问题</span>
+</span></span><span class="line"><span class="cl">        <span class="n">constexpr</span> <span class="ne">int</span> <span class="n">c6</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        constexpr int c7 = add(c6, c5);
+</span></span><span class="line"><span class="cl">        <span class="n">constexpr</span> <span class="ne">int</span> <span class="n">c7</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">c6</span><span class="p">,</span> <span class="n">c5</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        // 试图通过非常量取值，编译出错
-</span></span><span class="line"><span class="cl">        // constexpr int c8 = add(c2, c2);
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="err">试图通过非常量取值，编译出错</span>
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">constexpr</span> <span class="ne">int</span> <span class="n">c8</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">c2</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        int a, b;
-</span></span><span class="line"><span class="cl">        cin &gt;&gt; a &gt;&gt; b;
+</span></span><span class="line"><span class="cl">        <span class="ne">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        
-</span></span><span class="line"><span class="cl">        // 声明为constexpr返回值的函数，并不限制必须返回常量
-</span></span><span class="line"><span class="cl">        cout &lt;&lt; add(a, b) &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">        return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="err">声明为</span><span class="n">constexpr返回值的函数</span><span class="err">，并不限制必须返回常量</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h2 id="容器初始化列表">容器初始化列表</h2>
 <p>C++11 支持通过数组初始化容器：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
@@ -674,27 +674,27 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>第一次call调用以后，i值没有变化，因为模板推导时，P自动推导成了int，call的第二个参数是int有一次值拷贝，通过使用<code>std::ref</code>，显示的指定这应该推导为引用，即能修改i的值。</p>
 <h2 id="强类型枚举">强类型枚举</h2>
 <p>在C++中，enum枚举类型与define类似，定义了一个常量，可以与整型相互转换与比较，这样往往违背了enum的初衷，C++11中增加了强类型枚举：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">enum class CType {
-</span></span><span class="line"><span class="cl">        One, Two, Three
-</span></span><span class="line"><span class="cl">};
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="n">CType</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">One</span><span class="p">,</span> <span class="n">Two</span><span class="p">,</span> <span class="n">Three</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">enum EType {
-</span></span><span class="line"><span class="cl">        One, Two, Three
-</span></span><span class="line"><span class="cl">};
+</span></span><span class="line"><span class="cl"><span class="k">enum</span> <span class="n">EType</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">One</span><span class="p">,</span> <span class="n">Two</span><span class="p">,</span> <span class="n">Three</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">        CType ctype = CType::One;
-</span></span><span class="line"><span class="cl">        ctype = CType::Two;
+</span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CType</span> <span class="n">ctype</span> <span class="o">=</span> <span class="n">CType</span><span class="p">::</span><span class="n">One</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ctype</span> <span class="o">=</span> <span class="n">CType</span><span class="p">::</span><span class="n">Two</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        // can not print
-</span></span><span class="line"><span class="cl">        // cout &lt;&lt; ctype &lt;&lt; endl;
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">can</span> <span class="ow">not</span> <span class="nb">print</span>
+</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ctype</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">        EType etype = EType::Two;
-</span></span><span class="line"><span class="cl">        int a = etype;
-</span></span><span class="line"><span class="cl">        cout &lt;&lt; etype &lt;&lt; &#34; &#34; &lt;&lt; a &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">        return 0;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">        <span class="n">EType</span> <span class="n">etype</span> <span class="o">=</span> <span class="n">EType</span><span class="p">::</span><span class="n">Two</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="ne">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">etype</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">etype</span> <span class="o">&lt;&lt;</span> <span class="s2">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>CType 为类型更强的枚举，没法cout输出，也不能跟整数相互转换。</p>
 <h1 id="c11-扩展库">C++11 扩展库</h1>
 <h2 id="智能指针">智能指针</h2>
@@ -746,57 +746,57 @@ if (!doNotTrack) {
 </span></span><span class="line"><span class="cl">           class Alloc = allocator&lt;Key&gt;
 </span></span><span class="line"><span class="cl">           &gt; class unordered_set;
 </span></span></code></pre></div><p>用法跟set、map相同。需要了解的是，Hash表实现必然会遇到冲突，unorder系列容器创建一个buckets数组存放hash后的元素，落在同一个buckets中的元素使用链表方式存储。随着元素的增多，冲突的概率也会变大，标准库使用一个因子<code>load_factor</code>表示当前的冲突概率，算法如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 因子 = 元素数量 / bucket数量
-</span></span><span class="line"><span class="cl">load_factor = size / bucket_count
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="err">因子</span> <span class="o">=</span> <span class="err">元素数量</span> <span class="o">/</span> <span class="n">bucket数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">load_factor</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="n">bucket_count</span>
 </span></span></code></pre></div><p>当<code>load_factor</code>大于等于<code>max_load_factor</code>时，调用<code>rehash</code>进行重新hash，这时需要重新拷贝数据，对性能影响很大。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">unordered_set&lt;int&gt; st;
-</span></span><span class="line"><span class="cl">// 默认最大load_factor是1
-</span></span><span class="line"><span class="cl">cout &lt;&lt; st.max_load_factor() &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">cout &lt;&lt; st.load_factor() &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">// 默认bucket数量是11
-</span></span><span class="line"><span class="cl">cout &lt;&lt; st.bucket_count() &lt;&lt; endl;
-</span></span><span class="line"><span class="cl">// 获取最大bucket数量，由系统或者算法决定
-</span></span><span class="line"><span class="cl">cout &lt;&lt; st.max_bucket_count() &lt;&lt; endl;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">unordered_set</span><span class="o">&lt;</span><span class="ne">int</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">默认最大</span><span class="n">load_factor是1</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="o">.</span><span class="n">max_load_factor</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="o">.</span><span class="n">load_factor</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">默认</span><span class="n">bucket数量是11</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="o">.</span><span class="n">bucket_count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">获取最大</span><span class="n">bucket数量</span><span class="err">，由系统或者算法决定</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="o">.</span><span class="n">max_bucket_count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">st.insert(2);
-</span></span><span class="line"><span class="cl">st.insert({1, 2, 3, 5, 6});
+</span></span><span class="line"><span class="cl"><span class="n">st</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">st</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">});</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// 获取第0个bucket元素数量
-</span></span><span class="line"><span class="cl">cout &lt;&lt; st.bucket_size(0) &lt;&lt; endl;
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">获取第</span><span class="mi">0</span><span class="err">个</span><span class="n">bucket元素数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="o">.</span><span class="n">bucket_size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// 重新分配hash，大小向上取素数，默认情况下扩大一倍向上取素数
-</span></span><span class="line"><span class="cl">// 复杂度，最好情况下st.size()，最坏情况下 O(n^2)
-</span></span><span class="line"><span class="cl">st.rehash(100); // real 103
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">重新分配</span><span class="nb">hash</span><span class="err">，大小向上取素数，默认情况下扩大一倍向上取素数</span>
+</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">复杂度，最好情况下</span><span class="n">st</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="err">，最坏情况下</span> <span class="n">O</span><span class="p">(</span><span class="n">n</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">st</span><span class="o">.</span><span class="n">rehash</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span> <span class="o">//</span> <span class="n">real</span> <span class="mi">103</span>
 </span></span></code></pre></div><p><code>max_load_factor</code> 有重载的带参数函数，可进行设置，由调用者决定最大因子。rehash后迭代器失效，但对于取出来的独立的元素地址或者引用，是可以继续使用的。</p>
 <h2 id="hash">hash</h2>
 <p>hash 的实现使用了模板，用法如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">struct Shape {
-</span></span><span class="line"><span class="cl">	string name;
-</span></span><span class="line"><span class="cl">	bool operator==(const Shape &amp; other) const {
-</span></span><span class="line"><span class="cl">		return name == other.name;
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">};
-</span></span><span class="line"><span class="cl">namespace std
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	template&lt;&gt;
-</span></span><span class="line"><span class="cl">	struct hash&lt;Shape&gt;
-</span></span><span class="line"><span class="cl">	{
-</span></span><span class="line"><span class="cl">		size_t operator() (Shape const &amp; s) const{
-</span></span><span class="line"><span class="cl">			return std::hash&lt;std::string&gt;()(s.name);
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	};
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">int main()
-</span></span><span class="line"><span class="cl">{
-</span></span><span class="line"><span class="cl">	unordered_set&lt;Shape&gt; set;
-</span></span><span class="line"><span class="cl">	Shape s;
-</span></span><span class="line"><span class="cl">	s.name = &#34;s1&#34;;
-</span></span><span class="line"><span class="cl">	set.insert(s);
-</span></span><span class="line"><span class="cl">	s.name = &#34;s2&#34;;
-</span></span><span class="line"><span class="cl">	set.insert(s);
-</span></span><span class="line"><span class="cl">	return 0;
-</span></span><span class="line"><span class="cl">}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">struct</span> <span class="ne">Shape</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">bool</span> <span class="n">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="ne">Shape</span> <span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">namespace</span> <span class="n">std</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">template</span><span class="o">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">struct</span> <span class="nb">hash</span><span class="o">&lt;</span><span class="ne">Shape</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">size_t</span> <span class="n">operator</span><span class="p">()</span> <span class="p">(</span><span class="ne">Shape</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span> <span class="k">const</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">std</span><span class="p">::</span><span class="nb">hash</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">unordered_set</span><span class="o">&lt;</span><span class="ne">Shape</span><span class="o">&gt;</span> <span class="n">set</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">Shape</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&#34;s1&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">set</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&#34;s2&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">set</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h2 id="多线程">多线程</h2>
 <p>C++11标准库提供了多线程支持，可以用很简单的方法创建线程：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void thread_task() {
