@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
+先来看MASM中宏的语法规范：
+'>
 <title>汇编语言学习笔记(十一)-预编译宏</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十一)-预编译宏'>
-<meta property='og:description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的'>
+<meta property='og:description' content='在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
+先来看MASM中宏的语法规范：
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-22T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-22T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十一)-预编译宏">
-<meta name="twitter:description" content="在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。 先来看MASM中宏的">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
+先来看MASM中宏的语法规范：
+">
     </head>
     <body class="
     article-page
@@ -308,46 +307,46 @@ GE 	大于等于
 </code></pre>
 <p>if宏还有几种变型，现列举如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>伪指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ifb &lt; param &gt;</td>
-<td>如果参数为空则允许汇编，参数名必须用&lt;&gt;括起</td>
-</tr>
-<tr>
-<td>ifnb &lt; param &gt;</td>
-<td>如果参数不为空则允许汇编，参数名必须用&lt;&gt;括起</td>
-</tr>
-<tr>
-<td>ifidn &lt; param1 &gt;,&lt; param2 &gt;</td>
-<td>如果两个参数相同则允许汇编，区分大小写</td>
-</tr>
-<tr>
-<td>ifidni &lt; param1 &gt;,&lt; param2 &gt;</td>
-<td>如果两个参数相同则允许汇编，不分区大小写</td>
-</tr>
-<tr>
-<td>ifdif &lt; param1 &gt;,&lt; param2 &gt;</td>
-<td>如果两个参数不同则允许汇编，区分大小写</td>
-</tr>
-<tr>
-<td>ifdifi &lt; param1 &gt;,&lt; param2 &gt;</td>
-<td>如果两个参数不同则允许汇编，不分区大小写</td>
-</tr>
-<tr>
-<td>ifdef name</td>
-<td>如果名字定义则允许汇编</td>
-</tr>
-<tr>
-<td>ifndef name</td>
-<td>如果名字没有定义则允许汇编</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">伪指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">ifb &lt; param &gt;</td>
+          <td style="text-align: left">如果参数为空则允许汇编，参数名必须用&lt;&gt;括起</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifnb &lt; param &gt;</td>
+          <td style="text-align: left">如果参数不为空则允许汇编，参数名必须用&lt;&gt;括起</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifidn &lt; param1 &gt;,&lt; param2 &gt;</td>
+          <td style="text-align: left">如果两个参数相同则允许汇编，区分大小写</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifidni &lt; param1 &gt;,&lt; param2 &gt;</td>
+          <td style="text-align: left">如果两个参数相同则允许汇编，不分区大小写</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifdif &lt; param1 &gt;,&lt; param2 &gt;</td>
+          <td style="text-align: left">如果两个参数不同则允许汇编，区分大小写</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifdifi &lt; param1 &gt;,&lt; param2 &gt;</td>
+          <td style="text-align: left">如果两个参数不同则允许汇编，不分区大小写</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifdef name</td>
+          <td style="text-align: left">如果名字定义则允许汇编</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ifndef name</td>
+          <td style="text-align: left">如果名字没有定义则允许汇编</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>MASM的重复定义块：
 MASM中有些用于生成重复定义块的循环伪指令，while, repeat, for 和 forc，这些伪指令可在汇编期间生成代码，一般定义格式如下：</p>
@@ -411,34 +410,34 @@ _main:
 </code></pre>
 <p>另外还有.if宏，其用法与MASM和c相同，这里仅仅做一个简单的列举：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>宏</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>.ifdef symbol</td>
-<td>symbol 定义则编译</td>
-</tr>
-<tr>
-<td>.ifeq expression</td>
-<td>如果表达式为0则编译</td>
-</tr>
-<tr>
-<td>.ifndef symbol</td>
-<td>如果符号未定义则编译</td>
-</tr>
-<tr>
-<td>.endif</td>
-<td>结尾</td>
-</tr>
-<tr>
-<td>.else</td>
-<td>同MASM</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">宏</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">.ifdef symbol</td>
+          <td style="text-align: left">symbol 定义则编译</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">.ifeq expression</td>
+          <td style="text-align: left">如果表达式为0则编译</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">.ifndef symbol</td>
+          <td style="text-align: left">如果符号未定义则编译</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">.endif</td>
+          <td style="text-align: left">结尾</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">.else</td>
+          <td style="text-align: left">同MASM</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>当然，选择编译宏的种类十分丰富，这里只是列举常用宏，全部信息可由as使用手册获得。</p>
 <p>最后还需要说明一下AT&amp;T的.fill宏，这个宏在编译期间填充字符，可以用来控制可执行文件的大小，语法如下：</p>

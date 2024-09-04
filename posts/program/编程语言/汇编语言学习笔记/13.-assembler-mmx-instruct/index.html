@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
+'>
 <title>汇编语言学习笔记(十三)-MMX指令集</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十三)-MMX指令集'>
-<meta property='og:description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在'>
+<meta property='og:description' content='这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-24T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-24T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十三)-MMX指令集">
-<meta name="twitter:description" content="这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。
+">
     </head>
     <body class="
     article-page
@@ -250,35 +246,35 @@
 <p>首先mmx指令集需要cpu的支持，但不是所有cpu都支持，不然也不会称之为高级特性 了，所以在使用之前需要检测，检测指令为cpuid，获得cpu的特性，cpuid虽然只有一条指令，但是其隐含的内容太多，这里仅仅介绍检测SIMD指 令集所需要的部分，其他一些信息可参阅Intel 手册获得。</p>
 <p>当eax为1时，cpuid指令返回cpu签名信息，放入ecx和edx寄存器中，相应位为1表示支持。检测SIMD指令集的结果如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>寄存器</th>
-<th>位</th>
-<th>特性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>EDX</td>
-<td>23</td>
-<td>支持MMX</td>
-</tr>
-<tr>
-<td>EDX</td>
-<td>25</td>
-<td>支持SSE</td>
-</tr>
-<tr>
-<td>EDX</td>
-<td>26</td>
-<td>支持SSE2</td>
-</tr>
-<tr>
-<td>ECX</td>
-<td>0</td>
-<td>支持SSE3</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">寄存器</th>
+          <th style="text-align: left">位</th>
+          <th style="text-align: left">特性</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">EDX</td>
+          <td style="text-align: left">23</td>
+          <td style="text-align: left">支持MMX</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">EDX</td>
+          <td style="text-align: left">25</td>
+          <td style="text-align: left">支持SSE</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">EDX</td>
+          <td style="text-align: left">26</td>
+          <td style="text-align: left">支持SSE2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ECX</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">支持SSE3</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>具体检测代码如下(AT&amp;T 语法)：</p>
 <pre><code>.section .data
@@ -335,70 +331,70 @@ end:
 <p>其中饱和运算的预设值根据结果的位数决定，有符号8位最大为127，如果超过127，结果按127计算，其他情况与此类似，这里方便与一些图形处理，比如色彩黑色为0，为无符号最小值，小于其值也按黑色处理。</p>
 <p>好 了，到此可以看一下具体的指令，这里的指令有相同的格式，instruction source, destination;其中source可以是mmx寄存器或者64位内存，destination为mmx寄存器。这是AT&amp;T语法，对于 MASM语法源目的操作数相反。</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>paddb</td>
-<td>环绕打包字节整数加法</td>
-</tr>
-<tr>
-<td>paddw</td>
-<td>环绕打包字整数加法</td>
-</tr>
-<tr>
-<td>paddd</td>
-<td>环绕打包双字整数加法</td>
-</tr>
-<tr>
-<td>paddsb</td>
-<td>带符号饱和打包字节整数加法</td>
-</tr>
-<tr>
-<td>paddsw</td>
-<td>带符号饱和打包字整数加法</td>
-</tr>
-<tr>
-<td>paddusb</td>
-<td>无符号饱和打包字节整数加法</td>
-</tr>
-<tr>
-<td>paddusw</td>
-<td>无符号饱和打包字整数加法</td>
-</tr>
-<tr>
-<td>psubb</td>
-<td>环绕打包字节整数减法</td>
-</tr>
-<tr>
-<td>psubw</td>
-<td>环绕打包字整数减法</td>
-</tr>
-<tr>
-<td>psubd</td>
-<td>环绕打包双字整数减法</td>
-</tr>
-<tr>
-<td>psubsb</td>
-<td>带符号饱和打包字节整数减法</td>
-</tr>
-<tr>
-<td>psubsw</td>
-<td>带符号饱和打包字整数减法</td>
-</tr>
-<tr>
-<td>psubusb</td>
-<td>无符号饱和打包字节整数减法</td>
-</tr>
-<tr>
-<td>psubusw</td>
-<td>无符号饱和打包字整数减法</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">paddb</td>
+          <td style="text-align: left">环绕打包字节整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddw</td>
+          <td style="text-align: left">环绕打包字整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddd</td>
+          <td style="text-align: left">环绕打包双字整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddsb</td>
+          <td style="text-align: left">带符号饱和打包字节整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddsw</td>
+          <td style="text-align: left">带符号饱和打包字整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddusb</td>
+          <td style="text-align: left">无符号饱和打包字节整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paddusw</td>
+          <td style="text-align: left">无符号饱和打包字整数加法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubb</td>
+          <td style="text-align: left">环绕打包字节整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubw</td>
+          <td style="text-align: left">环绕打包字整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubd</td>
+          <td style="text-align: left">环绕打包双字整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubsb</td>
+          <td style="text-align: left">带符号饱和打包字节整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubsw</td>
+          <td style="text-align: left">带符号饱和打包字整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubusb</td>
+          <td style="text-align: left">无符号饱和打包字节整数减法</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psubusw</td>
+          <td style="text-align: left">无符号饱和打包字整数减法</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>下面以AT&amp;T加法为例进行说明，这里以饱和方式计算4个无符号字之和：</p>
 <pre><code># add four word
@@ -436,69 +432,69 @@ _main:
 <p>movq 指令把内存中的数据传送至mmx寄存器，如果数据之前在内存中不是连续的，则需要集中存放，即进行打包，之后使用paddusw进行加法计算，输出时 word需转化成dword放入堆栈，可以看到以饱和方式第三个结果为65535，即16位无符号数的最大值。从这里例子可以看出，通过一条指令计算了四 个word整数相加，很大程度上提高了计算的效率，但是同时需要注意，整数的打包以及传送过程也需要耗时，如果打包操作很多，结果不是提高效率而是降低效 率了。</p>
 <p>mmx指令集的加法根据需要有饱和方式和环绕方式计算，但对于乘法而言，由于结果的宽度可能是操作数的两倍，所以两种方式看上去都不合适，所以intel提供了两个指令，一个得到计算结果的低字节，另一个得到计算结果的高字节。</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pmulluw</td>
-<td>对无符号16位整数相乘取结果低16位</td>
-</tr>
-<tr>
-<td>pmulhuw</td>
-<td>对无符号16位整数相乘取结果高16位</td>
-</tr>
-<tr>
-<td>pmullw</td>
-<td>对有符号16位整数相乘取结果低16位</td>
-</tr>
-<tr>
-<td>pmulhw</td>
-<td>对有符号16位整数相乘取结果高16位</td>
-</tr>
-<tr>
-<td>pmaddwd</td>
-<td>对4个带符号整数相乘，高位两个结果相加存入高32位，低位相同</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">pmulluw</td>
+          <td style="text-align: left">对无符号16位整数相乘取结果低16位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pmulhuw</td>
+          <td style="text-align: left">对无符号16位整数相乘取结果高16位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pmullw</td>
+          <td style="text-align: left">对有符号16位整数相乘取结果低16位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pmulhw</td>
+          <td style="text-align: left">对有符号16位整数相乘取结果高16位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pmaddwd</td>
+          <td style="text-align: left">对4个带符号整数相乘，高位两个结果相加存入高32位，低位相同</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>mmx指令集还提供对四字值进行布尔逻辑操作和移位指令：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pand</td>
-<td>对源和目标操作数按位与操作</td>
-</tr>
-<tr>
-<td>pandn</td>
-<td>对目标操作数进行按位逻辑非操作，然后对源和目标操作数按位与操作</td>
-</tr>
-<tr>
-<td>por</td>
-<td>对源和目标操作数按位或操作</td>
-</tr>
-<tr>
-<td>pxor</td>
-<td>对源和目标操作数按位异或操作</td>
-</tr>
-<tr>
-<td>psll</td>
-<td>对目标操作数执行逻辑左移操作，使用0填充空位</td>
-</tr>
-<tr>
-<td>psra</td>
-<td>对目标操作数执行逻辑右移操作，使用0填充空位</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">pand</td>
+          <td style="text-align: left">对源和目标操作数按位与操作</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pandn</td>
+          <td style="text-align: left">对目标操作数进行按位逻辑非操作，然后对源和目标操作数按位与操作</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">por</td>
+          <td style="text-align: left">对源和目标操作数按位或操作</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pxor</td>
+          <td style="text-align: left">对源和目标操作数按位异或操作</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psll</td>
+          <td style="text-align: left">对目标操作数执行逻辑左移操作，使用0填充空位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">psra</td>
+          <td style="text-align: left">对目标操作数执行逻辑右移操作，使用0填充空位</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>其AT&amp;T指令格式如下：</p>
 <pre><code>pand source, destination
@@ -506,38 +502,38 @@ _main:
 <p>其中source是mmx寄存器或者64位内存，destination必须是mmx寄存器。移位指令可以使用字，双字或者四字操作数，还有移位的位置数量。MASM格式的源目的操作数相反。</p>
 <p>mmx构架提供了用于比较两个值的指令：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pcmpeqb</td>
-<td>比较打包字节整数值的相等性</td>
-</tr>
-<tr>
-<td>pcmpeqw</td>
-<td>比较打包字整数值的相等性</td>
-</tr>
-<tr>
-<td>pcmpeqd</td>
-<td>比较打包双字整数值的相等性</td>
-</tr>
-<tr>
-<td>pcmpgtb</td>
-<td>判断打包字节整数值是否大于另一个</td>
-</tr>
-<tr>
-<td>pcmpgtw</td>
-<td>判断打包字整数值是否大于另一个</td>
-</tr>
-<tr>
-<td>pcmpgtd</td>
-<td>判断打包双字整数值是否大于另一个</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">pcmpeqb</td>
+          <td style="text-align: left">比较打包字节整数值的相等性</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pcmpeqw</td>
+          <td style="text-align: left">比较打包字整数值的相等性</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pcmpeqd</td>
+          <td style="text-align: left">比较打包双字整数值的相等性</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pcmpgtb</td>
+          <td style="text-align: left">判断打包字节整数值是否大于另一个</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pcmpgtw</td>
+          <td style="text-align: left">判断打包字整数值是否大于另一个</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">pcmpgtd</td>
+          <td style="text-align: left">判断打包双字整数值是否大于另一个</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>因为mmx同时比较多个数据，所以不能设置标志，替换的做法是把判断结果放到目标打包整数值中，如果打包整数值满足对比提交，就把结果设置为全1，否则设置为全0。</p>
 <p>由于mmx指令集并非所有cpu都可以支持，所以对c语言这种编译通用性的程序而言，是不会贸然使用mmx指令集的，这也对我们手工汇编优化程序提供了很大的空间，但是需要注意打包整数的效率损耗。</p>

@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
+'>
 <title>汇编语言学习笔记(六)-数学运算</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.-assembler-math-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(六)-数学运算'>
-<meta property='og:description' content='在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可'>
+<meta property='og:description' content='在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.-assembler-math-instruct/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-17T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-17T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(六)-数学运算">
-<meta name="twitter:description" content="在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
+">
     </head>
     <body class="
     article-page
@@ -319,63 +315,63 @@
 </span></span><span class="line"><span class="cl">	imul destination, source, imm
 </span></span></code></pre></div><p>可以看到mul只有源操作数，那目的操作数呢？其实这里是隐含操作数。mul的操作数如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>被乘数</th>
-<th>乘数</th>
-<th>积</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AL</td>
-<td>r/m8</td>
-<td>AX</td>
-</tr>
-<tr>
-<td>AX</td>
-<td>r/m16</td>
-<td>DX:AX</td>
-</tr>
-<tr>
-<td>EAX</td>
-<td>r/m32</td>
-<td>EDX:EAX</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">被乘数</th>
+          <th style="text-align: left">乘数</th>
+          <th style="text-align: left">积</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">AL</td>
+          <td style="text-align: left">r/m8</td>
+          <td style="text-align: left">AX</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AX</td>
+          <td style="text-align: left">r/m16</td>
+          <td style="text-align: left">DX:AX</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">EAX</td>
+          <td style="text-align: left">r/m32</td>
+          <td style="text-align: left">EDX:EAX</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>最所以积比被乘数宽度大一倍，是因为两个32位的乘数乘起来可能是64位的！</p>
 <p>除法div，idiv
 除法与乘法相反，mul的操作数表反过来便是div的操作数表，如下表所示：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>被除数</th>
-<th>除数</th>
-<th>商</th>
-<th>余数</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AX</td>
-<td>r/m8</td>
-<td>AL</td>
-<td>AH</td>
-</tr>
-<tr>
-<td>DX:AX</td>
-<td>r/m16</td>
-<td>AX</td>
-<td>DX</td>
-</tr>
-<tr>
-<td>EDX:EAX</td>
-<td>r/m32</td>
-<td>EAX</td>
-<td>EDX</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">被除数</th>
+          <th style="text-align: left">除数</th>
+          <th style="text-align: left">商</th>
+          <th style="text-align: left">余数</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">AX</td>
+          <td style="text-align: left">r/m8</td>
+          <td style="text-align: left">AL</td>
+          <td style="text-align: left">AH</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DX:AX</td>
+          <td style="text-align: left">r/m16</td>
+          <td style="text-align: left">AX</td>
+          <td style="text-align: left">DX</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">EDX:EAX</td>
+          <td style="text-align: left">r/m32</td>
+          <td style="text-align: left">EAX</td>
+          <td style="text-align: left">EDX</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>这里跟乘法不同的是64位的操作数除以32位的操作数以后结果还可能大于32位，如此一来便会溢出，所以计算除法要千万小心，确保你的操作数不会出现溢出问题。
 语法格式如下：</p>

@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。
+'>
 <title>汇编语言学习笔记(九)-函数</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(九)-函数'>
-<meta property='og:description' content='编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但'>
+<meta property='og:description' content='编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-20T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-20T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(九)-函数">
-<meta name="twitter:description" content="编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。
+">
     </head>
     <body class="
     article-page

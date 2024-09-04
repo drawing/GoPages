@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。
+'>
 <title>汇编语言学习笔记(八)-字符串</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.-assembler-string-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(八)-字符串'>
-<meta property='og:description' content='字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追'>
+<meta property='og:description' content='字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.-assembler-string-instruct/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-19T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-19T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(八)-字符串">
-<meta name="twitter:description" content="字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。
+">
     </head>
     <body class="
     article-page
@@ -257,26 +253,26 @@
 <p>另外一个问题是，如果仅仅移动一个字符，mov指令完全可以胜任，那还要movsb干什么呢？的确如此，movsb本身来讲并不见得方便，但是结合一个指令前缀rep，就不同了。</p>
 <p>rep是一个指令前缀，就是再其他指令之前表示一种特性，rep为repeat，重复之意，就是他可以不停的执行，直到ecx为0，与之相关的还有两个指令，一起总结如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>rep</td>
-<td>ecx &gt; 0时重复</td>
-</tr>
-<tr>
-<td>repz/repe</td>
-<td>零标志置位 并且 ecx &gt; 0时重复</td>
-</tr>
-<tr>
-<td>repnz/repne</td>
-<td>零标志为清零 并且 ecx &gt; 0时重复</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">rep</td>
+          <td style="text-align: left">ecx &gt; 0时重复</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">repz/repe</td>
+          <td style="text-align: left">零标志置位 并且 ecx &gt; 0时重复</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">repnz/repne</td>
+          <td style="text-align: left">零标志为清零 并且 ecx &gt; 0时重复</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>如果还记得loop和loopz指令，应该熟悉汇编中的这种后缀规律。</p>
 <p>如果movsb能够重复执行，那另外一个问题就出来了，重复复制一个字节有什么意思呢？其实movsb指令不单复制，同时还修改esi和edi的值。至于如何修改，是加还是减，需要看DF标志，方向标识。当DF清零，则esi和edi递增；反之递减。</p>
@@ -327,88 +323,88 @@
 </span></span></code></pre></div><p>其中大致流程还是看的很清楚的。</p>
 <p>介绍了这么多，仅仅只介绍了一个字符拷贝命令movsb，其他的一些诸如比较、加载的指令，但是其他指令与movsb类似，没有什么难点，这里仅仅做一些列举：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>操作</th>
-<th>源操作数</th>
-<th>目的操作数</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>lodsb</td>
-<td>加载字节</td>
-<td>esi</td>
-<td>al</td>
-</tr>
-<tr>
-<td>lodsw</td>
-<td>加载双字节</td>
-<td>esi</td>
-<td>ax</td>
-</tr>
-<tr>
-<td>lodsl(MASM lodsd)</td>
-<td>加载四字节</td>
-<td>esi</td>
-<td>eax</td>
-</tr>
-<tr>
-<td>stosb</td>
-<td>保存字节到目的</td>
-<td>al</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>stosw</td>
-<td>保存双字节到目的</td>
-<td>ax</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>stosl(MASM stosd)</td>
-<td>保存四字节到目的</td>
-<td>eax</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>cmpsb</td>
-<td>比较字节</td>
-<td>esi</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>cmpsw</td>
-<td>比较双字节</td>
-<td>esi</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>cmpsl(MASM cmpsd)</td>
-<td>比较四字节</td>
-<td>esi</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>scasb</td>
-<td>比较内存和AL</td>
-<td>al</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>scasw</td>
-<td>比较内存和AX</td>
-<td>ax</td>
-<td>edi</td>
-</tr>
-<tr>
-<td>scasl(MASM scasd)</td>
-<td>比较内存和EAX</td>
-<td>eax</td>
-<td>edi</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">操作</th>
+          <th style="text-align: left">源操作数</th>
+          <th style="text-align: left">目的操作数</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">lodsb</td>
+          <td style="text-align: left">加载字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">al</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">lodsw</td>
+          <td style="text-align: left">加载双字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">ax</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">lodsl(MASM lodsd)</td>
+          <td style="text-align: left">加载四字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">eax</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">stosb</td>
+          <td style="text-align: left">保存字节到目的</td>
+          <td style="text-align: left">al</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">stosw</td>
+          <td style="text-align: left">保存双字节到目的</td>
+          <td style="text-align: left">ax</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">stosl(MASM stosd)</td>
+          <td style="text-align: left">保存四字节到目的</td>
+          <td style="text-align: left">eax</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">cmpsb</td>
+          <td style="text-align: left">比较字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">cmpsw</td>
+          <td style="text-align: left">比较双字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">cmpsl(MASM cmpsd)</td>
+          <td style="text-align: left">比较四字节</td>
+          <td style="text-align: left">esi</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">scasb</td>
+          <td style="text-align: left">比较内存和AL</td>
+          <td style="text-align: left">al</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">scasw</td>
+          <td style="text-align: left">比较内存和AX</td>
+          <td style="text-align: left">ax</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">scasl(MASM scasd)</td>
+          <td style="text-align: left">比较内存和EAX</td>
+          <td style="text-align: left">eax</td>
+          <td style="text-align: left">edi</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>这里举一个简单的strlen例子：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">

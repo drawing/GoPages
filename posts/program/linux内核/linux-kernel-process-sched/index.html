@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+'>
 <title>Linux内核笔记-进程调度</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-进程调度'>
-<meta property='og:description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉'>
+<meta property='og:description' content='现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-23T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-23T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-进程调度">
-<meta name="twitter:description" content="现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+">
     </head>
     <body class="
     article-page
@@ -355,46 +351,46 @@
 </ul>
 <p>系统调用<code>setrlimit</code>来增减当前限制，但不能超过<code>rlim_max</code>指定的值。<code>rlim</code>数组中的位置标志了受限资源的类型，这也是内核需要定义的处理器常数，将资源与位置关联起来的原因。如果某一类资源没有限制，则将<code>rlim_max</code>设置为<code>RLIM_INFINITY</code>。以下是几种宏定义：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>常数</th>
-<th>语义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>RLIMIT_CPU</td>
-<td>按毫秒计算的最大CPU时间</td>
-</tr>
-<tr>
-<td>RLIMIT_FSIZE</td>
-<td>允许的最大文件长度</td>
-</tr>
-<tr>
-<td>RLIMIT_DATA</td>
-<td>数据段的最大长度</td>
-</tr>
-<tr>
-<td>RLIMIT_STACK</td>
-<td>（用户态）栈最大长度</td>
-</tr>
-<tr>
-<td>RLIMIT_CORE</td>
-<td>内存转储文件最大长度</td>
-</tr>
-<tr>
-<td>RLIMIT_NOFILE</td>
-<td>打开文件最大数目</td>
-</tr>
-<tr>
-<td>RLIMIT_SIGPENDING</td>
-<td>待决信号的最大数目</td>
-</tr>
-<tr>
-<td>RLIMIT_MSGQUEUE</td>
-<td>信息队列最大数目</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">常数</th>
+          <th style="text-align: left">语义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">RLIMIT_CPU</td>
+          <td style="text-align: left">按毫秒计算的最大CPU时间</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_FSIZE</td>
+          <td style="text-align: left">允许的最大文件长度</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_DATA</td>
+          <td style="text-align: left">数据段的最大长度</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_STACK</td>
+          <td style="text-align: left">（用户态）栈最大长度</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_CORE</td>
+          <td style="text-align: left">内存转储文件最大长度</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_NOFILE</td>
+          <td style="text-align: left">打开文件最大数目</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_SIGPENDING</td>
+          <td style="text-align: left">待决信号的最大数目</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RLIMIT_MSGQUEUE</td>
+          <td style="text-align: left">信息队列最大数目</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>在<code>proc</code>文件系统中，可以从文件<code>/proc/self/limits</code>查看当前<code>rlimit</code>限制。</p>
 <h2 id="进程类型">进程类型</h2>

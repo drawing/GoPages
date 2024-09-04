@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+'>
 <title>汇编语言学习笔记(五)-控制流</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(五)-控制流'>
-<meta property='og:description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常'>
+<meta property='og:description' content='程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-16T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-16T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(五)-控制流">
-<meta name="twitter:description" content="程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+">
     </head>
     <body class="
     article-page
@@ -253,175 +249,175 @@
 </span></span></code></pre></div><p>跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，<code>jmp near ptr label</code>, <code>jmp far ptr label</code>。</p>
 <p>但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>跳转条件</th>
-<th>eflags标志</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>JA</td>
-<td>Jump if above</td>
-<td>CF=0 &amp; ZF=0</td>
-</tr>
-<tr>
-<td>JAE</td>
-<td>Jump if above or equal</td>
-<td>CF=0</td>
-</tr>
-<tr>
-<td>JB</td>
-<td>Jump if below</td>
-<td>CF=1</td>
-</tr>
-<tr>
-<td>JBE</td>
-<td>Jump if below or equal</td>
-<td>CF=1 or ZF=1</td>
-</tr>
-<tr>
-<td>JC</td>
-<td>Jump if carry</td>
-<td>CF=1</td>
-</tr>
-<tr>
-<td>JCXZ</td>
-<td>Jump if CX=0</td>
-<td>register CX=0</td>
-</tr>
-<tr>
-<td>JE</td>
-<td>(is the same as JZ) Jump if equal</td>
-<td>ZF=1</td>
-</tr>
-<tr>
-<td>JG</td>
-<td>Jump if greater (signed)</td>
-<td>ZF=0 &amp; SF=OF</td>
-</tr>
-<tr>
-<td>JGE</td>
-<td>Jump if greater or equal (signed)</td>
-<td>SF=OF</td>
-</tr>
-<tr>
-<td>JL</td>
-<td>Jump if less (signed)</td>
-<td>SF != OF</td>
-</tr>
-<tr>
-<td>JLE</td>
-<td>Jump if less or equal (signed)</td>
-<td>ZF=1 or SF!=OF</td>
-</tr>
-<tr>
-<td>JMP</td>
-<td>Unconditional Jump</td>
-<td>-</td>
-</tr>
-<tr>
-<td>JNA</td>
-<td>Jump if not above</td>
-<td>CF=1 or ZF=1</td>
-</tr>
-<tr>
-<td>JNAE</td>
-<td>Jump if not above or equal</td>
-<td>CF=1</td>
-</tr>
-<tr>
-<td>JNB</td>
-<td>Jump if not below</td>
-<td>CF=0</td>
-</tr>
-<tr>
-<td>JNBE</td>
-<td>Jump if not below or equal</td>
-<td>CF=1 &amp; ZF=0</td>
-</tr>
-<tr>
-<td>JNC</td>
-<td>Jump if not carry</td>
-<td>CF=0</td>
-</tr>
-<tr>
-<td>JNE</td>
-<td>Jump if not equal</td>
-<td>ZF=0</td>
-</tr>
-<tr>
-<td>JNG</td>
-<td>Jump if not greater (signed)</td>
-<td>ZF=1 or SF!=OF</td>
-</tr>
-<tr>
-<td>JNGE</td>
-<td>Jump if not greater or equal (signed)</td>
-<td>SF!=OF</td>
-</tr>
-<tr>
-<td>JNL</td>
-<td>Jump if not less (signed)</td>
-<td>SF=OF</td>
-</tr>
-<tr>
-<td>JNLE</td>
-<td>Jump if not less or equal (signed)</td>
-<td>ZF=0 &amp; SF=OF</td>
-</tr>
-<tr>
-<td>JNO</td>
-<td>Jump if not overflow (signed)</td>
-<td>OF=0</td>
-</tr>
-<tr>
-<td>JNP</td>
-<td>Jump if no parity</td>
-<td>PF=0</td>
-</tr>
-<tr>
-<td>JNS</td>
-<td>Jump if not signed (signed)</td>
-<td>SF=0</td>
-</tr>
-<tr>
-<td>JNZ</td>
-<td>Jump if not zero</td>
-<td>ZF=0</td>
-</tr>
-<tr>
-<td>JO</td>
-<td>Jump if overflow (signed)</td>
-<td>OF=1</td>
-</tr>
-<tr>
-<td>JP</td>
-<td>Jump if parity</td>
-<td>PF=1</td>
-</tr>
-<tr>
-<td>JPE</td>
-<td>Jump if parity even</td>
-<td>PF=1</td>
-</tr>
-<tr>
-<td>JPO</td>
-<td>Jump if paity odd</td>
-<td>PF=0</td>
-</tr>
-<tr>
-<td>JS</td>
-<td>Jump if signed (signed)</td>
-<td>SF=1</td>
-</tr>
-<tr>
-<td>JZ</td>
-<td>Jump if zero</td>
-<td>ZF=1</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">跳转条件</th>
+          <th style="text-align: left">eflags标志</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">JA</td>
+          <td style="text-align: left">Jump if above</td>
+          <td style="text-align: left">CF=0 &amp; ZF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JAE</td>
+          <td style="text-align: left">Jump if above or equal</td>
+          <td style="text-align: left">CF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JB</td>
+          <td style="text-align: left">Jump if below</td>
+          <td style="text-align: left">CF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JBE</td>
+          <td style="text-align: left">Jump if below or equal</td>
+          <td style="text-align: left">CF=1 or ZF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JC</td>
+          <td style="text-align: left">Jump if carry</td>
+          <td style="text-align: left">CF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JCXZ</td>
+          <td style="text-align: left">Jump if CX=0</td>
+          <td style="text-align: left">register CX=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JE</td>
+          <td style="text-align: left">(is the same as JZ) Jump if equal</td>
+          <td style="text-align: left">ZF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JG</td>
+          <td style="text-align: left">Jump if greater (signed)</td>
+          <td style="text-align: left">ZF=0 &amp; SF=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JGE</td>
+          <td style="text-align: left">Jump if greater or equal (signed)</td>
+          <td style="text-align: left">SF=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JL</td>
+          <td style="text-align: left">Jump if less (signed)</td>
+          <td style="text-align: left">SF != OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JLE</td>
+          <td style="text-align: left">Jump if less or equal (signed)</td>
+          <td style="text-align: left">ZF=1 or SF!=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JMP</td>
+          <td style="text-align: left">Unconditional Jump</td>
+          <td style="text-align: left">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNA</td>
+          <td style="text-align: left">Jump if not above</td>
+          <td style="text-align: left">CF=1 or ZF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNAE</td>
+          <td style="text-align: left">Jump if not above or equal</td>
+          <td style="text-align: left">CF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNB</td>
+          <td style="text-align: left">Jump if not below</td>
+          <td style="text-align: left">CF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNBE</td>
+          <td style="text-align: left">Jump if not below or equal</td>
+          <td style="text-align: left">CF=1 &amp; ZF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNC</td>
+          <td style="text-align: left">Jump if not carry</td>
+          <td style="text-align: left">CF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNE</td>
+          <td style="text-align: left">Jump if not equal</td>
+          <td style="text-align: left">ZF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNG</td>
+          <td style="text-align: left">Jump if not greater (signed)</td>
+          <td style="text-align: left">ZF=1 or SF!=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNGE</td>
+          <td style="text-align: left">Jump if not greater or equal (signed)</td>
+          <td style="text-align: left">SF!=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNL</td>
+          <td style="text-align: left">Jump if not less (signed)</td>
+          <td style="text-align: left">SF=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNLE</td>
+          <td style="text-align: left">Jump if not less or equal (signed)</td>
+          <td style="text-align: left">ZF=0 &amp; SF=OF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNO</td>
+          <td style="text-align: left">Jump if not overflow (signed)</td>
+          <td style="text-align: left">OF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNP</td>
+          <td style="text-align: left">Jump if no parity</td>
+          <td style="text-align: left">PF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNS</td>
+          <td style="text-align: left">Jump if not signed (signed)</td>
+          <td style="text-align: left">SF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JNZ</td>
+          <td style="text-align: left">Jump if not zero</td>
+          <td style="text-align: left">ZF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JO</td>
+          <td style="text-align: left">Jump if overflow (signed)</td>
+          <td style="text-align: left">OF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JP</td>
+          <td style="text-align: left">Jump if parity</td>
+          <td style="text-align: left">PF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JPE</td>
+          <td style="text-align: left">Jump if parity even</td>
+          <td style="text-align: left">PF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JPO</td>
+          <td style="text-align: left">Jump if paity odd</td>
+          <td style="text-align: left">PF=0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JS</td>
+          <td style="text-align: left">Jump if signed (signed)</td>
+          <td style="text-align: left">SF=1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">JZ</td>
+          <td style="text-align: left">Jump if zero</td>
+          <td style="text-align: left">ZF=1</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>根据上次的规律很容易理解，这里我们举几个例子，把c语言的流程控制语句转化为汇编：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span>

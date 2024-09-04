@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+'>
 <title>Linux性能调优之硬件篇</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之硬件篇'>
-<meta property='og:description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于'>
+<meta property='og:description' content='CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-02T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-02T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux性能调优之硬件篇">
-<meta name="twitter:description" content="CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+">
     </head>
     <body class="
     article-page
@@ -289,45 +285,45 @@
 <p>固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。</p>
 <p>不同存储的对比如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>类别</th>
-<th>IOPS</th>
-<th>每GB价格（元）</th>
-<th>随机读取</th>
-<th>随机写入</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>内存</td>
-<td>千万</td>
-<td>150</td>
-<td>友好</td>
-<td>友好</td>
-</tr>
-<tr>
-<td>SSD盘</td>
-<td>35000</td>
-<td>20</td>
-<td>友好</td>
-<td>写入放大</td>
-</tr>
-<tr>
-<td>SAS磁盘</td>
-<td>180</td>
-<td>3</td>
-<td>磁盘寻道</td>
-<td>磁盘寻道</td>
-</tr>
-<tr>
-<td>SATA磁盘</td>
-<td>90</td>
-<td>0.5</td>
-<td>磁盘寻道</td>
-<td>磁盘寻道</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">类别</th>
+          <th style="text-align: left">IOPS</th>
+          <th style="text-align: left">每GB价格（元）</th>
+          <th style="text-align: left">随机读取</th>
+          <th style="text-align: left">随机写入</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">内存</td>
+          <td style="text-align: left">千万</td>
+          <td style="text-align: left">150</td>
+          <td style="text-align: left">友好</td>
+          <td style="text-align: left">友好</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SSD盘</td>
+          <td style="text-align: left">35000</td>
+          <td style="text-align: left">20</td>
+          <td style="text-align: left">友好</td>
+          <td style="text-align: left">写入放大</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SAS磁盘</td>
+          <td style="text-align: left">180</td>
+          <td style="text-align: left">3</td>
+          <td style="text-align: left">磁盘寻道</td>
+          <td style="text-align: left">磁盘寻道</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SATA磁盘</td>
+          <td style="text-align: left">90</td>
+          <td style="text-align: left">0.5</td>
+          <td style="text-align: left">磁盘寻道</td>
+          <td style="text-align: left">磁盘寻道</td>
+      </tr>
+  </tbody>
 </table></div>
 <h2 id="网络">网络</h2>
 <p>传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。</p>
@@ -335,62 +331,62 @@
 <p>单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。</p>
 <h2 id="性能参数">性能参数</h2>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>类别</th>
-<th>延迟</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>访问 L1 Cache</td>
-<td>0.5ns</td>
-</tr>
-<tr>
-<td>分支预测失败</td>
-<td>5ns</td>
-</tr>
-<tr>
-<td>访问 L2 Cache</td>
-<td>7ns</td>
-</tr>
-<tr>
-<td>Mutex锁操作</td>
-<td>100ns</td>
-</tr>
-<tr>
-<td>内存访问</td>
-<td>100ns</td>
-</tr>
-<tr>
-<td>千兆网络发送1MB数据</td>
-<td>10ms</td>
-</tr>
-<tr>
-<td>从内存顺序读取1MB数据</td>
-<td>0.25 ms</td>
-</tr>
-<tr>
-<td>机房内网络来回</td>
-<td>0.5ms</td>
-</tr>
-<tr>
-<td>异地机房来回</td>
-<td>30-100ms</td>
-</tr>
-<tr>
-<td>SATA磁盘寻道</td>
-<td>10ms</td>
-</tr>
-<tr>
-<td>从SATA磁盘顺序读取 1MB 数据</td>
-<td>20ms</td>
-</tr>
-<tr>
-<td>固态SSD访问延迟</td>
-<td>01-0.2ms</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">类别</th>
+          <th style="text-align: left">延迟</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">访问 L1 Cache</td>
+          <td style="text-align: left">0.5ns</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">分支预测失败</td>
+          <td style="text-align: left">5ns</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">访问 L2 Cache</td>
+          <td style="text-align: left">7ns</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Mutex锁操作</td>
+          <td style="text-align: left">100ns</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">内存访问</td>
+          <td style="text-align: left">100ns</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">千兆网络发送1MB数据</td>
+          <td style="text-align: left">10ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">从内存顺序读取1MB数据</td>
+          <td style="text-align: left">0.25 ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">机房内网络来回</td>
+          <td style="text-align: left">0.5ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">异地机房来回</td>
+          <td style="text-align: left">30-100ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SATA磁盘寻道</td>
+          <td style="text-align: left">10ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">从SATA磁盘顺序读取 1MB 数据</td>
+          <td style="text-align: left">20ms</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">固态SSD访问延迟</td>
+          <td style="text-align: left">01-0.2ms</td>
+      </tr>
+  </tbody>
 </table></div>
 
 </section>

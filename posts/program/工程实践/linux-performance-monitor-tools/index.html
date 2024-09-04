@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+'>
 <title>Linux性能调优之工具篇</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之工具篇'>
-<meta property='og:description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结'>
+<meta property='og:description' content='在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-01T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-01T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux性能调优之工具篇">
-<meta name="twitter:description" content="在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+">
     </head>
     <body class="
     article-page
@@ -623,38 +619,38 @@
 <h2 id="benchmark">Benchmark</h2>
 <p>除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，有时候通过测试系统固有的特定，是一个好的选择。</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>工具</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Lmbench</td>
-<td>反应时间测评工具，上下文切换，网络：连接的建立，管道，文件系统的建立和删除，内存读入反应时间等等</td>
-</tr>
-<tr>
-<td>IOzone</td>
-<td>测试不同的操作系统中文件系统的读写性能</td>
-</tr>
-<tr>
-<td>netperf</td>
-<td>测试网络的性能</td>
-</tr>
-<tr>
-<td>bonnie</td>
-<td>磁盘IO和文件系统测试</td>
-</tr>
-<tr>
-<td>iperf</td>
-<td>网络测试</td>
-</tr>
-<tr>
-<td>ab(Apache)</td>
-<td>web server 测试</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">工具</th>
+          <th style="text-align: left">功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Lmbench</td>
+          <td style="text-align: left">反应时间测评工具，上下文切换，网络：连接的建立，管道，文件系统的建立和删除，内存读入反应时间等等</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">IOzone</td>
+          <td style="text-align: left">测试不同的操作系统中文件系统的读写性能</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">netperf</td>
+          <td style="text-align: left">测试网络的性能</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">bonnie</td>
+          <td style="text-align: left">磁盘IO和文件系统测试</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">iperf</td>
+          <td style="text-align: left">网络测试</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ab(Apache)</td>
+          <td style="text-align: left">web server 测试</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>其中 Lmbench 可以测试读写内存，网络建立，上下文切换等性能，这可以提供给我们很好的参考，作为架构师，一定需要了解各种性能指标，甚至主要api调用性能，才能更合理的使用。</p>
 

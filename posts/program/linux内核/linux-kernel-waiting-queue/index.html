@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&gt;state，这些状态定义于文件 include/linux/sched.h
+'>
 <title>Linux 内核等待队列解析</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-waiting-queue/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 内核等待队列解析'>
-<meta property='og:description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配'>
+<meta property='og:description' content='在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&gt;state，这些状态定义于文件 include/linux/sched.h
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-waiting-queue/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-14T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-14T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux 内核等待队列解析">
-<meta name="twitter:description" content="在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&gt;state，这些状态定义于文件 include/linux/sched.h
+">
     </head>
     <body class="
     article-page

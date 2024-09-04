@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+'>
 <title>tun/tap 驱动源码分析</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='tun/tap 驱动源码分析'>
-<meta property='og:description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数'>
+<meta property='og:description' content='tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-12T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-12T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="tun/tap 驱动源码分析">
-<meta name="twitter:description" content="tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。
+">
     </head>
     <body class="
     article-page

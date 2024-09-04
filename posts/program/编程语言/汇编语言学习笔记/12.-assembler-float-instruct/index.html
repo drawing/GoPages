@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。 现在看浮点数的表示方式，我们所'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。
+现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：
+'>
 <title>汇编语言学习笔记(十二)-浮点指令</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/'>
 
 <link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言学习笔记(十二)-浮点指令'>
-<meta property='og:description' content='浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。 现在看浮点数的表示方式，我们所'>
+<meta property='og:description' content='浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。
+现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：
+'>
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/'>
 <meta property='og:site_name' content='讲故事的人'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-23T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-23T01:18:03&#43;08:00'/>
 <meta name="twitter:title" content="汇编语言学习笔记(十二)-浮点指令">
-<meta name="twitter:description" content="浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。 现在看浮点数的表示方式，我们所">
-  
-    
-      
-    
-  
-
-
+<meta name="twitter:description" content="浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。
+现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：
+">
     </head>
     <body class="
     article-page
@@ -250,26 +249,26 @@
 <p>浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。</p>
 <p>现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>格式</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>单精度</td>
-<td>32位：符号占1位，指数占8位，尾数中的小数部分占23位</td>
-</tr>
-<tr>
-<td>双精度</td>
-<td>64位：符号占1位，指数占11位，尾数中的小数部分占52位</td>
-</tr>
-<tr>
-<td>扩展精度</td>
-<td>80位：符号占1位，指数占16位，尾数中的小数部分占63位</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">格式</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">单精度</td>
+          <td style="text-align: left">32位：符号占1位，指数占8位，尾数中的小数部分占23位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">双精度</td>
+          <td style="text-align: left">64位：符号占1位，指数占11位，尾数中的小数部分占52位</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">扩展精度</td>
+          <td style="text-align: left">80位：符号占1位，指数占16位，尾数中的小数部分占63位</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>以单精度为例，在内存中的储存格式如下（左边为高位）：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	| 1位符号 | 8位指数 | 23位尾数 |
@@ -349,98 +348,98 @@ fssave
 <h1 id="浮点数指令">浮点数指令</h1>
 <p>接下来将要详细说明其计算过程，要计算数据首先得看如何从内存中加载数据到寄存器，同时把结果从寄存器取出到内存，除了加载内存中的浮点数据指令，另外还有一些常量的加载，现列举如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>finit</td>
-<td>初始化控制和状态寄存器，不改变fpu数据寄存器</td>
-</tr>
-<tr>
-<td>fstcw control</td>
-<td>将控制寄存器内容放到内存control处</td>
-</tr>
-<tr>
-<td>fstsw status</td>
-<td>将状态寄存器内容放到内存status处</td>
-</tr>
-<tr>
-<td>flds value</td>
-<td>加载内存中的单精浮点到fpu寄存器堆栈</td>
-</tr>
-<tr>
-<td>fldl value</td>
-<td>加载内存中的双精浮点到fpu寄存器堆栈</td>
-</tr>
-<tr>
-<td>fldt value</td>
-<td>加载内存中的扩展精度点到fpu寄存器堆栈</td>
-</tr>
-<tr>
-<td>fld %st(i)</td>
-<td>将%st(i)寄存器数据压入fpu寄存器堆栈</td>
-</tr>
-<tr>
-<td>fsts value</td>
-<td>单精度数据保存到value，不出栈</td>
-</tr>
-<tr>
-<td>fstl value</td>
-<td>双精度数据保存到value，不出栈</td>
-</tr>
-<tr>
-<td>fstt value</td>
-<td>扩展精度数据保存到value，不出栈</td>
-</tr>
-<tr>
-<td>fstps value</td>
-<td>单精度数据保存到value，出栈</td>
-</tr>
-<tr>
-<td>fstpl value</td>
-<td>双精度数据保存到value，出栈</td>
-</tr>
-<tr>
-<td>fstpt value</td>
-<td>扩展精度数据保存到value，出栈</td>
-</tr>
-<tr>
-<td>fxch %st(i)</td>
-<td>交换%st(0)和%st(i)</td>
-</tr>
-<tr>
-<td>fld1</td>
-<td>把 +1.0 压入 FPU 堆栈中</td>
-</tr>
-<tr>
-<td>fldl2t</td>
-<td>把 10 的对数(底数2)压入 FPU 堆栈中</td>
-</tr>
-<tr>
-<td>fldl2e</td>
-<td>把 e 的对数(底数2)压入 FPU 堆栈中</td>
-</tr>
-<tr>
-<td>fldpi</td>
-<td>把 pi 的值压入 FPU 堆栈中</td>
-</tr>
-<tr>
-<td>fldlg2</td>
-<td>把 2 的对数(底数10)压入 FPU 堆栈中</td>
-</tr>
-<tr>
-<td>fldln2</td>
-<td>把 2 的对数(底数e) 压入堆栈中</td>
-</tr>
-<tr>
-<td>fldz</td>
-<td>把 +0.0 压入压入堆栈中</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">finit</td>
+          <td style="text-align: left">初始化控制和状态寄存器，不改变fpu数据寄存器</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstcw control</td>
+          <td style="text-align: left">将控制寄存器内容放到内存control处</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstsw status</td>
+          <td style="text-align: left">将状态寄存器内容放到内存status处</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">flds value</td>
+          <td style="text-align: left">加载内存中的单精浮点到fpu寄存器堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldl value</td>
+          <td style="text-align: left">加载内存中的双精浮点到fpu寄存器堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldt value</td>
+          <td style="text-align: left">加载内存中的扩展精度点到fpu寄存器堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fld %st(i)</td>
+          <td style="text-align: left">将%st(i)寄存器数据压入fpu寄存器堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fsts value</td>
+          <td style="text-align: left">单精度数据保存到value，不出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstl value</td>
+          <td style="text-align: left">双精度数据保存到value，不出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstt value</td>
+          <td style="text-align: left">扩展精度数据保存到value，不出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstps value</td>
+          <td style="text-align: left">单精度数据保存到value，出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstpl value</td>
+          <td style="text-align: left">双精度数据保存到value，出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fstpt value</td>
+          <td style="text-align: left">扩展精度数据保存到value，出栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fxch %st(i)</td>
+          <td style="text-align: left">交换%st(0)和%st(i)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fld1</td>
+          <td style="text-align: left">把 +1.0 压入 FPU 堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldl2t</td>
+          <td style="text-align: left">把 10 的对数(底数2)压入 FPU 堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldl2e</td>
+          <td style="text-align: left">把 e 的对数(底数2)压入 FPU 堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldpi</td>
+          <td style="text-align: left">把 pi 的值压入 FPU 堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldlg2</td>
+          <td style="text-align: left">把 2 的对数(底数10)压入 FPU 堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldln2</td>
+          <td style="text-align: left">把 2 的对数(底数e) 压入堆栈中</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fldz</td>
+          <td style="text-align: left">把 +0.0 压入压入堆栈中</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>以上指令虽多，但是还是很有规律，前缀f表示fpu操作，ld加载，st保存设置，p后缀弹出堆栈，s、l、t后缀表示单精度，双精度，扩展精度，c后缀表 示控制寄存器，s后缀表示状态寄存器。当然这仅仅是对AT&amp;T语法而言，对MASM语法没有s，l，t之分，需要使用type ptr来指明精度，即内存大小。</p>
 <p>学会灵活的加载弹出数据堆栈后，接下来就要看一些基本的计算：</p>
@@ -507,148 +506,148 @@ end:
 <h1 id="浮点高级运算">浮点高级运算</h1>
 <p>除了基本的浮点计算，x87还提供了一些诸如余弦运算等高级计算功能：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>f2xm1</td>
-<td>计算2的乘方（次数为st0中的值，减去1</td>
-</tr>
-<tr>
-<td>fabs</td>
-<td>计算st0中的绝对值</td>
-</tr>
-<tr>
-<td>fchs</td>
-<td>改变st0中的值的符号</td>
-</tr>
-<tr>
-<td>fcos</td>
-<td>计算st0中的值的余弦</td>
-</tr>
-<tr>
-<td>fpatan</td>
-<td>计算st0中的值的部分反正切</td>
-</tr>
-<tr>
-<td>fprem</td>
-<td>计算st0中的值除以st1的值的部分余数</td>
-</tr>
-<tr>
-<td>fprem1</td>
-<td>计算st0中的值除以st1的值的IEEE部分余弦</td>
-</tr>
-<tr>
-<td>fptan</td>
-<td>计算st0中的值的部分正切</td>
-</tr>
-<tr>
-<td>frndint</td>
-<td>把st0中的值舍入到最近的整数</td>
-</tr>
-<tr>
-<td>fscale</td>
-<td>计算st0乘以2的st1次方</td>
-</tr>
-<tr>
-<td>fsin</td>
-<td>计算st0中的值的正弦</td>
-</tr>
-<tr>
-<td>fsincos</td>
-<td>计算st0中的值的正弦和余弦</td>
-</tr>
-<tr>
-<td>fsqrt</td>
-<td>计算st0中的值的平方根</td>
-</tr>
-<tr>
-<td>fyl2x</td>
-<td>计算st1*log st0 以2为底</td>
-</tr>
-<tr>
-<td>fyl2xp1</td>
-<td>计算st1*log (st0 + 1) 以2为底</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">f2xm1</td>
+          <td style="text-align: left">计算2的乘方（次数为st0中的值，减去1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fabs</td>
+          <td style="text-align: left">计算st0中的绝对值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fchs</td>
+          <td style="text-align: left">改变st0中的值的符号</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcos</td>
+          <td style="text-align: left">计算st0中的值的余弦</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fpatan</td>
+          <td style="text-align: left">计算st0中的值的部分反正切</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fprem</td>
+          <td style="text-align: left">计算st0中的值除以st1的值的部分余数</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fprem1</td>
+          <td style="text-align: left">计算st0中的值除以st1的值的IEEE部分余弦</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fptan</td>
+          <td style="text-align: left">计算st0中的值的部分正切</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">frndint</td>
+          <td style="text-align: left">把st0中的值舍入到最近的整数</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fscale</td>
+          <td style="text-align: left">计算st0乘以2的st1次方</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fsin</td>
+          <td style="text-align: left">计算st0中的值的正弦</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fsincos</td>
+          <td style="text-align: left">计算st0中的值的正弦和余弦</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fsqrt</td>
+          <td style="text-align: left">计算st0中的值的平方根</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fyl2x</td>
+          <td style="text-align: left">计算st1*log st0 以2为底</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fyl2xp1</td>
+          <td style="text-align: left">计算st1*log (st0 + 1) 以2为底</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>下面来看一下浮点条件分支，浮点数的比较不像整数，可以容易的使用cmp指令比较，判断eflags的值，关于浮点数比较，fpu提供独立的比较机制和指令，现对这组比较指令进行说明：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>fcom</td>
-<td>比较st0和st1寄存器的值</td>
-</tr>
-<tr>
-<td>fcom %st(x)</td>
-<td>比较st0和stx寄存器的值</td>
-</tr>
-<tr>
-<td>fcom source</td>
-<td>比较st0和32/64位内存值</td>
-</tr>
-<tr>
-<td>fcomp</td>
-<td>比较st0和st1寄存器的值，并弹出堆栈</td>
-</tr>
-<tr>
-<td>fcomp %st(x)</td>
-<td>比较st0和stx寄存器的值，并弹出堆栈</td>
-</tr>
-<tr>
-<td>fcomp source</td>
-<td>比较st0和32/64位内存值，并弹出堆栈</td>
-</tr>
-<tr>
-<td>fcompp</td>
-<td>比较st0和st1寄存器的值，并两次弹出堆栈</td>
-</tr>
-<tr>
-<td>ftst</td>
-<td>比较st0和0.0</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">fcom</td>
+          <td style="text-align: left">比较st0和st1寄存器的值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcom %st(x)</td>
+          <td style="text-align: left">比较st0和stx寄存器的值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcom source</td>
+          <td style="text-align: left">比较st0和32/64位内存值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcomp</td>
+          <td style="text-align: left">比较st0和st1寄存器的值，并弹出堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcomp %st(x)</td>
+          <td style="text-align: left">比较st0和stx寄存器的值，并弹出堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcomp source</td>
+          <td style="text-align: left">比较st0和32/64位内存值，并弹出堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcompp</td>
+          <td style="text-align: left">比较st0和st1寄存器的值，并两次弹出堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ftst</td>
+          <td style="text-align: left">比较st0和0.0</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>浮点数比较的结果放入状态寄存器的c0，c2，c3条件代码位中，其值如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>结果</th>
-<th>c3</th>
-<th>c2</th>
-<th>c0</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>st0 &gt; source</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<td>st0 &lt; source</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-</tr>
-<tr>
-<td>st0 = source</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">结果</th>
+          <th style="text-align: left">c3</th>
+          <th style="text-align: left">c2</th>
+          <th style="text-align: left">c0</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">st0 &gt; source</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">st0 &lt; source</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">st0 = source</td>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>如此倘若直接判断c0，c2，c3的值比较繁琐，所以可以使用一些技巧，首先使用fstsw指令获得fpu状态寄存器的值并存入ax，再使用sahf指令把 ah寄存器中的值加载到eflags寄存器中，sahf指令把ah寄存器的第0、2、4、6、7分别传送至进位、奇偶、对准、零、符号位，不影响其他标 志，ah寄存器中这些位刚好包含fpu状态寄存器的条件代码值，所以通过fstsw和sahf指令组合，可以传送如下值：</p>
 <pre><code>把c0位传送到eflags的进位标志 
@@ -658,105 +657,105 @@ end:
 <p>传送完毕后，可以用条件跳转使用不同的结果值，另外需要说明的是浮点数相等判断，因为浮点数本身存储结构决定了它仅仅是一个近似值，所以不能直接判断是否相 等，这样可能与自己预期的结果不同，应该判断两个浮点数之差是否在一个很小的误差范围内，来决定这两个浮点数是否相等。</p>
 <p>根据上面的技巧，使用fstsw和fpu指令组合，可以方便的使用浮点判断结果，这对我们是一种便利，而intel的工程师又为我们设计了一个组合指令，fcomi指令执行浮点比较结果并把结果存放到eflags寄存器的进位，奇偶，和零标志。</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>fcomi</td>
-<td>比较st0和stx寄存器的值</td>
-</tr>
-<tr>
-<td>fcomip</td>
-<td>比较st0和stx寄存器，并弹出堆栈</td>
-</tr>
-<tr>
-<td>fucomi</td>
-<td>比较之前检查无序值</td>
-</tr>
-<tr>
-<td>fucomip</td>
-<td>比较之前检查无序值，之后弹出堆栈</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">fcomi</td>
+          <td style="text-align: left">比较st0和stx寄存器的值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcomip</td>
+          <td style="text-align: left">比较st0和stx寄存器，并弹出堆栈</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fucomi</td>
+          <td style="text-align: left">比较之前检查无序值</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fucomip</td>
+          <td style="text-align: left">比较之前检查无序值，之后弹出堆栈</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>判断结束后eflags的标志设置如下：</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>结果</th>
-<th>ZF</th>
-<th>PF</th>
-<th>CF</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>st0 &gt; st(x)</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<td>st0 &lt; st(x)</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-</tr>
-<tr>
-<td>st0 = st(x)</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">结果</th>
+          <th style="text-align: left">ZF</th>
+          <th style="text-align: left">PF</th>
+          <th style="text-align: left">CF</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">st0 &gt; st(x)</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">st0 &lt; st(x)</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">st0 = st(x)</td>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+      </tr>
+  </tbody>
 </table></div>
 <h1 id="cmov移动指令">CMOV移动指令</h1>
 <p>最后介绍的是类似cmov的指令，根据判断结果决定是否需要移动数据，其AT&amp;T格式为 fcmovxx source, destination，其中source是st(x)寄存器，destination是st(0)寄存器。</p>
 <div class="table-wrapper"><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>fcmovb</td>
-<td>如果st(0)小于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmove</td>
-<td>如果st(0)等于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovbe</td>
-<td>如果st(0)小于或等于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovu</td>
-<td>如果st(0)无序，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovnb</td>
-<td>如果st(0)不小于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovne</td>
-<td>如果st(0)不等于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovnbe</td>
-<td>如果st(0)不小于或等于st(x)，则进行传送</td>
-</tr>
-<tr>
-<td>fcmovnu</td>
-<td>如果st(0)非无序，则进行传送</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">指令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">fcmovb</td>
+          <td style="text-align: left">如果st(0)小于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmove</td>
+          <td style="text-align: left">如果st(0)等于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovbe</td>
+          <td style="text-align: left">如果st(0)小于或等于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovu</td>
+          <td style="text-align: left">如果st(0)无序，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovnb</td>
+          <td style="text-align: left">如果st(0)不小于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovne</td>
+          <td style="text-align: left">如果st(0)不等于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovnbe</td>
+          <td style="text-align: left">如果st(0)不小于或等于st(x)，则进行传送</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fcmovnu</td>
+          <td style="text-align: left">如果st(0)非无序，则进行传送</td>
+      </tr>
+  </tbody>
 </table></div>
 <p>以上可以看出，无论从寄存器的操作，还是计算过程，都比整数运算要繁琐的多，而且看似很简单的一个表达式，转化成浮点汇编需要做很多工作，由于其复杂性，同 一个表达式可以有多种运算过程，当然其中的效率相差很大，这依赖于对浮点汇编的理解程度，好在有高级语言处理相关工作，编写浮点指令的情况比较少见。</p>
 
