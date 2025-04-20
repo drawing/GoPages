@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。\n">
 <title>Linux 内核调试</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux 内核调试'>
-<meta property='og:description' content='UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux 内核调试">
+<meta property='og:description' content="UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-19T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-19T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux 内核调试">
-<meta name="twitter:description" content="UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。
-">
+<meta name="twitter:description" content="UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -238,8 +197,8 @@
     <section class="article-content">
     
     
-    <h1 id="uml调试linux内核">UML调试Linux内核</h1>
-<p>最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。</p>
+    <h1 id="uml调试linux内核">UML调试Linux内核
+</h1><p>最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。</p>
 <p>之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。</p>
 <p>这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如<code>linux- 2.6.34</code>:</p>
 <p>编译内核命令要在普通方式后加入构架um参数：</p>
@@ -312,8 +271,8 @@ Breakpoint 1, start_kernel () at init/main.c:533
 </code></pre>
 <p>居然一切顺利的断到了start_kernel，哈哈，不管如何，总算能够调试内核了。接下来还有UML虚拟机的网络配置，UML使用了一个取巧的方式就是利用 tun 和 iptables ，好在我也研究了大半年，明天继续。</p>
 <p>另外有个GDB调试的问题，明明遇到了SIGSEG，为什么还能继续呢？莫非这个信号是自己发出的？还有之后的SEGTRAP信号是怎么发出来的？要弄清楚这个问题，或许还得查阅UML代码。</p>
-<h1 id="uml网络配置">UML网络配置</h1>
-<p>UML支持多种方式的网络，一般使用tap/tun模拟UML虚拟机中的eth0驱动，仅仅这种方式也能分为桥接和NAT等等，手工配置网络也有助于理解网络的运行方式。</p>
+<h1 id="uml网络配置">UML网络配置
+</h1><p>UML支持多种方式的网络，一般使用tap/tun模拟UML虚拟机中的eth0驱动，仅仅这种方式也能分为桥接和NAT等等，手工配置网络也有助于理解网络的运行方式。</p>
 <p>根据官方文档 <a class="link" href="http://user-mode-linux.sourceforge.net/network.html"  target="_blank" rel="noopener"
     >Simple UML Networking</a> 下载 <code>uml_utilities</code> ，其实也就使用了一个工具 tunctl，这个工具很简单，就是启动 tun 驱动，首先得先查看是否加载 tun 驱动，当然首先需要有root权限：</p>
 <pre><code># 查看用户 ID （tunctl 使用）
@@ -452,8 +411,8 @@ default         192.168.33.33   0.0.0.0         UG    0      0        0 eth0
 # 如果此时不通，可检查iptables的其他规则和UML与主机的路由表配置
 </code></pre>
 <p>这样便可做成NAT的效果，比桥接方式简单的多，只是需要知道iptables的用法。当然以上配置每次重启将会消失，可以写到配置开机自动设置。</p>
-<h1 id="qemu调试linux内核">Qemu调试Linux内核</h1>
-<p>通过UML可以方便的在本机调试Linux内核，UML是一种特殊的虚拟机，另外一种更为灵活的虚拟机是Qemu，Qemu是一种完全仿真虚拟机， 可以在i386平台仿真任意其他处理器构架，而且支持GDB调试，这里尝试一下使用Qemu调试Linux内核，Qemu参数-kernel可以直接指定 内核启动，这与UML有相似之处。</p>
+<h1 id="qemu调试linux内核">Qemu调试Linux内核
+</h1><p>通过UML可以方便的在本机调试Linux内核，UML是一种特殊的虚拟机，另外一种更为灵活的虚拟机是Qemu，Qemu是一种完全仿真虚拟机， 可以在i386平台仿真任意其他处理器构架，而且支持GDB调试，这里尝试一下使用Qemu调试Linux内核，Qemu参数-kernel可以直接指定 内核启动，这与UML有相似之处。</p>
 <p>首先需要编译安装Qemu，这里并没有什么疑惑之处，直接从官方网站下载源码，使用Linux最常用的编译命令即可：</p>
 <pre><code># 默认选项会编译所有处理器构架虚拟机
 # 可以 ./configure --help 查看编译特定平台的配置
@@ -527,8 +486,8 @@ Breakpoint 1, start_kernel () at init/main.c:533
 (gdb)
 </code></pre>
 <p>Qemu由于是完全仿真实现，所以可以在任意平台调试其他构架内核，理论上甚至可以在Windows平台交叉编译Linux内核，再去由Qemu加载调试（交叉编译比较麻烦，需要先编译目标构架的binutil，而后链接内核）。</p>
-<h1 id="uml和qemu调试内核模块">UML和Qemu调试内核模块</h1>
-<p>这次来看如何调试内核模块，也就是驱动程序，模块的调试跟普通程序略有不同，不论是内核还是普通应用程序，在连接之后便以得知代码将要加载的位置，用户态程序有虚拟地址映射机制，而内核独占物理内存。内核运行与共享的内核地址空间，所以不能使用相同的线性地址，只能由内核加载模块时指定起始地址，模块中都以此为偏移运行。所以内核的调试不能使用普通的方式，需要知道模块的加载地址。</p>
+<h1 id="uml和qemu调试内核模块">UML和Qemu调试内核模块
+</h1><p>这次来看如何调试内核模块，也就是驱动程序，模块的调试跟普通程序略有不同，不论是内核还是普通应用程序，在连接之后便以得知代码将要加载的位置，用户态程序有虚拟地址映射机制，而内核独占物理内存。内核运行与共享的内核地址空间，所以不能使用相同的线性地址，只能由内核加载模块时指定起始地址，模块中都以此为偏移运行。所以内核的调试不能使用普通的方式，需要知道模块的加载地址。</p>
 <p>而且Qemu的调试原理与UML相似，也可用相同的方法进行模块的调试，这里仅以UML模块调试举例</p>
 <p>首先需要完成一个内核模块，这里可以照搬之前的 Linux 内核调试 ，保存源文件为go.c，完成Makefile和编译工作，内核源码以编译UML的内核为准：</p>
 <pre><code># Makefile 内容
@@ -670,8 +629,8 @@ Name .symtab Address 0x62872098
 Name .strtab Address 0x628725c0
 </code></pre>
 <p>如此便可稍微方便一点的打印所有段名和段基址，如果添加其他脚本扩展，可以更加方便且高效的调试Linux内核。</p>
-<h1 id="使用kgdb双机调试">使用KGDB双机调试</h1>
-<p>虽然使用UML或者Qemu可以调试Linux内核，但UML和Qemu毕竟是一个模拟，调试硬件驱动总是用虚拟硬件总不成事，而且Qemu据传闻 对于时钟和中断的处理也有问题，所以对于处理真实硬件的问题，最完美的调试方式就是双机调试，被调试内核在完全真实的环境中运行，排除虚拟机制的不稳定因 素，而且使用内核自带的KGDB机制，更具有可靠性，类似Windows下的WinDbg调试方式。这里使用VirtualBox虚拟机进行调试，但所提 及的方法完全适用于诸如VMWare、Qemu虚拟机或者真实机器，只是相关的串口配置方式有些许不同而已。</p>
+<h1 id="使用kgdb双机调试">使用KGDB双机调试
+</h1><p>虽然使用UML或者Qemu可以调试Linux内核，但UML和Qemu毕竟是一个模拟，调试硬件驱动总是用虚拟硬件总不成事，而且Qemu据传闻 对于时钟和中断的处理也有问题，所以对于处理真实硬件的问题，最完美的调试方式就是双机调试，被调试内核在完全真实的环境中运行，排除虚拟机制的不稳定因 素，而且使用内核自带的KGDB机制，更具有可靠性，类似Windows下的WinDbg调试方式。这里使用VirtualBox虚拟机进行调试，但所提 及的方法完全适用于诸如VMWare、Qemu虚拟机或者真实机器，只是相关的串口配置方式有些许不同而已。</p>
 <p>首先需要编译配置KGDB选项的内核，编译方式也比较简单：</p>
 <pre><code># 配置内核选项
 [cpp@dark linux-2.6.34]$ make menucofnig
@@ -896,12 +855,12 @@ cpp@dark:~/kernel/socat-2.0.0-b4$ ./socat -d -d /tmp/vboxS0 pty:1
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -990,7 +949,7 @@ cpp@dark:~/kernel/socat-2.0.0-b4$ ./socat -d -d /tmp/vboxS0 pty:1
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

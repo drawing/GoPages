@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="为什么开始 从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。\n">
+<title>汇编语言学习笔记(零)-为什么开始</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言学习笔记(零)-为什么开始">
+<meta property='og:description' content="为什么开始 从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。\n">
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0/'>
+<meta property='og:site_name' content='涸泽之鱼'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-11T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-04-11T01:16:33&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(零)-为什么开始">
+<meta name="twitter:description" content="为什么开始 从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">📖</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/drawing/'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0/">汇编语言学习笔记(零)-为什么开始</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 11, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="为什么开始">为什么开始
+</h1><p>从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。</p>
+<p>沿袭程序员“良好”习惯，这篇文章做为第零篇，主要总括汇编语言的概况以及它的主要用途，初识一种技能，知道它能做什么或许比如何去做更加有意义。</p>
+<h1 id="汇编语言种类">汇编语言种类
+</h1><p>汇编语言不同于C、C++等高级语言，因为它“派系林立”，语法种类非常之多，但总体来讲各种语法都没有本质的差别，更多的是表述方式不同。</p>
+<p>大学时期学过一门《微机原理》的课程，其中的汇编是微软的Masm语法，如同Windows基本成为系统的代名词，Masm几乎也成了汇编代名词，但我这组文章并不是仅仅用来说明Masm，微软的东西用起来挺方便，用多了感觉多少有点繁琐；Masm 还是 Visual C++编译后端，如果有需要，可以编译C/C++代码到Masm查看汇编代码。</p>
+<p>除此之外，比较流行的语法还有Nasm，这也算是个简洁的语法，简单到连数据类型都没有，只需指定内存大小，如何理解内存是开发者的事情，这样也更接近汇编语言的本质，但易用性就较之Masm差了很多；与Masm专注于Windows平台不同，Nasm是个跨平台语言，几乎可以生成各种平台下各种格式的二进制，官方的教程也写得很详细，只是语言显得有点过于简单，似乎学的人不少，但是用的人不多。</p>
+<p>还有一种比较出名的汇编语法HLA，语法有点类似高级语言，这种语法之所以出名得益于《汇编语言编程艺术》一书，书名有“艺术”一词或许会显得比较高深，但实在不知道这种语法除了作者还有谁在使用，用于何地。</p>
+<p>最后隆重推出的语法是AT&amp;T的GAS语法，压轴戏都是最后登场，此次也不例外，之前提到的各种汇编语法都是伟大的结晶，我也没有任何贬低之意，只是我更加喜欢AT&amp;T而已，AT&amp;T语法是Gcc的后端汇编语法，这也是为什么我更偏爱它的原因之一，Gcc几乎可以在任何平台编译任何代码，GAS当然做到Gcc所实现的事情，Nasm虽然也能轻松跨平台应用，但在特定平台下编译代码，除了代码的二进制还需有资源文件、系统库等，这点需要一个强大的链接器支持，与其使用各种拼盘，不如直接用Gcc套件来的更为直接；AT&amp;T汇编也被应用于Linux内核中，这点也不难理解，原本Gcc编译的代码就跟AT&amp;T汇编是一样的的东西。</p>
+<p>当然，汇编语言种类很多，还有些主要应用于Dos平台，我也没有更多接触，自此也不便妄加评论；汇编之中使用最为广泛的就属Win平台下的MASM和Linux平台下的GAS，之所以重要在于二者分别是VC++和Gcc这两大重器的后端，尤其是在Windows广泛应用的环境下，Masm在汇编语法中就显得更为重要了，所以说，有时候拼的不是谁更出色，而是拼谁的“背景”更牛。若在Linux平台想用汇编对代码进行优化、阅读Linux内核源码，就免不了GAS汇编；在Windows下做优化、破解、外挂，也免不了Masm汇编。虽说二者本质相同，但表现形式还是有很大差别。我这里写的东西并不局限于其中一种汇编，因为二者都是非常重要的语言。</p>
+<h1 id="学习汇编语言有什么用">学习汇编语言有什么用
+</h1><p>在学习汇编之前，很多人可能都有疑问，汇编到底能做什么，除非是Geek，否则没人去用汇编写一套软件出来吧；在这里需要总括一下汇编的用途：</p>
+<ul>
+<li>
+<p>破解：也许汇编最广的用途在于软件的破解，在中国大多数人都在有意无意的使用着盗版，有很多人都不知道自己电脑中哪些软件是需要收费的，也有很多程序员收集很多软件，以及这些软件所对应的注册码供人使用，所谓己所不欲勿施于人，作为一个程序员，却侵犯着其他程序员的利益，好在如今免费的东西越来越多，尤其是互联网的广泛使用，各种云平台的挤压，为服务收费方式越来越多过为软件收费的方式。抛开盗版这种行为，破解软件的过程中本身是件很有趣的事情，是跟软件保护者的一场智力对抗比赛；</p>
+</li>
+<li>
+<p>逆向工程：有时候看到某些软件制作精巧，细想之下居然不知道他是如何实现的，在作者不开源的情况下，要想理解作者的实现思路，只能阅读部分的汇编代码，还原为C代码来仿制作者的功能；同样由于互联网的冲击，提供网络服务的企业越来越多，逆向的需求也越来越少；</p>
+</li>
+<li>
+<p>游戏外挂：破解和逆向的应用场景不断收缩，但与之关联的游戏外挂却越来越火爆（当然法律的越来越健全对外挂有着相当大的阻力），因为通过游戏的盈利点非常清晰，通过一款成功的游戏能够获得巨大收益，而外挂是游戏的一种“捷径”，从中牟取的利益也是非常客观。游戏外挂本身是逆向和破解的集合，对技能的要求非常高。随着网页游戏和手机游戏的逐渐火爆，外挂的形式也变得多种多样，已经并不局限于汇编；</p>
+</li>
+<li>
+<p>系统编程：对于精确定位和控制可执行文件大小方面，恐怕没有哪种高级语言能够实现，Linux内核尽可能使用C语言实现，但是引导区部分仍然需要汇编处理，另外，操控硬件(in,out指令)，中断（int,syscall指令）等等，C语言也需要内联汇编实现；</p>
+</li>
+<li>
+<p>汇编优化：C语言是比较底层的语言，还是需要更进一步编译为汇编代码，由于C需要通用性，翻译成汇编指令的过程中为了兼顾其他平台或者各种可能的用法，对某种具体行为未必能做到最优化处理，这时就需要手动调整汇编代码，不过Gcc 的优化能力已经非常出色，况且这种优化只能是微观优化，大多数情况还得需要宏观的优化，调整算法的复杂度，汇编优化可能提高几倍的效率，业务算法的优化可能能够提升上百倍甚至上千倍的效率，除非这里已经是算法的瓶颈所在，否则汇编优化是没有多少意义的；</p>
+</li>
+<li>
+<p>理解高级语言：C++有很多晦涩的语法，不了解编译器如何实现，可能有各种猜测，但事实是否如此，我们可将最简单的例子编译成汇编阅读，一窥语言的底层实现，不过这里只供理解之用，不是标准规定的，各个平台的实现并不尽相同。</p>
+</li>
+</ul>
+<p>另外还有对可执行文件的二次开发等等，都脱离不了对程序的逆向。同时我们也可以看到，在互联网时代，汇编似乎显得比较没落，更多的学习者都在于增加“功力”而已。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 涸泽之鱼
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

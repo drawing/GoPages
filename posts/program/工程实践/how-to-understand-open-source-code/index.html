@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='为什么阅读源码 最早在学习 C&#43;&#43; 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C&#43;&#43; Programming Language》一书中讲到，如何学好C&#43;&#43;语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="为什么阅读源码 最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。\n">
 <title>如何阅读源代码</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/how-to-understand-open-source-code/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='如何阅读源代码'>
-<meta property='og:description' content='为什么阅读源码 最早在学习 C&#43;&#43; 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C&#43;&#43; Programming Language》一书中讲到，如何学好C&#43;&#43;语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="如何阅读源代码">
+<meta property='og:description' content="为什么阅读源码 最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/how-to-understand-open-source-code/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2011-01-10T22:50:04&#43;08:00'/><meta property='article:modified_time' content='2011-01-10T22:50:04&#43;08:00'/>
 <meta name="twitter:title" content="如何阅读源代码">
-<meta name="twitter:description" content="为什么阅读源码 最早在学习 C&#43;&#43; 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C&#43;&#43; Programming Language》一书中讲到，如何学好C&#43;&#43;语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。
-">
+<meta name="twitter:description" content="为什么阅读源码 最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -238,31 +197,31 @@
     <section class="article-content">
     
     
-    <h1 id="为什么阅读源码">为什么阅读源码</h1>
-<p>最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。</p>
+    <h1 id="为什么阅读源码">为什么阅读源码
+</h1><p>最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身边能够做到 &ldquo;多写&rdquo; 的大有人在，但真正做到 &ldquo;多看&rdquo; 的人却凤毛麟角（这似乎很语言学习相反，大多数人学习语言都喜欢多看，不喜欢多写）。</p>
 <p>在《STL源码剖析》中，侯捷写道：源码之前，了无秘密。想要理解一个开源软件，而不去阅读源码，往往流于表面，远远谈不上深入理解。只有熟悉其源码，这款软件才算真正展示在你的面前。</p>
 <p>常言道，熟读唐诗三百首，不会作诗也会吟。通过阅读高质量的源码，能够开阔眼界，随时可以把别人优秀的设计思路引入到自己的程序当中，见多识广，写出的代码也更能经受时间的考验。</p>
-<h1 id="源码阅读难在哪">源码阅读难在哪</h1>
-<p>阅读源码既然是很重要的，那为什么大多数人不想阅读代码呢。首先，相对文学作品，阅读源码的时候需要更多的思考，即烧脑作品，但本身又很枯燥，当然这样的文学作品和电影也不少，简直让人坐立不安；另外，源码并不像电影，循序渐进的讲述一个故事，更多的是逻辑的跳转、调用等，可能一直窥一斑，无法见全豹，时间一长也便没有耐性看下去了；最后每个人都有自己的想法和思路，看代码仅仅看到的局部，难以了解整体思路，猜测别人的想法也是件痛苦的事情。</p>
-<h1 id="阅读源码之前">阅读源码之前</h1>
-<p>在阅读源码之前，尽可能的了解程序，至少应该懂得如何使用，功能是什么，怎么编译、部署、调用，这是最基本的了解，如果连这些都不清楚，直接看代码是难以快速找到切入点的。</p>
+<h1 id="源码阅读难在哪">源码阅读难在哪
+</h1><p>阅读源码既然是很重要的，那为什么大多数人不想阅读代码呢。首先，相对文学作品，阅读源码的时候需要更多的思考，即烧脑作品，但本身又很枯燥，当然这样的文学作品和电影也不少，简直让人坐立不安；另外，源码并不像电影，循序渐进的讲述一个故事，更多的是逻辑的跳转、调用等，可能一直窥一斑，无法见全豹，时间一长也便没有耐性看下去了；最后每个人都有自己的想法和思路，看代码仅仅看到的局部，难以了解整体思路，猜测别人的想法也是件痛苦的事情。</p>
+<h1 id="阅读源码之前">阅读源码之前
+</h1><p>在阅读源码之前，尽可能的了解程序，至少应该懂得如何使用，功能是什么，怎么编译、部署、调用，这是最基本的了解，如果连这些都不清楚，直接看代码是难以快速找到切入点的。</p>
 <p>另外，如果是成熟的软件，很多人都会进行源码的分析，虽然大多数人讲解可能只是为了记录，未必适合自己，但能够方便了解代码结构和大体架构。</p>
 <p>比如，阅读Redis代码，可以参阅<a class="link" href="http://redisbook.com/"  target="_blank" rel="noopener"
     >Redis 设计与实现</a>，可以看到Redis模块划分比较清晰，通过 <strong>数据结构</strong>，<strong>对象</strong>，<strong>事件模型</strong>，等，可以方便把Redis代码拆解成小部分，每一个部分都是独立的，这样便很容易阅读和理解。当然，很多情况下没有想尽的参考，只能一步步分析学习。</p>
 <p>另外一个需要确定的问题是，阅读源码的目的，要去参与开发，还是只是了解，是要借鉴其中某一种设计思想，还是好奇某个特性是如何实现？怀着不同的目的，方法也必然不同。类似文章阅读的精读和粗读，精读可以详尽了解某软件的实现细节，粗读可以迅速扩展视野。大多数情况下，无法做到精读，了解即可，但有时需要精读一些感兴趣的项目。</p>
-<h1 id="代码分解">代码分解</h1>
-<p>阅读代码首先要了解代码的组成结构，可以通过参考资料，文件名，初步判断文件的作用（这时就体现出来起一个好名字的作用了）。另外可以看一下头文件，通过类名，函数名，大致了解一下，有些可能不知其可，但没有关系，能猜多少算多少。</p>
+<h1 id="代码分解">代码分解
+</h1><p>阅读代码首先要了解代码的组成结构，可以通过参考资料，文件名，初步判断文件的作用（这时就体现出来起一个好名字的作用了）。另外可以看一下头文件，通过类名，函数名，大致了解一下，有些可能不知其可，但没有关系，能猜多少算多少。</p>
 <p>接下来有两种方式，一个是能判断出来文件或类的作用，而且比较独立，精读的话可以先把独立的部分看懂，粗读的话至少需要看一遍主要接口的实现，然后分离出去，这部分代码就不会影响以后的阅读。比如Redis的集中数据结构，字符串，list等，都可以分离出来。</p>
 <p>在阅读源码过程中，一定要重视<strong>接口</strong>的作用，可能一时不大了解实现，但没关系，只要看懂了接口，这部分代码就可以先略过去，不影响以后的阅读。接口是代码之间的粘合剂，通过合理的分离接口，便能把代码分解成不同功能的部分，这也是代码架构必须考虑的问题。只要能够把代码分解，阅读代码便会很轻松了。当然，项目架构过程中，能够合理的把代码分解，也是项目成功的必要因素。</p>
 <p>当然，有时一些有趣的功能，虽然能够分解，但接口使用等等不易理解。一个好的方法就是为这些代码写一些测试程序，尝试通过接口去使用这些代码，便能深刻了解这些接口的含义，当然这需要耗费一些时间，但对理解代码是值得的。比如，Redis的事件驱动，通过尝试写<a class="link" href="/reading/source-analysis-redis-event-model.html" >测试代码</a>，能够快速掌握接口的使用，因为更为熟练，所以在后续的源码阅读过程中，也会感觉更清晰。不管是对某个接口，某个模块，还是对整个项目，熟练使用对代码的理解意义非常大。</p>
-<h1 id="骨架">骨架</h1>
-<p>对于一个网络Server，网络事件处理框架，往往就是这个项目的骨架。对于存储，数据结构往往是个关键，每个程序都有最核心的代码，通过熟悉其使用，猜测核心部分，然后再通过入口，增加日志等等，找到实现原理，再剥离这部分，往更深一层探索。掌握一个项目的骨架，即使很多没看过的地方，也很容易找到对应功能的代码。</p>
-<h1 id="善于动手">善于动手</h1>
-<p>不管是自己负责的项目，还是一些开源项目，如果只是看，即使看的很熟练，往往也是有个模糊的印象，但如果出现一个bug让自己去改，带着这个问题，往往比较容易快速的了解相关的代码。所以，带着一个问题去阅读，往往能起到事半功倍的效果。</p>
+<h1 id="骨架">骨架
+</h1><p>对于一个网络Server，网络事件处理框架，往往就是这个项目的骨架。对于存储，数据结构往往是个关键，每个程序都有最核心的代码，通过熟悉其使用，猜测核心部分，然后再通过入口，增加日志等等，找到实现原理，再剥离这部分，往更深一层探索。掌握一个项目的骨架，即使很多没看过的地方，也很容易找到对应功能的代码。</p>
+<h1 id="善于动手">善于动手
+</h1><p>不管是自己负责的项目，还是一些开源项目，如果只是看，即使看的很熟练，往往也是有个模糊的印象，但如果出现一个bug让自己去改，带着这个问题，往往比较容易快速的了解相关的代码。所以，带着一个问题去阅读，往往能起到事半功倍的效果。</p>
 <p>对于开源项目，可能没有那么多修改的机会（但也可以尝试去查看官网的Bug列表，挑一些简单的练手）。可以自己尝试做一些修改，包括写一些接口测试代码，尝试修改成一种奇怪又有趣的运行方式，比如阅读Linux进程代码，可以尝试写一个简单的进程调度算法，或者如果出现某个进程，强制执行完成等等。尝试一些类似Hacker的工作，既有趣又能很深刻的掌握相关代码，也是一些可以尝试的方法。</p>
 <p>另外，执行过程中进行调试，或者增加一些日志，也是很好的弄懂某个问题的方法。总之一句话，要动手去改，才能发现真实的项目。</p>
-<h1 id="善于总结">善于总结</h1>
-<p>代码阅读完成，可能一段时间便会遗忘，所以要做一些总结和分享，一个有效的方法就是绘制UML图，画一些类图，以及相互之间的关系，画一些时序图，记录代码运行过程。像Redis虽然是c实现，但其中也尽是面向对象方法，不难用UML绘制。另外一项就是分享，可以写一些博客，或者面对面分享，在相互交流中很可能想到之前一直没有想过的问题。</p>
+<h1 id="善于总结">善于总结
+</h1><p>代码阅读完成，可能一段时间便会遗忘，所以要做一些总结和分享，一个有效的方法就是绘制UML图，画一些类图，以及相互之间的关系，画一些时序图，记录代码运行过程。像Redis虽然是c实现，但其中也尽是面向对象方法，不难用UML绘制。另外一项就是分享，可以写一些博客，或者面对面分享，在相互交流中很可能想到之前一直没有想过的问题。</p>
 <p>另外，很多开源的项目有着类似的架构和设计思想，通过提炼总结，下次阅读代码时，会更加有效的找到自己想要了解的部分，以及一个功能最应该考虑的部分是什么，比如自己曾经写过或者读过一个网络框架程序，再次遇到类似程序，可以把之前项目中一些不是很清楚的，或者性能的瓶颈，或者实现不优雅的部分，对应到当前项目中，相互对比学习，也能更快的掌握代码的核心。</p>
 
 </section>
@@ -430,12 +389,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -524,7 +483,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

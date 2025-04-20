@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？\n">
 <title>做最好的架构-范式和总结</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/do-best-system-design-using-paradigm/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='做最好的架构-范式和总结'>
-<meta property='og:description' content='武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="做最好的架构-范式和总结">
+<meta property='og:description' content="武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/do-best-system-design-using-paradigm/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2011-01-11T22:50:04&#43;08:00'/><meta property='article:modified_time' content='2011-01-11T22:50:04&#43;08:00'/>
 <meta name="twitter:title" content="做最好的架构-范式和总结">
-<meta name="twitter:description" content="武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？
-">
+<meta name="twitter:description" content="武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -238,23 +197,23 @@
     <section class="article-content">
     
     
-    <h1 id="武侠中的境界">武侠中的境界</h1>
-<p>《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？</p>
+    <h1 id="武侠中的境界">武侠中的境界
+</h1><p>《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？</p>
 <p>事实却恰恰相反，郭靖武功大进是在桃花岛山洞，周伯通教授九阴真经开始，九阴真经中的武功包罗万象，如九阴白骨抓，移魂大法，大伏魔拳法，易筋锻骨等等，每种武学实际都有很大差别。后周伯通又教授了空明拳，左右互博，在洪七公、欧阳锋和黄药师比拼音律的时候又学习攻守进退之法，又经常与裘千仞欧阳锋等过招比拼，后又受一灯大师指点，内外精修方才窥视武学至高境界，成为旷世高手。</p>
 <p>不过郭靖资质平平，武学也就止于此，而杨过则更进一步，机缘下学习了林朝英和王重阳的武功，后学习了部分九阴真经，还有从小学习的蛤蟆功，后来又学了打狗棒法和东邪黄药师的武功，最后又在神雕帮助下学习了独孤求败的武学。基本上学全了当时最厉害的武学，集大成后创了黯然销魂掌，三拳五脚便干掉了老顽童等三人合力拿下的金轮法王。</p>
 <p>金庸武学中，要想窥视武学的最高境界，必须在机缘下学习很多不同的武学，相互印证，至少也需要不断跟其他高手过招。反观天下第一的王重阳教出的徒弟，虽然不至于很弱，但难以成为高手，归根结底还是因为只学习重阳宫一种武学。再看少林寺，一直成为武林至尊，在于少林本身一派就有很强的七十二种绝技，所谓他山之石可以攻玉，虽然练成多种的人很少，却能做一些参考。但七十二种每一种都不是当时顶尖的武学，所以少林靠自身的武功一直没有绝顶的高手。</p>
 <p>总结一下，要想成为一个高手，当然至少需要精通一门顶级的武学，另外还需要不断涉猎至少是需要了解其他顶级的武学，了解越多，才能相互印证自身的武学，眼界才能更上一层楼。</p>
-<h1 id="一专多长">一专多长</h1>
-<p>放到编程领域，同样需要如此。从最基本的编程语言来讲，经常在一些人简历上看到各种语言学全了，其实往往哪个都没学好，就好比爬山，一个山头爬了一半，根本不知道山顶的样子，也不知道其他山有多高，再去爬其他的山，爬了一半也以为到顶了；另外，如果精通一门语言，可以说是一个好的程序员，但如果想更进一步，还需要了解其他语言的优缺点。有一门自身喜爱并精通的语言，又可以了然其他语言的设计原则，像 lisp，erlang 等很有特色的语言，虽然不一定会用，有所了解往往能开阔自身眼界，用自己熟悉的语言时，理解会更深。</p>
+<h1 id="一专多长">一专多长
+</h1><p>放到编程领域，同样需要如此。从最基本的编程语言来讲，经常在一些人简历上看到各种语言学全了，其实往往哪个都没学好，就好比爬山，一个山头爬了一半，根本不知道山顶的样子，也不知道其他山有多高，再去爬其他的山，爬了一半也以为到顶了；另外，如果精通一门语言，可以说是一个好的程序员，但如果想更进一步，还需要了解其他语言的优缺点。有一门自身喜爱并精通的语言，又可以了然其他语言的设计原则，像 lisp，erlang 等很有特色的语言，虽然不一定会用，有所了解往往能开阔自身眼界，用自己熟悉的语言时，理解会更深。</p>
 <p>又比如设计一个业务的存储系统，可能比较精通公司用的某一种很出色的存储，再去写新的存储时，当然不会写的太差，但未必会成为当时这种情况下最合适的存储。可能会有其他设计迥异但又很合适的方案，只因为自己没有见过，很难想出，即使想出来，也不如别人经过若干年的检验来的细致。</p>
 <p>程序代码的设计更是如此，GOF 总结了 23 种设计模式，就是为了使我们更快速的了解前人不同场景下合理的设计，不过也就常说的那句话，没有写过或者维护过类似的系统，是无法很好的理解设计模式的，每种模式背后都有大量的故事，总结这 23 种模式的人是牛人，学习这 23 种模式的人未必会成为牛人，其实设计模式远远不止 23 种，何止成千上万种，大量的模式需要在实践中慢慢摸索学习，不过同样的，当对某一种或者几种模式有了深刻的理解和教训，再去看其他模式，多少也能理解更加深入。</p>
 <p>所以，不论做哪方面设计，精通一种出色的设计是必须的，但同时需要尽可能了解更多更出色的设计，这样再遇到新的挑战时才能自然而然相处最合适的方案。</p>
-<h1 id="范式">范式</h1>
-<p>引用 <a class="link" href="http://baike.baidu.com/subview/26218/6845453.htm#viewPageContent"  target="_blank" rel="noopener"
+<h1 id="范式">范式
+</h1><p>引用 <a class="link" href="http://baike.baidu.com/subview/26218/6845453.htm#viewPageContent"  target="_blank" rel="noopener"
     >百度百科</a> 解释：范式（paradigm）的概念和理论是美国著名科学哲学家托马斯·库恩 (Thomas,Kuhn) 提出并在《科学革命的结构》(The Structure of Scientific Revolutions)（1962）中系统阐述的，它指的是一个共同体成员所共享的信仰、价值、技术等等的集合。指常规科学所赖以运作的理论基础和实践规范，是从事某一科学的研究者群体所共同遵从的世界观和行为方式。</p>
 <p>这个定义说的也很清楚，范式就是成熟的一些套路，遵循这些套路便能做出不错的设计，这也是走向好的架构必经的节点。比如存储设计，有如 MySQL 这种使用 B+ 树的模式，也有 leveldb 这种 LSM tree 的模式，还有 Redis 这种 Hash+dump 的方式。每种设计又有通用或者特有的一些防止数据丢失和修复的操作。精通其中之一可能会很好的完成一个新的存储设计，但同时了解其他范式，则能更加合理和全面的做出更符合需要的设计，而且通过相互之间的对比，会加深对设计的理解。</p>
-<h1 id="世界观和方法论">世界观和方法论</h1>
-<p>虽说，熟读唐诗三百首，不会作诗也会吟，当了解领域内的不同设计范式以后，还可以更进一步，归纳总结不同设计的特点，抽象自身的世界观和方法论，甚至设计更好的方案。其实世界观和方法论总体来讲比较虚，有点形而上学的意思。</p>
+<h1 id="世界观和方法论">世界观和方法论
+</h1><p>虽说，熟读唐诗三百首，不会作诗也会吟，当了解领域内的不同设计范式以后，还可以更进一步，归纳总结不同设计的特点，抽象自身的世界观和方法论，甚至设计更好的方案。其实世界观和方法论总体来讲比较虚，有点形而上学的意思。</p>
 <p>学习的境界就好比佛家三境界，看山是山，看水是水；看山不是山，看水不是水；看山还是山，看水还是水。就拿设计模式举例，设计模式背后的世界观和方法论就是几种设计原则，初学者看这些原则的时候，往往觉得很容易理解，这就看山是山的境界；当深入的学习设计的模式和原理以后，会发现这几种原则不是那么简单，每个都蕴含着千万的道理在其中，这就是看山不是山的境界；再学到后来，各种设计模式融会贯通，建立自己的世界观和方法论，发现其实设计也就这几种原理，无需什么模式便能做出优秀的设计，这就是看山还是山的境界了。</p>
 <p>学习的路径很漫长，但归根结底就是学习前人的范式，总结自己的方法论，先继承，再创新。</p>
 
@@ -423,12 +382,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -517,7 +476,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

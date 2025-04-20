@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
-Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：\nRedis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。\n">
 <title>overcommit 对 fork 的影响</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='overcommit 对 fork 的影响'>
-<meta property='og:description' content='问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
-Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="overcommit 对 fork 的影响">
+<meta property='og:description' content="问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：\nRedis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-06-10T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-06-10T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="overcommit 对 fork 的影响">
-<meta name="twitter:description" content="问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
-Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。
-">
+<meta name="twitter:description" content="问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：\nRedis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。\n">
     </head>
     <body class="
     article-page
@@ -62,7 +56,7 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -75,10 +69,10 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -100,54 +94,15 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -155,7 +110,7 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -163,10 +118,11 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -241,8 +197,8 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
     <section class="article-content">
     
     
-    <h1 id="问题">问题</h1>
-<p>线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：</p>
+    <h1 id="问题">问题
+</h1><p>线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error
 </span></span></code></pre></div><p>RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。</p>
 <p>查看 Redis 的日志发现：</p>
@@ -250,10 +206,10 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
 </span></span><span class="line"><span class="cl">[23830] 14 Jan 20:13:11.060 # Can&#39;t save in background: fork: Cannot allocate memory
 </span></span><span class="line"><span class="cl">[23830] 14 Jan 20:13:17.067 * 1 changes in 900 seconds. Saving...
 </span></span><span class="line"><span class="cl">[23830] 14 Jan 20:13:17.068 # Can&#39;t save in background: fork: Cannot allocate memory
-</span></span></code></pre></div><h1 id="原因">原因</h1>
-<p>看到问题应该是由于fork出来一个进程后台持久化数据，由于内存不足导致fork失败，当Redis持久化失败时，设置当前为禁写的状态（读队列会删除元素，也算写操作）。使用info查看Redis状态，<code>rdb_last_bgsave_status</code>显示为 err。此时即使重新设置状态为ok也无用，因为很快就会下一轮fork，状态会被重置。</p>
-<h1 id="overcommit">overcommit</h1>
-<p><a class="link" href="http://redis.io/topics/faq"  target="_blank" rel="noopener"
+</span></span></code></pre></div><h1 id="原因">原因
+</h1><p>看到问题应该是由于fork出来一个进程后台持久化数据，由于内存不足导致fork失败，当Redis持久化失败时，设置当前为禁写的状态（读队列会删除元素，也算写操作）。使用info查看Redis状态，<code>rdb_last_bgsave_status</code>显示为 err。此时即使重新设置状态为ok也无用，因为很快就会下一轮fork，状态会被重置。</p>
+<h1 id="overcommit">overcommit
+</h1><p><a class="link" href="http://redis.io/topics/faq"  target="_blank" rel="noopener"
     >官方文档</a>有相关信息，需要设置<code>echo 1 &gt; /proc/sys/vm/overcommit_memory</code>，查阅<a class="link" href="http://www.win.tue.nl/~aeb/linux/lk/lk-9.html"  target="_blank" rel="noopener"
     >Linux Memory </a>发现，<code>overcommit_memory</code> 指定了Linux内存分配的策略。可选值：0，1，2。</p>
 <ul>
@@ -271,8 +227,8 @@ Redis is configured to save RDB snapshots, but is currently not able to persist 
 <p>overcommit 的策略通过<code>vm.overcommit_memory</code>设置
 overcommit的百分比由<code>vm.overcommit_ratio</code>设置</p>
 <p><code>overcommit_memory</code>设置为0时，Redis fork Linux会假定子进程占用同样多的内存空间（根据实际映射的物理内存决定），如果free空间不足，会发生错误导致无法正常fork。</p>
-<h1 id="复盘">复盘</h1>
-<p>复盘一下发现：写入量过大，导致fork时内存不足，fork失败，Redis这种情况下会切换成紧写的状态。导致Redis不可用，如果设置 <code>overcommit_memory</code> 为1，看到Redis上一次dump数据花费了60s左右，内存使用12G，每条数据大小500字节左右，60s时间队列读取速度为4M，基本上相当于2G数据量，可以看到变化的数据有20%不到，根据写时复制的原则，fork就不会有问题了。</p>
+<h1 id="复盘">复盘
+</h1><p>复盘一下发现：写入量过大，导致fork时内存不足，fork失败，Redis这种情况下会切换成紧写的状态。导致Redis不可用，如果设置 <code>overcommit_memory</code> 为1，看到Redis上一次dump数据花费了60s左右，内存使用12G，每条数据大小500字节左右，60s时间队列读取速度为4M，基本上相当于2G数据量，可以看到变化的数据有20%不到，根据写时复制的原则，fork就不会有问题了。</p>
 <p>不过Redis作为队列，在消息流动比较大，而且消息时效性比较强的情况下，可以禁用数据持久化功能，提升效率。</p>
 
 </section>
@@ -440,12 +396,12 @@ overcommit的百分比由<code>vm.overcommit_ratio</code>设置</p>
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -534,7 +490,7 @@ overcommit的百分比由<code>vm.overcommit_ratio</code>设置</p>
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。\n">
 <title>Linux内核数据结构</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核数据结构'>
-<meta property='og:description' content='内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux内核数据结构">
+<meta property='og:description' content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-17T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-17T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核数据结构">
-<meta name="twitter:description" content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
-">
+<meta name="twitter:description" content="内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -294,10 +253,10 @@
     <section class="article-content">
     
     
-    <h1 id="内核链表">内核链表</h1>
-<p>Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。</p>
-<h2 id="概览">概览</h2>
-<p>先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：</p>
+    <h1 id="内核链表">内核链表
+</h1><p>Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。</p>
+<h2 id="概览">概览
+</h2><p>先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：</p>
 <pre><code>// include/linux/types.h
 struct list_head {
         struct list_head *next, *prev;
@@ -339,8 +298,8 @@ struct list_head {
 <pre><code>simple * p = list_entry(ptr, struct simple, list);
 </code></pre>
 <p>这样便解决了从<code>list_head</code>上获取附着的数据的问题。接下来需要解决对链表的增删改查的问题：</p>
-<h2 id="初始化链表">初始化链表</h2>
-<p>初始化链表有两种方法，LIST_HEAD_INIT和LIST_HEAD</p>
+<h2 id="初始化链表">初始化链表
+</h2><p>初始化链表有两种方法，LIST_HEAD_INIT和LIST_HEAD</p>
 <pre><code>#define LIST_HEAD_INIT(name) { &amp;(name), &amp;(name) }
 
 #define LIST_HEAD(name) \
@@ -353,8 +312,8 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
 }
 </code></pre>
 <p>创建一个指向自身的节点。</p>
-<h2 id="插入节点">插入节点</h2>
-<p>在节点后插入新节点<code>list_add_tail</code>，和在节点前插入新节点<code>list_add</code>：</p>
+<h2 id="插入节点">插入节点
+</h2><p>在节点后插入新节点<code>list_add_tail</code>，和在节点前插入新节点<code>list_add</code>：</p>
 <pre><code>/**
  * list_add - add a new entry
  * @new: new entry to be added
@@ -382,8 +341,8 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
 }
 </code></pre>
 <p>其中 <code>__list_add</code> 只是普通的链表操作，并无特别之处，可参见Linux源码查看实现。</p>
-<h2 id="删除节点">删除节点</h2>
-<pre><code>static inline void list_del(struct list_head *entry)
+<h2 id="删除节点">删除节点
+</h2><pre><code>static inline void list_del(struct list_head *entry)
 {
         __list_del(entry-&gt;prev, entry-&gt;next);
         entry-&gt;next = LIST_POISON1;
@@ -391,15 +350,15 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
 }
 </code></pre>
 <p><code>__list_del</code> 把entry从链表中删除，之后把entry链表指针复制成非空指针（如果使用会出现段错误）</p>
-<h2 id="检查是否空链表">检查是否空链表</h2>
-<p>判断一个链表是否为空，只需要看头节点是否指向自己便可：</p>
+<h2 id="检查是否空链表">检查是否空链表
+</h2><p>判断一个链表是否为空，只需要看头节点是否指向自己便可：</p>
 <pre><code>static inline int list_empty(const struct list_head *head)
 {
         return head-&gt;next == head;
 }
 </code></pre>
-<h2 id="遍历链表">遍历链表</h2>
-<p>遍历是这几种操作中最为复杂的，有四个函数：</p>
+<h2 id="遍历链表">遍历链表
+</h2><p>遍历是这几种操作中最为复杂的，有四个函数：</p>
 <pre><code>#define list_for_each(pos, head) \
         for (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
 
@@ -417,8 +376,8 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
              pos = list_entry(pos-&gt;member.prev, typeof(*pos), member))
 </code></pre>
 <p><code>list_for_each</code> 和 <code>list_for_each_prev</code> 较为简单，一个向后遍历，另一个向前遍历，<code>list_for_each_entry</code>和<code>list_for_each_entry_reverse</code>功能相似，不过不是对<code>list_head</code>操作，而是直接对结构体操作，如我们这里的simple结构。根据之前的叙述也不难理解函数实现，只是在<code>list_head</code>上调用了<code>list_entry</code>获取了完整结构。</p>
-<h2 id="实例">实例</h2>
-<p>千言万语不如一个例子来的直观，我们通过一个简单的例子说明一下如何使用内核链表：</p>
+<h2 id="实例">实例
+</h2><p>千言万语不如一个例子来的直观，我们通过一个简单的例子说明一下如何使用内核链表：</p>
 <pre><code>#include &lt;linux/list.h&gt;
 #include &lt;linux/kernel.h&gt;
 #include &lt;stdio.h&gt;
@@ -458,9 +417,9 @@ int main()
 <p>编译参数为</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">gcc -D__KERNEL__ -I/usr/src/linux-headers-3.2.0-27-generic/include/ -I/usr/src/linux-headers-3.2.0-27-generic/arch/ia64/include/ simple.c
 </span></span></code></pre></div><p>其中头文件中都是内核函数，需要宏<code>__KERNEL__</code>，否则大部分定义会被忽略。</p>
-<h1 id="hash表">Hash表</h1>
-<h2 id="定义">定义</h2>
-<p>链表虽然是最常见的数据结构，但实际使用中，由于链表的检索能力较差，更多的是作为队列和栈结构使用，如果需要查询，比如通过pid查找进程，通过描述符查找inode，就需要用到检索更快的数据结构——Hash表。
+<h1 id="hash表">Hash表
+</h1><h2 id="定义">定义
+</h2><p>链表虽然是最常见的数据结构，但实际使用中，由于链表的检索能力较差，更多的是作为队列和栈结构使用，如果需要查询，比如通过pid查找进程，通过描述符查找inode，就需要用到检索更快的数据结构——Hash表。
 先来看Hash节点的定义：</p>
 <pre><code>struct hlist_head {
 	struct hlist_node *first;
@@ -471,8 +430,8 @@ struct hlist_node {
 </code></pre>
 <p>其中 <code>hlist_head</code> 为头结点，与链表不同的是还需要一个节点的概念 <code>hlist_node</code>，他们之间的关系如图：</p>
 <p>左侧是定长数组，每个节点是 <code>hlist_head</code> ，其中first指向 <code>hlist_node</code> 节点，<code>hlist_node</code>又组成一列链表，<code>hlist_node</code>的链表结构跟 <code>list_head</code>不同之处在于 <code>hlist_node</code> 的 pprev 指向了 前一个节点的指针地址。</p>
-<h2 id="基本操作">基本操作</h2>
-<p>Hash表使用起来也非常简单，首先通过hash函数计算目标值，得到一个索引，在<code>hlist_head</code>数组中找到相应位置，再插入链表。Hash的链表Linux也提供了多种操作方式：</p>
+<h2 id="基本操作">基本操作
+</h2><p>Hash表使用起来也非常简单，首先通过hash函数计算目标值，得到一个索引，在<code>hlist_head</code>数组中找到相应位置，再插入链表。Hash的链表Linux也提供了多种操作方式：</p>
 <pre><code>#define INIT_HLIST_HEAD(ptr) ((ptr)-&gt;first = NULL)
 static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h);
 static inline void hlist_add_before(struct hlist_node *n, 
@@ -510,8 +469,8 @@ static inline void hlist_move_list(struct hlist_head *old,
 }
 </code></pre>
 <p>这个函数把32位整数Hash成bits位的整数，另外还有 <code>hash_64</code> 等等Hash函数。</p>
-<h2 id="实例-1">实例</h2>
-<p>最后再来通过一个简单的例子看一下Hash表的使用：</p>
+<h2 id="实例-1">实例
+</h2><p>最后再来通过一个简单的例子看一下Hash表的使用：</p>
 <pre><code>#include &lt;linux/kernel.h&gt;
 #include &lt;linux/types.h&gt;
 #include &lt;linux/list.h&gt;
@@ -597,9 +556,9 @@ MODULE_VERSION(&quot;V0.1&quot;);
 MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
 </code></pre>
 <p>这里的代码是一个简单的Linux内核，关于如何写一个简单的Linux内核，可以参阅 Linux字符设备驱动框架</p>
-<h1 id="红黑树">红黑树</h1>
-<h2 id="定义-1">定义</h2>
-<p>Hash表虽然检索复杂度只需要O(1)，但是性能依赖于Hash函数，不合适的Hash函数会导致性能极其低下，而且需要预分配Hash头结点的空间，扩展性和性能稳定性都是问题，所以Linux内核另外还有一套快速插入查询的数据结构——红黑树。</p>
+<h1 id="红黑树">红黑树
+</h1><h2 id="定义-1">定义
+</h2><p>Hash表虽然检索复杂度只需要O(1)，但是性能依赖于Hash函数，不合适的Hash函数会导致性能极其低下，而且需要预分配Hash头结点的空间，扩展性和性能稳定性都是问题，所以Linux内核另外还有一套快速插入查询的数据结构——红黑树。</p>
 <p>红黑树是一种平衡二叉树，二叉树查找效率是O(logn)，但对于某些极端情况下，一个分支的节点远高于另一个分支，处于不平衡状态下的二叉树性能很差，极端情况跟链表相同。所以出现很多保持二叉树平衡的方法，其中一种便是红黑树，红黑树在二叉树的基础上又规定了一些规则：</p>
 <ul>
 <li>性质1：节点是红色或黑色。</li>
@@ -609,8 +568,8 @@ MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
 <li>性质5：从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。</li>
 </ul>
 <p>红黑树的性质保证了从根节点到任何一个叶子节点的长度都不会相差两倍以上，只要在增删的过程中保持红黑树的性质，也便保持了树的平衡性。</p>
-<h2 id="实现">实现</h2>
-<p>红黑树在内核中的实现位于：</p>
+<h2 id="实现">实现
+</h2><p>红黑树在内核中的实现位于：</p>
 <pre><code>linux/lib/rbtree.c
 linux/include/linux/rbtree.h
 </code></pre>
@@ -631,8 +590,8 @@ struct rb_root
 };
 </code></pre>
 <p>可以看到红黑树同链表一样，都没有数据块的定义，因为C语言中没有模版，这样实现能使数据结构跟具体的业务分离，<code>rb_root</code> 中仅有一个 rb_node 域，rb_node中有颜色和左右节点的指针，都很容易理解。</p>
-<h2 id="初始化">初始化</h2>
-<p>节点的初始化操作，节点默认被置为红色：</p>
+<h2 id="初始化">初始化
+</h2><p>节点的初始化操作，节点默认被置为红色：</p>
 <pre><code>static inline void rb_init_node(struct rb_node *rb)
 {
 	rb-&gt;rb_parent_color = 0;
@@ -641,16 +600,16 @@ struct rb_root
 	RB_CLEAR_NODE(rb);
 }
 </code></pre>
-<h2 id="增删操作">增删操作</h2>
-<p>红黑树的增加删除操作如下：</p>
+<h2 id="增删操作">增删操作
+</h2><p>红黑树的增加删除操作如下：</p>
 <pre><code>// node为已插入的节点，函数检查树的平衡性并修正
 void rb_insert_color(struct rb_node *node, struct rb_root *root);
 // 删除节点
 void rb_erase(struct rb_node *node, struct rb_root *root);
 </code></pre>
 <p>由于二叉树需要比较数据区域的大小，这里仅仅有节点是不够的，所以插入操作需要调用者比较插入，然后调用<code>rb_insert_color</code>调整树的平衡性，<code>rb_erase</code>可以直接删除，另外搜索操作也需要用户根据二叉树的性质自己处理，在头文件rbtree.h开头的注释给了一个使用的例子，这里再试着写一个简单的例子：</p>
-<h2 id="例子">例子</h2>
-<pre><code>#include &lt;linux/kernel.h&gt;
+<h2 id="例子">例子
+</h2><pre><code>#include &lt;linux/kernel.h&gt;
 #include &lt;linux/types.h&gt;
 #include &lt;linux/init.h&gt;
 #include &lt;linux/module.h&gt;
@@ -748,11 +707,11 @@ MODULE_VERSION(&quot;V0.1&quot;);
 MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
 </code></pre>
 <p>程序编译运行请参考 Linux字符设备驱动框架。</p>
-<h1 id="radix-tree">Radix Tree</h1>
-<h2 id="定义-2">定义</h2>
-<p>Linux内核实现了大量的数据结构，其中树结构除了前面提到的红黑树以外，还有一种很有意思的树-Radix Tree，翻译为基数树。Radix Tree也是一种key-value结构，要说最快速的key-value查找结构，非数组莫属，只需一次定位便可找到目标值，其缺点是需要占用过多的内存空间，如果连续的key中大多数都是空值，空间的利用率会非常低，如一个整数范围的key，value占一个字节也需要4G的存储，当key非常稀疏的情况下，无疑是一种浪费，Radix Tree的解决方式是分级，简单来说，如果按照整数的尾数分为2级，第一级需要10个指针即可，尾数为0的key映射到第一个指针上，第一个指针再指向存储数组，这样如果只有0-4的key，便可不需要给5-9的指针分配空间，可节省一半的空间。当然这只是简单的例子，内核的Radix Tree更为精炼。</p>
-<h2 id="实现-1">实现</h2>
-<p>Linux内核的根据Radix Tree的高度把key分为若干段，如下图所示，每段长度固定为<code>RADIX_TREE_MAP_SHIFT</code>，树高度可通过<code>radix_tree_extend</code>扩展，key的每一段分别指定了每一层的位置。</p>
+<h1 id="radix-tree">Radix Tree
+</h1><h2 id="定义-2">定义
+</h2><p>Linux内核实现了大量的数据结构，其中树结构除了前面提到的红黑树以外，还有一种很有意思的树-Radix Tree，翻译为基数树。Radix Tree也是一种key-value结构，要说最快速的key-value查找结构，非数组莫属，只需一次定位便可找到目标值，其缺点是需要占用过多的内存空间，如果连续的key中大多数都是空值，空间的利用率会非常低，如一个整数范围的key，value占一个字节也需要4G的存储，当key非常稀疏的情况下，无疑是一种浪费，Radix Tree的解决方式是分级，简单来说，如果按照整数的尾数分为2级，第一级需要10个指针即可，尾数为0的key映射到第一个指针上，第一个指针再指向存储数组，这样如果只有0-4的key，便可不需要给5-9的指针分配空间，可节省一半的空间。当然这只是简单的例子，内核的Radix Tree更为精炼。</p>
+<h2 id="实现-1">实现
+</h2><p>Linux内核的根据Radix Tree的高度把key分为若干段，如下图所示，每段长度固定为<code>RADIX_TREE_MAP_SHIFT</code>，树高度可通过<code>radix_tree_extend</code>扩展，key的每一段分别指定了每一层的位置。</p>
 <p><img src="/keep/2014/0_radix-tree.png"
 	
 	
@@ -1013,12 +972,12 @@ void *radix_tree_lookup(struct radix_tree_root *root, unsigned long index)
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -1107,7 +1066,7 @@ void *radix_tree_lookup(struct radix_tree_root *root, unsigned long index)
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

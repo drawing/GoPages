@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。\n">
 <title>告警优化实践总结</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='告警优化实践总结'>
-<meta property='og:description' content='一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="告警优化实践总结">
+<meta property='og:description' content="一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2023-04-11T22:50:04&#43;08:00'/><meta property='article:modified_time' content='2023-04-11T22:50:04&#43;08:00'/>
 <meta name="twitter:title" content="告警优化实践总结">
-<meta name="twitter:description" content="一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。
-">
+<meta name="twitter:description" content="一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -276,11 +235,11 @@
     <section class="article-content">
     
     
-    <h2 id="一背景">一、背景</h2>
-<p>对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。</p>
+    <h2 id="一背景">一、背景
+</h2><p>对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。</p>
 <p>如何提升告警的有效性，准确识别问题，同时又不至于淹没在大量的无效告警中，正是本文所探讨的内容。</p>
-<h2 id="二告警是可靠性的基础">二、告警是可靠性的基础</h2>
-<p>首先来看一下告警的重要性，为什么我们需要耗费这么多精力来优化告警。虽然我们都期望一个服务是没有故障的，但事实确是不存在 100% 没问题的系统，我们只能不断提升服务的可靠性，我们期望做到：</p>
+<h2 id="二告警是可靠性的基础">二、告警是可靠性的基础
+</h2><p>首先来看一下告警的重要性，为什么我们需要耗费这么多精力来优化告警。虽然我们都期望一个服务是没有故障的，但事实确是不存在 100% 没问题的系统，我们只能不断提升服务的可靠性，我们期望做到：</p>
 <ul>
 <li>对服务当前状态了如指掌，尽在掌控</li>
 <li>能够第一时间发现问题，并且快速定位问题原因</li>
@@ -295,7 +254,7 @@
 <p><img src="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28.png"
 	width="2042"
 	height="570"
-	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu15943157384875458411.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu11269095617358630092.png 1024w"
+	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu_5c02b0a123951714.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-10-28_hu_4e3a04fe1131c729.png 1024w"
 	loading="lazy"
 	
 		alt="可用性指标"
@@ -307,8 +266,8 @@
 	
 ></p>
 <p>可靠性在于追求更高的 MTTF 和低的 MTTR（平均无故障时间）。最好的情况是能够不产生故障，但不存在 100%可靠的系统，当出现故障/异常时，我们需要尽可能减少 MTTR（平均修复时间），告警的意义在于尽可能减少 T2 + T3 时间。</p>
-<h2 id="三告警面临的现实问题">三、告警面临的现实问题</h2>
-<p>理想中的告警，不存在误报（即本来正常的，告警为异常）也不存在漏报（即本来异常的，误认为正常），所以理想的模型满足以下三点：</p>
+<h2 id="三告警面临的现实问题">三、告警面临的现实问题
+</h2><p>理想中的告警，不存在误报（即本来正常的，告警为异常）也不存在漏报（即本来异常的，误认为正常），所以理想的模型满足以下三点：</p>
 <ul>
 <li>误报为 0：出现的告警都是需要处理的问题</li>
 <li>漏报为 0：异常问题都能够告警发现</li>
@@ -322,7 +281,7 @@
 <p><img src="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21.png"
 	width="766"
 	height="388"
-	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu3871953080438610077.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu3726007170146800320.png 1024w"
+	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu_1656a1389f622278.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-21_hu_c9a717097bc356de.png 1024w"
 	loading="lazy"
 	
 	
@@ -335,7 +294,7 @@
 <p><img src="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50.png"
 	width="916"
 	height="510"
-	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu9081048393850106354.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu17186107071552279164.png 1024w"
+	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu_f96b09533ca0f416.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-11-50_hu_4ed910c5853daa7e.png 1024w"
 	loading="lazy"
 	
 	
@@ -345,8 +304,8 @@
 	
 ></p>
 <p>减少误告警的思路，就是要尽可能减少现象产生的原因，如果能减少到唯一的一个原因，那就能很明确问题所在。</p>
-<h2 id="四告警分类">四、告警分类</h2>
-<p>同样是告警，对于 CPU 跑满这种情况需要立即处理，但对于单机健康状态告警（正常异常机器会自动置换，异常情况可能置换失败），系统并不能自动解决这种状况，但是一段时间内不处理，也不会造成影响，负载均衡设备会自动摘除。</p>
+<h2 id="四告警分类">四、告警分类
+</h2><p>同样是告警，对于 CPU 跑满这种情况需要立即处理，但对于单机健康状态告警（正常异常机器会自动置换，异常情况可能置换失败），系统并不能自动解决这种状况，但是一段时间内不处理，也不会造成影响，负载均衡设备会自动摘除。</p>
 <p>所以这里涉及到一个告警分类的问题，当然，告警可以有很多种分类方法，分成很多种级别区别对待，但在优化无效告警的目标下，我们通过是否需要立即停下手头工作立即处理，分为三类：</p>
 <ul>
 <li><strong>紧急</strong>：收到报警就需要立即执行某种操作。如 CPU 跑满，内存跑满等。判断标准，是否对业务有影响，以及是否有潜在的未知风险</li>
@@ -357,8 +316,8 @@
 <p>对于不需要处理的异常，则完全没有必要进行告警。如果需要感知事件，可以通过邮件方式进行时候定时通知，无需通过告警渠道打断工作。</p>
 <p>对于不紧急的告警，如果工具支持的话，应该以工单的形式定时推送，统一处理，没必要进行实时告警，减少对正常工作的打断。在工具不支持的场景，可以适当调整告警间隔时间，以及重复告警的收敛策略。如单机异常可以整点告警，避免重复打断工作，当然，如果同时超过一定百分比的机器异常，这便转换为紧急告警了，需要实时触达。</p>
 <p>对于紧急告警，应该尽量提升其实时性和准确性，尽可能去除无效告警。那应该如何进行无效告警的识别和判断呢，接下来可以看一下告警设置的原则。</p>
-<h2 id="五告警设置原则">五、告警设置原则</h2>
-<p>每当告警发生时，值班同学需要暂停手头工作，查看告警。这种中断非常影响工作效率，增加研发成本，特别对正在开发调试的同学，影响很严重。所以，每当我们收到告警时，我们希望它能真实的反映出异常，即告警尽可能不误报（对正常状态报警）；每当有异常产生时，报警应该及时发出来，即告警不能漏报（错过报警）。误报和漏报总是一对矛盾的指标。</p>
+<h2 id="五告警设置原则">五、告警设置原则
+</h2><p>每当告警发生时，值班同学需要暂停手头工作，查看告警。这种中断非常影响工作效率，增加研发成本，特别对正在开发调试的同学，影响很严重。所以，每当我们收到告警时，我们希望它能真实的反映出异常，即告警尽可能不误报（对正常状态报警）；每当有异常产生时，报警应该及时发出来，即告警不能漏报（错过报警）。误报和漏报总是一对矛盾的指标。</p>
 <p>以下是一些告警设置原则：</p>
 <ul>
 <li><strong>告警具备真实性</strong>：告警必须反馈某个真实存在的现象，展示你的服务正在出现的问题或即将出现的问题</li>
@@ -368,8 +327,8 @@
 <li><strong>告警持续优化</strong>：后续持续对告警进行统计分析，对误报的告警，通过屏蔽、简化、阈值调整、更精准的体现原因等多种方式减少误报，这是一个相对长期的过程。</li>
 </ul>
 <p>再以请求失败举例，如仅当请求的失败量超过某一阈值时告警，可能存在多种原因，如一些恶意构造的请求，也触发失败量告警。这样的告警既不具备真实性，也不具备可操作性，因为确实无需任何处理。对于此类情况，我们应该尽可能通过特性加以识别，从而更加精准的区分原因的告警。</p>
-<h2 id="六善用工具">六、善用工具</h2>
-<p>另外优化告警的一个必备条件，就是要熟悉所用告警平台使用，如果都不知道告警平台可以做到什么程度，可以设置怎样灵活的条件阈值，是很难对告警做合理优化的。</p>
+<h2 id="六善用工具">六、善用工具
+</h2><p>另外优化告警的一个必备条件，就是要熟悉所用告警平台使用，如果都不知道告警平台可以做到什么程度，可以设置怎样灵活的条件阈值，是很难对告警做合理优化的。</p>
 <ul>
 <li>监控告警平台能做到什么：业务基础指标，系统基础指标，各种维度的统计方式</li>
 <li>告警阈值设置：如何电话/短信告警设置</li>
@@ -380,7 +339,7 @@
 <p><img src="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22.png"
 	width="2806"
 	height="938"
-	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu6602699653685221263.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu14153978391679206386.png 1024w"
+	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu_64922816938903f4.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-22_hu_d06063aadf0dcd19.png 1024w"
 	loading="lazy"
 	
 	
@@ -389,13 +348,13 @@
 		data-flex-basis="717px"
 	
 ></p>
-<h2 id="七告警处理流程">七、告警处理流程</h2>
-<p>前面提到了告警的优化是一个持续的过程，不存在一劳永逸的事情。需要每天或者每周安排值班人员负责告警事宜，这点上确实是需要一定的投入。值班同学需要持续关注告警的有效性，对于出现的无效告警，分析清楚原因，持续优化阈值或者告警策略。</p>
+<h2 id="七告警处理流程">七、告警处理流程
+</h2><p>前面提到了告警的优化是一个持续的过程，不存在一劳永逸的事情。需要每天或者每周安排值班人员负责告警事宜，这点上确实是需要一定的投入。值班同学需要持续关注告警的有效性，对于出现的无效告警，分析清楚原因，持续优化阈值或者告警策略。</p>
 <p>合理的告警流转流程：</p>
 <p><img src="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33.png"
 	width="1688"
 	height="174"
-	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hu9448743948538008039.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hu11685085295150633733.png 1024w"
+	srcset="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hu_e67bbc90e25aa18.png 480w, /posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/2023-04-12-18-13-33_hu_ead2a0e23216cc14.png 1024w"
 	loading="lazy"
 	
 	
@@ -413,8 +372,8 @@
 <li><strong>明确根本原因</strong>：确保弄清楚问题原因，而不是表面上恢复。比如单台机器 CPU 跑满告警，可能存在未知的死循环问题，如果仅仅重启进程恢复，很可能掩盖了问题，导致未来出现大面积的死循环引发故障</li>
 </ul>
 <p>最后告警的处理，在心态上要做到：凡事最好能在不疑处有疑，不能在有疑处不疑。</p>
-<h2 id="参考引用">参考&amp;引用</h2>
-<p>《SRC：Google 运维解密》
+<h2 id="参考引用">参考&amp;引用
+</h2><p>《SRC：Google 运维解密》
 《MTTR/MTTF/MTBF 图解》：https://blog.csdn.net/starshinning975/article/details/102893787
 《一篇文章了解监控告警》：https://zhuanlan.zhihu.com/p/60416209
 《准确率、精度和召回率》：https://www.cnblogs.com/xuexuefirst/p/8858274.html
@@ -585,12 +544,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -679,7 +638,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='C&#43;&#43;11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
-题外话 C&#43;&#43;语言是一门非常繁复的语言，支持的编程范式很多：
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。\n题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：\n">
 <title>C&#43;&#43;11 详解</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/meaning-of-c&#43;&#43;11/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='C&#43;&#43;11 详解'>
-<meta property='og:description' content='C&#43;&#43;11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
-题外话 C&#43;&#43;语言是一门非常繁复的语言，支持的编程范式很多：
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="C++11 详解">
+<meta property='og:description' content="C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。\n题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/meaning-of-c&#43;&#43;11/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2011-04-15T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2011-04-15T22:40:04&#43;08:00'/>
-<meta name="twitter:title" content="C&#43;&#43;11 详解">
-<meta name="twitter:description" content="C&#43;&#43;11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
-题外话 C&#43;&#43;语言是一门非常繁复的语言，支持的编程范式很多：
-">
+<meta name="twitter:title" content="C++11 详解">
+<meta name="twitter:description" content="C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。\n题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：\n">
     </head>
     <body class="
     article-page
@@ -62,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -75,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -100,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -155,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -163,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -303,26 +259,26 @@
     
     
     <p>C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。</p>
-<h1 id="题外话">题外话</h1>
-<p>C++语言是一门非常繁复的语言，支持的编程范式很多：</p>
+<h1 id="题外话">题外话
+</h1><p>C++语言是一门非常繁复的语言，支持的编程范式很多：</p>
 <ul>
 <li>面向过程编程（c子集）</li>
 <li>面向对象OO</li>
 <li>泛型编程</li>
 </ul>
 <p>而且C++本身并不限制使用者，方便使用者进行混用，再加上包罗万象的语法和各种隐晦的含义，也很方便使用者滥用和误用。</p>
-<h2 id="艺术-vs-工程">艺术 vs 工程</h2>
-<p>编程中常会有编程是门艺术还是一项工程的考虑，最完美的结果当然是艺术与工程的完美结合，但现实往往所有偏向，以我个人的理解，<strong>艺术是让最优秀的人做的最好，工程是让最平庸的人做的不能太差</strong>。像画家，只要一根笔就能绘制无穷的世界，但只有最优秀的艺术家才能做出珍品，平庸的人往往都是涂鸦，这就是艺术的最好体现。而像流水线的工人，只要培训几天就能上岗，机械的重复简单的劳动，集合起来便能做出令人惊讶的产品，这就是工程的力量。而编程，是一项脑力劳动，不能像流水线的工人那么机械，需要自身的创作，所以会有艺术成分。像很多年以前的手工业者，也往往蕴涵艺术创作，随着时代发展，越来越倾向于工程创作。编程同样也是如此，尤其是大型项目，往往更侧重工程性而非艺术性。</p>
-<h2 id="c-是一门艺术">C++ 是一门艺术</h2>
-<p>如果认同上面的理论，那就很容易得出，C++是一门艺术，优秀的人能写出优雅的艺术作品，平庸的人几乎没办法避免滥用。所以在学习的时候，要非常审慎，避免误用造成涂鸦。</p>
-<h2 id="可以这么用-vs-为什么要这么用">可以这么用 vs 为什么要这么用</h2>
-<p>在学习C++，如果仅仅是知道语法，并不算学会了C++，如果看到一个语法，心里想，原来C++可以这么用，往往会误入歧途，正确的想法应该是想，为什么要有这样一个语法，用其他的语法替代会有什么优点和缺点，刨根追底，才会更好的避免误用。同时，每个C++语法的引入，都是旷日持久的讨论权衡的结果，通过理解引入的原因，也能增加自身的编程技艺。</p>
-<h1 id="c11-编译">C++11 编译</h1>
-<p>C++11 大多数情况下兼容之前版本，从C99版本升级到C++11，C++11扩充了关键字，如果之前代码有用到，需要替换，增加编译参数<code>c++11</code>:</p>
+<h2 id="艺术-vs-工程">艺术 vs 工程
+</h2><p>编程中常会有编程是门艺术还是一项工程的考虑，最完美的结果当然是艺术与工程的完美结合，但现实往往所有偏向，以我个人的理解，<strong>艺术是让最优秀的人做的最好，工程是让最平庸的人做的不能太差</strong>。像画家，只要一根笔就能绘制无穷的世界，但只有最优秀的艺术家才能做出珍品，平庸的人往往都是涂鸦，这就是艺术的最好体现。而像流水线的工人，只要培训几天就能上岗，机械的重复简单的劳动，集合起来便能做出令人惊讶的产品，这就是工程的力量。而编程，是一项脑力劳动，不能像流水线的工人那么机械，需要自身的创作，所以会有艺术成分。像很多年以前的手工业者，也往往蕴涵艺术创作，随着时代发展，越来越倾向于工程创作。编程同样也是如此，尤其是大型项目，往往更侧重工程性而非艺术性。</p>
+<h2 id="c-是一门艺术">C++ 是一门艺术
+</h2><p>如果认同上面的理论，那就很容易得出，C++是一门艺术，优秀的人能写出优雅的艺术作品，平庸的人几乎没办法避免滥用。所以在学习的时候，要非常审慎，避免误用造成涂鸦。</p>
+<h2 id="可以这么用-vs-为什么要这么用">可以这么用 vs 为什么要这么用
+</h2><p>在学习C++，如果仅仅是知道语法，并不算学会了C++，如果看到一个语法，心里想，原来C++可以这么用，往往会误入歧途，正确的想法应该是想，为什么要有这样一个语法，用其他的语法替代会有什么优点和缺点，刨根追底，才会更好的避免误用。同时，每个C++语法的引入，都是旷日持久的讨论权衡的结果，通过理解引入的原因，也能增加自身的编程技艺。</p>
+<h1 id="c11-编译">C++11 编译
+</h1><p>C++11 大多数情况下兼容之前版本，从C99版本升级到C++11，C++11扩充了关键字，如果之前代码有用到，需要替换，增加编译参数<code>c++11</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">g++ -std=c++11 test.cpp
-</span></span></code></pre></div><h1 id="c11-语法">C++11 语法</h1>
-<h2 id="auto类型推断">auto类型推断</h2>
-<p>auto 语法为了简化，一个是简化写法，一个是简化程序员心智，有时候不需要关心到底是什么类型。auto 语法很简单，但需要知道 auto 是在编译期间推断的类型：</p>
+</span></span></code></pre></div><h1 id="c11-语法">C++11 语法
+</h1><h2 id="auto类型推断">auto类型推断
+</h2><p>auto 语法为了简化，一个是简化写法，一个是简化程序员心智，有时候不需要关心到底是什么类型。auto 语法很简单，但需要知道 auto 是在编译期间推断的类型：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int main()
 </span></span><span class="line"><span class="cl">{
 </span></span><span class="line"><span class="cl">        vector&lt;int&gt; vec;
@@ -337,8 +293,8 @@
 </span></span><span class="line"><span class="cl">        return a;
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>其实以上写法不能编译通过，需要返回值后置语法。</p>
-<h2 id="返回值后置语法">返回值后置语法</h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">auto func() -&gt; int {
+<h2 id="返回值后置语法">返回值后置语法
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">auto func() -&gt; int {
 </span></span><span class="line"><span class="cl">        int a = 10;
 </span></span><span class="line"><span class="cl">        return a;
 </span></span><span class="line"><span class="cl">}
@@ -364,8 +320,8 @@
 </span></span><span class="line"><span class="cl">	return nullptr;
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>另外一种用法是模板的返回值类型推断，需要结合decltype使用。</p>
-<h2 id="decltype">decltype</h2>
-<p>通过使用 decltype 语法，可以在编译期间获得auto或者其他变量的类型，进行定义同类型的新变量。</p>
+<h2 id="decltype">decltype
+</h2><p>通过使用 decltype 语法，可以在编译期间获得auto或者其他变量的类型，进行定义同类型的新变量。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
 </span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
@@ -381,8 +337,8 @@
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>使用decltype的其中一个好处，正如auto的好处，不用关心具体的类型，另外一个也是用在模板，通过非成员begin来说明。</p>
-<h2 id="非成员begin--end">非成员begin &amp; end</h2>
-<p>经常使用stl的人应该很熟悉成员begin和end，分别表示起始和结束的迭代器，这也是标准库的统一接口。在C++11中引入了非成员begin和end，用法如下：</p>
+<h2 id="非成员begin--end">非成员begin &amp; end
+</h2><p>经常使用stl的人应该很熟悉成员begin和end，分别表示起始和结束的迭代器，这也是标准库的统一接口。在C++11中引入了非成员begin和end，用法如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int a[] = {2, 1, 3};
 </span></span><span class="line"><span class="cl">std::sort(std::begin(a), std::end(a));
 </span></span><span class="line"><span class="cl">
@@ -395,8 +351,8 @@
 </span></span><span class="line"><span class="cl">template &lt;class T, size_t N&gt;
 </span></span><span class="line"><span class="cl">T* end (T(&amp;arr)[N]);
 </span></span></code></pre></div><p>这里也是 decltype 和 auto 的经典使用法，否则需要多一个模板参数才能实现，不方便调用。但仔细想下，非成员 begin 和 end 的作用其实只是统一了数组和容器，并没有太多可讲之处，不过这种统一方便了另外一个foreach语法。</p>
-<h2 id="for-each">for each</h2>
-<p>foreach 可以简化代码，让代码更清晰可读性更强，使用方法如下：</p>
+<h2 id="for-each">for each
+</h2><p>foreach 可以简化代码，让代码更清晰可读性更强，使用方法如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int arr[] = {2, 2, 3, 8, 3};
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">for (auto v: arr) {
@@ -407,8 +363,8 @@
 </span></span><span class="line"><span class="cl">	v ++;
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>之所以能做到foreach，得益于非成员begin&amp;end，通过foreach的原理，自定义的容易，只要实现begin，end，operator[]操作符，调用方也可使用foreach语法。</p>
-<h2 id="lambda-表达式">lambda 表达式</h2>
-<p>lambda 表达式是C++11重点引入的语法之一，通过lambda表达式和闭包，可以使代码更为简洁，所谓<em>闭包</em>，是词法闭包（Lexical Closure）的简称，是引用了自由变量的函数。这个被引用的自由变量将和这个函数一同存在，即使已经离开了创造它的环境也不例外。所以，有另一种说法认为闭包是由函数和与其相关的引用环境组合而成的实体。</p>
+<h2 id="lambda-表达式">lambda 表达式
+</h2><p>lambda 表达式是C++11重点引入的语法之一，通过lambda表达式和闭包，可以使代码更为简洁，所谓<em>闭包</em>，是词法闭包（Lexical Closure）的简称，是引用了自由变量的函数。这个被引用的自由变量将和这个函数一同存在，即使已经离开了创造它的环境也不例外。所以，有另一种说法认为闭包是由函数和与其相关的引用环境组合而成的实体。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">vector&lt;int&gt; vec;
 </span></span><span class="line"><span class="cl">std::for_each(vec.begin(), vec.end(), [](int v){ cout &lt;&lt; v &lt;&lt; endl;});
 </span></span><span class="line"><span class="cl">
@@ -426,8 +382,8 @@
 </ul>
 <p>其中<code>&amp;</code>引用传递需要注意外部变量的生命周期，如果是局部变量，一定要确保闭包的生命周期在局部变量之前完结。</p>
 <p>现在回头再想一下，<code>for_each</code>是如何实现的呢？这就要用到 function。</p>
-<h2 id="function">function</h2>
-<p>闭包也是一个对象，可以使用function模板类型的变量接收：</p>
+<h2 id="function">function
+</h2><p>闭包也是一个对象，可以使用function模板类型的变量接收：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">int TestFunction(int param, std::function&lt;int(int)&gt; fun) {
 </span></span><span class="line"><span class="cl">	return fun(param);
 </span></span><span class="line"><span class="cl">}
@@ -438,8 +394,8 @@
 </span></span><span class="line"><span class="cl">	cout &lt;&lt; ret &lt;&lt; endl;
 </span></span><span class="line"><span class="cl">	return 0;
 </span></span><span class="line"><span class="cl">}
-</span></span></code></pre></div><h2 id="右值引用和move语义">右值引用和move语义</h2>
-<p>在C++03及之前的标准，临时对象（称为右值<code>R-values</code>，位于赋值运算符之右）无法被改变。C++11增加一个新的非常数引用类型，称作右值引用（R-value reference），标记为<code>T &amp;&amp;</code>。右值引用所引用的临时对象可以在该临时对象被初始化之后做修改，这是为了允许move语义。</p>
+</span></span></code></pre></div><h2 id="右值引用和move语义">右值引用和move语义
+</h2><p>在C++03及之前的标准，临时对象（称为右值<code>R-values</code>，位于赋值运算符之右）无法被改变。C++11增加一个新的非常数引用类型，称作右值引用（R-value reference），标记为<code>T &amp;&amp;</code>。右值引用所引用的临时对象可以在该临时对象被初始化之后做修改，这是为了允许move语义。</p>
 <p>简单来说，在C++中经常需要创建一些临时对象，对于小内存变量还好，对于有大块内存的变量，如string等，拷贝一次将会浪费很大的空间，而临时变量创建一次就需要销毁，造成性能的浪费，move语意可以方便的把临时变量中的内存，转移到另一个对象中（当然每个类转移的代码需要自己编写）。先来看一个简单的例子：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">string one = &#34;TestOne String&#34;;
 </span></span><span class="line"><span class="cl">string two = std::move(one);
@@ -484,8 +440,8 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">long</span><span class="p">)</span><span class="n">elem</span><span class="o">.</span><span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span></code></pre></div><p>可以看到，通过<code>std::move</code>方式，修改了<code>elem</code>地址，完成了<code>move</code>操作。当然，如果原始值以后还有用处，就不要使用move语意，避免出现代码逻辑错误或者理解上的偏差。</p>
-<h2 id="元组">元组</h2>
-<p>C++11标准库提供了<code>std::tuple</code>类，可以方便的把若干不同类型元素集合在一起：</p>
+<h2 id="元组">元组
+</h2><p>C++11标准库提供了<code>std::tuple</code>类，可以方便的把若干不同类型元素集合在一起：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">std::tuple&lt;int, int, int&gt; fun() {
 </span></span><span class="line"><span class="cl">	return std::make_tuple(1, 2, 3);
 </span></span><span class="line"><span class="cl">}
@@ -496,8 +452,8 @@
 </span></span><span class="line"><span class="cl">auto t = fun();
 </span></span><span class="line"><span class="cl">int one = std::get&lt;0&gt;(t);
 </span></span></code></pre></div><p><code>tuple</code>只是一个类库，可以设想一下这个类库如何实现？这里就要用到新的语法，变长参数模板。</p>
-<h2 id="变长参数模板">变长参数模板</h2>
-<p>C++11 支持可变长参数的模板，类似可变长参数：</p>
+<h2 id="变长参数模板">变长参数模板
+</h2><p>C++11 支持可变长参数的模板，类似可变长参数：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">template&lt;typename ... Types&gt;
 </span></span><span class="line"><span class="cl">struct Tuple {};
 </span></span><span class="line"><span class="cl">
@@ -524,8 +480,8 @@
 </span></span><span class="line"><span class="cl">        Print(1, 2, 3, 10, &#39;a&#39;, &#34;is string&#34;);
 </span></span><span class="line"><span class="cl">        return 0;
 </span></span><span class="line"><span class="cl">}
-</span></span></code></pre></div><h2 id="nullptr">nullptr</h2>
-<p>nullptr 的出现主要是为了替换NULL，为什么需要一个 nullptr 呢？那就得看下NULL在使用过程中会有什么问题。NULL在C/C++中只是一个宏：</p>
+</span></span></code></pre></div><h2 id="nullptr">nullptr
+</h2><p>nullptr 的出现主要是为了替换NULL，为什么需要一个 nullptr 呢？那就得看下NULL在使用过程中会有什么问题。NULL在C/C++中只是一个宏：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#ifdef __cplusplus
 </span></span></span><span class="line"><span class="cl"><span class="cp">#define NULL 0
 </span></span></span><span class="line"><span class="cl"><span class="cp">#else
@@ -535,8 +491,8 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void func(int *p);
 </span></span><span class="line"><span class="cl">void func(int i);
 </span></span></code></pre></div><p>调用方使用 <code>func(NULL)</code> 实际上调用的是<code>void func(int i);</code>，但NULL给人的信息是空指针，表意跟实际运行不同，会误导我们以为调用的是<code>void func(int *p);</code>，从而产生隐晦的错误，为了防止这种问题出现，于是 nullptr 被引入了，表示空指针，从而终结了0和NULL的各种说不清道不明的关系。</p>
-<h2 id="override--final">override &amp; final</h2>
-<p>override 和 final 相对含义比较清楚，在之前的版本，对类继承重写等并没有太多限制，可能会由于编码错误等原因误用，C++11中加强了这方面的语法检查：</p>
+<h2 id="override--final">override &amp; final
+</h2><p>override 和 final 相对含义比较清楚，在之前的版本，对类继承重写等并没有太多限制，可能会由于编码错误等原因误用，C++11中加强了这方面的语法检查：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">class Shape {
 </span></span><span class="line"><span class="cl">public:
 </span></span><span class="line"><span class="cl">	virtual void draw() {
@@ -574,8 +530,8 @@
 </span></span><span class="line"><span class="cl">// complie failed
 </span></span><span class="line"><span class="cl">class SubClass : public FinalClass {
 </span></span><span class="line"><span class="cl">};
-</span></span></code></pre></div><h2 id="委托构造函数">委托构造函数</h2>
-<p>在C++03以前，构造函数不能相互调用，要想重用代码，必须写一个类似Init的函数，不同的构造函数都去调用，在C++11中，构造函数可以相互调用，如下所示：</p>
+</span></span></code></pre></div><h2 id="委托构造函数">委托构造函数
+</h2><p>在C++03以前，构造函数不能相互调用，要想重用代码，必须写一个类似Init的函数，不同的构造函数都去调用，在C++11中，构造函数可以相互调用，如下所示：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">class</span> <span class="ne">Shape</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl"><span class="n">public</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl">	<span class="ne">Shape</span><span class="p">()</span> <span class="p">:</span> <span class="ne">Shape</span><span class="p">(</span><span class="s2">&#34;Default&#34;</span><span class="p">)</span> <span class="p">{}</span>
@@ -584,8 +540,8 @@
 </span></span><span class="line"><span class="cl">	<span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span></code></pre></div><p>虽然使用起来比较方便，不过到底是使用Init函数集中初始化好呢，还是构造函数相互调用更清晰？这就看具体的问题了。</p>
-<h2 id="使用默认或禁用函数">使用默认或禁用函数</h2>
-<p>C++11允许显式地表明采用或拒用编译器提供的内置函数。例如要求类带有默认构造函数，可以用以下的语法：</p>
+<h2 id="使用默认或禁用函数">使用默认或禁用函数
+</h2><p>C++11允许显式地表明采用或拒用编译器提供的内置函数。例如要求类带有默认构造函数，可以用以下的语法：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">struct SomeType
 </span></span><span class="line"><span class="cl">{
 </span></span><span class="line"><span class="cl">  SomeType() = default;
@@ -604,8 +560,8 @@
 </span></span><span class="line"><span class="cl">	void f(int i);
 </span></span><span class="line"><span class="cl">    void f(double) = delete;
 </span></span><span class="line"><span class="cl">};
-</span></span></code></pre></div><h2 id="constexpr">constexpr</h2>
-<p>类似const，但比const更加严格，声明为constexpr的变量，取值必须在编译器间获得，否则编译出错。</p>
+</span></span></code></pre></div><h2 id="constexpr">constexpr
+</h2><p>类似const，但比const更加严格，声明为constexpr的变量，取值必须在编译器间获得，否则编译出错。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">constexpr</span> <span class="ne">int</span> <span class="n">add</span><span class="p">(</span><span class="k">const</span> <span class="ne">int</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="ne">int</span> <span class="n">b</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
@@ -640,8 +596,8 @@
 </span></span><span class="line"><span class="cl">        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="容器初始化列表">容器初始化列表</h2>
-<p>C++11 支持通过数组初始化容器：</p>
+</span></span></code></pre></div><h2 id="容器初始化列表">容器初始化列表
+</h2><p>C++11 支持通过数组初始化容器：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
 </span></span></code></pre></div><p>这里的实现是通过模板<code>template&lt;class T&gt; class initializer_list;</code>，下面通过一个简单的例子展示如何让自己的类通过列表初始化：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">class TestInit
@@ -655,8 +611,8 @@
 </span></span><span class="line"><span class="cl">};
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">TestInit a = {1, 3, 5, 7};
-</span></span></code></pre></div><h2 id="reference-wrapper">reference wrapper</h2>
-<p>看一个模板的例子：</p>
+</span></span></code></pre></div><h2 id="reference-wrapper">reference wrapper
+</h2><p>看一个模板的例子：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
@@ -685,8 +641,8 @@
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>第一次call调用以后，i值没有变化，因为模板推导时，P自动推导成了int，call的第二个参数是int有一次值拷贝，通过使用<code>std::ref</code>，显示的指定这应该推导为引用，即能修改i的值。</p>
-<h2 id="强类型枚举">强类型枚举</h2>
-<p>在C++中，enum枚举类型与define类似，定义了一个常量，可以与整型相互转换与比较，这样往往违背了enum的初衷，C++11中增加了强类型枚举：</p>
+<h2 id="强类型枚举">强类型枚举
+</h2><p>在C++中，enum枚举类型与define类似，定义了一个常量，可以与整型相互转换与比较，这样往往违背了enum的初衷，C++11中增加了强类型枚举：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="n">CType</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">One</span><span class="p">,</span> <span class="n">Two</span><span class="p">,</span> <span class="n">Three</span>
 </span></span><span class="line"><span class="cl"><span class="p">};</span>
@@ -709,9 +665,9 @@
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>CType 为类型更强的枚举，没法cout输出，也不能跟整数相互转换。</p>
-<h1 id="c11-扩展库">C++11 扩展库</h1>
-<h2 id="智能指针">智能指针</h2>
-<p>智能指针的作用应该都比较清楚，为了防止内存泄漏，或者野指针，C++11在这方面也做了很多工作，先来看最基本的<code>shared_ptr</code>，每当复制出来一份副本，引用计数+1，当所有副本都销毁时，内存也会被释放：</p>
+<h1 id="c11-扩展库">C++11 扩展库
+</h1><h2 id="智能指针">智能指针
+</h2><p>智能指针的作用应该都比较清楚，为了防止内存泄漏，或者野指针，C++11在这方面也做了很多工作，先来看最基本的<code>shared_ptr</code>，每当复制出来一份副本，引用计数+1，当所有副本都销毁时，内存也会被释放：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">class Shape {
 </span></span><span class="line"><span class="cl">public:
 </span></span><span class="line"><span class="cl">	Shape() {cout &lt;&lt; &#34;Create&#34; &lt;&lt; endl;}
@@ -751,8 +707,8 @@
 </span></span><span class="line"><span class="cl">        std::unique_ptr&lt;int&gt; p2 = std::move(p1);
 </span></span><span class="line"><span class="cl">        return 0;
 </span></span><span class="line"><span class="cl">}
-</span></span></code></pre></div><h2 id="散列表">散列表</h2>
-<p>stl 的 set，和map都是红黑树变种实现，在C++11版本中引入四种了hash实现，分别为：<code>unordered_set</code>, <code>unordered_map</code>, <code>unordered_multimap</code>, <code>unordered_multiset</code>，如果之前用过set和map，这四种分别表示什么也很容易理解，只不过换成了hash表实现，set和map是根据大小创建红黑树，所以只要重载<code>operator &lt;</code>即可，在<code>unordered_set</code>中，使用hash表，当然需要提供一个自定义函数了，参照前面的hash实现，另外，通过hash不能判断两个元素是否相同，还需要重载<code>operator==</code>运算符，<code>unordered_set</code>的声明如下：</p>
+</span></span></code></pre></div><h2 id="散列表">散列表
+</h2><p>stl 的 set，和map都是红黑树变种实现，在C++11版本中引入四种了hash实现，分别为：<code>unordered_set</code>, <code>unordered_map</code>, <code>unordered_multimap</code>, <code>unordered_multiset</code>，如果之前用过set和map，这四种分别表示什么也很容易理解，只不过换成了hash表实现，set和map是根据大小创建红黑树，所以只要重载<code>operator &lt;</code>即可，在<code>unordered_set</code>中，使用hash表，当然需要提供一个自定义函数了，参照前面的hash实现，另外，通过hash不能判断两个元素是否相同，还需要重载<code>operator==</code>运算符，<code>unordered_set</code>的声明如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">template &lt; class Key,
 </span></span><span class="line"><span class="cl">           class Hash = hash&lt;Key&gt;,
 </span></span><span class="line"><span class="cl">           class Pred = equal_to&lt;Key&gt;,
@@ -782,8 +738,8 @@
 </span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="err">复杂度，最好情况下</span><span class="n">st</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="err">，最坏情况下</span> <span class="n">O</span><span class="p">(</span><span class="n">n</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">st</span><span class="o">.</span><span class="n">rehash</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span> <span class="o">//</span> <span class="n">real</span> <span class="mi">103</span>
 </span></span></code></pre></div><p><code>max_load_factor</code> 有重载的带参数函数，可进行设置，由调用者决定最大因子。rehash后迭代器失效，但对于取出来的独立的元素地址或者引用，是可以继续使用的。</p>
-<h2 id="hash">hash</h2>
-<p>hash 的实现使用了模板，用法如下：</p>
+<h2 id="hash">hash
+</h2><p>hash 的实现使用了模板，用法如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">struct</span> <span class="ne">Shape</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="n">string</span> <span class="n">name</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">	<span class="ne">bool</span> <span class="n">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="ne">Shape</span> <span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
@@ -810,8 +766,8 @@
 </span></span><span class="line"><span class="cl">	<span class="n">set</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="多线程">多线程</h2>
-<p>C++11标准库提供了多线程支持，可以用很简单的方法创建线程：</p>
+</span></span></code></pre></div><h2 id="多线程">多线程
+</h2><p>C++11标准库提供了多线程支持，可以用很简单的方法创建线程：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void thread_task() {
 </span></span><span class="line"><span class="cl">        cout &lt;&lt; &#34;one task begin.&#34; &lt;&lt; endl;
 </span></span><span class="line"><span class="cl">        std::chrono::milliseconds dura(3000);
@@ -826,17 +782,17 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>另外还有若干锁的支持，具体可参阅手册：<a class="link" href="http://en.cppreference.com/w/cpp/thread"  target="_blank" rel="noopener"
     >http://en.cppreference.com/w/cpp/thread</a></p>
-<h1 id="升级老代码到c11">升级老代码到C++11</h1>
-<p>C++11 兼容大部分语法，升级的时候只需要增加<code>-std=c++11</code>即可，不过多数情况下升级并没有这么简单，需要几点注意：</p>
+<h1 id="升级老代码到c11">升级老代码到C++11
+</h1><p>C++11 兼容大部分语法，升级的时候只需要增加<code>-std=c++11</code>即可，不过多数情况下升级并没有这么简单，需要几点注意：</p>
 <ul>
 <li>关键字扩充，如果之前的老代码有使用C++11的关键字作为变量，需要替换变量名</li>
 <li>C++11语法更为严格，如没有引入头文件，某些隐式转换，会变成编译错误，需要加入头文件或者强制转换</li>
 </ul>
-<h1 id="总结">总结</h1>
-<p>最后总结一下，C++11主要是在代码的简化上做了优化，如auto，lambda，尤其是加强了模板的功能，通过模板和库来提升语言的表达能力，之前的C++版本，语法即语法，库即库，C++11中可以看到更多的是语法和库密不可分，融为一体。而且在尽量消除一些隐晦的错误，如nullptr，final等。</p>
+<h1 id="总结">总结
+</h1><p>最后总结一下，C++11主要是在代码的简化上做了优化，如auto，lambda，尤其是加强了模板的功能，通过模板和库来提升语言的表达能力，之前的C++版本，语法即语法，库即库，C++11中可以看到更多的是语法和库密不可分，融为一体。而且在尽量消除一些隐晦的错误，如nullptr，final等。</p>
 <p>另外，C++的设计者始终秉承一个原则，就是你不知道的语法对你不会有任何影响，不论是性能上还是代码编写上，所以，不论是否精通C++的各种语法，只要知道一个子集，便能写出很好的代码，贪多不一定是好事。</p>
-<h1 id="参考">参考</h1>
-<ul>
+<h1 id="参考">参考
+</h1><ul>
 <li>wikipedia : <a class="link" href="http://zh.wikipedia.org/wiki/C%2B%2B11"  target="_blank" rel="noopener"
     >http://zh.wikipedia.org/wiki/C%2B%2B11</a></li>
 <li>cppreference : <a class="link" href="http://en.cppreference.com/w/cpp"  target="_blank" rel="noopener"
@@ -923,7 +879,7 @@
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/">
         
         
 
@@ -936,7 +892,7 @@
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/">
         
         
 
@@ -1008,12 +964,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -1102,7 +1058,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

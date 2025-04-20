@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。\n">
 <title>汇编语言练习-AT&amp;T汇编win32窗口</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='汇编语言练习-AT&amp;T汇编win32窗口'>
-<meta property='og:description' content='AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言练习-AT&T汇编win32窗口">
+<meta property='og:description' content="AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-28T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-28T01:18:03&#43;08:00'/>
-<meta name="twitter:title" content="汇编语言练习-AT&amp;T汇编win32窗口">
-<meta name="twitter:description" content="AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
-">
+<meta name="twitter:title" content="汇编语言练习-AT&T汇编win32窗口">
+<meta name="twitter:description" content="AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -274,8 +233,8 @@
     <section class="article-content">
     
     
-    <h1 id="att-bios模式">AT&amp;T BIOS模式</h1>
-<p>BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。</p>
+    <h1 id="att-bios模式">AT&amp;T BIOS模式
+</h1><p>BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。</p>
 <p>系统加电启动时，BIOS首先获得控制权，由它首先进行硬件检测，这个过程称为加点自检(POST)，通常POST检测cpu、内存、磁盘、主板等等，一旦发现问题，便会提示信息或者鸣笛警告。</p>
 <p>BIOS另外一个职责便是引导系统，BIOS加电自检完毕之后，读取CMOS中的设备引导信息，从引导设备中读取0柱面0磁头1扇区的512字节，若 512字节以55 AA（2字节）结束，则认为是引导扇区（Boot Sector），BIOS便会装载此段到地址0x7C00，执行此程序，以后的引导工作边交由引导扇区处理，BIOS便退居幕后，为系统提供基本的服务。 在汇编中通过int指令产生中断，可请求BIOS服务，这篇先来介绍BIOS中断请求，不过需注意的是BIOS中断请求必须在16位实模式，或者虚拟 8086模式下才可运行，进入保护模式后，中断的处理方式发生变化。</p>
 <p>BIOS中断请求通过指令int Num，Num是中断号，不同的中断号负责不同的功能，比如0×10控制视频，0×16键盘中断等等。BIOS中断非常之多，不可能全部记忆，好在调用方式相同，另有相关手册参考，我觅得一份，可以在 这里 下载，或者浏览 网页版本，或者在Railf Brown 的主页 下载。</p>
@@ -409,8 +368,8 @@ outstring:
 <p>其实这段代码跟虚拟8086显示字符的代码基本相同，只是末尾加入了.org宏，指示汇编器直接到510字节开始汇编，中间空出的字符 补0，最后以0xAA55结尾，因为内存中是大端方式存储数据。接下来需要修改的地方是连接脚本的0×0100，因为这里的程序需要加载至0x7c00， 所以修改这个地址，最后objcopy命令 bios.com 换成 bios.img，后缀只是为了让虚拟机识别。虚拟机会把img识别当软盘载入，之后的事情可以预料到了，BIOS会认为我们的这512字节文件是引导 区，并执行。</p>
 <p>使用二进制工具打开bios.img，检验一下，文件刚好512字节，并且以55 AA结尾。说明我们编译过程是没有问题的，接着使用virtual box或者VMware等虚拟机，配置软盘为bios.img，并且设置软盘为第一启动介质。接着开机，便可看到蓝底红字的BIOS 10H 13H！而且我们这里的代码完全独立于操作系统，是在裸机上执行的。</p>
 <p>这里的引导区可作为操作系统的前导，用于引导操作系统，Linux内核中也有一份类似代码，不过由于Linux使用了lilo或者grub这些专业的启动管理程序，内核引导代码便早已废弃。</p>
-<h1 id="bios视频映射内存">BIOS视频映射内存</h1>
-<p>之前说过BIOS的视频控制，仅仅说明的是字符显示，其实显卡可以设置两种模式，一种是图形模式，一种是字符模式，在BIOS中断10h ah=0时可以设置模式，在BIOS手册 video mode列表中，第二列有T和G字符，指明此种模式的类别，比如13h便是图形模式，屏幕大小为320×200，另外注意一个属性addr，这里是 A000，也就是说视频是映射至内存A000处，此地址是以后操作映射内存的基础：</p>
+<h1 id="bios视频映射内存">BIOS视频映射内存
+</h1><p>之前说过BIOS的视频控制，仅仅说明的是字符显示，其实显卡可以设置两种模式，一种是图形模式，一种是字符模式，在BIOS中断10h ah=0时可以设置模式，在BIOS手册 video mode列表中，第二列有T和G字符，指明此种模式的类别，比如13h便是图形模式，屏幕大小为320×200，另外注意一个属性addr，这里是 A000，也就是说视频是映射至内存A000处，此地址是以后操作映射内存的基础：</p>
 <pre><code>Values for video mode:
 
      text/ text pixel	pixel	colors disply scrn  system
@@ -529,8 +488,8 @@ end main
 <p>函数SetBackgroudColor包含了调色板的操作，因为调色板索引0为背景，第一个out选择0调色板，接下来调用了三次out dx, al，dx为颜色选择端口，al为色彩值，以R、G、B的方式分别传出3个颜色字节进行设置，设置之后调色板0便为红色。</p>
 <p>函 数DrawSquare看似复杂，其实大部分都与BIOS调用无关，仅仅是计算坐标点，两个循环绘制了一个矩形，关键点有两个，第一个就是颜色设置，这次 设置的是调色板索引1，这里与SetBackgroudColor基本相同，再一个便是设置颜色，关键语句为 mov byte ptr es:[di], 1，如果记得，在main函数中把es设置为Video的机制，di是基址上的偏移，对应屏幕上的像素，这里屏幕像素是320*200，就是当dl为 320时是第二行第一列的像素，这里与二维数组的意义相同，第二个操作数1为刚才设置的调色板索引，综合来看，这句话的含义便是把内存位置（对应显存）设 置为调色板索引1的颜色。</p>
 <p>编译连接程序为 video.img，设置为虚拟机的软盘，并设置成第一启动介质，打开虚拟机便可看到红色背景上100*100的蓝色矩形。</p>
-<h1 id="bios键盘中断">BIOS键盘中断</h1>
-<p>这里来看一下BIOS中断的键盘控制部分，当用户按下键盘，键盘的扫描码从输入端口进入键盘缓冲，在系统中可以调用BIOS int 16h 来获取缓冲区中的扫描码和ASCII码。</p>
+<h1 id="bios键盘中断">BIOS键盘中断
+</h1><p>这里来看一下BIOS中断的键盘控制部分，当用户按下键盘，键盘的扫描码从输入端口进入键盘缓冲，在系统中可以调用BIOS int 16h 来获取缓冲区中的扫描码和ASCII码。</p>
 <p>关于键盘操作的BIOS中断有很多种，接下来介绍一些常用的调用：</p>
 <p>设置击键重复率 03h ，当一直按着某个键，在按键开始重复之前有250~1000ms的延时。击键重复速率取值可以是1Fh（最慢）到0（最快）：</p>
 <pre><code>Inp.:
@@ -690,15 +649,15 @@ Values for system state ID:
  0003h	off (not supported for device ID 0001h in APM v1.0)
 </code></pre>
 <p>编译后可在虚拟机上查看效果，由于增加了键盘等待，程序不会空耗cpu资源，而且可以关机，也不用使用暴力的方式断电关机。</p>
-<h1 id="汇编优化执行文件大小">汇编优化执行文件大小</h1>
-<p>闲来无事写了一个点灯小游戏，记得当年在文曲星上玩过，现在使用BIOS中断在引导区实现，其实整个游戏实现起来并不复杂，无非是一些BIOS调 用，图形显示等等，但是最让人郁闷的事情是引导程序仅仅有512字节，当然有方法突破这个限制，但这仅仅是个小程序，没有必要再去载入文件到内存。不过这 个以后倒可以试试。</p>
+<h1 id="汇编优化执行文件大小">汇编优化执行文件大小
+</h1><p>闲来无事写了一个点灯小游戏，记得当年在文曲星上玩过，现在使用BIOS中断在引导区实现，其实整个游戏实现起来并不复杂，无非是一些BIOS调 用，图形显示等等，但是最让人郁闷的事情是引导程序仅仅有512字节，当然有方法突破这个限制，但这仅仅是个小程序，没有必要再去载入文件到内存。不过这 个以后倒可以试试。</p>
 <p>这里的代码不少，我会附到文后，不过我想也没有人去研究如此杂乱的代码。不过程序还有不少问题，BIOS刷新屏幕的部分，我重绘背景，这样导致刷新时会闪 屏，也不算很大的bug，我也没有花精力去解决这个问题，还有一个问题是填充的问题，最后填充时总是说长度不能为负，不过实际计算长度远不足512，不知 道什么机制导致这种错误，不过最后我编译好程序刚刚好512字节，也不存在填充的问题了，只是扩展不易。</p>
 <p>其实编译结果为512字节并非巧合，开始写完程序时文件有680多字节，经过调整代码，压缩，最终才缩小至512字节，能让系统正常引导。这里说下压缩可执行文件大小的经验：</p>
-<h2 id="一立即数优化">一、立即数优化</h2>
-<p>程 序中经常有 mov ax, 0 类似的指令，目的是把一个寄存器清零，别看这里的0是很小的数字，他占用的大小与 0ffffh 无异，都是根据Intel立即数的大小而定的，其他的比如ax和mov仅仅是intel的一个索引，所需字节很少，所以如非必要，尽力避免立即数的使用， 寄存器清零可使用 xor ax, ax 指令实现。相同的原理 cmp ax, 0 可用 test ax, ax 实现。
+<h2 id="一立即数优化">一、立即数优化
+</h2><p>程 序中经常有 mov ax, 0 类似的指令，目的是把一个寄存器清零，别看这里的0是很小的数字，他占用的大小与 0ffffh 无异，都是根据Intel立即数的大小而定的，其他的比如ax和mov仅仅是intel的一个索引，所需字节很少，所以如非必要，尽力避免立即数的使用， 寄存器清零可使用 xor ax, ax 指令实现。相同的原理 cmp ax, 0 可用 test ax, ax 实现。
 还是如果给寄存器加2，直接写成 add bp, 2 甚至比两个inc bp还要大。</p>
-<h2 id="二地址优化">二、地址优化</h2>
-<p>时 常会出现使用 address 寻址变量的情况，如果一个变量寻址多次，mov ax, word ptr[address]就会出现多次，address在16位平台大小16位，这样累计也是很客观的大小，这种情况可以使用mov si, offset address 指令，刚才提到，si寄存器仅仅是一个索引，所以mov ax, word ptr[si] 会比刚才要小，如果相同代码很多，则可节省不少空间。</p>
+<h2 id="二地址优化">二、地址优化
+</h2><p>时 常会出现使用 address 寻址变量的情况，如果一个变量寻址多次，mov ax, word ptr[address]就会出现多次，address在16位平台大小16位，这样累计也是很客观的大小，这种情况可以使用mov si, offset address 指令，刚才提到，si寄存器仅仅是一个索引，所以mov ax, word ptr[si] 会比刚才要小，如果相同代码很多，则可节省不少空间。</p>
 <p>另外，还有函数的调用，有些代码放到函数中可减少重复代码，但如果函数很小call address占用的空间便会很大；
 如果要保存一个寄存器待执行完毕后恢复，使用push cx, pop cx要比先存储与其他寄存器事后再恢复要小很多。</p>
 
@@ -758,7 +717,7 @@ Values for system state ID:
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/">
         
         
 
@@ -771,7 +730,7 @@ Values for system state ID:
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/">
         
         
 
@@ -784,7 +743,7 @@ Values for system state ID:
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/">
         
         
 
@@ -797,7 +756,7 @@ Values for system state ID:
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12/">
         
         
 
@@ -869,12 +828,12 @@ Values for system state ID:
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -963,7 +922,7 @@ Values for system state ID:
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

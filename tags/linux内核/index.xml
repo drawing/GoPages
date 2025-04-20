@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>Linux内核 on 讲故事的人</title>
+        <title>Linux内核 on 涸泽之鱼</title>
         <link>https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/</link>
-        <description>Recent content in Linux内核 on 讲故事的人</description>
+        <description>Recent content in Linux内核 on 涸泽之鱼</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Tue, 10 Jun 2014 01:16:33 +0800</lastBuildDate><atom:link href="https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/index.xml" rel="self" type="application/rss+xml" /><item>
@@ -12,8 +12,8 @@
         <pubDate>Tue, 10 Jun 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/</guid>
-        <description>&lt;h1 id=&#34;问题&#34;&gt;问题&lt;/h1&gt;
-&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;
+        <description>&lt;h1 id=&#34;问题&#34;&gt;问题
+&lt;/h1&gt;&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。&lt;/p&gt;
 &lt;p&gt;查看 Redis 的日志发现：&lt;/p&gt;
@@ -21,10 +21,10 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;[23830] 14 Jan 20:13:11.060 # Can&amp;#39;t save in background: fork: Cannot allocate memory
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;[23830] 14 Jan 20:13:17.067 * 1 changes in 900 seconds. Saving...
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;[23830] 14 Jan 20:13:17.068 # Can&amp;#39;t save in background: fork: Cannot allocate memory
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;原因&#34;&gt;原因&lt;/h1&gt;
-&lt;p&gt;看到问题应该是由于fork出来一个进程后台持久化数据，由于内存不足导致fork失败，当Redis持久化失败时，设置当前为禁写的状态（读队列会删除元素，也算写操作）。使用info查看Redis状态，&lt;code&gt;rdb_last_bgsave_status&lt;/code&gt;显示为 err。此时即使重新设置状态为ok也无用，因为很快就会下一轮fork，状态会被重置。&lt;/p&gt;
-&lt;h1 id=&#34;overcommit&#34;&gt;overcommit&lt;/h1&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://redis.io/topics/faq&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;原因&#34;&gt;原因
+&lt;/h1&gt;&lt;p&gt;看到问题应该是由于fork出来一个进程后台持久化数据，由于内存不足导致fork失败，当Redis持久化失败时，设置当前为禁写的状态（读队列会删除元素，也算写操作）。使用info查看Redis状态，&lt;code&gt;rdb_last_bgsave_status&lt;/code&gt;显示为 err。此时即使重新设置状态为ok也无用，因为很快就会下一轮fork，状态会被重置。&lt;/p&gt;
+&lt;h1 id=&#34;overcommit&#34;&gt;overcommit
+&lt;/h1&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://redis.io/topics/faq&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;官方文档&lt;/a&gt;有相关信息，需要设置&lt;code&gt;echo 1 &amp;gt; /proc/sys/vm/overcommit_memory&lt;/code&gt;，查阅&lt;a class=&#34;link&#34; href=&#34;http://www.win.tue.nl/~aeb/linux/lk/lk-9.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Linux Memory &lt;/a&gt;发现，&lt;code&gt;overcommit_memory&lt;/code&gt; 指定了Linux内存分配的策略。可选值：0，1，2。&lt;/p&gt;
 &lt;ul&gt;
@@ -42,8 +42,8 @@
 &lt;p&gt;overcommit 的策略通过&lt;code&gt;vm.overcommit_memory&lt;/code&gt;设置
 overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;overcommit_memory&lt;/code&gt;设置为0时，Redis fork Linux会假定子进程占用同样多的内存空间（根据实际映射的物理内存决定），如果free空间不足，会发生错误导致无法正常fork。&lt;/p&gt;
-&lt;h1 id=&#34;复盘&#34;&gt;复盘&lt;/h1&gt;
-&lt;p&gt;复盘一下发现：写入量过大，导致fork时内存不足，fork失败，Redis这种情况下会切换成紧写的状态。导致Redis不可用，如果设置 &lt;code&gt;overcommit_memory&lt;/code&gt; 为1，看到Redis上一次dump数据花费了60s左右，内存使用12G，每条数据大小500字节左右，60s时间队列读取速度为4M，基本上相当于2G数据量，可以看到变化的数据有20%不到，根据写时复制的原则，fork就不会有问题了。&lt;/p&gt;
+&lt;h1 id=&#34;复盘&#34;&gt;复盘
+&lt;/h1&gt;&lt;p&gt;复盘一下发现：写入量过大，导致fork时内存不足，fork失败，Redis这种情况下会切换成紧写的状态。导致Redis不可用，如果设置 &lt;code&gt;overcommit_memory&lt;/code&gt; 为1，看到Redis上一次dump数据花费了60s左右，内存使用12G，每条数据大小500字节左右，60s时间队列读取速度为4M，基本上相当于2G数据量，可以看到变化的数据有20%不到，根据写时复制的原则，fork就不会有问题了。&lt;/p&gt;
 &lt;p&gt;不过Redis作为队列，在消息流动比较大，而且消息时效性比较强的情况下，可以禁用数据持久化功能，提升效率。&lt;/p&gt;
 </description>
         </item>
@@ -60,8 +60,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;li&gt;进程从A切换到B时，需要确保进程B的执行环境与上一次撤销其处理资源时完全相同；&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;这两个任务称之为调度器的内核子系统的职责。&lt;/p&gt;
-&lt;h1 id=&#34;进程生命周期&#34;&gt;进程生命周期&lt;/h1&gt;
-&lt;p&gt;进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：&lt;/p&gt;
+&lt;h1 id=&#34;进程生命周期&#34;&gt;进程生命周期
+&lt;/h1&gt;&lt;p&gt;进程不是总是可以立即运行，有时必须等待外部信号，在信号发生时进程无法运行。当调度器在进程之间切换时，必须知道系统中每个进程的状态。进程可能有以下几种状态：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;运行：进程正在运行&lt;/li&gt;
 &lt;li&gt;等待：进程能够运行，但没有分到时间片，调度器下一次可以选择此进程&lt;/li&gt;
@@ -76,8 +76,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;li&gt;中断可以暂停出于用户状态和核心态的进程，中断有最高优先级&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;内核有一个内核抢占的选项，支持紧急情况下切换到另一个进程，甚至当前处于核心态执行系统调用。&lt;/p&gt;
-&lt;h1 id=&#34;进程表示&#34;&gt;进程表示&lt;/h1&gt;
-&lt;p&gt;Linux内核涉及进程和进程所有算法都围绕一个名为 &lt;code&gt;task_struct&lt;/code&gt; 的数据结构建立，该结构定义在 &lt;code&gt;include/sched.h&lt;/code&gt; 中，这是系统中重要的一个结构。&lt;/p&gt;
+&lt;h1 id=&#34;进程表示&#34;&gt;进程表示
+&lt;/h1&gt;&lt;p&gt;Linux内核涉及进程和进程所有算法都围绕一个名为 &lt;code&gt;task_struct&lt;/code&gt; 的数据结构建立，该结构定义在 &lt;code&gt;include/sched.h&lt;/code&gt; 中，这是系统中重要的一个结构。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;task_struct&lt;/code&gt; 结构复杂，要想都搞清楚着实不易，但该结构可以分为各个部分，每个部分表示进程的不同方面：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;状态和执行信息：如待定信号，进程ID（pid），父进程及其他有关进程的指针，优先级和程序执行有关的信息&lt;/li&gt;
@@ -89,8 +89,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;li&gt;该进程所用的信号处理程序，用于响应到来的信号&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;task_struct&lt;/code&gt; 的许多成员并非简单类型变量，而是其他数据结构的指针。下面介绍一些结构的重要数据成员。&lt;/p&gt;
-&lt;h2 id=&#34;当前状态-state&#34;&gt;当前状态 state&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;state&lt;/code&gt;指定了当前状态，可以使用&lt;/p&gt;
+&lt;h2 id=&#34;当前状态-state&#34;&gt;当前状态 state
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;state&lt;/code&gt;指定了当前状态，可以使用&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;TASK_RUNNING&lt;/code&gt;：进程处于可运行状态，这并不意味着实际分配了CPU，进程可能会一直等到调度器选中它&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;TASK_INTERRUPTIBLE&lt;/code&gt;：针对等待某事件或其他资源的睡眠进程设置的。在内核发送信号给进程表明事件已经发生，进程状态变为 &lt;code&gt;TASK_RUNNING&lt;/code&gt;&lt;/li&gt;
@@ -103,8 +103,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;li&gt;&lt;code&gt;EXIT_ZOMBIE&lt;/code&gt;：僵尸进程&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;EXIT_DEAD&lt;/code&gt;：状态则是指&lt;code&gt;wait&lt;/code&gt;系统调用已经发出，而进程完全从系统移除之前的状态，只有多个线程对同一个进程发出&lt;code&gt;wait&lt;/code&gt;调用时，才有意义&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;资源限制-rlimit&#34;&gt;资源限制 rlimit&lt;/h2&gt;
-&lt;p&gt;Linux提供资源限制功能，该机制利用了&lt;code&gt;task_struct&lt;/code&gt;中的 rlim 数组，数组项类型为 &lt;code&gt;struct rlimit&lt;/code&gt;：&lt;/p&gt;
+&lt;h2 id=&#34;资源限制-rlimit&#34;&gt;资源限制 rlimit
+&lt;/h2&gt;&lt;p&gt;Linux提供资源限制功能，该机制利用了&lt;code&gt;task_struct&lt;/code&gt;中的 rlim 数组，数组项类型为 &lt;code&gt;struct rlimit&lt;/code&gt;：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rlimit&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;rlim_cur&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;rlim_max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
@@ -118,56 +118,56 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;table&gt;
   &lt;thead&gt;
       &lt;tr&gt;
-          &lt;th style=&#34;text-align: left&#34;&gt;常数&lt;/th&gt;
-          &lt;th style=&#34;text-align: left&#34;&gt;语义&lt;/th&gt;
+          &lt;th&gt;常数&lt;/th&gt;
+          &lt;th&gt;语义&lt;/th&gt;
       &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_CPU&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;按毫秒计算的最大CPU时间&lt;/td&gt;
+          &lt;td&gt;RLIMIT_CPU&lt;/td&gt;
+          &lt;td&gt;按毫秒计算的最大CPU时间&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_FSIZE&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;允许的最大文件长度&lt;/td&gt;
+          &lt;td&gt;RLIMIT_FSIZE&lt;/td&gt;
+          &lt;td&gt;允许的最大文件长度&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_DATA&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;数据段的最大长度&lt;/td&gt;
+          &lt;td&gt;RLIMIT_DATA&lt;/td&gt;
+          &lt;td&gt;数据段的最大长度&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_STACK&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;（用户态）栈最大长度&lt;/td&gt;
+          &lt;td&gt;RLIMIT_STACK&lt;/td&gt;
+          &lt;td&gt;（用户态）栈最大长度&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_CORE&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;内存转储文件最大长度&lt;/td&gt;
+          &lt;td&gt;RLIMIT_CORE&lt;/td&gt;
+          &lt;td&gt;内存转储文件最大长度&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_NOFILE&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;打开文件最大数目&lt;/td&gt;
+          &lt;td&gt;RLIMIT_NOFILE&lt;/td&gt;
+          &lt;td&gt;打开文件最大数目&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_SIGPENDING&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;待决信号的最大数目&lt;/td&gt;
+          &lt;td&gt;RLIMIT_SIGPENDING&lt;/td&gt;
+          &lt;td&gt;待决信号的最大数目&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;RLIMIT_MSGQUEUE&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;信息队列最大数目&lt;/td&gt;
+          &lt;td&gt;RLIMIT_MSGQUEUE&lt;/td&gt;
+          &lt;td&gt;信息队列最大数目&lt;/td&gt;
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;在&lt;code&gt;proc&lt;/code&gt;文件系统中，可以从文件&lt;code&gt;/proc/self/limits&lt;/code&gt;查看当前&lt;code&gt;rlimit&lt;/code&gt;限制。&lt;/p&gt;
-&lt;h2 id=&#34;进程类型&#34;&gt;进程类型&lt;/h2&gt;
-&lt;p&gt;典型的UNIX进程包括：由二进制代码组成的应用程序、单线程、分配给应用程序的一组资源。新进程是由&lt;code&gt;fork&lt;/code&gt;和&lt;code&gt;exec&lt;/code&gt;系统调用完成的。&lt;/p&gt;
+&lt;h2 id=&#34;进程类型&#34;&gt;进程类型
+&lt;/h2&gt;&lt;p&gt;典型的UNIX进程包括：由二进制代码组成的应用程序、单线程、分配给应用程序的一组资源。新进程是由&lt;code&gt;fork&lt;/code&gt;和&lt;code&gt;exec&lt;/code&gt;系统调用完成的。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;fork 生成当前进程的一个相同副本，成为子进程。&lt;/li&gt;
 &lt;li&gt;exec 从一个可执行文件加载另一个应用程序，来代替当前运行的进程。&lt;/li&gt;
 &lt;li&gt;clone 工作原理基本与fork相同，但新进程不是独立于父进程的，可以与其共享某些资源，如父进程的内存数据等。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;clone&lt;/code&gt; 用于实现线程，但仅仅系统调用还不能做到这点，还需要用户空间库才能提供完整实现，如Linuxthreads和Next Generation Posix Threads等。&lt;/p&gt;
-&lt;h2 id=&#34;命名空间&#34;&gt;命名空间&lt;/h2&gt;
-&lt;p&gt;命名空间提供了虚拟化的一种轻量级形式，传统上，在Linux以及其他衍生的UINX扁蹄中，许多资源是全局管理的，例如系统中的所有进程按照惯例都是通过PID标识的，这意味着内核必须管理一个全局的PID列表，而且，所有调用者通过uname系统调用返回的系统相关信息都是相同的。用户的管理方式相同，即各个用户是通过一个全局唯一的UID号标识。&lt;/p&gt;
+&lt;h2 id=&#34;命名空间&#34;&gt;命名空间
+&lt;/h2&gt;&lt;p&gt;命名空间提供了虚拟化的一种轻量级形式，传统上，在Linux以及其他衍生的UINX扁蹄中，许多资源是全局管理的，例如系统中的所有进程按照惯例都是通过PID标识的，这意味着内核必须管理一个全局的PID列表，而且，所有调用者通过uname系统调用返回的系统相关信息都是相同的。用户的管理方式相同，即各个用户是通过一个全局唯一的UID号标识。&lt;/p&gt;
 &lt;p&gt;有些情况下，如提供Web主机的提供商给每个用户提供Linux计算机全部访问权限，包括root权限在内，传统上，要为每个用户准备一台计算机，代价很高，使用KVM虚拟机是另一种办法，但资源分配做的不是很好，计算机各个用户都需要一个独立的内核，以及一份完全安装好的用户层应用。&lt;/p&gt;
 &lt;p&gt;命名空间提供了一种不同的解决方案，所需资源较少，命令空间只使用一个内核，前述的所有全局资源都通过命令空间抽象起来，这使得可以将一组进程放置到容器中，各个容器彼此隔离，隔离可以使得容器的成员与其他容器毫无关系，但也可以通过允许容器进程一定的共享，来降低容器之间的间隔。例如，容器可以设置为使用自身的PID集合，但仍然与其他容器共享部分文件系统。&lt;/p&gt;
 &lt;p&gt;Linux 系统对简单形式的命令空间的支持已经有很长时间了，主要是chroot系统调用，该方法可以将进程限制到文件系统的某一部分。因而是一种简单的命名空间机制，但真正的命名空间能够控制的功能远超文件系统视图。&lt;/p&gt;
@@ -209,16 +209,16 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;net_ns&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;init_net&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#endif
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;进程id号&#34;&gt;进程ID号&lt;/h2&gt;
-&lt;p&gt;UNIX进程总会分配一个号码用于在命令空间中唯一的标志它们，该号码被称作PID。用fork和clone产生的每个进程都会由内核自动地分配唯一的新的PID值。&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;进程id号&#34;&gt;进程ID号
+&lt;/h2&gt;&lt;p&gt;UNIX进程总会分配一个号码用于在命令空间中唯一的标志它们，该号码被称作PID。用fork和clone产生的每个进程都会由内核自动地分配唯一的新的PID值。&lt;/p&gt;
 &lt;p&gt;进程除了PID这个值还有其他的ID，有下列几种可能的类型：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;处于某个线程组中的所有统一的线程组ID（TGID），如果进程没有使用线程，则PID和TGID相同，线程组中的主进程被称作组长。通过clone组建的所有线程&lt;code&gt;task_struct&lt;/code&gt;的&lt;code&gt;group_leader&lt;/code&gt;成员，会指向组长的&lt;code&gt;task_struct&lt;/code&gt;。&lt;/li&gt;
 &lt;li&gt;独立进程可以组成进程组（&lt;code&gt;setpgrp&lt;/code&gt;系统调用），进程组成员的&lt;code&gt;task_struct&lt;/code&gt;成员&lt;code&gt;pgrp&lt;/code&gt;属性都相同，即组长PID。&lt;/li&gt;
 &lt;li&gt;几个进程组可以合并成一个会话。会话中所有进程都有相同的会话ID，保存在&lt;code&gt;task_struct&lt;/code&gt;的&lt;code&gt;session&lt;/code&gt;成员中。SID可以使用&lt;code&gt;setsid&lt;/code&gt;系统调用设置。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;进程关系&#34;&gt;进程关系&lt;/h2&gt;
-&lt;p&gt;除了源于ID连接的关系外，内核还负责管理建立在UNIX进程创建模型之上的家族关系：&lt;/p&gt;
+&lt;h2 id=&#34;进程关系&#34;&gt;进程关系
+&lt;/h2&gt;&lt;p&gt;除了源于ID连接的关系外，内核还负责管理建立在UNIX进程创建模型之上的家族关系：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;如果进程A分支形成进程B，进程A称之为父进程二进程B是子进程&lt;/li&gt;
 &lt;li&gt;如果进程B再次分支建立进程C，进程A和进程C之间称之为祖孙关系&lt;/li&gt;
@@ -231,16 +231,16 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sibling&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;进程管理相关的系统调用&#34;&gt;进程管理相关的系统调用&lt;/h1&gt;
-&lt;h2 id=&#34;进程复制&#34;&gt;进程复制&lt;/h2&gt;
-&lt;p&gt;Linux内核提供三个函数复制进程：&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;进程管理相关的系统调用&#34;&gt;进程管理相关的系统调用
+&lt;/h1&gt;&lt;h2 id=&#34;进程复制&#34;&gt;进程复制
+&lt;/h2&gt;&lt;p&gt;Linux内核提供三个函数复制进程：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;fork&lt;/code&gt;：这是重量级调用，因为它提供了一个完整副本，然后作为子进程执行，为减少调用相关的工作量，Linux使用了写时复制（copy-on-write）技术&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;vfork&lt;/code&gt;：类似fork，但并不创建父进程数据副本，相反，父子进程之间共享数据，这节省了大量CPU时间，vfork设计用于子进程执行execve系统调用加载新程序的情况，但由于fork函数实现了写时复制功能，所以vfork在性能方面不再有优势，应避免使用&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;clone&lt;/code&gt; 产生线程，可以对父子进程之间的共享、复制进行精确控制&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;写时复制&#34;&gt;写时复制&lt;/h2&gt;
-&lt;p&gt;内核使用写时复制技术，以防止在&lt;code&gt;fork&lt;/code&gt;执行时将父进程的所有数据复制到子进程，该技术利用了下述事实，进程通常只使用了其内存页的一小部分，在调用&lt;code&gt;fork&lt;/code&gt;时，内核通常会复制父进程的每个内存页，这样有两个不好的负面效应：&lt;/p&gt;
+&lt;h2 id=&#34;写时复制&#34;&gt;写时复制
+&lt;/h2&gt;&lt;p&gt;内核使用写时复制技术，以防止在&lt;code&gt;fork&lt;/code&gt;执行时将父进程的所有数据复制到子进程，该技术利用了下述事实，进程通常只使用了其内存页的一小部分，在调用&lt;code&gt;fork&lt;/code&gt;时，内核通常会复制父进程的每个内存页，这样有两个不好的负面效应：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;使用了大量的内存&lt;/li&gt;
 &lt;li&gt;复制操作耗费很长时间&lt;/li&gt;
@@ -248,8 +248,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;p&gt;如果应用程序在进程复制之后使用&lt;code&gt;exec&lt;/code&gt;立即加载程序，那么负面效应会更严重。这意味着，此前复制操作是完全多余的。内核可以使用技巧来规避这个问题，并不复制整个地址空间，而是复制其页表，这样建立了虚拟地址和物理内存页之间的联系。&lt;code&gt;fork&lt;/code&gt;之后父子进程地址空间指向相同的物理内存页。&lt;/p&gt;
 &lt;p&gt;这时父子进程不能修改彼此的页，这也是两个进程页表对其标志了只读的原因。如果两个进程只读内存页，二者共享空间不会有问题，只要有一个进程试图向复制的内存页写入，处理器会向内核报告缺页异常。内核查看额外的内存管理数据结构，如果是COW页，内核会创建当前进程的副本。这里的实现需要了解内存管理方面的知识。&lt;/p&gt;
 &lt;p&gt;COW机制使得内核尽可能延迟内存页复制，当然大多数情况下，可能都不需要复制，节省了大量的时间。&lt;/p&gt;
-&lt;h2 id=&#34;执行系统调用&#34;&gt;执行系统调用&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;fork&lt;/code&gt;,&lt;code&gt;vfork&lt;/code&gt;,&lt;code&gt;clone&lt;/code&gt;系统调用的入口分别是&lt;code&gt;sys_fork&lt;/code&gt;,&lt;code&gt;sys_vfork&lt;/code&gt;,&lt;code&gt;sys_clone&lt;/code&gt;函数。其定义依赖于具体的体系结构。上述函数任务是从处理器寄存器中提取用户空间提供的信息，调用体系结构无关的&lt;code&gt;do_fork&lt;/code&gt;函数，后者负责进程复制。函数原型如下：&lt;/p&gt;
+&lt;h2 id=&#34;执行系统调用&#34;&gt;执行系统调用
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;fork&lt;/code&gt;,&lt;code&gt;vfork&lt;/code&gt;,&lt;code&gt;clone&lt;/code&gt;系统调用的入口分别是&lt;code&gt;sys_fork&lt;/code&gt;,&lt;code&gt;sys_vfork&lt;/code&gt;,&lt;code&gt;sys_clone&lt;/code&gt;函数。其定义依赖于具体的体系结构。上述函数任务是从处理器寄存器中提取用户空间提供的信息，调用体系结构无关的&lt;code&gt;do_fork&lt;/code&gt;函数，后者负责进程复制。函数原型如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// kernel/fork.c
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;do_fork&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;clone_flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stack_start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
@@ -282,8 +282,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;do_fork&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;clone_flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;newsp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;regs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;parent_tid&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;child_tid&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;标志不再是硬编码，可以通过各个寄存器参数传递到系统调用。而且，也不再复制父进程的栈，可以指定新的栈地址。&lt;/p&gt;
-&lt;h2 id=&#34;do_fork-的实现&#34;&gt;do_fork 的实现&lt;/h2&gt;
-&lt;p&gt;所有三个fork机制最终都调用了&lt;code&gt;do_fork&lt;/code&gt;，其代码流程如下：&lt;/p&gt;
+&lt;h2 id=&#34;do_fork-的实现&#34;&gt;do_fork 的实现
+&lt;/h2&gt;&lt;p&gt;所有三个fork机制最终都调用了&lt;code&gt;do_fork&lt;/code&gt;，其代码流程如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;do_fork
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    |----- copy_process
@@ -312,8 +312,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;|-----&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;设置各个&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ID&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、进程关系&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;复制进程的行为受到相当多的标志的控制，clone(2) 的手册详细讲述了这些标志，标志可以参考手册。该函数也需要做一些错误判断，Linux函数有时候会在成功的时候返回结构体指针，失败的情况下返回错误码，但函数只能返回一个值，所以Linux做了一个特殊处理，虽然一般而言指针可以指向内存任何位置，而Linux支持的每个体系结构的虚拟地址从0到4Kib的区域，该区域没有任何有意义的信息，因此内核可以重用此地址范围来编码错误。&lt;/p&gt;
 &lt;p&gt;当检查完标志后，使用&lt;code&gt;dup_task_struct&lt;/code&gt;来建立父进程&lt;code&gt;task_struct&lt;/code&gt;的副本，父进程的&lt;code&gt;task_struct&lt;/code&gt;实例只有一个成员不同，新进程分配了一个新的核心态，即&lt;code&gt;task_struct-&amp;gt;stack&lt;/code&gt;。通常栈和&lt;code&gt;thread_info&lt;/code&gt;一同保存在一个联合之中，&lt;code&gt;thread_info&lt;/code&gt;保存了线程所需的所有特定于处理器的底层信息。&lt;/p&gt;
-&lt;h2 id=&#34;内核线程&#34;&gt;内核线程&lt;/h2&gt;
-&lt;p&gt;内核线程是直接由内核本身启动的进程，内核线程实际上是将内核函数委托给独立的进程，内核线程经常称之为守护线程，用于执行下列任务：&lt;/p&gt;
+&lt;h2 id=&#34;内核线程&#34;&gt;内核线程
+&lt;/h2&gt;&lt;p&gt;内核线程是直接由内核本身启动的进程，内核线程实际上是将内核函数委托给独立的进程，内核线程经常称之为守护线程，用于执行下列任务：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;周期性的修改内存页与页来源块设备同步&lt;/li&gt;
 &lt;li&gt;如果内存页很少使用，写入交换区&lt;/li&gt;
@@ -354,8 +354,8 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;   10 ?        S      0:00  \_ [ksoftirqd/1]
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;   12 ?        S      0:00  \_ [watchdog/1]
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;   13 ?        S      0:01  \_ [migration/2]
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;启动新程序-execve&#34;&gt;启动新程序 execve&lt;/h2&gt;
-&lt;p&gt;Linux 通过用新代码替换现存程序，即可启动新程序。Linux提供的 &lt;code&gt;execve&lt;/code&gt; 系统调用可实现此功能。该函数的入口点是体系相关的&lt;code&gt;sys_execve&lt;/code&gt; 函数，该函数把具体的工作委托给&lt;code&gt;do_execve&lt;/code&gt;实现具体功能。&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;启动新程序-execve&#34;&gt;启动新程序 execve
+&lt;/h2&gt;&lt;p&gt;Linux 通过用新代码替换现存程序，即可启动新程序。Linux提供的 &lt;code&gt;execve&lt;/code&gt; 系统调用可实现此功能。该函数的入口点是体系相关的&lt;code&gt;sys_execve&lt;/code&gt; 函数，该函数把具体的工作委托给&lt;code&gt;do_execve&lt;/code&gt;实现具体功能。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;do_execve&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__user&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__user&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;__argv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__user&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__user&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;__envp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
@@ -404,16 +404,16 @@ overcommit的百分比由&lt;code&gt;vm.overcommit_ratio&lt;/code&gt;设置&lt;/
 &lt;li&gt;&lt;code&gt;core_dump&lt;/code&gt; 用于程序错误的情况下输出内存转储&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;每种格式首先必须用&lt;code&gt;register_binfmt&lt;/code&gt;向内核注册。该函数的目的是向一个链表增加一个新的二进制格式，该链表的表头是&lt;code&gt;fs/exec.c&lt;/code&gt;中的全局变量&lt;code&gt;formats&lt;/code&gt;，&lt;code&gt;linux_binfmt&lt;/code&gt;实例通过其&lt;code&gt;next&lt;/code&gt;成员彼此连接起来。&lt;/p&gt;
-&lt;h2 id=&#34;退出进程&#34;&gt;退出进程&lt;/h2&gt;
-&lt;p&gt;进程必须用exit系统调用终止，这使得内核有机会将该进程使用的资源放回系统。该调用的入口点是 &lt;code&gt;sys_exit&lt;/code&gt; 函数，需要一个错误码作为其参数，以便退出进程，最终调用&lt;code&gt;do_exit&lt;/code&gt;函数实现，该函数实现就是将各个引用计数器减1。如果引用计数器归0就将相应的内存区域返还给内存管理模块。&lt;/p&gt;
-&lt;h1 id=&#34;调度器的实现&#34;&gt;调度器的实现&lt;/h1&gt;
-&lt;p&gt;内存中保存了对每个进程的唯一描述，通过若干结构与其他进程连接起来，调度器任务便是程序之间共享CPU时间，创造并执行的错觉，该任务分为两个不同部分：一个涉及调度策略，另一个涉及上下文切换。&lt;/p&gt;
-&lt;h2 id=&#34;概观&#34;&gt;概观&lt;/h2&gt;
-&lt;p&gt;内核必须提供一种方法，在进程之间尽可能公平地共享CPU时间，而同时又要考虑不同的任务优先级。&lt;code&gt;schedule&lt;/code&gt;函数是理解调度操作的起点，该函数定义在&lt;code&gt;kernel/sched.c&lt;/code&gt;中，是内核代码最常用的函数之一。&lt;/p&gt;
-&lt;h1 id=&#34;完全公平调度类&#34;&gt;完全公平调度类&lt;/h1&gt;
-&lt;h1 id=&#34;实时调度类&#34;&gt;实时调度类&lt;/h1&gt;
-&lt;h1 id=&#34;调度器增强&#34;&gt;调度器增强&lt;/h1&gt;
-</description>
+&lt;h2 id=&#34;退出进程&#34;&gt;退出进程
+&lt;/h2&gt;&lt;p&gt;进程必须用exit系统调用终止，这使得内核有机会将该进程使用的资源放回系统。该调用的入口点是 &lt;code&gt;sys_exit&lt;/code&gt; 函数，需要一个错误码作为其参数，以便退出进程，最终调用&lt;code&gt;do_exit&lt;/code&gt;函数实现，该函数实现就是将各个引用计数器减1。如果引用计数器归0就将相应的内存区域返还给内存管理模块。&lt;/p&gt;
+&lt;h1 id=&#34;调度器的实现&#34;&gt;调度器的实现
+&lt;/h1&gt;&lt;p&gt;内存中保存了对每个进程的唯一描述，通过若干结构与其他进程连接起来，调度器任务便是程序之间共享CPU时间，创造并执行的错觉，该任务分为两个不同部分：一个涉及调度策略，另一个涉及上下文切换。&lt;/p&gt;
+&lt;h2 id=&#34;概观&#34;&gt;概观
+&lt;/h2&gt;&lt;p&gt;内核必须提供一种方法，在进程之间尽可能公平地共享CPU时间，而同时又要考虑不同的任务优先级。&lt;code&gt;schedule&lt;/code&gt;函数是理解调度操作的起点，该函数定义在&lt;code&gt;kernel/sched.c&lt;/code&gt;中，是内核代码最常用的函数之一。&lt;/p&gt;
+&lt;h1 id=&#34;完全公平调度类&#34;&gt;完全公平调度类
+&lt;/h1&gt;&lt;h1 id=&#34;实时调度类&#34;&gt;实时调度类
+&lt;/h1&gt;&lt;h1 id=&#34;调度器增强&#34;&gt;调度器增强
+&lt;/h1&gt;</description>
         </item>
         <item>
         <title>Linux内核笔记-启动协议</title>
@@ -576,29 +576,29 @@ load_address = is_bzImage ? 0x100000 : 0x10000;
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/</guid>
         <description>&lt;p&gt;Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。&lt;/p&gt;
-&lt;h1 id=&#34;概念&#34;&gt;概念&lt;/h1&gt;
-&lt;p&gt;之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。&lt;/p&gt;
-&lt;h2 id=&#34;分层&#34;&gt;分层&lt;/h2&gt;
-&lt;p&gt;Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。&lt;/p&gt;
+&lt;h1 id=&#34;概念&#34;&gt;概念
+&lt;/h1&gt;&lt;p&gt;之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。&lt;/p&gt;
+&lt;h2 id=&#34;分层&#34;&gt;分层
+&lt;/h2&gt;&lt;p&gt;Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。&lt;/p&gt;
 &lt;p&gt;VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。&lt;/p&gt;
-&lt;h2 id=&#34;inode&#34;&gt;inode&lt;/h2&gt;
-&lt;p&gt;内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 &lt;code&gt;inode_operations&lt;/code&gt; ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。&lt;code&gt;file_operations&lt;/code&gt; 实现文件内容操作，如read、write等等，&lt;code&gt;inode_operations&lt;/code&gt; 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。&lt;/p&gt;
-&lt;h2 id=&#34;file&#34;&gt;file&lt;/h2&gt;
-&lt;p&gt;inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。&lt;/p&gt;
-&lt;h2 id=&#34;dentry&#34;&gt;dentry&lt;/h2&gt;
-&lt;p&gt;dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。&lt;/p&gt;
-&lt;h2 id=&#34;file_system_type&#34;&gt;file_system_type&lt;/h2&gt;
-&lt;p&gt;file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 &lt;code&gt;register_filesystem&lt;/code&gt; 向内核注册，函数只是简单的把 &lt;code&gt;file_system_type&lt;/code&gt; 插入链表，其中最关键的成员就是 get_sb，得到 &lt;code&gt;super_block&lt;/code&gt; 结构。&lt;/p&gt;
-&lt;h2 id=&#34;super_block&#34;&gt;super_block&lt;/h2&gt;
-&lt;p&gt;super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。&lt;/p&gt;
-&lt;h2 id=&#34;vfsmount&#34;&gt;vfsmount&lt;/h2&gt;
-&lt;p&gt;对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 &lt;code&gt;super_block&lt;/code&gt; 对与挂接点来说，都是唯一的。&lt;/p&gt;
-&lt;h2 id=&#34;path&#34;&gt;path&lt;/h2&gt;
-&lt;p&gt;path 包含 vfsmount 和 dentry 结构。&lt;/p&gt;
-&lt;h2 id=&#34;nameidata&#34;&gt;nameidata&lt;/h2&gt;
-&lt;p&gt;nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。&lt;/p&gt;
-&lt;h1 id=&#34;sys_mount-实现&#34;&gt;sys_mount 实现&lt;/h1&gt;
-&lt;p&gt;&lt;code&gt;sys_mount&lt;/code&gt; 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 &lt;code&gt;sys_mount&lt;/code&gt; 的函数原型：&lt;/p&gt;
+&lt;h2 id=&#34;inode&#34;&gt;inode
+&lt;/h2&gt;&lt;p&gt;内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 &lt;code&gt;inode_operations&lt;/code&gt; ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。&lt;code&gt;file_operations&lt;/code&gt; 实现文件内容操作，如read、write等等，&lt;code&gt;inode_operations&lt;/code&gt; 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。&lt;/p&gt;
+&lt;h2 id=&#34;file&#34;&gt;file
+&lt;/h2&gt;&lt;p&gt;inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。&lt;/p&gt;
+&lt;h2 id=&#34;dentry&#34;&gt;dentry
+&lt;/h2&gt;&lt;p&gt;dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。&lt;/p&gt;
+&lt;h2 id=&#34;file_system_type&#34;&gt;file_system_type
+&lt;/h2&gt;&lt;p&gt;file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 &lt;code&gt;register_filesystem&lt;/code&gt; 向内核注册，函数只是简单的把 &lt;code&gt;file_system_type&lt;/code&gt; 插入链表，其中最关键的成员就是 get_sb，得到 &lt;code&gt;super_block&lt;/code&gt; 结构。&lt;/p&gt;
+&lt;h2 id=&#34;super_block&#34;&gt;super_block
+&lt;/h2&gt;&lt;p&gt;super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。&lt;/p&gt;
+&lt;h2 id=&#34;vfsmount&#34;&gt;vfsmount
+&lt;/h2&gt;&lt;p&gt;对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 &lt;code&gt;super_block&lt;/code&gt; 对与挂接点来说，都是唯一的。&lt;/p&gt;
+&lt;h2 id=&#34;path&#34;&gt;path
+&lt;/h2&gt;&lt;p&gt;path 包含 vfsmount 和 dentry 结构。&lt;/p&gt;
+&lt;h2 id=&#34;nameidata&#34;&gt;nameidata
+&lt;/h2&gt;&lt;p&gt;nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。&lt;/p&gt;
+&lt;h1 id=&#34;sys_mount-实现&#34;&gt;sys_mount 实现
+&lt;/h1&gt;&lt;p&gt;&lt;code&gt;sys_mount&lt;/code&gt; 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 &lt;code&gt;sys_mount&lt;/code&gt; 的函数原型：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# 源码中的原型
 SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 		char __user *, type, unsigned long, flags, void __user *, data)
@@ -824,11 +824,11 @@ out_unlock:
         <pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/</guid>
-        <description>&lt;h1 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义&lt;/h1&gt;
-&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;
+        <description>&lt;h1 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义
+&lt;/h1&gt;&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;
 &lt;p&gt;为了描述简单，通常称异步中断为中断，同步中断为异常。&lt;/p&gt;
-&lt;h1 id=&#34;中断分类&#34;&gt;中断分类：&lt;/h1&gt;
-&lt;pre&gt;&lt;code&gt;faults类异常：系统可以恢复，需要重新执行导致异常的指令。
+&lt;h1 id=&#34;中断分类&#34;&gt;中断分类：
+&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;faults类异常：系统可以恢复，需要重新执行导致异常的指令。
 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。
 abort异常：不可恢复。
 &lt;/code&gt;&lt;/pre&gt;
@@ -847,23 +847,23 @@ abort异常：不可恢复。
 &lt;pre&gt;&lt;code&gt;驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权
 内核`common_interrrpt`调用`do_IRQ`
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h1 id=&#34;异常处理过程&#34;&gt;异常处理过程：&lt;/h1&gt;
-&lt;pre&gt;&lt;code&gt;响应的处理程序执行
+&lt;h1 id=&#34;异常处理过程&#34;&gt;异常处理过程：
+&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;响应的处理程序执行
 do_trap
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;延时处理机制&lt;/p&gt;
 &lt;p&gt;由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。&lt;/p&gt;
 &lt;p&gt;Linux内核提供的延时机制分为softirq，tasklet，work queue。&lt;/p&gt;
-&lt;h1 id=&#34;softirq机制&#34;&gt;softirq机制：&lt;/h1&gt;
-&lt;p&gt;softirq在内核中由结构体&lt;code&gt;softirq_action&lt;/code&gt;表示，内核预设的softirq存储于&lt;code&gt;softirq_vec&lt;/code&gt;数组中，初始化函数为：&lt;code&gt;open_softirq&lt;/code&gt;。&lt;/p&gt;
+&lt;h1 id=&#34;softirq机制&#34;&gt;softirq机制：
+&lt;/h1&gt;&lt;p&gt;softirq在内核中由结构体&lt;code&gt;softirq_action&lt;/code&gt;表示，内核预设的softirq存储于&lt;code&gt;softirq_vec&lt;/code&gt;数组中，初始化函数为：&lt;code&gt;open_softirq&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;系统运行过程中，会在合适的地方调用&lt;code&gt;local_softirq_pending&lt;/code&gt;检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;中断处理退出函数irq_exit
 内核线程ksoftirqd
 内核网络子系统显示调用
 local_bh_enable
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h1 id=&#34;tasklet延时处理机制&#34;&gt;tasklet延时处理机制：&lt;/h1&gt;
-&lt;p&gt;tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。&lt;/p&gt;
+&lt;h1 id=&#34;tasklet延时处理机制&#34;&gt;tasklet延时处理机制：
+&lt;/h1&gt;&lt;p&gt;tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。&lt;/p&gt;
 &lt;p&gt;work queue延时处理：&lt;/p&gt;
 &lt;p&gt;内核使用&lt;code&gt;workqueue_struct&lt;/code&gt;记录工作队列信息，每个具体work由结构&lt;code&gt;work_struct&lt;/code&gt;定义，初始化工作队列可以用函数&lt;code&gt;create_workqueue&lt;/code&gt;，激活工作队列使用&lt;code&gt;schedule_work&lt;/code&gt;，处理工作队列函数&lt;code&gt;run_workqueue&lt;/code&gt;。&lt;/p&gt;
 </description>
@@ -916,8 +916,8 @@ copy_to_user
         <pubDate>Mon, 19 May 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-debugging/</guid>
-        <description>&lt;h1 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核&lt;/h1&gt;
-&lt;p&gt;最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;
+        <description>&lt;h1 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核
+&lt;/h1&gt;&lt;p&gt;最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;
 &lt;p&gt;之 前一直觉得KGDB这种双机调试的方式很不完美，还必须使用一个调试机，不过在Windows下使用WinDbg调试虚拟机多了，感觉这种方式很合理，起 码被调试机当机的情况下，调试机还是活的。而且这样看上去很酷，而且比SoftICE这样“不稳定”的调试方式要好的多。&lt;/p&gt;
 &lt;p&gt;这两天看到一种 UML（User Mode Linux）的调试方式，居然早已加入内核，我才听闻，真是落后时代啊。这种UML方式是把linux内核当作本地一个普通的应用程序执行，当然也很方便 调试，这个类似于Xen虚拟机。不过在64位Fedora上没有配好环境，在i386却很容易配置，打开控制台转到内核源码，例如&lt;code&gt;linux- 2.6.34&lt;/code&gt;:&lt;/p&gt;
 &lt;p&gt;编译内核命令要在普通方式后加入构架um参数：&lt;/p&gt;
@@ -990,8 +990,8 @@ Breakpoint 1, start_kernel () at init/main.c:533
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;居然一切顺利的断到了start_kernel，哈哈，不管如何，总算能够调试内核了。接下来还有UML虚拟机的网络配置，UML使用了一个取巧的方式就是利用 tun 和 iptables ，好在我也研究了大半年，明天继续。&lt;/p&gt;
 &lt;p&gt;另外有个GDB调试的问题，明明遇到了SIGSEG，为什么还能继续呢？莫非这个信号是自己发出的？还有之后的SEGTRAP信号是怎么发出来的？要弄清楚这个问题，或许还得查阅UML代码。&lt;/p&gt;
-&lt;h1 id=&#34;uml网络配置&#34;&gt;UML网络配置&lt;/h1&gt;
-&lt;p&gt;UML支持多种方式的网络，一般使用tap/tun模拟UML虚拟机中的eth0驱动，仅仅这种方式也能分为桥接和NAT等等，手工配置网络也有助于理解网络的运行方式。&lt;/p&gt;
+&lt;h1 id=&#34;uml网络配置&#34;&gt;UML网络配置
+&lt;/h1&gt;&lt;p&gt;UML支持多种方式的网络，一般使用tap/tun模拟UML虚拟机中的eth0驱动，仅仅这种方式也能分为桥接和NAT等等，手工配置网络也有助于理解网络的运行方式。&lt;/p&gt;
 &lt;p&gt;根据官方文档 &lt;a class=&#34;link&#34; href=&#34;http://user-mode-linux.sourceforge.net/network.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Simple UML Networking&lt;/a&gt; 下载 &lt;code&gt;uml_utilities&lt;/code&gt; ，其实也就使用了一个工具 tunctl，这个工具很简单，就是启动 tun 驱动，首先得先查看是否加载 tun 驱动，当然首先需要有root权限：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# 查看用户 ID （tunctl 使用）
@@ -1130,8 +1130,8 @@ default         192.168.33.33   0.0.0.0         UG    0      0        0 eth0
 # 如果此时不通，可检查iptables的其他规则和UML与主机的路由表配置
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这样便可做成NAT的效果，比桥接方式简单的多，只是需要知道iptables的用法。当然以上配置每次重启将会消失，可以写到配置开机自动设置。&lt;/p&gt;
-&lt;h1 id=&#34;qemu调试linux内核&#34;&gt;Qemu调试Linux内核&lt;/h1&gt;
-&lt;p&gt;通过UML可以方便的在本机调试Linux内核，UML是一种特殊的虚拟机，另外一种更为灵活的虚拟机是Qemu，Qemu是一种完全仿真虚拟机， 可以在i386平台仿真任意其他处理器构架，而且支持GDB调试，这里尝试一下使用Qemu调试Linux内核，Qemu参数-kernel可以直接指定 内核启动，这与UML有相似之处。&lt;/p&gt;
+&lt;h1 id=&#34;qemu调试linux内核&#34;&gt;Qemu调试Linux内核
+&lt;/h1&gt;&lt;p&gt;通过UML可以方便的在本机调试Linux内核，UML是一种特殊的虚拟机，另外一种更为灵活的虚拟机是Qemu，Qemu是一种完全仿真虚拟机， 可以在i386平台仿真任意其他处理器构架，而且支持GDB调试，这里尝试一下使用Qemu调试Linux内核，Qemu参数-kernel可以直接指定 内核启动，这与UML有相似之处。&lt;/p&gt;
 &lt;p&gt;首先需要编译安装Qemu，这里并没有什么疑惑之处，直接从官方网站下载源码，使用Linux最常用的编译命令即可：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# 默认选项会编译所有处理器构架虚拟机
 # 可以 ./configure --help 查看编译特定平台的配置
@@ -1205,8 +1205,8 @@ Breakpoint 1, start_kernel () at init/main.c:533
 (gdb)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Qemu由于是完全仿真实现，所以可以在任意平台调试其他构架内核，理论上甚至可以在Windows平台交叉编译Linux内核，再去由Qemu加载调试（交叉编译比较麻烦，需要先编译目标构架的binutil，而后链接内核）。&lt;/p&gt;
-&lt;h1 id=&#34;uml和qemu调试内核模块&#34;&gt;UML和Qemu调试内核模块&lt;/h1&gt;
-&lt;p&gt;这次来看如何调试内核模块，也就是驱动程序，模块的调试跟普通程序略有不同，不论是内核还是普通应用程序，在连接之后便以得知代码将要加载的位置，用户态程序有虚拟地址映射机制，而内核独占物理内存。内核运行与共享的内核地址空间，所以不能使用相同的线性地址，只能由内核加载模块时指定起始地址，模块中都以此为偏移运行。所以内核的调试不能使用普通的方式，需要知道模块的加载地址。&lt;/p&gt;
+&lt;h1 id=&#34;uml和qemu调试内核模块&#34;&gt;UML和Qemu调试内核模块
+&lt;/h1&gt;&lt;p&gt;这次来看如何调试内核模块，也就是驱动程序，模块的调试跟普通程序略有不同，不论是内核还是普通应用程序，在连接之后便以得知代码将要加载的位置，用户态程序有虚拟地址映射机制，而内核独占物理内存。内核运行与共享的内核地址空间，所以不能使用相同的线性地址，只能由内核加载模块时指定起始地址，模块中都以此为偏移运行。所以内核的调试不能使用普通的方式，需要知道模块的加载地址。&lt;/p&gt;
 &lt;p&gt;而且Qemu的调试原理与UML相似，也可用相同的方法进行模块的调试，这里仅以UML模块调试举例&lt;/p&gt;
 &lt;p&gt;首先需要完成一个内核模块，这里可以照搬之前的 Linux 内核调试 ，保存源文件为go.c，完成Makefile和编译工作，内核源码以编译UML的内核为准：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# Makefile 内容
@@ -1348,8 +1348,8 @@ Name .symtab Address 0x62872098
 Name .strtab Address 0x628725c0
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;如此便可稍微方便一点的打印所有段名和段基址，如果添加其他脚本扩展，可以更加方便且高效的调试Linux内核。&lt;/p&gt;
-&lt;h1 id=&#34;使用kgdb双机调试&#34;&gt;使用KGDB双机调试&lt;/h1&gt;
-&lt;p&gt;虽然使用UML或者Qemu可以调试Linux内核，但UML和Qemu毕竟是一个模拟，调试硬件驱动总是用虚拟硬件总不成事，而且Qemu据传闻 对于时钟和中断的处理也有问题，所以对于处理真实硬件的问题，最完美的调试方式就是双机调试，被调试内核在完全真实的环境中运行，排除虚拟机制的不稳定因 素，而且使用内核自带的KGDB机制，更具有可靠性，类似Windows下的WinDbg调试方式。这里使用VirtualBox虚拟机进行调试，但所提 及的方法完全适用于诸如VMWare、Qemu虚拟机或者真实机器，只是相关的串口配置方式有些许不同而已。&lt;/p&gt;
+&lt;h1 id=&#34;使用kgdb双机调试&#34;&gt;使用KGDB双机调试
+&lt;/h1&gt;&lt;p&gt;虽然使用UML或者Qemu可以调试Linux内核，但UML和Qemu毕竟是一个模拟，调试硬件驱动总是用虚拟硬件总不成事，而且Qemu据传闻 对于时钟和中断的处理也有问题，所以对于处理真实硬件的问题，最完美的调试方式就是双机调试，被调试内核在完全真实的环境中运行，排除虚拟机制的不稳定因 素，而且使用内核自带的KGDB机制，更具有可靠性，类似Windows下的WinDbg调试方式。这里使用VirtualBox虚拟机进行调试，但所提 及的方法完全适用于诸如VMWare、Qemu虚拟机或者真实机器，只是相关的串口配置方式有些许不同而已。&lt;/p&gt;
 &lt;p&gt;首先需要编译配置KGDB选项的内核，编译方式也比较简单：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# 配置内核选项
 [cpp@dark linux-2.6.34]$ make menucofnig
@@ -1416,12 +1416,12 @@ cpp@dark:~/kernel/socat-2.0.0-b4$ ./socat -d -d /tmp/vboxS0 pty:1
         <pubDate>Sun, 18 May 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-slab-allocator/</guid>
-        <description>&lt;h1 id=&#34;slab-介绍&#34;&gt;slab 介绍&lt;/h1&gt;
-&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;
+        <description>&lt;h1 id=&#34;slab-介绍&#34;&gt;slab 介绍
+&lt;/h1&gt;&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;
 &lt;p&gt;Linux内核一种分配内存的方式是alloc_pages，使用伙伴算法，但这个只适应于按页分配，如果需要几个字节的内存都分配4k，显然会是极大的浪费，所以内核又提供了一种小内存的分配方式，称之为slab，另外还有两种可选的分配方式，slob和slub，slob是为了在嵌入式环境中使用，slub在一些大型设备中币slab有更优秀的性能。但作为程序开发者来说，无需关心内核选用了哪种分配方式，三者具有相同的接口，调用者可以忽略其中的差别。&lt;/p&gt;
 &lt;p&gt;因为在内核中需要频繁分配同类型的对象，比如频繁分配socket，task_struct等结构体对象，slab一个核心思想就是一个slab分配器只分配一种对象，这样做的好处便是每个slab只分配等大小的内存，能够很好的兼顾效率和内存碎片的问题，当然slab最终也是通过alloc_pages按页分配的内存。&lt;/p&gt;
-&lt;h2 id=&#34;直观认识&#34;&gt;直观认识&lt;/h2&gt;
-&lt;p&gt;先来通过命令直观的了解一下slab的情况：&lt;/p&gt;
+&lt;h2 id=&#34;直观认识&#34;&gt;直观认识
+&lt;/h2&gt;&lt;p&gt;先来通过命令直观的了解一下slab的情况：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cat /proc/slabinfo
 slabinfo - version: 2.1
 # name                 : tunables    : slabdata   
@@ -1434,8 +1434,8 @@ kmalloc-192          352    420    192   21    1 : tunables    0    0    0 : sla
 kmalloc-96         14293  14322     96   42    1 : tunables    0    0    0 : slabdata    341    341      0
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;可以很直观的看到每种对象的slab分配情况，从名称不难看出每种slab的作用，从名字kmalloc-8等也能猜测出这是调用kmalloc时分配的内存，内存也是按照一定规则递增分配。&lt;/p&gt;
-&lt;h2 id=&#34;结构&#34;&gt;结构&lt;/h2&gt;
-&lt;p&gt;slab分配器的结构如下：&lt;/p&gt;
+&lt;h2 id=&#34;结构&#34;&gt;结构
+&lt;/h2&gt;&lt;p&gt;slab分配器的结构如下：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/keep/2014/0_kernel-slab-design.gif&#34;
 	
 	
@@ -1460,8 +1460,8 @@ void *kmem_cache_alloc(struct kmem_cache *, gfp_t);
 // 释放内存
 void kmem_cache_free(struct kmem_cache *, void *);
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;用法例子&#34;&gt;用法例子&lt;/h2&gt;
-&lt;p&gt;接下来可以写一段代码来体验一下slab的用法，这里在 Linux字符设备框架 的基础上添加代码实现：&lt;/p&gt;
+&lt;h2 id=&#34;用法例子&#34;&gt;用法例子
+&lt;/h2&gt;&lt;p&gt;接下来可以写一段代码来体验一下slab的用法，这里在 Linux字符设备框架 的基础上添加代码实现：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#include&amp;lt;linux/init.h&amp;gt; 
 #include&amp;lt;linux/module.h&amp;gt; 
  
@@ -1614,11 +1614,11 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 [root@localhost module]#
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这里便介绍了slab的调用方法，具体的细节和实现过程需要下篇分解了。&lt;/p&gt;
-&lt;h1 id=&#34;slab-实现&#34;&gt;slab 实现&lt;/h1&gt;
-&lt;p&gt;slab 除了作为内存分配器以外，还有一个重要的功能便是做CPU的高速缓存，slab会把当前cpu释放的对象保存在对应cpu的数组上，这样如果下次还是这个cpu分配相同的对象，直接从对应数组返回，这里利用了cpu的告诉缓存，cpu刚释放的空间仍然存在于它的高速缓存中的概率会很大。&lt;/p&gt;
+&lt;h1 id=&#34;slab-实现&#34;&gt;slab 实现
+&lt;/h1&gt;&lt;p&gt;slab 除了作为内存分配器以外，还有一个重要的功能便是做CPU的高速缓存，slab会把当前cpu释放的对象保存在对应cpu的数组上，这样如果下次还是这个cpu分配相同的对象，直接从对应数组返回，这里利用了cpu的告诉缓存，cpu刚释放的空间仍然存在于它的高速缓存中的概率会很大。&lt;/p&gt;
 &lt;p&gt;分析slab的具体实现。首先可以浏览一下关键数据结构 kmem_cache 的实现（注意这里结构体的定义有三个分别是slab，slub，slob的实现，slab的实现位于文件 include/linux/slab_def.h）&lt;/p&gt;
-&lt;h2 id=&#34;第一部分kmem_cache-结构体&#34;&gt;第一部分：kmem_cache 结构体&lt;/h2&gt;
-&lt;p&gt;根据内核代码注释，kmem_cache分为6个部分，第一部分是 Cache tunables&lt;/p&gt;
+&lt;h2 id=&#34;第一部分kmem_cache-结构体&#34;&gt;第一部分：kmem_cache 结构体
+&lt;/h2&gt;&lt;p&gt;根据内核代码注释，kmem_cache分为6个部分，第一部分是 Cache tunables&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;struct kmem_cache {
 /* 1) Cache tunables. Protected by cache_chain_mutex */
         unsigned int batchcount;
@@ -1632,8 +1632,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;batchcount 表示在per-CPU列表为空的情况下，从缓存的slab获取对象的数目。limit指定per-CPU列表中保存的对象最大数目，如果超过该值，内核会将batchcount个对象返回到slab。这里的参数便是与cpu高速缓存相关的控制参数。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;buffer_size&lt;/code&gt;表示缓存管理对象的长度。&lt;/p&gt;
-&lt;h2 id=&#34;第二部分&#34;&gt;第二部分：&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;struct kmem_cache {
+&lt;h2 id=&#34;第二部分&#34;&gt;第二部分：
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;struct kmem_cache {
 		...
 /* 2) touched by every alloc &amp;amp; free from the backend */
         unsigned int flags;             /* constant flags */
@@ -1642,8 +1642,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;num 是每个slab中的object数量。&lt;/p&gt;
-&lt;h2 id=&#34;第三部分&#34;&gt;第三部分：&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;struct kmem_cache {
+&lt;h2 id=&#34;第三部分&#34;&gt;第三部分：
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;struct kmem_cache {
 		...
 /* 3) cache_grow/shrink */
         /* order of pgs per slab (2^n) */
@@ -1664,8 +1664,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这里于分配相关的参数，主要的参数是颜色范围。&lt;/p&gt;
-&lt;h2 id=&#34;第四部分&#34;&gt;第四部分：&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;struct kmem_cache {
+&lt;h2 id=&#34;第四部分&#34;&gt;第四部分：
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;struct kmem_cache {
 		...
 /* 4) cache creation/removal */
         const char *name;
@@ -1677,8 +1677,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这部分存储了缓存的名称和缓存的list_head节点。&lt;/p&gt;
-&lt;h2 id=&#34;第五部分&#34;&gt;第五部分&lt;/h2&gt;
-&lt;p&gt;主要是统计之用，开启了&lt;code&gt;CONFIG_DEBUG_SLAB&lt;/code&gt;宏才会生效，与slab分配算法无关。&lt;/p&gt;
+&lt;h2 id=&#34;第五部分&#34;&gt;第五部分
+&lt;/h2&gt;&lt;p&gt;主要是统计之用，开启了&lt;code&gt;CONFIG_DEBUG_SLAB&lt;/code&gt;宏才会生效，与slab分配算法无关。&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;struct kmem_cache {
 		...
 /* 5) statistics */
@@ -1707,8 +1707,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 		...
 };
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;第六部分&#34;&gt;第六部分&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;struct kmem_cache {
+&lt;h2 id=&#34;第六部分&#34;&gt;第六部分
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;struct kmem_cache {
 		...
 /* 6) per-cpu/per-node data, touched during every alloc/free */
         /*
@@ -1724,31 +1724,31 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;最后这部分是per-CPU相关变量，array很容易理解，既是每个cpu对应的数组。另外一个成员nodelists存储了 &lt;code&gt;slabs_partia&lt;/code&gt;l，&lt;code&gt;slabs_full&lt;/code&gt;，&lt;code&gt;slabs_free&lt;/code&gt;链表，并记录链表空闲节点等信息，这个结构体便是给per-CPU数组提供object的缓存池，注意这里是一个指针的指针，是 &lt;code&gt;kmem_list3&lt;/code&gt; 的二维数组，其中第一个维度是与cpu最接近的内存块索引。&lt;/p&gt;
-&lt;h1 id=&#34;创建过程&#34;&gt;创建过程&lt;/h1&gt;
-&lt;p&gt;接下来看&lt;code&gt;kmem_cache&lt;/code&gt;节点的创建过程，&lt;code&gt;kmem_cache_create&lt;/code&gt; 分为几个部分：&lt;/p&gt;
-&lt;h2 id=&#34;一检查参数的合理性&#34;&gt;一、检查参数的合理性&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;if (!name || in_interrupt() || (size &amp;lt; BYTES_PER_WORD) ||             size &amp;gt; KMALLOC_MAX_SIZE) {
+&lt;h1 id=&#34;创建过程&#34;&gt;创建过程
+&lt;/h1&gt;&lt;p&gt;接下来看&lt;code&gt;kmem_cache&lt;/code&gt;节点的创建过程，&lt;code&gt;kmem_cache_create&lt;/code&gt; 分为几个部分：&lt;/p&gt;
+&lt;h2 id=&#34;一检查参数的合理性&#34;&gt;一、检查参数的合理性
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;if (!name || in_interrupt() || (size &amp;lt; BYTES_PER_WORD) ||             size &amp;gt; KMALLOC_MAX_SIZE) {
         printk(KERN_ERR &amp;quot;%s: Early error in slab %s\n&amp;quot;, __func__,
                         name);
         BUG();
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;查看名字是否为空，分配大小是否大于分配的最大值KMALLOC_MAX_SIZE，是否小于CPU字长等，之后进行了去重检测，防止创建相同名称的缓存。&lt;/p&gt;
-&lt;h2 id=&#34;二计算对齐&#34;&gt;二、计算对齐&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;if (size &amp;amp; (BYTES_PER_WORD - 1)) {
+&lt;h2 id=&#34;二计算对齐&#34;&gt;二、计算对齐
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;if (size &amp;amp; (BYTES_PER_WORD - 1)) {
         size += (BYTES_PER_WORD - 1);
         size &amp;amp;= ~(BYTES_PER_WORD - 1);
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;按照处理器字长对其。之后根据flag 的ARCH参数计算对齐。&lt;/p&gt;
-&lt;h2 id=&#34;三分配缓存结构&#34;&gt;三、分配缓存结构&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;cachep = kmem_cache_zalloc(&amp;amp;cache_cache, gfp);
+&lt;h2 id=&#34;三分配缓存结构&#34;&gt;三、分配缓存结构
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;cachep = kmem_cache_zalloc(&amp;amp;cache_cache, gfp);
 if (!cachep)
         goto oops;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;cache_cache 是缓存的slab分配器，这里创建出一个新的cache实例，存入cachep，这里就会出现一个问题，便是mem_cache的创建需要调用alloc，但是cache_cache是如何分配出来的呢，这里涉及到slab的初始化问题，之后再讨论。&lt;/p&gt;
-&lt;h2 id=&#34;四确定slab头的存储位置&#34;&gt;四、确定slab头的存储位置&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;if ((size &amp;gt;= (PAGE_SIZE &amp;gt;&amp;gt; 3)) &amp;amp;&amp;amp; !slab_early_init &amp;amp;&amp;amp;
+&lt;h2 id=&#34;四确定slab头的存储位置&#34;&gt;四、确定slab头的存储位置
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;if ((size &amp;gt;= (PAGE_SIZE &amp;gt;&amp;gt; 3)) &amp;amp;&amp;amp; !slab_early_init &amp;amp;&amp;amp;
     !(flags &amp;amp; SLAB_NOLEAKTRACE))
         /*
          * Size is large, assume best to place the slab management obj
@@ -1757,23 +1757,23 @@ if (!cachep)
         flags |= CFLGS_OFF_SLAB;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;如果object大小大于页帧的八分之一，则将管理数据放到slab之外。&lt;/p&gt;
-&lt;h2 id=&#34;五calculate_slab_order&#34;&gt;五、calculate_slab_order&lt;/h2&gt;
-&lt;p&gt;现在已经确定缓存对象的size，现在需要估算slab的长度，函数&lt;code&gt;calculate_slab_order&lt;/code&gt;通过对象size，align和flags计算slab应该使用多少页帧，如果页帧过少则存储的对象过少，增加分配管理的开销，如果页帧过多，则空间过于浪费。&lt;/p&gt;
+&lt;h2 id=&#34;五calculate_slab_order&#34;&gt;五、calculate_slab_order
+&lt;/h2&gt;&lt;p&gt;现在已经确定缓存对象的size，现在需要估算slab的长度，函数&lt;code&gt;calculate_slab_order&lt;/code&gt;通过对象size，align和flags计算slab应该使用多少页帧，如果页帧过少则存储的对象过少，增加分配管理的开销，如果页帧过多，则空间过于浪费。&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;for (gfporder = 0; gfporder
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;函数循环中gfporder为页帧数量，对指定的页帧，通过函数cache_estimate计算能够存储的数量num以及浪费的空间remainder，计算的公式为： PAGE_SIZE &amp;laquo; gfporder = head + num * size + left_over。
 如果对象存储在slab之外，则&lt;code&gt;head（mgmt_size）&lt;/code&gt;为0，如果对象存储于slab之内，则 &lt;code&gt;head = sizeof(struct slab) + num*sizeof(kmem_bufctl_t)&lt;/code&gt;。接着&lt;code&gt;calculate_slab_order&lt;/code&gt;之后便是循环退出的各种条件。&lt;/p&gt;
-&lt;h2 id=&#34;六着色&#34;&gt;六、着色&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;cachep-&amp;gt;colour_off = cache_line_size();
+&lt;h2 id=&#34;六着色&#34;&gt;六、着色
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;cachep-&amp;gt;colour_off = cache_line_size();
 /* Offset must be a multiple of the alignment. */
 if (cachep-&amp;gt;colour_off &amp;lt; align)                 cachep-&amp;gt;colour_off = align;
 cachep-&amp;gt;colour = left_over / cachep-&amp;gt;colour_off;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;colour_off&lt;/code&gt; 计算颜色偏移，colour颜色数量，紧接着初始化函数对cache的变量赋值。&lt;/p&gt;
-&lt;h2 id=&#34;七setup_cpu_cache&#34;&gt;七、setup_cpu_cache&lt;/h2&gt;
-&lt;p&gt;调用enable_cpucache初始化per-CPU变量。&lt;/p&gt;
-&lt;h2 id=&#34;八加入全局链表&#34;&gt;八、加入全局链表&lt;/h2&gt;
-&lt;p&gt;函数的最后加入全局链表&lt;code&gt;cache_chain&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;七setup_cpu_cache&#34;&gt;七、setup_cpu_cache
+&lt;/h2&gt;&lt;p&gt;调用enable_cpucache初始化per-CPU变量。&lt;/p&gt;
+&lt;h2 id=&#34;八加入全局链表&#34;&gt;八、加入全局链表
+&lt;/h2&gt;&lt;p&gt;函数的最后加入全局链表&lt;code&gt;cache_chain&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;接下来看缓存分配过程，&lt;code&gt;kmem_cache_alloc&lt;/code&gt;，函数调用&lt;code&gt;__cache_alloc&lt;/code&gt; -&amp;gt; &lt;code&gt;____cache_alloc&lt;/code&gt; 完成主要功能：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;ac = cpu_cache_get(cachep);
 if (likely(ac-&amp;gt;avail)) {
@@ -1796,10 +1796,10 @@ cache_grow 执行时首先计算颜色值，颜色值加一，如果超过最大
         <pubDate>Sat, 17 May 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-data-structure/</guid>
-        <description>&lt;h1 id=&#34;内核链表&#34;&gt;内核链表&lt;/h1&gt;
-&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;
-&lt;h2 id=&#34;概览&#34;&gt;概览&lt;/h2&gt;
-&lt;p&gt;先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：&lt;/p&gt;
+        <description>&lt;h1 id=&#34;内核链表&#34;&gt;内核链表
+&lt;/h1&gt;&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;
+&lt;h2 id=&#34;概览&#34;&gt;概览
+&lt;/h2&gt;&lt;p&gt;先来看一个链表的节点，对于一个节点，分为两部分，一部分是数据，另一部分是串联数据的指针。Linux链表节点的定义如下(以下代码皆为3.5版本)：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;// include/linux/types.h
 struct list_head {
         struct list_head *next, *prev;
@@ -1841,8 +1841,8 @@ struct list_head {
 &lt;pre&gt;&lt;code&gt;simple * p = list_entry(ptr, struct simple, list);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这样便解决了从&lt;code&gt;list_head&lt;/code&gt;上获取附着的数据的问题。接下来需要解决对链表的增删改查的问题：&lt;/p&gt;
-&lt;h2 id=&#34;初始化链表&#34;&gt;初始化链表&lt;/h2&gt;
-&lt;p&gt;初始化链表有两种方法，LIST_HEAD_INIT和LIST_HEAD&lt;/p&gt;
+&lt;h2 id=&#34;初始化链表&#34;&gt;初始化链表
+&lt;/h2&gt;&lt;p&gt;初始化链表有两种方法，LIST_HEAD_INIT和LIST_HEAD&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#define LIST_HEAD_INIT(name) { &amp;amp;(name), &amp;amp;(name) }
 
 #define LIST_HEAD(name) \
@@ -1855,8 +1855,8 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;创建一个指向自身的节点。&lt;/p&gt;
-&lt;h2 id=&#34;插入节点&#34;&gt;插入节点&lt;/h2&gt;
-&lt;p&gt;在节点后插入新节点&lt;code&gt;list_add_tail&lt;/code&gt;，和在节点前插入新节点&lt;code&gt;list_add&lt;/code&gt;：&lt;/p&gt;
+&lt;h2 id=&#34;插入节点&#34;&gt;插入节点
+&lt;/h2&gt;&lt;p&gt;在节点后插入新节点&lt;code&gt;list_add_tail&lt;/code&gt;，和在节点前插入新节点&lt;code&gt;list_add&lt;/code&gt;：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;/**
  * list_add - add a new entry
  * @new: new entry to be added
@@ -1884,8 +1884,8 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;其中 &lt;code&gt;__list_add&lt;/code&gt; 只是普通的链表操作，并无特别之处，可参见Linux源码查看实现。&lt;/p&gt;
-&lt;h2 id=&#34;删除节点&#34;&gt;删除节点&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;static inline void list_del(struct list_head *entry)
+&lt;h2 id=&#34;删除节点&#34;&gt;删除节点
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;static inline void list_del(struct list_head *entry)
 {
         __list_del(entry-&amp;gt;prev, entry-&amp;gt;next);
         entry-&amp;gt;next = LIST_POISON1;
@@ -1893,15 +1893,15 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;__list_del&lt;/code&gt; 把entry从链表中删除，之后把entry链表指针复制成非空指针（如果使用会出现段错误）&lt;/p&gt;
-&lt;h2 id=&#34;检查是否空链表&#34;&gt;检查是否空链表&lt;/h2&gt;
-&lt;p&gt;判断一个链表是否为空，只需要看头节点是否指向自己便可：&lt;/p&gt;
+&lt;h2 id=&#34;检查是否空链表&#34;&gt;检查是否空链表
+&lt;/h2&gt;&lt;p&gt;判断一个链表是否为空，只需要看头节点是否指向自己便可：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;static inline int list_empty(const struct list_head *head)
 {
         return head-&amp;gt;next == head;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;遍历链表&#34;&gt;遍历链表&lt;/h2&gt;
-&lt;p&gt;遍历是这几种操作中最为复杂的，有四个函数：&lt;/p&gt;
+&lt;h2 id=&#34;遍历链表&#34;&gt;遍历链表
+&lt;/h2&gt;&lt;p&gt;遍历是这几种操作中最为复杂的，有四个函数：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#define list_for_each(pos, head) \
         for (pos = (head)-&amp;gt;next; pos != (head); pos = pos-&amp;gt;next)
 
@@ -1919,8 +1919,8 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
              pos = list_entry(pos-&amp;gt;member.prev, typeof(*pos), member))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;list_for_each&lt;/code&gt; 和 &lt;code&gt;list_for_each_prev&lt;/code&gt; 较为简单，一个向后遍历，另一个向前遍历，&lt;code&gt;list_for_each_entry&lt;/code&gt;和&lt;code&gt;list_for_each_entry_reverse&lt;/code&gt;功能相似，不过不是对&lt;code&gt;list_head&lt;/code&gt;操作，而是直接对结构体操作，如我们这里的simple结构。根据之前的叙述也不难理解函数实现，只是在&lt;code&gt;list_head&lt;/code&gt;上调用了&lt;code&gt;list_entry&lt;/code&gt;获取了完整结构。&lt;/p&gt;
-&lt;h2 id=&#34;实例&#34;&gt;实例&lt;/h2&gt;
-&lt;p&gt;千言万语不如一个例子来的直观，我们通过一个简单的例子说明一下如何使用内核链表：&lt;/p&gt;
+&lt;h2 id=&#34;实例&#34;&gt;实例
+&lt;/h2&gt;&lt;p&gt;千言万语不如一个例子来的直观，我们通过一个简单的例子说明一下如何使用内核链表：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#include &amp;lt;linux/list.h&amp;gt;
 #include &amp;lt;linux/kernel.h&amp;gt;
 #include &amp;lt;stdio.h&amp;gt;
@@ -1960,9 +1960,9 @@ int main()
 &lt;p&gt;编译参数为&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;gcc -D__KERNEL__ -I/usr/src/linux-headers-3.2.0-27-generic/include/ -I/usr/src/linux-headers-3.2.0-27-generic/arch/ia64/include/ simple.c
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中头文件中都是内核函数，需要宏&lt;code&gt;__KERNEL__&lt;/code&gt;，否则大部分定义会被忽略。&lt;/p&gt;
-&lt;h1 id=&#34;hash表&#34;&gt;Hash表&lt;/h1&gt;
-&lt;h2 id=&#34;定义&#34;&gt;定义&lt;/h2&gt;
-&lt;p&gt;链表虽然是最常见的数据结构，但实际使用中，由于链表的检索能力较差，更多的是作为队列和栈结构使用，如果需要查询，比如通过pid查找进程，通过描述符查找inode，就需要用到检索更快的数据结构——Hash表。
+&lt;h1 id=&#34;hash表&#34;&gt;Hash表
+&lt;/h1&gt;&lt;h2 id=&#34;定义&#34;&gt;定义
+&lt;/h2&gt;&lt;p&gt;链表虽然是最常见的数据结构，但实际使用中，由于链表的检索能力较差，更多的是作为队列和栈结构使用，如果需要查询，比如通过pid查找进程，通过描述符查找inode，就需要用到检索更快的数据结构——Hash表。
 先来看Hash节点的定义：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;struct hlist_head {
 	struct hlist_node *first;
@@ -1973,8 +1973,8 @@ struct hlist_node {
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;其中 &lt;code&gt;hlist_head&lt;/code&gt; 为头结点，与链表不同的是还需要一个节点的概念 &lt;code&gt;hlist_node&lt;/code&gt;，他们之间的关系如图：&lt;/p&gt;
 &lt;p&gt;左侧是定长数组，每个节点是 &lt;code&gt;hlist_head&lt;/code&gt; ，其中first指向 &lt;code&gt;hlist_node&lt;/code&gt; 节点，&lt;code&gt;hlist_node&lt;/code&gt;又组成一列链表，&lt;code&gt;hlist_node&lt;/code&gt;的链表结构跟 &lt;code&gt;list_head&lt;/code&gt;不同之处在于 &lt;code&gt;hlist_node&lt;/code&gt; 的 pprev 指向了 前一个节点的指针地址。&lt;/p&gt;
-&lt;h2 id=&#34;基本操作&#34;&gt;基本操作&lt;/h2&gt;
-&lt;p&gt;Hash表使用起来也非常简单，首先通过hash函数计算目标值，得到一个索引，在&lt;code&gt;hlist_head&lt;/code&gt;数组中找到相应位置，再插入链表。Hash的链表Linux也提供了多种操作方式：&lt;/p&gt;
+&lt;h2 id=&#34;基本操作&#34;&gt;基本操作
+&lt;/h2&gt;&lt;p&gt;Hash表使用起来也非常简单，首先通过hash函数计算目标值，得到一个索引，在&lt;code&gt;hlist_head&lt;/code&gt;数组中找到相应位置，再插入链表。Hash的链表Linux也提供了多种操作方式：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#define INIT_HLIST_HEAD(ptr) ((ptr)-&amp;gt;first = NULL)
 static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h);
 static inline void hlist_add_before(struct hlist_node *n, 
@@ -2012,8 +2012,8 @@ static inline void hlist_move_list(struct hlist_head *old,
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这个函数把32位整数Hash成bits位的整数，另外还有 &lt;code&gt;hash_64&lt;/code&gt; 等等Hash函数。&lt;/p&gt;
-&lt;h2 id=&#34;实例-1&#34;&gt;实例&lt;/h2&gt;
-&lt;p&gt;最后再来通过一个简单的例子看一下Hash表的使用：&lt;/p&gt;
+&lt;h2 id=&#34;实例-1&#34;&gt;实例
+&lt;/h2&gt;&lt;p&gt;最后再来通过一个简单的例子看一下Hash表的使用：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#include &amp;lt;linux/kernel.h&amp;gt;
 #include &amp;lt;linux/types.h&amp;gt;
 #include &amp;lt;linux/list.h&amp;gt;
@@ -2099,9 +2099,9 @@ MODULE_VERSION(&amp;quot;V0.1&amp;quot;);
 MODULE_LICENSE(&amp;quot;Dual BSD/GPL&amp;quot;);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;这里的代码是一个简单的Linux内核，关于如何写一个简单的Linux内核，可以参阅 Linux字符设备驱动框架&lt;/p&gt;
-&lt;h1 id=&#34;红黑树&#34;&gt;红黑树&lt;/h1&gt;
-&lt;h2 id=&#34;定义-1&#34;&gt;定义&lt;/h2&gt;
-&lt;p&gt;Hash表虽然检索复杂度只需要O(1)，但是性能依赖于Hash函数，不合适的Hash函数会导致性能极其低下，而且需要预分配Hash头结点的空间，扩展性和性能稳定性都是问题，所以Linux内核另外还有一套快速插入查询的数据结构——红黑树。&lt;/p&gt;
+&lt;h1 id=&#34;红黑树&#34;&gt;红黑树
+&lt;/h1&gt;&lt;h2 id=&#34;定义-1&#34;&gt;定义
+&lt;/h2&gt;&lt;p&gt;Hash表虽然检索复杂度只需要O(1)，但是性能依赖于Hash函数，不合适的Hash函数会导致性能极其低下，而且需要预分配Hash头结点的空间，扩展性和性能稳定性都是问题，所以Linux内核另外还有一套快速插入查询的数据结构——红黑树。&lt;/p&gt;
 &lt;p&gt;红黑树是一种平衡二叉树，二叉树查找效率是O(logn)，但对于某些极端情况下，一个分支的节点远高于另一个分支，处于不平衡状态下的二叉树性能很差，极端情况跟链表相同。所以出现很多保持二叉树平衡的方法，其中一种便是红黑树，红黑树在二叉树的基础上又规定了一些规则：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;性质1：节点是红色或黑色。&lt;/li&gt;
@@ -2111,8 +2111,8 @@ MODULE_LICENSE(&amp;quot;Dual BSD/GPL&amp;quot;);
 &lt;li&gt;性质5：从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;红黑树的性质保证了从根节点到任何一个叶子节点的长度都不会相差两倍以上，只要在增删的过程中保持红黑树的性质，也便保持了树的平衡性。&lt;/p&gt;
-&lt;h2 id=&#34;实现&#34;&gt;实现&lt;/h2&gt;
-&lt;p&gt;红黑树在内核中的实现位于：&lt;/p&gt;
+&lt;h2 id=&#34;实现&#34;&gt;实现
+&lt;/h2&gt;&lt;p&gt;红黑树在内核中的实现位于：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;linux/lib/rbtree.c
 linux/include/linux/rbtree.h
 &lt;/code&gt;&lt;/pre&gt;
@@ -2133,8 +2133,8 @@ struct rb_root
 };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;可以看到红黑树同链表一样，都没有数据块的定义，因为C语言中没有模版，这样实现能使数据结构跟具体的业务分离，&lt;code&gt;rb_root&lt;/code&gt; 中仅有一个 rb_node 域，rb_node中有颜色和左右节点的指针，都很容易理解。&lt;/p&gt;
-&lt;h2 id=&#34;初始化&#34;&gt;初始化&lt;/h2&gt;
-&lt;p&gt;节点的初始化操作，节点默认被置为红色：&lt;/p&gt;
+&lt;h2 id=&#34;初始化&#34;&gt;初始化
+&lt;/h2&gt;&lt;p&gt;节点的初始化操作，节点默认被置为红色：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;static inline void rb_init_node(struct rb_node *rb)
 {
 	rb-&amp;gt;rb_parent_color = 0;
@@ -2143,16 +2143,16 @@ struct rb_root
 	RB_CLEAR_NODE(rb);
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;增删操作&#34;&gt;增删操作&lt;/h2&gt;
-&lt;p&gt;红黑树的增加删除操作如下：&lt;/p&gt;
+&lt;h2 id=&#34;增删操作&#34;&gt;增删操作
+&lt;/h2&gt;&lt;p&gt;红黑树的增加删除操作如下：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;// node为已插入的节点，函数检查树的平衡性并修正
 void rb_insert_color(struct rb_node *node, struct rb_root *root);
 // 删除节点
 void rb_erase(struct rb_node *node, struct rb_root *root);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;由于二叉树需要比较数据区域的大小，这里仅仅有节点是不够的，所以插入操作需要调用者比较插入，然后调用&lt;code&gt;rb_insert_color&lt;/code&gt;调整树的平衡性，&lt;code&gt;rb_erase&lt;/code&gt;可以直接删除，另外搜索操作也需要用户根据二叉树的性质自己处理，在头文件rbtree.h开头的注释给了一个使用的例子，这里再试着写一个简单的例子：&lt;/p&gt;
-&lt;h2 id=&#34;例子&#34;&gt;例子&lt;/h2&gt;
-&lt;pre&gt;&lt;code&gt;#include &amp;lt;linux/kernel.h&amp;gt;
+&lt;h2 id=&#34;例子&#34;&gt;例子
+&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;#include &amp;lt;linux/kernel.h&amp;gt;
 #include &amp;lt;linux/types.h&amp;gt;
 #include &amp;lt;linux/init.h&amp;gt;
 #include &amp;lt;linux/module.h&amp;gt;
@@ -2250,11 +2250,11 @@ MODULE_VERSION(&amp;quot;V0.1&amp;quot;);
 MODULE_LICENSE(&amp;quot;Dual BSD/GPL&amp;quot;);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;程序编译运行请参考 Linux字符设备驱动框架。&lt;/p&gt;
-&lt;h1 id=&#34;radix-tree&#34;&gt;Radix Tree&lt;/h1&gt;
-&lt;h2 id=&#34;定义-2&#34;&gt;定义&lt;/h2&gt;
-&lt;p&gt;Linux内核实现了大量的数据结构，其中树结构除了前面提到的红黑树以外，还有一种很有意思的树-Radix Tree，翻译为基数树。Radix Tree也是一种key-value结构，要说最快速的key-value查找结构，非数组莫属，只需一次定位便可找到目标值，其缺点是需要占用过多的内存空间，如果连续的key中大多数都是空值，空间的利用率会非常低，如一个整数范围的key，value占一个字节也需要4G的存储，当key非常稀疏的情况下，无疑是一种浪费，Radix Tree的解决方式是分级，简单来说，如果按照整数的尾数分为2级，第一级需要10个指针即可，尾数为0的key映射到第一个指针上，第一个指针再指向存储数组，这样如果只有0-4的key，便可不需要给5-9的指针分配空间，可节省一半的空间。当然这只是简单的例子，内核的Radix Tree更为精炼。&lt;/p&gt;
-&lt;h2 id=&#34;实现-1&#34;&gt;实现&lt;/h2&gt;
-&lt;p&gt;Linux内核的根据Radix Tree的高度把key分为若干段，如下图所示，每段长度固定为&lt;code&gt;RADIX_TREE_MAP_SHIFT&lt;/code&gt;，树高度可通过&lt;code&gt;radix_tree_extend&lt;/code&gt;扩展，key的每一段分别指定了每一层的位置。&lt;/p&gt;
+&lt;h1 id=&#34;radix-tree&#34;&gt;Radix Tree
+&lt;/h1&gt;&lt;h2 id=&#34;定义-2&#34;&gt;定义
+&lt;/h2&gt;&lt;p&gt;Linux内核实现了大量的数据结构，其中树结构除了前面提到的红黑树以外，还有一种很有意思的树-Radix Tree，翻译为基数树。Radix Tree也是一种key-value结构，要说最快速的key-value查找结构，非数组莫属，只需一次定位便可找到目标值，其缺点是需要占用过多的内存空间，如果连续的key中大多数都是空值，空间的利用率会非常低，如一个整数范围的key，value占一个字节也需要4G的存储，当key非常稀疏的情况下，无疑是一种浪费，Radix Tree的解决方式是分级，简单来说，如果按照整数的尾数分为2级，第一级需要10个指针即可，尾数为0的key映射到第一个指针上，第一个指针再指向存储数组，这样如果只有0-4的key，便可不需要给5-9的指针分配空间，可节省一半的空间。当然这只是简单的例子，内核的Radix Tree更为精炼。&lt;/p&gt;
+&lt;h2 id=&#34;实现-1&#34;&gt;实现
+&lt;/h2&gt;&lt;p&gt;Linux内核的根据Radix Tree的高度把key分为若干段，如下图所示，每段长度固定为&lt;code&gt;RADIX_TREE_MAP_SHIFT&lt;/code&gt;，树高度可通过&lt;code&gt;radix_tree_extend&lt;/code&gt;扩展，key的每一段分别指定了每一层的位置。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://drawing.fancymore.com/keep/2014/0_radix-tree.png&#34;
 	
 	
@@ -3374,10 +3374,10 @@ close 函数调用 netif_stop_queue(dev); 通知上层停止接受数据包&lt;/
         <pubDate>Sun, 11 May 2014 01:16:33 +0800</pubDate>
         
         <guid>https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-character-driver/</guid>
-        <description>&lt;h1 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？&lt;/h1&gt;
-&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;
-&lt;h1 id=&#34;如何实现&#34;&gt;如何实现？&lt;/h1&gt;
-&lt;p&gt;操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：&lt;/p&gt;
+        <description>&lt;h1 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？
+&lt;/h1&gt;&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;
+&lt;h1 id=&#34;如何实现&#34;&gt;如何实现？
+&lt;/h1&gt;&lt;p&gt;操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;file_operations&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;module&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;owner&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		&lt;span class=&#34;kt&#34;&gt;loff_t&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;llseek&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;file&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;loff_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。\n">
+<title>汇编语言学习笔记(四)-MOV指令</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言学习笔记(四)-MOV指令">
+<meta property='og:description' content="汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。\n">
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4/'>
+<meta property='og:site_name' content='涸泽之鱼'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-15T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-15T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(四)-MOV指令">
+<meta name="twitter:description" content="汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">📖</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/drawing/'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4/">汇编语言学习笔记(四)-MOV指令</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 15, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。</p>
+<p>对于AT&amp;T和MASM两种语法，最大的差别就从此开始了，因为二者的源、目的操作数是相反的！</p>
+<p>在AT&amp;T里mov的语法结构为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	movx source, destination
+</span></span></code></pre></div><p>其中x为操作数的宽度，有l，w，b，q等，例如movl操作数的宽度为32位，movb操作数宽度为8位，例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	movl $0, %eax
+</span></span><span class="line"><span class="cl">	movl $0, %al
+</span></span></code></pre></div><p>这里另一个不同是寄存器的写法，在AT&amp;T里使用寄存器要在寄存器前加%符号，在MASM中则不用。另外MASM可以自动识别操作数大小，如果有些仅仅传入内存，无法识别操作数大小，则必须使用 dword ptr[] 语法，这里在寻址部分会有涉及。</p>
+<p>在MASM中，mov语言的规则为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	mov destination, source
+</span></span></code></pre></div><p>这里千万注意二者的操作数是相反的！</p>
+<p>对于MOV指令还有一些规则如下：</p>
+<ul>
+<li>两个操作数尺寸必须相同</li>
+<li>两个操作数不可同为内存</li>
+<li>目的操作数不可为CS，EIP和IP</li>
+<li>立即数不可直接传送至段寄存器</li>
+</ul>
+<p>这些规则对AT&amp;T语法也同样适用，why？因为二者编译都会编译成相同的二进制代码，这些规则是cpu的规则，而不是某种语法的规则。</p>
+<p>以上说的是基本的mov指令，另外为了方便或者效率，还有些相应的扩展指令：
+扩展移动，因为mov指令的操作数大小必须相同，所以如果需要把一个较小值ax移动到较大值ebx中，则需要两步：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	mov ebx, 0
+</span></span><span class="line"><span class="cl">	mov bx, ax
+</span></span></code></pre></div><p>如果ax为负数，需要把ebx高位扩展为全1，mov ebx, FFFFFFFFh，好在intel支持了相关的扩展指令，movzx和movsx
+movzx为零扩展，即高位补零，movsx为符号扩展，即高位补符号位，一般有符号数适用movsx。此指令目标操作数必须为寄存器，源操作数可以为内存和寄存器。
+写一个简单的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.section .data
+</span></span><span class="line"><span class="cl">		num1: .byte 0x12
+</span></span><span class="line"><span class="cl">		num2: .byte 0xf2
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.section .text
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.globl _main
+</span></span><span class="line"><span class="cl">	_main:
+</span></span><span class="line"><span class="cl">		mov num1, %al
+</span></span><span class="line"><span class="cl">		movzx num1, %eax
+</span></span><span class="line"><span class="cl">		movsx num1, %ebx
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		movzx num2, %ecx
+</span></span><span class="line"><span class="cl">		movsx num2, %edx
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		pushl $0
+</span></span><span class="line"><span class="cl">		call _exit
+</span></span></code></pre></div><p>编译时使用 <code>gcc -g hello.s -o hello</code> 加入调试信息，便于调试，然后使用命令 <code>gdb a.exe</code> 调试：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	br main // 在main函数出下断点
+</span></span><span class="line"><span class="cl">	r // 执行程序
+</span></span><span class="line"><span class="cl">	n // 单步运行至 pushl $0 处
+</span></span><span class="line"><span class="cl">	info register // 查看寄存器信息
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	eax 0×12 18
+</span></span><span class="line"><span class="cl">	ecx 0xf2 242
+</span></span><span class="line"><span class="cl">	edx 0xfffffff2 -14
+</span></span><span class="line"><span class="cl">	ebx 0×12 18
+</span></span></code></pre></div><p>显示所有寄存器的信息，可以看到，eax和ebx都是0×12，因为num1高位是0，所以无论使用哪种方式都是高位补零，num2符号位为1，如此在使用movzx时高位补零，但是使用movsx时高位为符号位，补0，所以edx的最后结果为0xfffffff2。</p>
+<p>这里示例了AT&amp;T语法，对于MASM二者的用法相同，除了操作数的顺序。</p>
+<p>mov 的另外一种变形是cmovx形式，涉及到cpu流水线的问题，cpu的eip寄存器指向当前执行的指令，但这个指令如果每次用到再从内存中读取，速度会有 所限制，于是cpu使用流水线方式，会对指令进行预读取，就是先读一定量的指令到队列中，每次都从此队列中读取，这样会加快执行速度，但是一旦遇到跳转指 令，cpu在运行到此处时并不知道程序将会走哪个分支，如此，到达跳转部分，将会有可能清空队列中所有指令，再次读取另一分支，损耗cpu执行指令的效 率，当然，cpu后来加入了乱序引擎，但是还是尽量减少跳转为上。对于一些简单的跳转移动数据，比如比较大小后决定是否赋值，使用cmovx形式便可不进 行跳转而完成这个过程。</p>
+<p>例如对于c语言的一段分支代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	if (a &gt; b)
+</span></span><span class="line"><span class="cl">		max = a;
+</span></span></code></pre></div><p>现用汇编改写：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.686
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">	value1 dd 4321h
+</span></span><span class="line"><span class="cl">	value2 dd 1234h
+</span></span><span class="line"><span class="cl">	max dd ?
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">		mov eax, value1
+</span></span><span class="line"><span class="cl">		cmp eax, value2
+</span></span><span class="line"><span class="cl">		cmovb eax, value2
+</span></span><span class="line"><span class="cl">		mov max, eax
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>这里要说明的是.686模式，如果使用.386模式编译会错误，说cmovb对目前的cpu模式不支持，从start开始，第一句 mov eax, value1 把value1赋值给eax寄存器，cmp比较eax和value2的大小，实际上做了一个eax-value2的操作，但是舍弃结果。如果eax小于 value2，则eflag寄存器的CF位被设置（参考寄存器），cmovb指令是CF=1时移动数据，否则不做操作。这样eax中即为大数，直接移动到 max内存中。</p>
+<p>这样程序看不到最终的效果，还需要调试器的帮助，在Windows平台，比较方便的动态调试工具为Ollydbg，打开 Ollydbg后文件-&gt;打开cmov.exe，如此便可在代码窗口看到刚才写的指令，可以在push 0处设置断点，运行便可在右侧寄存器窗口看到结果。其使用方式与VC大致相同。</p>
+<p>另外从调试过程中，我们也可看到invoke ExitProcess, NULL被编译成push和call指令，与AT&amp;T的写法相同，invoke仅仅是为了简化函数调用的写法而已。</p>
+<p>另外cmovx是一系列函数，都是根据eflag寄存器的不同标志来决定是否移动数据，其中的细节可参考Intel手册卷2A，这里简单列举一些情形以及条件：</p>
+<p>对于无符号型比较</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	cmova / cmovnbe &gt; 赋值
+</span></span><span class="line"><span class="cl">	cmovae / cmovnb &gt;=
+</span></span><span class="line"><span class="cl">	cmovnc 无进位赋值
+</span></span><span class="line"><span class="cl">	cmovb / cmovnae &lt;
+</span></span><span class="line"><span class="cl">	cmovc 进位
+</span></span><span class="line"><span class="cl">	cmovbe / cmovna cmove / cmovz = 或 为0 赋值
+</span></span><span class="line"><span class="cl">	cmovne / cmovnz 不等于 
+</span></span></code></pre></div><p>对于有符号类型</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	:::nasm
+</span></span><span class="line"><span class="cl">	cmovge / cmovnl &gt;=
+</span></span><span class="line"><span class="cl">	cmovl / cmovnge &lt;
+</span></span><span class="line"><span class="cl">	cmovle /cmovng cmovo 溢出
+</span></span><span class="line"><span class="cl">	cmovno 未溢出
+</span></span><span class="line"><span class="cl">	cmovs 结果带符号（负数）
+</span></span><span class="line"><span class="cl">	cmovns 无符号（非负数） 
+</span></span></code></pre></div><p>这里乍一看，如此之多的情形，还只是其中一部分，不过稍微细心观察，这里的规律还是很明显的：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	a表示above，无符号大于
+</span></span><span class="line"><span class="cl">	b表示blow，无符号小于
+</span></span><span class="line"><span class="cl">	e表示equal，等于
+</span></span><span class="line"><span class="cl">	n表示not，不等于
+</span></span><span class="line"><span class="cl">	g表示great，有符号大于
+</span></span><span class="line"><span class="cl">	l表示less，有符号小于 
+</span></span></code></pre></div><p>掌握其中规律，记住这些指令并不是难事，而且这些规律在汇编指令中是用过的，不如以后将会看到的条件跳转指令，也是如此。</p>
+<p>到这里mov指令介绍完了，但是移动数据的指令还有很多，这里也顺便做一些归纳，简单列举几类指令，对于AT&amp;T和MASM都是通用的。</p>
+<ul>
+<li>
+<p>xchg 指令：
+格式 xchg operand1, operand2 ，交换operand1和operand2两个操作数的值，但千万别以为这个指令很方便，因为这个指令操作时会对内存加锁LOCK，可能会非常耗时，所以请慎用。这里两个操作数不能同为内存。</p>
+</li>
+<li>
+<p>bswap 指令：
+格式 bswap operand , 其中operand为32位或64位寄存器，这个指令时反转字节指令，即可以让32位寄存器的4个字节数据反转，可以方便的转换大小端数据。</p>
+</li>
+<li>
+<p>lahf 和 sahf 指令：
+lahf指令将eflags寄存器的低字节复制到ah寄存器，sahf把ah寄存器的值复制到eflags寄存器的低字节，ah为隐含操作数。</p>
+</li>
+<li>
+<p>push 指令:
+把一个16位、32位、64位数据（寄存器，立即数，内存）到堆栈，esp指针做相应修改。这里AT&amp;T指令必须自己指定大小，加后缀l, w等，与mov指令相同。</p>
+</li>
+<li>
+<p>pop 指令:
+出栈，与push相反。</p>
+</li>
+</ul>
+<p>另外还有pop和push的批量操作指令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	pusha/popa 全部16位通用寄存器入栈/出栈
+</span></span><span class="line"><span class="cl">	pushad/popad 全部32位通用寄存器入栈/出栈
+</span></span><span class="line"><span class="cl">	pushf/popf eflags寄存器低16位入栈/出栈
+</span></span><span class="line"><span class="cl">	pushfd/popfd eflags寄存器全32位入栈/出栈
+</span></span></code></pre></div><p>到这里介绍了常用的数据移动指令，当然这里不可能一一详细介绍，其中的细节还需要参考Intel手册卷2(A,B)。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 涸泽之鱼
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

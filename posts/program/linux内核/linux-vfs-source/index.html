@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。\n">
 <title>Linux内核笔记-VFS</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-VFS'>
-<meta property='og:description' content='Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux内核笔记-VFS">
+<meta property='og:description' content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-21T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-21T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-VFS">
-<meta name="twitter:description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。
-">
+<meta name="twitter:description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -278,29 +237,29 @@
     
     
     <p>Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。</p>
-<h1 id="概念">概念</h1>
-<p>之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。</p>
-<h2 id="分层">分层</h2>
-<p>Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。</p>
+<h1 id="概念">概念
+</h1><p>之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。</p>
+<h2 id="分层">分层
+</h2><p>Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。</p>
 <p>VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。</p>
-<h2 id="inode">inode</h2>
-<p>内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 <code>inode_operations</code> ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。<code>file_operations</code> 实现文件内容操作，如read、write等等，<code>inode_operations</code> 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。</p>
-<h2 id="file">file</h2>
-<p>inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。</p>
-<h2 id="dentry">dentry</h2>
-<p>dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。</p>
-<h2 id="file_system_type">file_system_type</h2>
-<p>file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 <code>register_filesystem</code> 向内核注册，函数只是简单的把 <code>file_system_type</code> 插入链表，其中最关键的成员就是 get_sb，得到 <code>super_block</code> 结构。</p>
-<h2 id="super_block">super_block</h2>
-<p>super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。</p>
-<h2 id="vfsmount">vfsmount</h2>
-<p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对与挂接点来说，都是唯一的。</p>
-<h2 id="path">path</h2>
-<p>path 包含 vfsmount 和 dentry 结构。</p>
-<h2 id="nameidata">nameidata</h2>
-<p>nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
-<h1 id="sys_mount-实现">sys_mount 实现</h1>
-<p><code>sys_mount</code> 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 <code>sys_mount</code> 的函数原型：</p>
+<h2 id="inode">inode
+</h2><p>内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 <code>inode_operations</code> ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。<code>file_operations</code> 实现文件内容操作，如read、write等等，<code>inode_operations</code> 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。</p>
+<h2 id="file">file
+</h2><p>inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。</p>
+<h2 id="dentry">dentry
+</h2><p>dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。</p>
+<h2 id="file_system_type">file_system_type
+</h2><p>file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 <code>register_filesystem</code> 向内核注册，函数只是简单的把 <code>file_system_type</code> 插入链表，其中最关键的成员就是 get_sb，得到 <code>super_block</code> 结构。</p>
+<h2 id="super_block">super_block
+</h2><p>super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。</p>
+<h2 id="vfsmount">vfsmount
+</h2><p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对与挂接点来说，都是唯一的。</p>
+<h2 id="path">path
+</h2><p>path 包含 vfsmount 和 dentry 结构。</p>
+<h2 id="nameidata">nameidata
+</h2><p>nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
+<h1 id="sys_mount-实现">sys_mount 实现
+</h1><p><code>sys_mount</code> 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 <code>sys_mount</code> 的函数原型：</p>
 <pre><code># 源码中的原型
 SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 		char __user *, type, unsigned long, flags, void __user *, data)
@@ -684,12 +643,12 @@ out_unlock:
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -778,7 +737,7 @@ out_unlock:
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

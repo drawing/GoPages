@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。\n">
 <title>Linux内核笔记-中断和异常</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux内核笔记-中断和异常'>
-<meta property='og:description' content='中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux内核笔记-中断和异常">
+<meta property='og:description' content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Linux内核' /><meta property='article:published_time' content='2014-05-20T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-05-20T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux内核笔记-中断和异常">
-<meta name="twitter:description" content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
-">
+<meta name="twitter:description" content="中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -238,11 +197,11 @@
     <section class="article-content">
     
     
-    <h1 id="中断和异常的定义">中断和异常的定义</h1>
-<p>中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。</p>
+    <h1 id="中断和异常的定义">中断和异常的定义
+</h1><p>中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。</p>
 <p>为了描述简单，通常称异步中断为中断，同步中断为异常。</p>
-<h1 id="中断分类">中断分类：</h1>
-<pre><code>faults类异常：系统可以恢复，需要重新执行导致异常的指令。
+<h1 id="中断分类">中断分类：
+</h1><pre><code>faults类异常：系统可以恢复，需要重新执行导致异常的指令。
 traps类型异常：系统可以恢复，用户取得系统服务的一种手段。
 abort异常：不可恢复。
 </code></pre>
@@ -261,23 +220,23 @@ abort异常：不可恢复。
 <pre><code>驱动程序调用 request_irq请求中断号为irq的中断请求线的使用权
 内核`common_interrrpt`调用`do_IRQ`
 </code></pre>
-<h1 id="异常处理过程">异常处理过程：</h1>
-<pre><code>响应的处理程序执行
+<h1 id="异常处理过程">异常处理过程：
+</h1><pre><code>响应的处理程序执行
 do_trap
 </code></pre>
 <p>延时处理机制</p>
 <p>由于中断处理必须非常快，当系统穿过中断门后系统处于中断禁用状态，这时系统要么不能响应所有外部中断，要么不能响应当前中断源的中断，在这个过程中，会导致新的中断无法及时处理或者丢失中断请求。</p>
 <p>Linux内核提供的延时机制分为softirq，tasklet，work queue。</p>
-<h1 id="softirq机制">softirq机制：</h1>
-<p>softirq在内核中由结构体<code>softirq_action</code>表示，内核预设的softirq存储于<code>softirq_vec</code>数组中，初始化函数为：<code>open_softirq</code>。</p>
+<h1 id="softirq机制">softirq机制：
+</h1><p>softirq在内核中由结构体<code>softirq_action</code>表示，内核预设的softirq存储于<code>softirq_vec</code>数组中，初始化函数为：<code>open_softirq</code>。</p>
 <p>系统运行过程中，会在合适的地方调用<code>local_softirq_pending</code>检查是否游softirq需要处理，如果需要便调用函数do_softirq处理，这些检查点包括：</p>
 <pre><code>中断处理退出函数irq_exit
 内核线程ksoftirqd
 内核网络子系统显示调用
 local_bh_enable
 </code></pre>
-<h1 id="tasklet延时处理机制">tasklet延时处理机制：</h1>
-<p>tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。</p>
+<h1 id="tasklet延时处理机制">tasklet延时处理机制：
+</h1><p>tasklet在内核中的表示tasklet_struct，这个结构描述了处理函数等信息，该结构可以使用DECLARE_TASKLET或者DECLARE_TASKLET_DISABLED宏进行定义。在中断处理上半部会调用 tasklet_schedule函数激活下半部的处理。最终系统会调用tasklet_action处理任务。</p>
 <p>work queue延时处理：</p>
 <p>内核使用<code>workqueue_struct</code>记录工作队列信息，每个具体work由结构<code>work_struct</code>定义，初始化工作队列可以用函数<code>create_workqueue</code>，激活工作队列使用<code>schedule_work</code>，处理工作队列函数<code>run_workqueue</code>。</p>
 
@@ -446,12 +405,12 @@ local_bh_enable
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -540,7 +499,7 @@ local_bh_enable
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

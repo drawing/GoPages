@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。\n">
 <title>SWIG 跨语言调用</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='SWIG 跨语言调用'>
-<meta property='og:description' content='一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="SWIG 跨语言调用">
+<meta property='og:description' content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:published_time' content='2023-04-10T22:40:04&#43;08:00'/><meta property='article:modified_time' content='2023-04-10T22:40:04&#43;08:00'/>
 <meta name="twitter:title" content="SWIG 跨语言调用">
-<meta name="twitter:description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
-">
+<meta name="twitter:description" content="一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -279,8 +238,8 @@
     <section class="article-content">
     
     
-    <h2 id="一跨平台调用">一、跨平台调用</h2>
-<p>在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。</p>
+    <h2 id="一跨平台调用">一、跨平台调用
+</h2><p>在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。</p>
 <p><strong>Web 流派</strong>：PhoneGap</p>
 <ul>
 <li>优点
@@ -306,22 +265,22 @@
 <li>Golang（gobind）</li>
 <li>C/C++（java: jni，go: cgo, python: ctypes)</li>
 </ul>
-<h2 id="二swig-是什么">二、SWIG 是什么</h2>
-<p>C/C++库提供给不同平台和不同语言使用，存在的一些问题</p>
+<h2 id="二swig-是什么">二、SWIG 是什么
+</h2><p>C/C++库提供给不同平台和不同语言使用，存在的一些问题</p>
 <ul>
 <li>适配层工作量较大：取决于 API 数量</li>
 <li>易错：涉及底层数据类型的转换</li>
 <li>不同语言实现不同：如 Android 平台使用，就需要提供 Java 接口的支持，可以通过实现 JNI 胶水层连接；提供 Go 语言使用，需要 cgo 等</li>
 </ul>
 <p>SWIG 就是为了解决跨语言调用的问题产生的工具，考虑到胶水层的形式固定，有利于通过代码自动生成，SWIG 就应运而生，作为一种提升效率的开发工具，它将用 C 和 C++ 编写的程序与各种高级编程语言连接起来。</p>
-<h2 id="三swig-能做什么">三、SWIG 能做什么</h2>
-<p>自动生成 C/C++代码不同高级语言的封装（胶水层），支持的语言 ：C#, D, Go, Guile, Java, Javascript, Lua, MzScheme/Racket, OCaml, Octave, Perl, PHP, Python, R, Ruby, Scilab, Tcl</p>
+<h2 id="三swig-能做什么">三、SWIG 能做什么
+</h2><p>自动生成 C/C++代码不同高级语言的封装（胶水层），支持的语言 ：C#, D, Go, Guile, Java, Javascript, Lua, MzScheme/Racket, OCaml, Octave, Perl, PHP, Python, R, Ruby, Scilab, Tcl</p>
 <p>支持 ISO C99：所有的数据类型，指针、枚举、结构体、数组、typedef 等
 支持 ISO C++98 to C++17：类，继承和多重继承，重载、静态方法、名字空间、模板、嵌套类、STL 等</p>
 <p>文档生成：支持 Doxygen 注释生成对应目标语言的文档（Java、Python）</p>
-<h2 id="四show-一些例子">四、Show 一些例子</h2>
-<h3 id="1-java-调用-c-最简单例子">1. Java 调用 C 最简单例子</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// File: tools.c
+<h2 id="四show-一些例子">四、Show 一些例子
+</h2><h3 id="1-java-调用-c-最简单例子">1. Java 调用 C 最简单例子
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// File: tools.c
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">TestFunction</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
@@ -345,8 +304,8 @@
 </span></span><span class="line"><span class="cl">javac main.java
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">java main
-</span></span></code></pre></div><h3 id="2-c-回调">2. C++ 回调</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// File: include/shape.h
+</span></span></code></pre></div><h3 id="2-c-回调">2. C++ 回调
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// File: include/shape.h
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#ifndef SHAPE_H
 </span></span></span><span class="line"><span class="cl"><span class="cp">#define SHAPE_H
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
@@ -467,9 +426,9 @@
 </span></span><span class="line"><span class="cl">	rm -f *.jar
 </span></span><span class="line"><span class="cl">	rm -f *.class
 </span></span><span class="line"><span class="cl">	rm -f drawing_wrap.*
-</span></span></code></pre></div><h3 id="3-go-语言调用">3. Go 语言调用</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// File: main.go
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">package</span> <span class="nx">main</span>
+</span></span></code></pre></div><h3 id="3-go-语言调用">3. Go 语言调用
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// File: main.go</span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;./drawing&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;log&#34;</span>
@@ -500,8 +459,8 @@
 </span></span><span class="line"><span class="cl">swig -go -cgo -c++ -intgosize <span class="m">64</span> -outdir drawing shape.i
 </span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>off go run main.go
 </span></span></code></pre></div><p>C/C++代码不用修改，跟 Java 的区别在于 Go 应用层逻辑 以及 编译命令不同。</p>
-<h2 id="五其他高级功能">五、其他高级功能</h2>
-<p>参阅文档：https://www.swig.org/Doc4.0/Contents.html#Contents</p>
+<h2 id="五其他高级功能">五、其他高级功能
+</h2><p>参阅文档：https://www.swig.org/Doc4.0/Contents.html#Contents</p>
 
 </section>
 
@@ -570,7 +529,7 @@
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/">
         
         
 
@@ -583,7 +542,7 @@
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/">
         
         
 
@@ -596,7 +555,7 @@
             
                 
 <article class="">
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/">
         
         
 
@@ -668,12 +627,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -762,7 +721,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

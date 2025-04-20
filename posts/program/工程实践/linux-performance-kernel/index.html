@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
-'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。\n">
 <title>Linux性能调优之内核篇</title>
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/'>
 
-<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Linux性能调优之内核篇'>
-<meta property='og:description' content='进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
-'>
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux性能调优之内核篇">
+<meta property='og:description' content="进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/'>
-<meta property='og:site_name' content='讲故事的人'>
+<meta property='og:site_name' content='涸泽之鱼'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='工程实践' /><meta property='article:published_time' content='2014-07-03T01:16:33&#43;08:00'/><meta property='article:modified_time' content='2014-07-03T01:16:33&#43;08:00'/>
 <meta name="twitter:title" content="Linux性能调优之内核篇">
-<meta name="twitter:description" content="进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
-">
+<meta name="twitter:description" content="进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。\n">
     </head>
     <body class="
     article-page
@@ -59,7 +56,7 @@
                     
                     
                         
-                        <img src="/images/avatar_hu15433768011567165505.png" width="300"
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -72,10 +69,10 @@
         
         
         <div class="site-meta">
-            <h1 class="site-name"><a href="/">讲故事的人</a></h1>
-            <h2 class="site-description">寻牛：忙忙拨草去追寻，水阔山遥路更深，力尽神疲无处觅，但闻枫树晚蝉吟。</h2>
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
         </div>
-    </header><ol class="social-menu">
+    </header><ol class="menu-social">
             
                 <li>
                     <a 
@@ -97,54 +94,15 @@
                     </a>
                 </li>
             
-                <li>
-                    <a 
-                        href='https://twitter.com'
-                        target="_blank"
-                        title="Twitter"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
         </ol><ol class="menu" id="main-menu">
         
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://drawing.fancymore.com/" selected>中文</option>
-                        
-                    </select>
-                </li>
-            
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -152,7 +110,7 @@
 
 
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -160,10 +118,11 @@
 
 
 
-                    <span>暗色模式</span>
-                </li>
-            
-        </div>
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
@@ -278,62 +237,62 @@
     <section class="article-content">
     
     
-    <h1 id="进程管理">进程管理</h1>
-<h2 id="进程">进程</h2>
-<p>进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为<code>task_struct</code>，包含了进程的所有信息。</p>
+    <h1 id="进程管理">进程管理
+</h1><h2 id="进程">进程
+</h2><p>进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为<code>task_struct</code>，包含了进程的所有信息。</p>
 <p>进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。</p>
 <p>而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。</p>
 <p>更加详细的内容可查阅Linux内核代码，<a class="link" href="../linux_kernel/linux-kernel-process-sched/" >进程调度</a>。</p>
-<h2 id="线程">线程</h2>
-<p>线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。</p>
+<h2 id="线程">线程
+</h2><p>线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。</p>
 <p>线程可通过<code>pthread_create</code>创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。</p>
 <p>线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。</p>
-<h2 id="中断">中断</h2>
-<p>进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统<code>/proc/interrupt</code>查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。</p>
-<h1 id="函数调用">函数调用</h1>
-<p>函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。</p>
+<h2 id="中断">中断
+</h2><p>进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统<code>/proc/interrupt</code>查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。</p>
+<h1 id="函数调用">函数调用
+</h1><p>函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。</p>
 <div class="table-wrapper"><table>
   <thead>
       <tr>
-          <th style="text-align: left">函数</th>
-          <th style="text-align: left">性能(次/S)</th>
+          <th>函数</th>
+          <th>性能(次/S)</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left">ntohl</td>
-          <td style="text-align: left">2.5亿</td>
+          <td>ntohl</td>
+          <td>2.5亿</td>
       </tr>
       <tr>
-          <td style="text-align: left">memset 1k</td>
-          <td style="text-align: left">150w</td>
+          <td>memset 1k</td>
+          <td>150w</td>
       </tr>
       <tr>
-          <td style="text-align: left">getppid</td>
-          <td style="text-align: left">1000w</td>
+          <td>getppid</td>
+          <td>1000w</td>
       </tr>
       <tr>
-          <td style="text-align: left">getimeofday</td>
-          <td style="text-align: left">30w-400w</td>
+          <td>getimeofday</td>
+          <td>30w-400w</td>
       </tr>
       <tr>
-          <td style="text-align: left">socket</td>
-          <td style="text-align: left">10w-50w</td>
+          <td>socket</td>
+          <td>10w-50w</td>
       </tr>
       <tr>
-          <td style="text-align: left">sendto</td>
-          <td style="text-align: left">40w</td>
+          <td>sendto</td>
+          <td>40w</td>
       </tr>
   </tbody>
 </table></div>
 <p>更详细系统调用相关内容，可参考：<a class="link" href="../linux_kernel/reading/linux-kernel-system-call/" >系统调用</a>。</p>
-<h1 id="文件系统">文件系统</h1>
-<p>文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数<code>fsync</code>可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用<code>fsync</code>把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。</p>
+<h1 id="文件系统">文件系统
+</h1><p>文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数<code>fsync</code>可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用<code>fsync</code>把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。</p>
 <p>在&rsquo;/proc/vm&rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。<code>dirty_background_ratio</code>表示脏页占内存多少比例时，开始进行回收。<code>dirty_expire_centisecs</code>表示当脏页存在多长时间以后回收。</p>
-<h1 id="系统指标">系统指标</h1>
-<p>Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。</p>
-<h2 id="cpu">CPU</h2>
-<p>判别CPU当前执行效能，可通过以下指标查看：</p>
+<h1 id="系统指标">系统指标
+</h1><p>Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。</p>
+<h2 id="cpu">CPU
+</h2><p>判别CPU当前执行效能，可通过以下指标查看：</p>
 <ul>
 <li>CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈</li>
 <li>用户态时间：展现了CPU用户态的执行时间</li>
@@ -343,21 +302,21 @@
 <li>Interrupts：中断</li>
 <li>Load average：等待CPU的进程队列大小</li>
 </ul>
-<h2 id="内存">内存</h2>
-<ul>
+<h2 id="内存">内存
+</h2><ul>
 <li>空闲内存</li>
 <li>swap使用大小</li>
 <li>Buffer和Cache大小</li>
 <li>Slabs 大小</li>
 </ul>
-<h2 id="网络">网络</h2>
-<ul>
+<h2 id="网络">网络
+</h2><ul>
 <li>收包和发包量</li>
 <li>收包和发包大小</li>
 <li>丢包量</li>
 </ul>
-<h2 id="磁盘">磁盘</h2>
-<ul>
+<h2 id="磁盘">磁盘
+</h2><ul>
 <li>iowait，CPU等待IO时间</li>
 <li>平均等待时间</li>
 <li>执行时间</li>
@@ -530,12 +489,12 @@
         
             2020 - 
         
-        2024 讲故事的人
+        2025 涸泽之鱼
     </section>
     
     <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
 
@@ -624,7 +583,7 @@
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');
