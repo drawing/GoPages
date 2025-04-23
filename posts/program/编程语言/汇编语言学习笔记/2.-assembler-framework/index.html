@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。\nGAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。\n">
+<title>汇编语言学习笔记(二)-代码框架</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言学习笔记(二)-代码框架">
+<meta property='og:description' content="前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。\nGAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。\n">
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/'>
+<meta property='og:site_name' content='涸泽之鱼'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-13T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-13T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(二)-代码框架">
+<meta name="twitter:description" content="前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。\nGAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">📖</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/drawing/'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#函数入口">函数入口</a></li>
+    <li><a href="#c库调用">C库调用</a></li>
+    <li><a href="#数据段和代码段">数据段和代码段</a></li>
+    <li><a href="#标签">标签</a></li>
+    <li><a href="#符号">$符号</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/">汇编语言学习笔记(二)-代码框架</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 13, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。</p>
+<h1 id="gas语法框架">GAS语法框架
+</h1><p>程序员学习语言都是从<code>hello world</code>开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。</p>
+<p>下面看一下<code>hello world</code>程序，因为GAS汇编文件以.s后缀，所以文件名定为hello.s：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">out_text:</span>
+</span></span><span class="line"><span class="cl">		<span class="na">.asciz</span> <span class="s">&#34;hello world\n&#34;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl">	<span class="na">.globl</span> <span class="no">_main</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">_main:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">pushl</span> <span class="no">$out_text</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">call</span> <span class="no">_printf</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">pushl</span> <span class="no">$0</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">call</span> <span class="no">_exit</span>
+</span></span></code></pre></div><p>为了方便输出，忽略程序细节，其中引用了c函数库，可以使用 <code>gcc hello.s -o hello</code> 来编译此程序，运行hello后输出hello world字串。</p>
+<p>至 此完成了最为简单的程序，从main开始，先调用printf输出out_text处的字串，之后调用exit程序结束程序，从代码调用的函数名可以很清 楚理解这个过程，但是汇编最需注重的是细节，任何一个细节都可能导致程序的崩溃。</p>
+<h1 id="gas程序说明">GAS程序说明
+</h1><p>下面我对以上涉及到的细节做一些说明：</p>
+<h2 id="函数入口">函数入口
+</h2><p>对于c来说，毫无疑问是main函数作为入口，但这也只是表象，之所以要指定入口，是因为连接器把目标文件组织成可执行文件时需要把入口代码放到代码 段最开始的位置，只要编译器告诉连接器把哪个部分放在入口处即可，所以入口仅仅是一个符号，一个程序可以完全不写main函数，直接修改连接器ld的连接 脚本或者参数，自定义一个入口点。</p>
+<p>汇编程序也是如此，因为直接使用的gcc编译器，gcc把<code>main</code>作为入口点，但其实gcc并不是编译汇编的主体，汇编编译器其实是as，它默认入口点是 <code>start</code>。可以把以上程序<code>_main</code>修改为<code>_start</code>，使用as进行编译，编译成目标文件之后再使用ld进行链接，之所以这里用gcc编译，完全是为 了简单，它可以自动进行编译连接，并在连接时加入c库。</p>
+<h2 id="c库调用">C库调用
+</h2><p>另一个问题是main，<code>printf</code>函数都有个下划线，问题便出来了，到底这个 是<code>printf</code>还是<code>_printf</code>呢？这里完全是Windows下的规则，Windows的标准c函数，在连接时符号都是加入下划线的，在vc里写入 <code>printf</code>，编译时被修改为<code>_printf</code>进行连接，这里由于是汇编，没有c编译器处理这些细节，只能由我们直接写出最终的连接符号。这里有必要一提的 是，对于stdcall类型函数，比如Win32 API，连接符号后会有“@参数总长度 ” 这样的后缀，比如上层的<code>MessageBox</code>函数，在编译时便会转变成<code>_MessageBoxA@16</code>，后面所加的A是使用的窄字符版本，这里并不是编译 器所作，而是Windows.h头文件中使用宏分离的不同字符集下的符号，作为汇编，一切工作都得由我们做了，可以看到使用GAS来处理Windows程 序甚为繁琐，因为没有很好的支持，后面可以看到MASM的一个封装，MASM32，作者本身定义了很多的宏以方便调用。当然，如果在linux下编程，便 可省去这烦人的下弧线了。</p>
+<h2 id="数据段和代码段">数据段和代码段
+</h2><p>接下来该进入正题了，就是语法，由于最终程序是要分成若干段，比如代码段，数据段，这些c编译器可以帮忙指定，对于汇编，还是需要我们自己说明，这里的<code>.section</code>指令便是指明段的属性</p>
+<ul>
+<li>.data —— 初始化数据段，其中的数据在编译期间便已经占用了指定了空间</li>
+<li>.bss —— 与.data对应，是未初始化数据段，也就是这里的数据是未初始化的，在程序运行时才分配的空间</li>
+<li>.rodata —— 只读数据段，相当于常量区，其中的数据不可修改</li>
+<li>.text —— 代码段，此段具有可执行属性，只读</li>
+</ul>
+<h2 id="标签">标签
+</h2><p>另外，<code>out_text</code>为标签，因为gas汇编并没有变量名的概念，只能在内存地址的其实位置定义一个标签，方便以后引用此位置。<code>.globl</code> 导出<code>_main</code>这个符号，毕竟在连接时需要使用此符号。</p>
+<h2 id="符号">$符号
+</h2><p>最后说明一$符号的使用，在gas汇编中，对于立即数，比如0，需要在数字之前加上$符号，来指明此为立即数，$0就是立即数0，另外，对于符号前的$，即为取地址，<code>$out_text</code>含义便是取出<code>out_text</code>的地址，因为<code>printf</code>需要<code>char *</code>指针传入。</p>
+<p>如此，示例代码便很容易理解了。对于涉及到的一些汇编指令，今后将会做详细说明。</p>
+<h1 id="masn-语法框架">MASN 语法框架
+</h1><p>对于MASM汇编，语法规则可能要繁琐，但是理解反而要简单，这可能是微软的一贯风格。
+首先也来讲一下环境配置，其实编译MASM只需要在微软的开发包中提取出ml.exe和link.exe即可，有人为了方便大家使用，把所需要的一系列工具集成一个开发包，可以在这里下载 Masm32 。</p>
+<p>安装好后，便可开始<code>hello world</code>程序，这里使用记事本创建<code>hello.asm</code>程序：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    user32.inc
+</span></span><span class="line"><span class="cl">	includelib user32.lib
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">	szText    db &#39;hello world!&#39;,0
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">	    invoke MessageBox, NULL, offset szText, NULL, MB_OK
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>这里编译的时候要注意，因为这里引用了头文件和lib文件，所以需要设置环境变量include和lib到masm32目录下的include和lib，或者直接在源文件里写绝对路径，最好设置masm32/bin到path变量。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">	ml /c /coff hello.asm
+</span></span><span class="line"><span class="cl">	link /SUBSYSTEM:WINDOWS hello.obj
+</span></span></code></pre></div><p>ml 为编译命令，<code>/c</code> 是仅编译不连接，<code>/coff</code>是编译为coff格式的目标文件。
+link 为连接命令，<code>/SUBSYSTEM:WINDOWS</code> 指定为窗口程序</p>
+<p>先看开头这些命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span></code></pre></div><p><code>.386</code> 指定处理器构架在<code>.386</code>以上，<code>.model</code>指定编译模式为flat平坦模式，<code>casemap:none</code>选项表明程序大小写敏感。</p>
+<ul>
+<li>.data 指定数据段 .code指定代码段。</li>
+<li>start 为程序开始指定一个符号</li>
+<li>end start 指明程序就此结束，并指定程序入口为start</li>
+</ul>
+<p>这里给出框架仅仅为了能建立能运行的汇编环境，其中调用了一些API，也算作配合高级语言编程的一种方式，但汇编绝对不是调用几个API显示几个漂亮的窗口 就算是学会汇编，这些事情用C语言都能够更轻易的处理，一个语言擅长什么就该让它去做什么。没有能应对一切情况的语言，如同没有一个完美的人。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 涸泽之鱼
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

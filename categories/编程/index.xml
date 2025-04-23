@@ -5522,10 +5522,10 @@ strip a.exe
         </item>
         <item>
         <title>汇编语言练习-实模式下的汇编</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/</link>
         <pubDate>Sat, 26 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/</guid>
         <description>&lt;p&gt;在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的MASM，仅仅利用 Windows的虚拟8086模式编程，虚拟8086是Intel为了兼容实模式程序推出的，此模式可以让用户程序在32位系统上进行16位操作，模拟了 8086处理器。&lt;/p&gt;
 &lt;p&gt;在16位实模式下，由于寻址空间的限制，必须把内存划分为多个段，如果单纯的使用一个offset，由于16位的操作数，最多能寻址 64k 的地址空间，但8086 cpu的数据总线有20位，也就是能够寻址1M的地址，所以intel处理器想出了 seg:offset 的方式，去寻址，首先由seg段寄存器定位一个地址，再此地址上进行偏移，具体计算 seg * 16 + offset ，如此便可达到20位的寻址。所以在实模式下编程，还需要注意段寄存器，在寻址之前要看使用的段。&lt;/p&gt;
 &lt;p&gt;还有一个问题是编译最后的格式，之前在windows保护模式下，编译最后都是windows可执行文件PE格式，这显然是不能在实模式下运行的，所以还需要把我们的程序编译成能够在实模式下运行的文件。&lt;/p&gt;
@@ -5567,10 +5567,10 @@ db 0AAh
         </item>
         <item>
         <title>汇编语言学习笔记(十四)-SSE指令集</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/</link>
         <pubDate>Fri, 25 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/</guid>
         <description>&lt;p&gt;本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。&lt;/p&gt;
 &lt;p&gt;sse提供了xmm寄存器，xmm一组8个128位的寄存器，分别名为xmm0-xmm7，sse构架提供对打包单精度浮点数的SIMD支持。&lt;/p&gt;
 &lt;p&gt;sse提供了两个版本的指令，其一以后缀ps结尾，这组指令对打包单精度浮点值执行类似mmx操作运算，而第二种后缀ss，这些指令对一个量标单精度浮点 值进行运算操作，这些指令不对打包值中的所有浮点值操作，而只对打包值中的低位双字节执行操作，源操作数中剩余的3个值直接传送给结果。&lt;/p&gt;
@@ -5968,10 +5968,10 @@ $1 = {v4_float = {43.2400017, 92.0139999, 290.459991, 145.695999},
         </item>
         <item>
         <title>汇编语言学习笔记(十三)-MMX指令集</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/</link>
         <pubDate>Thu, 24 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/</guid>
         <description>&lt;p&gt;这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。&lt;/p&gt;
 &lt;p&gt;首先mmx指令集需要cpu的支持，但不是所有cpu都支持，不然也不会称之为高级特性 了，所以在使用之前需要检测，检测指令为cpuid，获得cpu的特性，cpuid虽然只有一条指令，但是其隐含的内容太多，这里仅仅介绍检测SIMD指 令集所需要的部分，其他一些信息可参阅Intel 手册获得。&lt;/p&gt;
 &lt;p&gt;当eax为1时，cpuid指令返回cpu签名信息，放入ecx和edx寄存器中，相应位为1表示支持。检测SIMD指令集的结果如下：&lt;/p&gt;
@@ -6272,10 +6272,10 @@ _main:
         </item>
         <item>
         <title>汇编语言学习笔记(十二)-浮点指令</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/</link>
         <pubDate>Wed, 23 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/</guid>
         <description>&lt;h1 id=&#34;浮点数如何存储&#34;&gt;浮点数如何存储
 &lt;/h1&gt;&lt;p&gt;浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。&lt;/p&gt;
 &lt;p&gt;现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：&lt;/p&gt;
@@ -6793,10 +6793,10 @@ end:
         </item>
         <item>
         <title>汇编语言学习笔记(十一)-预编译宏</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/</link>
         <pubDate>Tue, 22 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/</guid>
         <description>&lt;p&gt;在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。&lt;/p&gt;
 &lt;p&gt;先来看MASM中宏的语法规范：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;macroname macro parameter1, parameter2, ...
@@ -7000,10 +7000,10 @@ _main:
         </item>
         <item>
         <title>汇编语言学习笔记(十)-内联汇编</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/</link>
         <pubDate>Mon, 21 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/</guid>
         <description>&lt;p&gt;这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。&lt;/p&gt;
 &lt;h1 id=&#34;语法规则&#34;&gt;语法规则
 &lt;/h1&gt;&lt;p&gt;一般来讲，MASM的语法规则较多，也比较复杂，不过内联汇编却相当的方便，相反，AT&amp;amp;T的内联汇编语法规非常复杂，这里先介绍简单的MASM内联。&lt;/p&gt;
@@ -7181,10 +7181,10 @@ _main:
         </item>
         <item>
         <title>汇编语言学习笔记(九)-函数</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/</link>
         <pubDate>Sun, 20 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/</guid>
         <description>&lt;p&gt;编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。&lt;/p&gt;
 &lt;p&gt;首先从基本的函数语法形式说起，先来说MASM语法，因为他的语法比较复杂，相对AT&amp;amp;T就很简单了：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	name proc [uses reg1 reg2 ...] [,参数:类型]
@@ -7334,10 +7334,10 @@ _main:
         </item>
         <item>
         <title>汇编语言学习笔记(八)-字符串</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.-assembler-string-instruct/</link>
         <pubDate>Sat, 19 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.-assembler-string-instruct/</guid>
         <description>&lt;p&gt;字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。&lt;/p&gt;
 &lt;p&gt;先来看几个简单的拷贝操作：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	;AT&amp;amp;T 语法格式
@@ -7545,10 +7545,10 @@ _main:
         </item>
         <item>
         <title>汇编语言学习笔记(七)-寻址方式</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.-assembler-addressing-method/</link>
         <pubDate>Fri, 18 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.-assembler-addressing-method/</guid>
         <description>&lt;p&gt;寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。&lt;/p&gt;
 &lt;p&gt;对于实模式，处理器可以寻址20位的地址空间，但是寄存器只有16位，为了能达到20位的寻址，需要使用 段：偏移 这样的方式寻址，格式为 &lt;code&gt;segreg:offset&lt;/code&gt;，计算出的直接偏移地址为 &lt;code&gt;segreg * 16 + offset&lt;/code&gt;，相当于段基址左移4位后加上偏移，这样刚好有20位的地址，可以达到2M内存寻址。
 在平坦内存模式下，寻址类似于c的指针，一个基址加上偏移。&lt;/p&gt;
@@ -7663,10 +7663,10 @@ segreg为分段模式下段寄存器，&lt;code&gt;base_address&lt;/code&gt;为�
         </item>
         <item>
         <title>汇编语言学习笔记(六)-数学运算</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.-assembler-math-instruct/</link>
         <pubDate>Thu, 17 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.-assembler-math-instruct/</guid>
         <description>&lt;p&gt;在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。&lt;/p&gt;
 &lt;h1 id=&#34;指令介绍&#34;&gt;指令介绍
 &lt;/h1&gt;&lt;h2 id=&#34;加减法&#34;&gt;加减法
@@ -7895,10 +7895,10 @@ segreg为分段模式下段寄存器，&lt;code&gt;base_address&lt;/code&gt;为�
         </item>
         <item>
         <title>汇编语言学习笔记(五)-控制流</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/</link>
         <pubDate>Wed, 16 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.-assembler-control-flow/</guid>
         <description>&lt;p&gt;程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	label:
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;		...
@@ -8141,10 +8141,10 @@ segreg为分段模式下段寄存器，&lt;code&gt;base_address&lt;/code&gt;为�
         </item>
         <item>
         <title>汇编语言学习笔记(四)-MOV指令</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.-assembler-mov-instruct/</link>
         <pubDate>Tue, 15 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.-assembler-mov-instruct/</guid>
         <description>&lt;p&gt;汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。&lt;/p&gt;
 &lt;p&gt;对于AT&amp;amp;T和MASM两种语法，最大的差别就从此开始了，因为二者的源、目的操作数是相反的！&lt;/p&gt;
 &lt;p&gt;在AT&amp;amp;T里mov的语法结构为：&lt;/p&gt;
@@ -8288,10 +8288,10 @@ lahf指令将eflags寄存器的低字节复制到ah寄存器，sahf把ah寄存�
         </item>
         <item>
         <title>汇编语言学习笔记(三)-数据结构</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/</link>
         <pubDate>Mon, 14 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.-assembler-datastruct/</guid>
         <description>&lt;p&gt;其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。&lt;/p&gt;
 &lt;p&gt;对AT&amp;amp;T汇编来说，仅仅有几种基本类型，上篇介绍编程框架时已经有所涉及：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	.ascii —— 字符串，但是无\0结尾
@@ -8375,10 +8375,10 @@ lahf指令将eflags寄存器的低字节复制到ah寄存器，sahf把ah寄存�
         </item>
         <item>
         <title>汇编语言学习笔记(二)-代码框架</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/</link>
         <pubDate>Sun, 13 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.-assembler-framework/</guid>
         <description>&lt;p&gt;前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。&lt;/p&gt;
 &lt;h1 id=&#34;gas语法框架&#34;&gt;GAS语法框架
 &lt;/h1&gt;&lt;p&gt;程序员学习语言都是从&lt;code&gt;hello world&lt;/code&gt;开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。&lt;/p&gt;
@@ -8458,10 +8458,10 @@ link 为连接命令，&lt;code&gt;/SUBSYSTEM:WINDOWS&lt;/code&gt; 指定为窗�
         </item>
         <item>
         <title>汇编语言学习笔记(一)-寄存器</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/</link>
         <pubDate>Sat, 12 Apr 2014 01:18:03 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.-assembler-register/</guid>
         <description>&lt;p&gt;一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。&lt;/p&gt;
 &lt;p&gt;寄存器是CPU的组成部分，因为在CPU内，所以CPU对其读写速度是最快的，不需要IO传输，但同时也决定了此类寄存器数量非常有限，有限到几乎每个存储都有自己的名字，而且有些还有多个名字^_^&lt;/p&gt;
 &lt;h1 id=&#34;寄存器分类&#34;&gt;寄存器分类
@@ -8535,10 +8535,10 @@ dr0 – dr7
         </item>
         <item>
         <title>汇编语言学习笔记(零)-为什么开始</title>
-        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0/</link>
+        <link>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0.-assembler-why-learning/</link>
         <pubDate>Fri, 11 Apr 2014 01:16:33 +0800</pubDate>
         
-        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0/</guid>
+        <guid>https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/0.-assembler-why-learning/</guid>
         <description>&lt;h1 id=&#34;为什么开始&#34;&gt;为什么开始
 &lt;/h1&gt;&lt;p&gt;从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。&lt;/p&gt;
 &lt;p&gt;沿袭程序员“良好”习惯，这篇文章做为第零篇，主要总括汇编语言的概况以及它的主要用途，初识一种技能，知道它能做什么或许比如何去做更加有意义。&lt;/p&gt;

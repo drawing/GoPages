@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;T语法。\n">
+<title>汇编语言学习笔记(十)-内联汇编</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言学习笔记(十)-内联汇编">
+<meta property='og:description' content="这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;T语法。\n">
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/'>
+<meta property='og:site_name' content='涸泽之鱼'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-21T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-21T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(十)-内联汇编">
+<meta name="twitter:description" content="这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;T语法。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">📖</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/drawing/'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#寄存器绑定这类修饰符修饰的变量跟某中寄存器绑定随后的操作中可直接操作相应的寄存器">寄存器绑定：这类修饰符修饰的变量跟某中寄存器绑定，随后的操作中，可直接操作相应的寄存器。</a></li>
+    <li><a href="#输出变量修饰">输出变量修饰</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/">汇编语言学习笔记(十)-内联汇编</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 21, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;T语法。</p>
+<h1 id="语法规则">语法规则
+</h1><p>一般来讲，MASM的语法规则较多，也比较复杂，不过内联汇编却相当的方便，相反，AT&amp;T的内联汇编语法规非常复杂，这里先介绍简单的MASM内联。</p>
+<p>vc环境下内联汇编语法规则如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">__asm statement
+</span></span><span class="line"><span class="cl">__asm {
+</span></span><span class="line"><span class="cl">	statement-1
+</span></span><span class="line"><span class="cl">	statement-2
+</span></span><span class="line"><span class="cl">	...
+</span></span><span class="line"><span class="cl">	statement-n
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><p>这里的指令即MASM程序，但是有一些限制如下：</p>
+<ul>
+<li>不能使用数据定义伪指令</li>
+<li>不能定义结构等复杂数据类型</li>
+<li>不能使用宏，或宏操作符</li>
+<li>不能引用段名</li>
+</ul>
+<p>当然这里只是简单的介绍一下，其中的细节只能在实践中体会了，接下来举一个简单的例子来说明内联汇编的使用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/** 计算两个参数的积 */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">testAssembler</span><span class="p">(</span><span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">p1</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mul</span> <span class="n">p2</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">testAssembler</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span> <span class="n">mov</span> <span class="n">result</span><span class="p">,</span> <span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;result is %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里 testAssembler 函数中使用内联汇编计算了参数的积，调用点并未接受其返回值，因为函数返回值是由eax寄存器返回，则再次使用内联汇编可以取到返回值。</p>
+<p>可以看到MASM内联汇编是十分简单的，接下来看gcc的内联语法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">asm (
+</span></span><span class="line"><span class="cl">	语句模板
+</span></span><span class="line"><span class="cl">	: 输出部分
+</span></span><span class="line"><span class="cl">	: 输入部分
+</span></span><span class="line"><span class="cl">	: 破坏描述
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></div><p>先来说语句模板，这里的语句即为AT&amp;T的基本语法，与MASM不同的是这里不能直接使用局部变量，倒是可以引用全局变量，指 令之间使用<code>;</code>, <code>\n</code>, <code>\n\t</code> 分割，后面的部分是可选的，如果只介绍到这里，可如vc一样的方式去使用内联，不过这便损失了gcc更为强大的功能。</p>
+<p>在指令部分除了使用 AT&amp;T标准语法之外，还可以有最多10个占位符：<code>%0</code>, <code>%1</code>, <code>…</code> , <code>%9</code>，他们出现的次序与操作数相对应，另外，可在%和数字之间插入字符w, h, b分别表示访问操作数中的低字，低字中的高字节和低字中的低字节。这里可能说的比较糊涂，不过没关系，介绍之后的部分自然会明白。</p>
+<p>输出部分指示此内嵌汇编输出结果保存到什么变量中，这些变量通过占位符作为汇编语句中的操作数。当输出列表多于一个变量时，变量之间用逗号隔开，这些变量之间的修饰字符串中必须包含’=&rsquo;，来表示它是一个输出操作数，修饰字符稍微会做详细说明。</p>
+<p>输入部分看名字就知道是做输入之用，语法格式也与输出部分相同，唯一缺少的就是那个修饰的符号<code>=</code>。</p>
+<h1 id="修饰符">修饰符
+</h1><p>到这里详细说一下修饰字符，修饰字符很多，这里仅仅介绍常用修饰符。</p>
+<h2 id="寄存器绑定这类修饰符修饰的变量跟某中寄存器绑定随后的操作中可直接操作相应的寄存器">寄存器绑定：这类修饰符修饰的变量跟某中寄存器绑定，随后的操作中，可直接操作相应的寄存器。
+</h2><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>修饰符</th>
+          <th>绑定寄存器</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>a</td>
+          <td>%eax</td>
+      </tr>
+      <tr>
+          <td>b</td>
+          <td>%ebx</td>
+      </tr>
+      <tr>
+          <td>c</td>
+          <td>%ecx</td>
+      </tr>
+      <tr>
+          <td>d</td>
+          <td>%edx</td>
+      </tr>
+      <tr>
+          <td>S</td>
+          <td>%esi</td>
+      </tr>
+      <tr>
+          <td>D</td>
+          <td>%edi</td>
+      </tr>
+      <tr>
+          <td>q</td>
+          <td>eax, ebx, ecx, edx 任意一个</td>
+      </tr>
+      <tr>
+          <td>r</td>
+          <td>eax, ebx, ecx, edx, esi, edi 任意一个</td>
+      </tr>
+      <tr>
+          <td>A</td>
+          <td>被修饰是64位变量，要与%eax,%edx联合绑定</td>
+      </tr>
+      <tr>
+          <td>m</td>
+          <td>不绑定</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>另外，如果该寄存器已经被绑定，编译器会在合适的地方push到堆栈，使用之后再回复此寄存器。</p>
+<h2 id="输出变量修饰">输出变量修饰
+</h2><p>除了以上修饰符，还有一些只用于修饰输出变量，简单介绍如下：</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>符号</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>‘&amp;’</td>
+          <td>输出变量不能和输入变量共用同一个寄存器</td>
+      </tr>
+      <tr>
+          <td>‘=’</td>
+          <td>输出变量只写</td>
+      </tr>
+      <tr>
+          <td>‘+’</td>
+          <td>先将输出变量预先读入到对应寄存器</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>gcc 内联汇编规范最后一个部分是破坏描述，不论做什么操作，基本都需要寄存器的参与，对于只有c代码的程序，编译器保护寄存器不会被不同模块写乱，但是对于内 联汇编，我们可能修改某些寄存器而破坏了gcc原本保护的寄存器，所以内联汇编时我们需要告诉编译器哪些寄存器使我们所需要改变的，这里破坏描述符由逗号 隔开的字符串组成，每个字符串描述一种情况，一般是寄存器名，另外还有”memory”-内存破坏描述符，内存描述符为了将寄存器保存的变量内容及时写回 到内存中去，避免在寄存器中存有多份不同拷贝，与c++关键字volatile类似。</p>
+<p>到这里简要介绍了gcc内联汇编的部分语法，接下来举例说明此用法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1">#include &lt;stdio.h&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">var1</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="ne">int</span> <span class="n">var2</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">asm</span> <span class="n">volatile</span><span class="p">(</span>	<span class="s2">&#34;movl %1, %0</span><span class="se">\n\t</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">					<span class="s2">&#34;addl %2, %0</span><span class="se">\n\t</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">:</span><span class="s2">&#34;+a&#34;</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">:</span><span class="s2">&#34;r&#34;</span><span class="p">(</span><span class="n">var1</span><span class="p">),</span> <span class="s2">&#34;r&#34;</span><span class="p">(</span><span class="n">var2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s2">&#34;result is </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>可以看到，在语句模板部分出现了占位符，其中 0,1,2 根据变量出现的次数依次为sum, var1, var2，所以，movl %1, %0 表示把var1存入sum，addl %2, %0表示把var2与sum相加结果存入sum，后面描述部分都比较简单，因为addl语句的关系，需要对%0先读其值后计算，所以需要使用描述 符”+”。</p>
+<p>当然，内联汇编只是汇编跟c结合的一种方式，还有一种就是直接把汇编编译成目标文件，再跟c直接链接到一起，这里并没有什么新的东西，仅仅写一个AT&amp;T汇编的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#file Assembler.s
+</span></span><span class="line"><span class="cl">.section .text
+</span></span><span class="line"><span class="cl">.globl _mulTwo
+</span></span><span class="line"><span class="cl">_mulTwo:
+</span></span><span class="line"><span class="cl">	pushl %ebp
+</span></span><span class="line"><span class="cl">	movl %esp, %ebp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	movl 8(%ebp), %eax
+</span></span><span class="line"><span class="cl">	mull 12(%ebp)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	movl %ebp, %esp
+</span></span><span class="line"><span class="cl">	popl %ebp
+</span></span><span class="line"><span class="cl">	ret
+</span></span></code></pre></div><p>这里汇编仅仅实现一个函数，并通过.globl导出符号，这里加下划线的原因是因为Windows的符号规则，之前已有说明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* file testAssembler.c*/</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/** 由于c必须声明，这里仅仅对汇编函数做一个c声明 */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">mulTwo</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="nf">mulTwo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>测试的c代码只需要定义一个汇编的函数声明即可使用。编译命令可以分别编译成目标文件再链接，也可直接使用 gcc testAssembler.c Assembler.s 编译之，对于反过来回调，汇编代码调用c代码，因为之前在汇编结尾已多次使用exit函数，这里便不再举例，同时，MASM语法的原理也相同，仅换了一套 编译命令而已。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 涸泽之鱼
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

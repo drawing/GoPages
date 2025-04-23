@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。\n">
+<title>汇编语言学习笔记(九)-函数</title>
+
+<link rel='canonical' href='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="汇编语言学习笔记(九)-函数">
+<meta property='og:description' content="编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。\n">
+<meta property='og:url' content='https://drawing.fancymore.com/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/'>
+<meta property='og:site_name' content='涸泽之鱼'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='编程语言' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2014-04-20T01:18:03&#43;08:00'/><meta property='article:modified_time' content='2014-04-20T01:18:03&#43;08:00'/>
+<meta name="twitter:title" content="汇编语言学习笔记(九)-函数">
+<meta name="twitter:description" content="编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">📖</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
+            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/drawing/'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
+                编程
+            </a>
+        
+            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
+                汇编语言
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/">汇编语言学习笔记(九)-函数</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 20, 2014</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。</p>
+<p>首先从基本的函数语法形式说起，先来说MASM语法，因为他的语法比较复杂，相对AT&amp;T就很简单了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name proc [uses reg1 reg2 ...] [,参数:类型]
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">	name endp
+</span></span></code></pre></div><p>这里函数定义比较简单，唯一有点迷惑的是uses伪指令，因为函数需要做很多操作，这样不免修改某些寄存器，uses伪指令指定该函数 要修改的寄存器，由编译器对其做保护，当然，此项是可选的，不规定一定要把修改的寄存器保护起来。编译器保护寄存器的方式就是在函数开始把reg通过 push指令保存到堆栈，退出时再通过pop反向的取出寄存器。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	test_uses proc uses eax ebx
+</span></span><span class="line"><span class="cl">		; 编译器再此添加
+</span></span><span class="line"><span class="cl">		; push eax
+</span></span><span class="line"><span class="cl">		; push ebx
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">		; 编译器再此添加
+</span></span><span class="line"><span class="cl">		; pop ebx
+</span></span><span class="line"><span class="cl">		; pop eax
+</span></span><span class="line"><span class="cl">	test_uses endp
+</span></span></code></pre></div><p>函数声明倒不复杂，先来看参数的传递，传递参数最简单的情况就是通过寄存器，调用点把数据放至寄存器中，到函数中便可直接使用，但寄存 器毕竟数量有限，更为通用的方式就是通过堆栈传输，再调用点先把参数依次传入堆栈（push 指令），函数中便可从堆栈中读取参数，对c函数来讲，参数的入栈顺序是倒序的，也就是最后一个参数先入栈，依次向前。</p>
+<p>调用点调用函数需要指 令：call address，call指令先把接下来要执行的指令（EIP）放入堆栈，紧接着修改EIP的值为address，这样就到address的位置开始执 行，即函数入口。因为函数结束时需要跳转到刚才存入堆栈的EIP地址执行，所以必须有一个指令与call对应，修改EIP的值，那就是ret指令，ret 指令从堆栈中取出返回地址，然后修改EIP为该地址，便可回到调用函数的地址开始往下执行。</p>
+<p>所以，再调用点现在可以写成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	push param
+</span></span><span class="line"><span class="cl">	call function
+</span></span></code></pre></div><p>另外，MASM提供了一个方便的指令invoke，语法规则为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	invoke procName, Arg1, Arg2 ...
+</span></span></code></pre></div><p>可把函数调用过程简化为 invoke function param，invoke可以让调用汇编像调用c函数一样简单，不过如果需要invoke调用则需先声明，当然如果函数在使用之前定义，则可不进行声明， 这与C语言的语法颇为相似，MASM提供了另一个伪指令proto来声明函数，无需函数体，仅仅规定函数格式，proto语法与proc大致相同，修改 proc到proto也很简单，只需要proc改为proto，去掉uses伪指令，去掉函数体。</p>
+<p>函数的返回值可以以任意方式返回，不过c函数一般是通过eax寄存器返回，如果调用c函数，可直接使用eax得到返回值。</p>
+<p>到这里似乎有了很多的堆栈操作，比如保护寄存器，返回地址，参数，还有局部变量，这里问题是不会发生堆栈的错乱么？这还要通过堆栈的变化来看。</p>
+<p>首先堆栈是从大到小增长的，也就是后push进去的元素在小地址。需要传递参数时，先用push指令把参数入栈，然后用call进行跳转，call指令再把 返回地址入栈，接下来的空间作为局部变量的地址，也就是说以返回地址为分割，小地址方向为局部变量，大地址方向存储参数。但是如果函数中再次调用其他函数 会修改堆栈，这样影响了局部变量的空间，所以再进入函数时，需要把esp减去一定字节数以腾出空间作为局部变量，但是esp本身是随着push指令而变化 的，不能使用esp来寻址参数或者局部变量，一般做法是在函数开始处保存ebp的值，再把esp赋值给ebp作为固定的基址寻址参数，esp减去一定空间 作为局部变量。再函数退出时只需把ebp赋值给esp即可清理一切局部堆栈信息。所以基本的函数框架如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name proc
+</span></span><span class="line"><span class="cl">		push ebp
+</span></span><span class="line"><span class="cl">		mov ebp, esp
+</span></span><span class="line"><span class="cl">		sub esp, 16
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">		mov esp, ebp
+</span></span><span class="line"><span class="cl">		pop ebp
+</span></span><span class="line"><span class="cl">		ret
+</span></span><span class="line"><span class="cl">	name endp
+</span></span></code></pre></div><p>如此，在读取第一个参数时使用语法 [ebp + 8], 第二个参数便是 [ebp + 12]，依次类推，第一个局部变量便是 [ebp - 4], 第二个是 [ebp - 8] 等等。当然这只是规律但不是规定，如果使用uses伪指令再函数开始处增加push指令而改变堆栈，如此的规律便不再适用。</p>
+<p>为了方便理解，这里用一图示来展现函数堆栈的分布，当然这一图示是静态的，难以表示整个函数调用过程中动态增衰的过程，还需更多的思考：</p>
+<p>由图可以清楚的看到堆栈状态，这样我们甚至可以直接修改返回地址为另外一个函数，来改变整个调用的流程！甚至这个过程可以用c语言指针操作来完成，有兴趣的可以一试。</p>
+<p>MASM为了方便参数的读取（不必计算偏移）而制定了参数列表，为了方便局部变量的读取而指令了local指令，语法如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">proc</span> <span class="p">[</span><span class="n">uses</span> <span class="n">reg1</span> <span class="n">reg2</span> <span class="o">...</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="k">var</span><span class="p">:</span><span class="n">byte</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="n">array</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="n">name</span> <span class="n">endp</span>
+</span></span></code></pre></div><p>如此，在程序中便可直接使用var来直接引用byte局部变量。</p>
+<p>另外由于函数的开始和结尾都是定式，intel又提供了两个指令来简化操作，enter指令，有两个操作数，第一个位局部变量大小，第二个暂时填写0即可，leave指令无操作数，上面函数框架也可写作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	name proc
+</span></span><span class="line"><span class="cl">		enter 16, 0
+</span></span><span class="line"><span class="cl">		; 等价于以下三条指令
+</span></span><span class="line"><span class="cl">		; push ebp
+</span></span><span class="line"><span class="cl">		; mov ebp, esp
+</span></span><span class="line"><span class="cl">		; sub esp, 16
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		leave
+</span></span><span class="line"><span class="cl">		; 等价于一下两条指令
+</span></span><span class="line"><span class="cl">		; mov esp, ebp
+</span></span><span class="line"><span class="cl">		; pop ebp
+</span></span><span class="line"><span class="cl">		ret
+</span></span><span class="line"><span class="cl">	name endp
+</span></span></code></pre></div><p>以上都是MASM语法形式，当然，大多数的原理性东西也对AT&amp;T语法适用，MASM提供了很多宏去方便程序员适用，从函数调用的invoke伪指令，到参数列表，到局部变量，都做了全副武装。这在AT&amp;T中就没那么幸运了。</p>
+<p>对AT&amp;T汇编来说，函数仅仅是一个符号，跟其他label并没什么不同。定义的语法规则如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.type func_name, @function
+</span></span><span class="line"><span class="cl">	func_name:
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">		ret
+</span></span></code></pre></div><p>这里仅仅是对linux适用，如果在mingw下写，发现这样甚至连编译都过不了，其实只要有一个符号即可，.type完全可以不写， 如果要导出函数，可用.globl func_name。另外，AT&amp;T的函数需要自己计算参数的偏移，没有参数列表没有局部声明，也没有invoke调用。这么简陋的设施或许也没 什么可以说明的。</p>
+<p>如果仔细研究堆栈变化，在调用函数的时候先要把参数入栈，然后把返回地址入栈，之后跳到函数入口点执行。这样就产生一个问题，谁应该把压入的参数弹出（即清理堆栈）。</p>
+<p>对于__cdecl函数（c函数）是调用者进行清理，gcc的处理方式是在局部变量的最后多开辟一点空间，然后每次调用函数之前，先把参数赋值给esp的正偏移，这样等函数返回之后就没有必要清理堆栈了。</p>
+<p>对于<code>__stdcall</code>函数（Win32 API），清理堆栈的工作需要交给被调用者，也就是说，所有<code>__stdcall</code>的函数在返回之前使用 ret (n-bype) 清理了参数，如果返回之后再次清理堆栈就会造成堆栈的混乱。</p>
+<p>这里由函数本身清理堆栈时，还用到一个ret指令的变形，可以增加一个操作数来指定堆栈清理的字节数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	; MASM
+</span></span><span class="line"><span class="cl">	ret bytes;
+</span></span><span class="line"><span class="cl">	; AT&amp;T
+</span></span><span class="line"><span class="cl">	retn bytes;
+</span></span></code></pre></div><p>最后，举一个例子简单的说明一下函数的用法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.section .data
+</span></span><span class="line"><span class="cl">		out: .asciz &#34;result is %d\n&#34;
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.section .text
+</span></span><span class="line"><span class="cl">	# 这里定义一个两数相加的例子
+</span></span><span class="line"><span class="cl">	# 为了说明，先存结果到局部变量
+</span></span><span class="line"><span class="cl">	.globl _Function
+</span></span><span class="line"><span class="cl">	_Function:
+</span></span><span class="line"><span class="cl">		pushl %ebp
+</span></span><span class="line"><span class="cl">		movl %esp, %ebp
+</span></span><span class="line"><span class="cl">		subl $16, %esp
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		movl 8(%ebp), %ebx
+</span></span><span class="line"><span class="cl">		addl 12(%ebp), %ebx
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		#存入局部变量位置偏移为 -4
+</span></span><span class="line"><span class="cl">		movl %ebx, -4(%ebp)
+</span></span><span class="line"><span class="cl">		movl -4(%ebp), %eax
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		movl %ebp, %esp
+</span></span><span class="line"><span class="cl">		popl %ebp
+</span></span><span class="line"><span class="cl">		ret
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.globl _main
+</span></span><span class="line"><span class="cl">	_main:
+</span></span><span class="line"><span class="cl">		pushl $5
+</span></span><span class="line"><span class="cl">		pushl $9
+</span></span><span class="line"><span class="cl">		call _Function
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		#结果位于eax
+</span></span><span class="line"><span class="cl">		#调用printf输出
+</span></span><span class="line"><span class="cl">		pushl %eax
+</span></span><span class="line"><span class="cl">		pushl $out
+</span></span><span class="line"><span class="cl">		call _printf
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		pushl $0
+</span></span><span class="line"><span class="cl">		call _exit
+</span></span></code></pre></div><p>这里需要注意的是，_Function这个函数符合c编程的规范，也就是说c语言也可直接调用此函数，这种方式再下篇会有提及。对于 MASM，也适用这种写法，不过为了介绍简化过程的伪指令，现把此程序改为由伪指令简化过的形式，注意（enter虽然简化过程，但是intel的指令， 不算伪指令）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="o">.</span><span class="mi">386</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">model</span> <span class="n">flat</span><span class="p">,</span> <span class="n">stdcall</span>
+</span></span><span class="line"><span class="cl">	<span class="n">option</span> <span class="n">casemap</span><span class="p">:</span><span class="n">none</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">include</span>    <span class="n">windows</span><span class="o">.</span><span class="n">inc</span>
+</span></span><span class="line"><span class="cl">	<span class="n">include</span>    <span class="n">kernel32</span><span class="o">.</span><span class="n">inc</span>
+</span></span><span class="line"><span class="cl">	<span class="n">includelib</span> <span class="n">kernel32</span><span class="o">.</span><span class="n">lib</span>
+</span></span><span class="line"><span class="cl">	<span class="n">includelib</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">lib</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">		<span class="n">outstring</span> <span class="n">db</span> <span class="s2">&#34;result is </span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="n">code</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span> <span class="n">proto</span> <span class="n">c</span> <span class="n">s</span><span class="p">:</span><span class="n">dword</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">Function</span> <span class="n">proc</span> <span class="n">p1</span><span class="p">:</span><span class="n">dword</span><span class="p">,</span> <span class="n">p2</span><span class="p">:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="n">local</span> <span class="k">var</span><span class="p">:</span><span class="n">dword</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="n">p1</span>
+</span></span><span class="line"><span class="cl">		<span class="n">add</span> <span class="n">ebx</span><span class="p">,</span> <span class="n">p2</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="k">var</span><span class="p">,</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="k">var</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ret</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Function</span> <span class="n">endp</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">start</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">invoke</span> <span class="n">Function</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span>
+</span></span><span class="line"><span class="cl">		<span class="n">invoke</span> <span class="n">printf</span><span class="p">,</span> <span class="n">addr</span> <span class="n">outstring</span><span class="p">,</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">invoke</span> <span class="n">ExitProcess</span><span class="p">,</span> <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl">	<span class="n">end</span> <span class="n">start</span>
+</span></span></code></pre></div><p>这里需要做几点说明，由于.model设定了stdcall，所以proc指定的都会是stdcall函数，即堆栈清理由函数自己执 行，所以Function最终使用ret 8来返回。另外，由于指定了函数Function的参数，编译器会自动生成框架，所以无需使用enter和leave，对于printf，没有使用头文 件，而是自己进行了生命，当然，这里并没有使用可变长参数，仅仅写了两个参数，proto后加了函数的类型为c类型。另外，连接期间无需连接成 windows类型，可用命令<code>link /subsystem:console fun.obj</code> 来连接成控制台程序。</p>
+<p>本篇主要介绍了函数堆栈变化，这个过程虽然并不复杂，但是要是讲解清晰还是非常困难。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+        
+            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-AT&amp;T汇编win32窗口</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言练习-实模式下的汇编</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十四)-SSE指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 涸泽之鱼
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
