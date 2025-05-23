@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-slab-allocator/'>
 
-<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Linux 内核 slab 分配器">
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Linux 内核 slab 分配器">
 <meta property='og:description' content="slab 介绍 内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-slab-allocator/'>
 <meta property='og:site_name' content='涸泽之鱼'>

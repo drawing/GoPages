@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
 
-<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="select/poll 源码分析">
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="select/poll 源码分析">
 <meta property='og:description' content="select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-epoll/'>
 <meta property='og:site_name' content='涸泽之鱼'>

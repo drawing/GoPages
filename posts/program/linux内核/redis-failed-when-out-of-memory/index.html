@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/'>
 
-<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="overcommit 对 fork 的影响">
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="overcommit 对 fork 的影响">
 <meta property='og:description' content="问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：\nRedis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/'>
 <meta property='og:site_name' content='涸泽之鱼'>
