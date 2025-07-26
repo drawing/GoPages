@@ -62,7 +62,7 @@ GameScene.create = function ()
     this.characterTimer = this.time.addEvent({
         delay: 500,
         callback: () => {
-            this.character.y += 50;
+            this.character.y += 15;
             if (this.character.y > config.height) {
                 console.log("game over");
 
