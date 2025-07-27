@@ -31,7 +31,7 @@ GameScene.create = function ()
     // this.input.keyboard.disableGlobalCapture();
     // this.alphabet = 'QWERTYUIOPASDFGHJKL;ZXCVBNM./';
 
-    this.alphabet = 'qwertyuiopasdfghjkl;zxcvbnm./';
+    this.alphabet = 'qwertyuiopasdfghjklzxcvbnm';
 
     var X = Math.floor((Math.random()*config.height)+1);
     var Y = 40;
