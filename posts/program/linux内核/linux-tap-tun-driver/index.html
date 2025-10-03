@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
 
-<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="tun/tap 驱动源码分析">
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="tun/tap 驱动源码分析">
 <meta property='og:description' content="tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上此驱动是一种把网络数据包直接定向至用户态进程的一种方式。用户态进程充当网络的角色，通过read接受网卡数据包，write发送数据包给网卡。\n">
 <meta property='og:url' content='https://drawing.fancymore.com/posts/program/linux%E5%86%85%E6%A0%B8/linux-tap-tun-driver/'>
 <meta property='og:site_name' content='涸泽之鱼'>
