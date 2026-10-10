@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux内核笔记-VFS · 闲亩</title>
+<meta name="description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Linux内核笔记-VFS</h1>
+        <div class="post-meta">
+            <time datetime="2014-05-21">2014-05-21</time>
+            <span class="sep">·</span>
+            <span>3439 字</span>
+            <span class="sep">·</span>
+            <span>约 7 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/linux%E5%86%85%E6%A0%B8/">#Linux内核</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。</p>
+<h1 id="概念">概念</h1>
+<p>之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。</p>
+<h2 id="分层">分层</h2>
+<p>Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。</p>
+<p>VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。</p>
+<h2 id="inode">inode</h2>
+<p>内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 <code>inode_operations</code> ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。<code>file_operations</code> 实现文件内容操作，如read、write等等，<code>inode_operations</code> 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。</p>
+<h2 id="file">file</h2>
+<p>inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。</p>
+<h2 id="dentry">dentry</h2>
+<p>dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。</p>
+<h2 id="file_system_type">file_system_type</h2>
+<p>file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 <code>register_filesystem</code> 向内核注册，函数只是简单的把 <code>file_system_type</code> 插入链表，其中最关键的成员就是 get_sb，得到 <code>super_block</code> 结构。</p>
+<h2 id="super_block">super_block</h2>
+<p>super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。</p>
+<h2 id="vfsmount">vfsmount</h2>
+<p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对与挂接点来说，都是唯一的。</p>
+<h2 id="path">path</h2>
+<p>path 包含 vfsmount 和 dentry 结构。</p>
+<h2 id="nameidata">nameidata</h2>
+<p>nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
+<h1 id="sys_mount-实现">sys_mount 实现</h1>
+<p><code>sys_mount</code> 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 <code>sys_mount</code> 的函数原型：</p>
+<pre><code># 源码中的原型
+SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+		char __user *, type, unsigned long, flags, void __user *, data)
+
+# 根据宏推演开来展现原型
+#define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
+
+#define SYSCALL_DEFINEx(x, sname, ...)				\
+	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__
+
+#define __SYSCALL_DEFINEx(x, name, ...)					\
+	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__)
+
+#define __SC_DECL1(t1, a1)	t1 a1
+#define __SC_DECL2(t2, a2, ...) t2 a2, __SC_DECL1(__VA_ARGS__)
+#define __SC_DECL3(t3, a3, ...) t3 a3, __SC_DECL2(__VA_ARGS__)
+#define __SC_DECL4(t4, a4, ...) t4 a4, __SC_DECL3(__VA_ARGS__)
+#define __SC_DECL5(t5, a5, ...) t5 a5, __SC_DECL4(__VA_ARGS__)
+
+# 最终展开宏之后的原型为
+asmlinkage long sys_mount(char __user * dev_name, char __user * dir_name,	\
+		char __user * type, unsigned long flags, void __user * data)
+</code></pre>
+<p>参数 dev_name 是设备名，如/dev/sda1；dir_name 是目标挂接点路径，如/mnt/target/；type 是文件系统类型，如ext2、ext3等；flags 是mount标志；data是附加选项值。</p>
+<p>由于<code>sys_mount</code>的字符串参数都是 <code>__user</code> 内存，所以在 sys_mount 开始处，首先使用<code>copy_mount_string</code>等函数把用户空间的字串复制到内核空间。之后再去调用 <code>do_mount</code> 完成具体的操作。<code>do_mount</code> 的原型与 <code>sys_mount</code> 相对应，仅是参数全部已经转换成内核空间的地址。</p>
+<pre><code>long do_mount(char *dev_name, char *dir_name, char *type_page,
+		  unsigned long flags, void *data_page)
+{
+	/** 省略无关部分 */
+
+	/* ... and get the mountpoint */
+	retval = kern_path(dir_name, LOOKUP_FOLLOW, &amp;path);
+	if (retval)
+		return retval;
+
+	retval = security_sb_mount(dev_name, &amp;path,
+				   type_page, flags, data_page);
+	if (retval)
+		goto dput_out;
+
+	/** 省略flags判断分支 */
+
+		retval = do_new_mount(&amp;path, type_page, flags, mnt_flags,
+				      dev_name, data_page);
+dput_out:
+	path_put(&amp;path);
+	return retval;
+}
+</code></pre>
+<p>可以看到 <code>do_mount</code> 的主干是非常清晰的，开始省去一些参数校验代码，紧接着调用 <code>kern_path</code> 根据 <code>dir_name</code> 指示的路径名获取其 path 结构，<code>security_sb_mount</code> 做一些安全校验工作，如果没有设置，这个函数为空，否则去调用 <code>security_ops-&gt;sb_mount</code> 成员实现。这里不去研究 LSM 安全模块，省去这个函数的分析。紧接着根据flags进行判断，决定是重新加载，或者移动，或者更改文件系统，这里仅跟加载新的 mount 作为分析对象，其他部分类似。最后使用<code>path_put</code>回收path资源。</p>
+<p>这里可以看书，<code>do_mount</code>其实也只是一个分发函数，首先获得path，然后调用各分支的mount函数，接下来分析 <code>kern_path</code> 和 <code>do_new_mount</code> 函数。</p>
+<pre><code>int kern_path(const char *name, unsigned int flags, struct path *path)
+{
+	struct nameidata nd;
+	int res = do_path_lookup(AT_FDCWD, name, flags, &amp;nd);
+	if (!res)
+		*path = nd.path;
+	return res;
+}
+</code></pre>
+<p><code>kern_path</code> 很明显，构建一个 nameidata 对象，使用 <code>do_path_lookup</code> 函数由路径名 name 得到 nameidata 对象，path 仅是 nameidata 对象的一个成员，把这个成员返回给上层。也就是 <code>kern_path</code> 调用了更为广泛的 <code>do_path_lookup</code>。</p>
+<pre><code>static int do_path_lookup(int dfd, const char *name,
+				unsigned int flags, struct nameidata *nd)
+{
+	int retval = path_init(dfd, name, flags, nd);
+	if (!retval)
+		retval = path_walk(name, nd);
+	if (unlikely(!retval &amp;&amp; !audit_dummy_context() &amp;&amp; nd-&gt;path.dentry &amp;&amp;
+				nd-&gt;path.dentry-&gt;d_inode))
+		audit_inode(name, nd-&gt;path.dentry);
+	if (nd-&gt;root.mnt) {
+		path_put(&amp;nd-&gt;root);
+		nd-&gt;root.mnt = NULL;
+	}
+	return retval;
+}
+</code></pre>
+<p>可以看到，<code>do_path_lookup</code> 又去调用了 <code>path_init</code> 和 <code>path_walk</code> 函数实现功能，<code>path_init</code> 代码很易懂，根据路径名 name 获取当前相对 name 的 nameidata 结构，如果 name 是以/开始的绝对路径，<code>nameidata-&gt;path</code> 即为根，否则，如果name是相对路径，nameidata-&gt;path 为当前路径的path，也就是不管name是相对路径还是绝对的，对此时的 nameidata 来讲都可以认为是相对路径。</p>
+<p><code>path_walk</code> 便是根据 nameidata 找到相对路径 name 的 path 节点。<code>path_walk</code> 本身也没有做这件事，只是把参数又传递给 <code>link_path_walk</code> 去具体操作，<code>link_path_walk</code> 的操作便复杂了许多，需要处理各种奇怪的路径名，这里先无视这段复杂的代码，继续向后分析，至少已经知道 <code>link_path_walk</code> 所实现的功能，不怕他写的复杂，就怕你猜不到他在做什么。</p>
+<p>如此便已清楚 <code>kern_path</code> 的功能，接下来看 <code>do_new_mount</code> 的操作：</p>
+<pre><code>static int do_new_mount(struct path *path, char *type, int flags,
+			int mnt_flags, char *name, void *data)
+{
+	struct vfsmount *mnt;
+
+	if (!type)
+		return -EINVAL;
+
+	/* we need capabilities... */
+	if (!capable(CAP_SYS_ADMIN))
+		return -EPERM;
+
+	lock_kernel();
+	mnt = do_kern_mount(type, flags, name, data);
+	unlock_kernel();
+	if (IS_ERR(mnt))
+		return PTR_ERR(mnt);
+
+	return do_add_mount(mnt, path, mnt_flags, NULL);
+}
+</code></pre>
+<p><code>do_new_mount</code> 也分为两步，第一步调用 <code>do_kern_mount</code> 创建 vfsmount 挂接点结构，之后调用 <code>do_add_mount</code> 挂接 mnt 到文件系统树。再来一步一步分析，从 <code>do_kern_mount</code> 开始：</p>
+<pre><code>struct vfsmount *
+do_kern_mount(const char *fstype, int flags, const char *name, void *data)
+{
+	struct file_system_type *type = get_fs_type(fstype);
+	struct vfsmount *mnt;
+	if (!type)
+		return ERR_PTR(-ENODEV);
+	mnt = vfs_kern_mount(type, flags, name, data);
+	if (!IS_ERR(mnt) &amp;&amp; (type-&gt;fs_flags &amp; FS_HAS_SUBTYPE) &amp;&amp;
+	    !mnt-&gt;mnt_sb-&gt;s_subtype)
+		mnt = fs_set_subtype(mnt, fstype);
+	put_filesystem(type);
+	return mnt;
+}
+</code></pre>
+<p><code>do_kern_mount</code> 从主干来看，首先调用 <code>get_fs_type</code> 得到文件系统的 <code>file_system_type</code> 结构，之后调用 <code>vfs_kern_mount</code> 生成 vfsmount 结构。<code>get_fs_type</code> 所作工作比较简单，直接调用<code>__get_fs_type</code>函数从当前已加载的 <code>file_systems</code> 查找对应文件系统，如果未找到，便以文件系统名为模块名调用 request_module 加载模块，如果加载成功，对应模块会调用 <code>register_filesystem</code> 把自己的 <code>file_system_type</code> 结构插入 <code>file_systems</code> 链表，<code>get_fs_type</code>会再次进行查找。如果查找失败，便返回 NULL。</p>
+<p>在得到 <code>file_system_type</code> 文件系统结构后，调用 <code>vfs_kern_mount</code> 创建 mnt 挂接点。</p>
+<pre><code>struct vfsmount *
+vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void *data)
+{
+	/** 省去无关代码 */
+	mnt = alloc_vfsmnt(name);
+	if (!mnt)
+		goto out;
+
+	if (flags &amp; MS_KERNMOUNT)
+		mnt-&gt;mnt_flags = MNT_INTERNAL;
+
+	/** 省去无关代码 */
+
+	error = type-&gt;get_sb(type, flags, name, data, mnt);
+	if (error &lt; 0) 		goto out_free_secdata; 	/** 省去 LSM 安全模块代码 */ 	mnt-&gt;mnt_mountpoint = mnt-&gt;mnt_root;
+	mnt-&gt;mnt_parent = mnt;
+	up_write(&amp;mnt-&gt;mnt_sb-&gt;s_umount);
+	free_secdata(secdata);
+	return mnt;
+
+	/** 省去错误清理代码 */
+
+	return ERR_PTR(error);
+}
+</code></pre>
+<p>经过抽取函数的骨干，可以清楚看到函数所作操作，首先 alloc_vfsmnt 为 vfsmount 结构分配空间，并初始化成员。再调用对应文件系统的 file_system_type 成员 get_sb 填充 mnt结构。分配空间并初始化代码并无关键之处，而 get_sb 函数却是相应文件系统的实现，比如 ext2 的 ext2_get_sb 函数。</p>
+<p>先不去研究文件系统的具体实现，这与VFS无关，<code>do_kern_mount</code> 便以分析完毕，所作功能便是为 vfsmount 分配空间，再去调用文件系统的 <code>get_sb</code> 实现填充 vfsmount 结构。</p>
+<p>接下来查看 <code>do_add_mount</code> 的实现：</p>
+<pre><code>int do_add_mount(struct vfsmount *newmnt, struct path *path,
+		 int mnt_flags, struct list_head *fslist)
+{
+	int err;
+
+	mnt_flags &amp;= ~(MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL);
+
+	down_write(&amp;namespace_sem);
+	/* Something was mounted here while we slept */
+	while (d_mountpoint(path-&gt;dentry) &amp;&amp;
+	       follow_down(path))
+		;
+	err = -EINVAL;
+	if (!(mnt_flags &amp; MNT_SHRINKABLE) &amp;&amp; !check_mnt(path-&gt;mnt))
+		goto unlock;
+
+	/* Refuse the same filesystem on the same mount point */
+	err = -EBUSY;
+	if (path-&gt;mnt-&gt;mnt_sb == newmnt-&gt;mnt_sb &amp;&amp;
+	    path-&gt;mnt-&gt;mnt_root == path-&gt;dentry)
+		goto unlock;
+
+	err = -EINVAL;
+	if (S_ISLNK(newmnt-&gt;mnt_root-&gt;d_inode-&gt;i_mode))
+		goto unlock;
+
+	newmnt-&gt;mnt_flags = mnt_flags;
+	if ((err = graft_tree(newmnt, path)))
+		goto unlock;
+
+	if (fslist) /* add to the specified expiration list */
+		list_add_tail(&amp;newmnt-&gt;mnt_expire, fslist);
+
+	up_write(&amp;namespace_sem);
+	return 0;
+
+unlock:
+	up_write(&amp;namespace_sem);
+	mntput(newmnt);
+	return err;
+}
+</code></pre>
+<p>函数开始调用 <code>d_mountpoint</code> 和 <code>follow_down</code> 查看是否已经有 mnt 挂接到 path 位置，之后便调用 <code>graft_tree</code> 把 newmnt 挂接到 path 位置：</p>
+<pre><code>static int graft_tree(struct vfsmount *mnt, struct path *path)
+{
+	int err;
+	if (mnt-&gt;mnt_sb-&gt;s_flags &amp; MS_NOUSER)
+		return -EINVAL;
+
+	/** 检测是否文件夹 */
+	if (S_ISDIR(path-&gt;dentry-&gt;d_inode-&gt;i_mode) !=
+	      S_ISDIR(mnt-&gt;mnt_root-&gt;d_inode-&gt;i_mode))
+		return -ENOTDIR;
+
+	err = -ENOENT;
+	mutex_lock(&amp;path-&gt;dentry-&gt;d_inode-&gt;i_mutex);
+
+	/** 检测路径的标志，是否允许 mount */
+	if (cant_mount(path-&gt;dentry))
+		goto out_unlock;
+
+	/** 挂接 mnt */
+	if (!d_unlinked(path-&gt;dentry))
+		err = attach_recursive_mnt(mnt, path, NULL);
+out_unlock:
+	mutex_unlock(&amp;path-&gt;dentry-&gt;d_inode-&gt;i_mutex);
+	return err;
+}
+</code></pre>
+<p>看来这里的关键点便是 <code>attach_recursive_mnt</code> 函数，它挂接 mnt 到 path 路径上，甚至内核源码本身也为这个函数使用了很大篇幅的注释。此函数调用 <code>mnt_set_mountpoint</code> ，增加目标挂接点 mounted 计数，最后调用 <code>commit_tree</code> 把当前 mnt 添加至全局散列表和父文件系统的子文件系统链。</p>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#分层">分层</a></li>
+    <li><a href="#inode">inode</a></li>
+    <li><a href="#file">file</a></li>
+    <li><a href="#dentry">dentry</a></li>
+    <li><a href="#file_system_type">file_system_type</a></li>
+    <li><a href="#super_block">super_block</a></li>
+    <li><a href="#vfsmount">vfsmount</a></li>
+    <li><a href="#path">path</a></li>
+    <li><a href="#nameidata">nameidata</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/linux-kernel-interrupt-and-exception/">← Linux内核笔记-中断和异常</a>
+        
+        
+        <a class="next" href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归档 · 闲亩</title>
+<meta name="description" content="">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/" class="active">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<h1 class="page-title">归档</h1>
+
+
+<section class="archive-year">
+    <h2>2026</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2026-10-09">10-09</time>
+            <a href="/posts/collect-information/">信息获取的分层方法</a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="archive-year">
+    <h2>2023</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2023-04-11">04-11</time>
+            <a href="/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">告警优化实践总结</a>
+        </li>
+        
+        <li>
+            <time datetime="2023-04-10">04-10</time>
+            <a href="/posts/swig_cross_language_call/">SWIG 跨语言调用</a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="archive-year">
+    <h2>2015</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2015-09-26">09-26</time>
+            <a href="/posts/management-training-sentiment/">腾讯-育龙培训感悟</a>
+        </li>
+        
+        <li>
+            <time datetime="2015-09-25">09-25</time>
+            <a href="/posts/curriculum-development/">课程设计与开发入门</a>
+        </li>
+        
+        <li>
+            <time datetime="2015-09-24">09-24</time>
+            <a href="/posts/interview-cola/">腾讯-育龙-cola访谈记录</a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="archive-year">
+    <h2>2014</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2014-07-03">07-03</time>
+            <a href="/posts/linux-performance-kernel/">Linux性能调优之内核篇</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-07-02">07-02</time>
+            <a href="/posts/linux-performance-hardware/">Linux性能调优之硬件篇</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-07-01">07-01</time>
+            <a href="/posts/linux-performance-monitor-tools/">Linux性能调优之工具篇</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-06-10">06-10</time>
+            <a href="/posts/redis-failed-when-out-of-memory/">overcommit 对 fork 的影响</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-06-02">06-02</time>
+            <a href="/posts/algorithm-lcs/">算法学习笔记-最长公共子序列</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-06-01">06-01</time>
+            <a href="/posts/algorithm-dynamic-programming/">算法学习笔记-动态规划</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-23">05-23</time>
+            <a href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-22">05-22</time>
+            <a href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-21">05-21</time>
+            <a href="/posts/linux-vfs-source/">Linux内核笔记-VFS</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-20">05-20</time>
+            <a href="/posts/linux-kernel-virtual-address/">Linxu内核笔记-虚拟地址空间</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-20">05-20</time>
+            <a href="/posts/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-19">05-19</time>
+            <a href="/posts/linux-kernel-debugging/">Linux 内核调试</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-18">05-18</time>
+            <a href="/posts/linux-kernel-slab-allocator/">Linux 内核 slab 分配器</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-17">05-17</time>
+            <a href="/posts/linux-kernel-data-structure/">Linux内核数据结构</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-16">05-16</time>
+            <a href="/posts/linux-kernel-system-call/">Linux系统调用</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-15">05-15</time>
+            <a href="/posts/linux-driver-select-implement/">Linux 设备驱动轮询编程</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-14">05-14</time>
+            <a href="/posts/linux-kernel-waiting-queue/">Linux 内核等待队列解析</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-13">05-13</time>
+            <a href="/posts/linux-kernel-epoll/">select/poll 源码分析</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-12">05-12</time>
+            <a href="/posts/linux-tap-tun-driver/">tun/tap 驱动源码分析</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-05-11">05-11</time>
+            <a href="/posts/linux-character-driver/">Linux字符设备驱动开发</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-28">04-28</time>
+            <a href="/posts/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-27">04-27</time>
+            <a href="/posts/practice-assembler-gas-win32/">汇编语言练习-AT&amp;T汇编win32窗口</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-26">04-26</time>
+            <a href="/posts/practice-16-asm-real-mode.md/">汇编语言练习-实模式下的汇编</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-25">04-25</time>
+            <a href="/posts/14.-assembler-sse-instruct/">汇编语言学习笔记(十四)-SSE指令集</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-24">04-24</time>
+            <a href="/posts/13.-assembler-mmx-instruct/">汇编语言学习笔记(十三)-MMX指令集</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-23">04-23</time>
+            <a href="/posts/12.-assembler-float-instruct/">汇编语言学习笔记(十二)-浮点指令</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-22">04-22</time>
+            <a href="/posts/11.-assembler-precompile-macro/">汇编语言学习笔记(十一)-预编译宏</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-21">04-21</time>
+            <a href="/posts/10.-assembler-c-inline/">汇编语言学习笔记(十)-内联汇编</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-20">04-20</time>
+            <a href="/posts/9.-assembler-function/">汇编语言学习笔记(九)-函数</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-19">04-19</time>
+            <a href="/posts/8.-assembler-string-instruct/">汇编语言学习笔记(八)-字符串</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-18">04-18</time>
+            <a href="/posts/7.-assembler-addressing-method/">汇编语言学习笔记(七)-寻址方式</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-17">04-17</time>
+            <a href="/posts/6.-assembler-math-instruct/">汇编语言学习笔记(六)-数学运算</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-16">04-16</time>
+            <a href="/posts/5.-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-15">04-15</time>
+            <a href="/posts/4.-assembler-mov-instruct/">汇编语言学习笔记(四)-MOV指令</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-14">04-14</time>
+            <a href="/posts/3.-assembler-datastruct/">汇编语言学习笔记(三)-数据结构</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-13">04-13</time>
+            <a href="/posts/2.-assembler-framework/">汇编语言学习笔记(二)-代码框架</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-12">04-12</time>
+            <a href="/posts/1.-assembler-register/">汇编语言学习笔记(一)-寄存器</a>
+        </li>
+        
+        <li>
+            <time datetime="2014-04-11">04-11</time>
+            <a href="/posts/0.-assembler-why-learning/">汇编语言学习笔记(零)-为什么开始</a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="archive-year">
+    <h2>2011</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2011-06-03">06-03</time>
+            <a href="/posts/effective-executive/">如何有效决策-《卓有成效的管理者》读感</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-06-02">06-02</time>
+            <a href="/posts/probability-double-color/">双色球必胜秘籍</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-06-02">06-02</time>
+            <a href="/posts/become-an-influential-programmers/">成为有影响力的开发者</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-06-01">06-01</time>
+            <a href="/posts/software-version-compare-for-design/">软件版本对系统架构的理解</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-06-01">06-01</time>
+            <a href="/posts/how-to-reply-for-technology/">技术答辩感悟</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-04-16">04-16</time>
+            <a href="/posts/how-to-publish-server-program/">发布后台程序注意总结</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-04-15">04-15</time>
+            <a href="/posts/latex-formula/">Latex 数学公式整理</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-04-15">04-15</time>
+            <a href="/posts/meaning-of-c-11/">C&#43;&#43;11 详解</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-04-10">04-10</time>
+            <a href="/posts/objective-c-brief-course/">Objective-C 简明教程</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-01-12">01-12</time>
+            <a href="/posts/everything-under-control/">一切尽在掌握</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-01-11">01-11</time>
+            <a href="/posts/do-best-system-design-using-paradigm/">做最好的架构-范式和总结</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-01-10">01-10</time>
+            <a href="/posts/how-to-understand-open-source-code/">如何阅读源代码</a>
+        </li>
+        
+        <li>
+            <time datetime="2011-01-09">01-09</time>
+            <a href="/posts/large-concurrent-software-design/">大并发程序设计的思考</a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="archive-year">
+    <h2>2010</h2>
+    <ul class="archive-list">
+        
+        <li>
+            <time datetime="2010-11-20">11-20</time>
+            <a href="/posts/message-queue-development/">指令队列设计</a>
+        </li>
+        
+        <li>
+            <time datetime="2010-11-05">11-05</time>
+            <a href="/posts/thinking-of-software-design/">软件设计的思考</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

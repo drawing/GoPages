@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>技术答辩感悟 · 闲亩</title>
+<meta name="description" content="昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
+准备 成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>技术答辩感悟</h1>
+        <div class="post-meta">
+            <time datetime="2011-06-01">2011-06-01</time>
+            <span class="sep">·</span>
+            <span>821 字</span>
+            <span class="sep">·</span>
+            <span>约 2 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。</p>
+<h1 id="准备">准备</h1>
+<p>成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。</p>
+<p>另外，答辩之前，也需要针对性的做一些准备，首先，需要知道这次答辩的目的，比如昨晚的答辩，实际上最开始就以为review一下代码就行，其实最后还是纠结在如何设计和实现。之前我自己的答辩，也是没有对答辩的状况有合理的预期，准备的时候更多的是考虑如何讲更有逻辑性，而不知道评委最终会纠结在什么地方，什么地方他们根本不关心，没有对状况的预期，往往会手忙脚乱。</p>
+<p>还有对评委的背景，最好能有一个初步的了解，一般评委关注点更多的跟自己的背景有关。不过有时候很难了解每个评委的风格。</p>
+<h1 id="论述">论述</h1>
+<p>关于如何讲自己的项目或者设计，以前都是站在自己的角度考虑，如何才能清楚、有逻辑的讲完，但对于评委，可能是完全不同的理解。评委对一开始讲的背景，优缺点其实并不是很在意，模型才是关键，有时候一贴架构图，评委就来了精神，这里的图，就是整个架构的模型，也是理解架构的切入点，所以如何讲清楚模型是非常重要的。</p>
+<p>评委都有自身的背景，面对模型，也会结合自己的经验，所谓的经验就是定式，如果你的模型符合他的定式，便会非常容易理解，一旦模型不符合定式，就需要花费很大精力去讲解，所以从大众熟悉的模型讲起，逐渐推演，便会容易理解很多。</p>
+<p>另外还需要学习一些通用的表达方式，如金字塔原理等。</p>
+<h1 id="面对挑战">面对挑战</h1>
+<p>答辩必然会遇到评委的挑战，有些评委气势如虹，很容易造成答辩者的心理压力，导致不能正常发挥。其实很多情况下，评委只是一时兴起的问题，还不没有深思熟虑，稍加思考即可应对，所以回答问题不能急，要慢下来，思考后回答。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/how-to-publish-server-program/">← 发布后台程序注意总结</a>
+        
+        
+        <a class="next" href="/posts/software-version-compare-for-design/">软件版本对系统架构的理解 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

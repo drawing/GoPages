@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux系统调用 · 闲亩</title>
+<meta name="description" content="操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Linux系统调用</h1>
+        <div class="post-meta">
+            <time datetime="2014-05-16">2014-05-16</time>
+            <span class="sep">·</span>
+            <span>1268 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/linux%E5%86%85%E6%A0%B8/">#Linux内核</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：</p>
+<p>在用户态通过API接口编程如下：</p>
+<pre><code>#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+
+int main()
+{
+    return printf(&quot;pid is %d\n&quot;, getpid()) &gt; 0;
+}
+</code></pre>
+<p>getpid 为应用编程接口(API)函数，提供统一标准接口，实现是通过系统调用获得进程ID。
+系统调用函数由唯一的调用号标识，x86构架下在文件 arch/x86/include/asm/unistd.h 指定，实现文件根据32位系统与64为系统的不同分别实现在相同目录的unistd_32.h和unistd_64.h文件，现通过64位系统分析，32位系统原理相同。</p>
+<pre><code>#define __NR_getpid                             39
+__SYSCALL(__NR_getpid, sys_getpid)
+</code></pre>
+<p>可以看到getpid系统调用号为 39， 当然这在不同的系统上并不一定相同，getpid API函数的封装正是封装了种种不同。</p>
+<p>系统初始化时创建名为 <code>sys_call_table</code> 的表项，其中存储了系统调用函数，而<code>__NR_*</code>调用号正是表项索引，<code>sys_call_table</code>的定义 32构架位于 <code>arch/x86/kernel/syscall_table_32.S</code>，<code>sys_call_table</code> 为起始地址依次存储一系列函数地址。</p>
+<pre><code>:::
+ENTRY(sys_call_table)
+	.long sys_restart_syscall	/* 0 - old &quot;setup()&quot; system call, used for restarting */
+	.long sys_exit
+	.long ptregs_fork
+	.long sys_read
+	.long sys_write
+	.long sys_open		/* 5 */
+	.long sys_close
+	.long sys_waitpid
+	.long sys_creat
+	.long sys_link
+	...
+</code></pre>
+<p>64位构架位于<code>arch/x86/kernel/syscall_64.c</code>，这里干脆定义成了一个<code>sys_call_ptr_t</code>类型数组，其初始化由宏<code>__SYSCALL</code>完成。</p>
+<pre><code>const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+	/*
+	*Smells like a like a compiler bug -- it doesn't work
+	*when the &amp; below is removed.
+	*/
+	[0 ... __NR_syscall_max] = &amp;sys_ni_syscall,
+#include &lt;asm/unistd_64.h&gt;
+};
+</code></pre>
+<p>系统调用时，根据 <code>sys_call_table[__NR_getpid]</code> 获得 <code>sys_getpid</code> 地址调用之。如此，我们便可通过修改 <code>sys_call_table</code> 的初始化和<code>__NR_*</code>的定义来增加自己的系统调用和修改原来系统调用的执行方式。</p>
+<p>倘若增加我们自己的系统调用，那接下来一问题是我们如何调用？getpid函数由glibc库封装，接下来需要看如何直接调用该内核函数。当然，通过源码可以看到getpid的实现即为 <code>sys_getpid</code> 函数，但因为调用需要进行特权级的转变，所以直接调用<code>sys_getpid</code>函数是行不通的。</p>
+<p>在Linux内核 2.6.20 以前，是存在一系列宏方便调用的，不同参数调用<code>_syscall0</code>,<code>_syscall1</code>,<code>_syscall2</code>等等，但是据说为了防止内核漏洞取消了这些宏，当然，从 2.6.19 拷贝出这些宏的实现，还是可以使用的，这里只是简单说明一下原理即可。</p>
+<pre><code>/* 摘自2.6.20内核源码 include/asm-x86_64/unistd.h */
+#define __syscall &quot;syscall&quot;
+...
+#define _syscall0(type,name) \
+type name(void) \
+{ \
+long __res; \
+__asm__ volatile (__syscall \
+	: &quot;=a&quot; (__res) \
+	: &quot;0&quot; (__NR_##name) : __syscall_clobber ); \
+__syscall_return(type,__res); \
+
+/* 摘自2.6.20内核源码 include/asm-i386/unistd.h */
+#define _syscall0(type,name) \
+type name(void) \
+{ \
+long __res; \
+__asm__ volatile (&quot;int $0x80&quot; \
+        : &quot;=a&quot; (__res) \
+        : &quot;0&quot; (__NR_##name)); \
+__syscall_return(type,__res); \
+}
+</code></pre>
+<p>可以看到，64位系统使用 syscall 指令进行系统调用，32系统使用 int 0×80指令。以64位系统举例，直接调用getpid的代码如下：</p>
+<pre><code>#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;
+
+int main()
+{
+	pid_t pid = 0;
+	asm (
+		&quot;syscall&quot; \
+		: &quot;=a&quot;(pid) \
+		: &quot;0&quot;(39) \
+	);
+	printf(&quot;pid is %d\n&quot;, pid);
+	return 0;
+}
+</code></pre>
+<p>如此一来，我们便可通过通过syscall指令或者int指令调用我们自己定义的系统函数。</p>
+<p>更进一步，再调用syscall指令之后，系统进行用户态向内核态转变，这个过程分为两部分，一部分是硬件支持，即cpu所作操作，另一部分，是软件支持，位于 <code>arch/x86/kernel/entry_32.S</code> 和 <code>arch/x86/kernel/entry_64.S</code> 文件的<code>system_call</code>，这里暂不分析。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/linux-driver-select-implement/">← Linux 设备驱动轮询编程</a>
+        
+        
+        <a class="next" href="/posts/linux-kernel-data-structure/">Linux内核数据结构 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

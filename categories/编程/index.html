@@ -1,384 +1,282 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Category: 编程 - 涸泽之鱼</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Category: 编程 - 涸泽之鱼">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="Category: 编程 - 涸泽之鱼">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>编程 · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/categories/%E7%BC%96%E7%A8%8B/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/" class="active">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
-</section>
+<main class="container">
 
+
+<p class="page-crumb">分类</p>
+
+<h1 class="page-title">编程</h1>
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">告警优化实践总结</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结 …</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <header>
-        <h3 class="section-title">
             
-                Categories
-            
-        </h3>
-
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">58 个页面</h3>
-                <h1 class="section-term">编程</h1>
+            <div class="post-meta">
+                <time datetime="2023-04-11">2023-04-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
                 
             </div>
-        </div>
-    </header>
+        </article>
+    </li>
     
-    <section class="article-list--compact">
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
-        <div class="article-details">
-            <h2 class="article-title">告警优化实践总结</h2>
-            <footer class="article-time">
-                <time datetime='2023-04-11T22:50:04&#43;08:00'>Apr 11, 2023</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/swig_cross_language_call/">
-        <div class="article-details">
-            <h2 class="article-title">SWIG 跨语言调用</h2>
-            <footer class="article-time">
-                <time datetime='2023-04-10T22:40:04&#43;08:00'>Apr 10, 2023</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/management-training-sentiment/">
-        <div class="article-details">
-            <h2 class="article-title">腾讯-育龙培训感悟</h2>
-            <footer class="article-time">
-                <time datetime='2015-09-26T01:16:33&#43;08:00'>Sep 26, 2015</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/curriculum-development/">
-        <div class="article-details">
-            <h2 class="article-title">课程设计与开发入门</h2>
-            <footer class="article-time">
-                <time datetime='2015-09-25T01:16:33&#43;08:00'>Sep 25, 2015</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E4%BD%9C%E6%84%9F%E6%82%9F/interview-cola/">
-        <div class="article-details">
-            <h2 class="article-title">腾讯-育龙-cola访谈记录</h2>
-            <footer class="article-time">
-                <time datetime='2015-09-24T01:16:33&#43;08:00'>Sep 24, 2015</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/swig_cross_language_call/">SWIG 跨语言调用</a></h2>
+            
+            
+            <p class="post-summary">一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2023-04-10">2023-04-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/management-training-sentiment/">腾讯-育龙培训感悟</a></h2>
+            
+            
+            <p class="post-summary">育龙培训，通过读书、小组嘉宾采访和为期一天半的集中培训，受益良多，培训中讲师通过各种活动以及理论的讲解，深入浅出的解释了从一个技术骨干到管理者转身所必须的知识。其中有几点感触很深。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2015-09-26">2015-09-26</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/curriculum-development/">课程设计与开发入门</a></h2>
+            
+            
+            <p class="post-summary">学习知识的过程分为几个阶段，学习、应用、共享、创新。在上学的时候，我们多数情况都在不断的学习知识，工作以后，更多的是实践中锤炼自身的技艺，但能够做到开发课程去传承共享知识的人很少，工作中遇到的同事，如果经常写博客，参与一些开源项目等，技术往 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2015-09-25">2015-09-25</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/interview-cola/">腾讯-育龙-cola访谈记录</a></h2>
+            
+            
+            <p class="post-summary">育龙cola访谈记录
+时间 2015年9月24日，地点万利达303
+问题：请问您刚上任时，印象最深刻的困难是什么，您是如何应对的？ 答：刚上任的时候，当时是新的团队负责新的项目，最困难的是没有人，需要快速招人负责项目。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2015-09-24">2015-09-24</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-kernel/">Linux性能调优之内核篇</a></h2>
+            
+            
+            <p class="post-summary">进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-03">2014-07-03</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-hardware/">Linux性能调优之硬件篇</a></h2>
+            
+            
+            <p class="post-summary">CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-02">2014-07-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-monitor-tools/">Linux性能调优之工具篇</a></h2>
+            
+            
+            <p class="post-summary">在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-01">2014-07-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/redis-failed-when-out-of-memory/">overcommit 对 fork 的影响</a></h2>
+            
+            
+            <p class="post-summary">问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
+Redis is configured to save RDB snapshots, but is …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-10">2014-06-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/algorithm-lcs/">算法学习笔记-最长公共子序列</a></h2>
+            
+            
+            <p class="post-summary">概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。 最长公共子序列：如果没有比 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-02">2014-06-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
 
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/categories/%E7%BC%96%E7%A8%8B/page/2/'>2</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/categories/%E7%BC%96%E7%A8%8B/page/12/'>12</a>
-                
-            
-    </nav>
 
+<nav class="pagination">
+    
+    <span class="disabled">← 上一页</span>
+    
+    <span class="page-info">1 / 6</span>
+    
+    <a href="/categories/%E7%BC%96%E7%A8%8B/page/2/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
+<script src="/js/theme.js" defer></script>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

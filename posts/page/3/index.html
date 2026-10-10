@@ -1,384 +1,275 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Posts</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/posts/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Posts">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/posts/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="Posts">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/posts/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posts · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/posts/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
-</section>
+<main class="container">
 
+
+<h1 class="page-title">Posts</h1>
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-system-call/">Linux系统调用</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
+</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <header>
-        <h3 class="section-title">
             
-                章节
-            
-        </h3>
-
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">58 个页面</h3>
-                <h1 class="section-term">Posts</h1>
+            <div class="post-meta">
+                <time datetime="2014-05-16">2014-05-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
                 
             </div>
-        </div>
-    </header>
+        </article>
+    </li>
     
-    <section class="article-list--compact">
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E7%AE%97%E6%B3%95/algorithm-dynamic-programming/">
-        <div class="article-details">
-            <h2 class="article-title">算法学习笔记-动态规划</h2>
-            <footer class="article-time">
-                <time datetime='2014-06-01T01:16:33&#43;08:00'>Jun 01, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-进程调度</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-23T01:16:33&#43;08:00'>May 23, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-启动协议</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-22T01:16:33&#43;08:00'>May 22, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-VFS</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-21T01:16:33&#43;08:00'>May 21, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-20T01:16:33&#43;08:00'>May 20, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-driver-select-implement/">Linux 设备驱动轮询编程</a></h2>
+            
+            
+            <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-15">2014-05-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-waiting-queue/">Linux 内核等待队列解析</a></h2>
+            
+            
+            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-14">2014-05-14</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-epoll/">select/poll 源码分析</a></h2>
+            
+            
+            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-13">2014-05-13</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-tap-tun-driver/">tun/tap 驱动源码分析</a></h2>
+            
+            
+            <p class="post-summary">tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-12">2014-05-12</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-character-driver/">Linux字符设备驱动开发</a></h2>
+            
+            
+            <p class="post-summary">什么是字符驱动？ 所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动， …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-11">2014-05-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口</a></h2>
+            
+            
+            <p class="post-summary">AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-28">2014-04-28</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/practice-assembler-gas-win32/">汇编语言练习-AT&amp;T汇编win32窗口</a></h2>
+            
+            
+            <p class="post-summary">这里写一个win32窗口程序，如果对c语言如何使用api创建窗口还不熟悉，请先学习win32 api的使用，网上有很多用masm编写win32程序的例子，使用masm编写win32程序也比较方便，这里便不再重复。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-27">2014-04-27</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/practice-16-asm-real-mode.md/">汇编语言练习-实模式下的汇编</a></h2>
+            
+            
+            <p class="post-summary">在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-26">2014-04-26</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/14.-assembler-sse-instruct/">汇编语言学习笔记(十四)-SSE指令集</a></h2>
+            
+            
+            <p class="post-summary">本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-25">2014-04-25</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
 
-        
-            
-                    <a class='page-link' href='/posts/'>1</a>
-                
-            
-            
-                    <a class='page-link' href='/posts/page/2/'>2</a>
-                
-            
-            
-                <span class='page-link current'>3</span>
-                
-            
-            
-                    <a class='page-link' href='/posts/page/4/'>4</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/posts/page/12/'>12</a>
-                
-            
-    </nav>
 
+<nav class="pagination">
+    
+    <a href="/posts/page/2/">← 上一页</a>
+    
+    <span class="page-info">3 / 6</span>
+    
+    <a href="/posts/page/4/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
+<script src="/js/theme.js" defer></script>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

@@ -1,345 +1,277 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Tag: 工程实践 - 涸泽之鱼</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Tag: 工程实践 - 涸泽之鱼">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="Tag: 工程实践 - 涸泽之鱼">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工程实践 · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/" class="active">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
-</section>
+<main class="container">
 
+
+<p class="page-crumb">标签</p>
+
+<h1 class="page-title">工程实践</h1>
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">告警优化实践总结</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结 …</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <header>
-        <h3 class="section-title">
             
-                Tags
-            
-        </h3>
-
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">11 个页面</h3>
-                <h1 class="section-term">工程实践</h1>
+            <div class="post-meta">
+                <time datetime="2023-04-11">2023-04-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
                 
             </div>
-        </div>
-    </header>
+        </article>
+    </li>
     
-    <section class="article-list--compact">
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
-        <div class="article-details">
-            <h2 class="article-title">告警优化实践总结</h2>
-            <footer class="article-time">
-                <time datetime='2023-04-11T22:50:04&#43;08:00'>Apr 11, 2023</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-kernel/">
-        <div class="article-details">
-            <h2 class="article-title">Linux性能调优之内核篇</h2>
-            <footer class="article-time">
-                <time datetime='2014-07-03T01:16:33&#43;08:00'>Jul 03, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-hardware/">
-        <div class="article-details">
-            <h2 class="article-title">Linux性能调优之硬件篇</h2>
-            <footer class="article-time">
-                <time datetime='2014-07-02T01:16:33&#43;08:00'>Jul 02, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/linux-performance-monitor-tools/">
-        <div class="article-details">
-            <h2 class="article-title">Linux性能调优之工具篇</h2>
-            <footer class="article-time">
-                <time datetime='2014-07-01T01:16:33&#43;08:00'>Jul 01, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/software-version-compare-for-design/">
-        <div class="article-details">
-            <h2 class="article-title">软件版本对系统架构的理解</h2>
-            <footer class="article-time">
-                <time datetime='2011-06-01T22:50:04&#43;08:00'>Jun 01, 2011</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-kernel/">Linux性能调优之内核篇</a></h2>
+            
+            
+            <p class="post-summary">进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-03">2014-07-03</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-hardware/">Linux性能调优之硬件篇</a></h2>
+            
+            
+            <p class="post-summary">CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-02">2014-07-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-monitor-tools/">Linux性能调优之工具篇</a></h2>
+            
+            
+            <p class="post-summary">在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-01">2014-07-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/software-version-compare-for-design/">软件版本对系统架构的理解</a></h2>
+            
+            
+            <p class="post-summary">之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-06-01">2011-06-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/everything-under-control/">一切尽在掌握</a></h2>
+            
+            
+            <p class="post-summary"> 长兄于病视神，未有形而除之，故名不出于家。中兄治病，其在毫毛，故名不出于闾。若扁鹊者，镵血脉，投毒药，副肌肤，闲而名出闻于诸侯。———— 扁鹊
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-12">2011-01-12</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/do-best-system-design-using-paradigm/">做最好的架构-范式和总结</a></h2>
+            
+            
+            <p class="post-summary">武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-11">2011-01-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/how-to-understand-open-source-code/">如何阅读源代码</a></h2>
+            
+            
+            <p class="post-summary">为什么阅读源码 最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-10">2011-01-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/large-concurrent-software-design/">大并发程序设计的思考</a></h2>
+            
+            
+            <p class="post-summary">之前设计 VPN 大并发时候，第一次听到大并发的时候，心头一片迷茫，不知道如何设计才算是大并发的，网上找了很多资料，基本都没有对此进行过详细的说明，可能需要一些经验，或者阅读更为出色的代码才能得知，但在大并发 VPN 的设计当中，我总结了很 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-09">2011-01-09</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/message-queue-development/">指令队列设计</a></h2>
+            
+            
+            <p class="post-summary">最近有时间赶紧开始NC项目的开发，今天刚写到指令队列的处理，我的最初的设计是让整个VPN系统能够自动运转，分多个线程不断的处理数据，类似流水线工厂，外界通过压入数据包供处理线程加解密，或者压入指令包，处理线程识别并且执行，方便服务器客户端之 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2010-11-20">2010-11-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
 
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/page/2/'>2</a>
-                
-            
-            
-                    <a class='page-link' href='/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/page/3/'>3</a>
-                
-            
-    </nav>
 
+<nav class="pagination">
+    
+    <span class="disabled">← 上一页</span>
+    
+    <span class="page-info">1 / 2</span>
+    
+    <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/page/2/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
+<script src="/js/theme.js" defer></script>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

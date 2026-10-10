@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇编语言练习-AT&amp;T汇编win32窗口 · 闲亩</title>
+<meta name="description" content="这里写一个win32窗口程序，如果对c语言如何使用api创建窗口还不熟悉，请先学习win32 api的使用，网上有很多用masm编写win32程序的例子，使用masm编写win32程序也比较方便，这里便不再重复。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>汇编语言练习-AT&amp;T汇编win32窗口</h1>
+        <div class="post-meta">
+            <time datetime="2014-04-27">2014-04-27</time>
+            <span class="sep">·</span>
+            <span>1238 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">#汇编语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>这里写一个win32窗口程序，如果对c语言如何使用api创建窗口还不熟悉，请先学习win32 api的使用，网上有很多用masm编写win32程序的例子，使用masm编写win32程序也比较方便，这里便不再重复。</p>
+<p>masm 毕竟对win32的api自己做了一层封装，不能使我们更加透彻的理解win32 api，所以我这里的例子使用AT&amp;T语法编写，编译环境为mingw，当然，这里依赖于windows平台，语法虽说是跨平台的，但使用了系统 调用，便无法在linux下使用了。</p>
+<p>似乎很少有使用AT&amp;T语法写窗口的例子，可能因为这样写比较繁琐，且没有意义，所以本例可能只是练习AT&amp;T语法，顺便学习win32 api最原生的程序是什么样子，如果反汇编一个程序，看到的样子应该与这个相差无几，也为逆向或者破解做一些基础工作。</p>
+<pre><code>.section .data
+class_name:
+	.asciz &quot;go&quot;
+window_name:
+	.asciz &quot;First AT&amp;T Windows&quot;
+
+.section .text
+
+.globl _WindowProc
+_WindowProc:
+	pushl %ebp
+	movl %esp, %ebp
+	subl $16, %esp
+
+	/*
+		8 (%ebp) hwnd
+		12(%ebp) message
+		16(%ebp) wParam
+		20(%ebp) lParam
+	*/
+	/* WM_DESTROY */
+	cmp $0x0002, 12(%ebp)
+	jnz L1
+	pushl $0
+	call _PostQuitMessage@4
+L1:
+
+	pushl 20(%ebp)
+	pushl 16(%ebp)
+	pushl 12(%ebp)
+	pushl 8(%ebp)
+	call _DefWindowProcA@16
+	addl $16, %esp
+
+	movl %ebp, %esp
+	popl %ebp
+	ret $16
+
+.globl _main
+_main:
+	pushl %ebp
+	movl %esp, %ebp
+	subl $128, %esp
+	/*
+		-4(%ebp)  className
+		-8(%ebp)  menuName
+		-12(%ebp) hbrbackground
+		-16(%ebp) hCursor
+		-20(%ebp) hIcon
+		-24(%ebp) hInstance
+		-28(%ebp) wnd extra
+		-32(%ebp) class extra
+		-36(%ebp) callback
+		-40(%ebp) style
+	*/
+	movl $0x03, -40(%ebp)
+	movl $_WindowProc, -36(%ebp)
+	movl $0, -32(%ebp)
+	movl $0, -28(%ebp)
+	movl 8(%ebp), %eax
+	movl %eax, -24(%ebp)
+	movl $0, -20(%ebp)
+	movl $0, -16(%ebp)
+
+	pushl $4
+	call _GetStockObject@4
+	movl %eax, -12(%ebp)
+	movl $0, -8(%ebp)
+	movl $class_name, -4(%ebp)
+
+	leal -40(%ebp), %eax
+	pushl %eax
+	call _RegisterClassA@4
+
+	/*
+		-44(%ebp) hwnd
+	*/
+	pushl $0
+	pushl -24(%ebp)
+	pushl $0
+	pushl $0
+	pushl $0x80000000
+	pushl $0x80000000
+	pushl $0x80000000
+	pushl $0x80000000
+	pushl $0xCF0000
+	pushl $window_name
+	pushl $class_name
+	pushl $0
+	call _CreateWindowExA@48
+	movl %eax, -44(%ebp)
+
+	pushl $1
+	pushl -44(%ebp)
+	call _ShowWindow@8
+
+	pushl -44(%ebp)
+	call _UpdateWindow@4
+
+	/*
+		28 byte MSG
+		-48(%ebp) -&gt; -76(%ebp)
+	*/
+
+L_Message:
+	pushl $0
+	pushl $0
+	pushl $0
+	leal -76(%ebp), %eax
+	pushl %eax
+	call _GetMessageA@16
+	test %eax, %eax
+	jz L_End
+
+	leal -76(%ebp), %eax
+	pushl %eax
+	call _TranslateMessage@4
+
+	leal -76(%ebp), %eax
+	pushl %eax
+	call _DispatchMessageA@4
+	jmp L_Message
+
+L_End:
+	movl %ebp, %esp
+	popl %ebp
+	ret
+</code></pre>
+<p>这里基本结构是win32 api标准的窗口创建程序，只是AT&amp;T语法没有相应的结构体，只能通过操作一块内存的方式处理，在AT&amp;T看来，windows下的所 有结构体都仅仅是一块内存，具体多少偏移代表什么意义，还需根据win32的结构体对应。这里的符号有些奇怪，之前提到过STDCALL的符号处理方式， 后缀要加“@参数字节数”。</p>
+<p>编译过程使用 gcc win.s -lgdi32 因为其中使用了gdi函数，所以需引入gdi32库。</p>
+<p>如 果注意一下编译后的可执行文件大小，足足有27k之多，对于masm汇编可能就有几k，真是天壤之别，难道mingw如此臃肿么？其实这里正是mingw 灵活的地方，之所以编译后有如此之大，是因为mingw添加了很多信息，对于windows的pe格式，不管你怎么编译，最终可用代码都是一样的，而ld 连接器可以自定义脚本，甚至手工设置段信息，这里来试一下，先写一个win.lds的ld脚本：</p>
+<pre><code>SEARCH_DIR(&quot;D:\Program Files\MSYS\mingw\lib&quot;)
+SEARCH_DIR(&quot;D:\Program Files\MSYS\mingw\include&quot;)
+ENTRY(_main)
+
+SECTIONS
+{
+. = 0X40000;
+.text : {*(.text)}
+.data : {*(.data)}
+}
+</code></pre>
+<p>脚本开始定义一下搜索路径，方便找到引用的头文件和库，ENTRY定义了程序的入口函数符号，SECTIONS定义各个段，从0×40000开始，依次是代码段和数据段。</p>
+<p>之后再进行分步编译：</p>
+<pre><code>as win.s -o
+ld win.lds a.out -lgdi32 -luser32
+strip a.exe
+</code></pre>
+<p>最终生成可执行文件a.exe，可以看到仅仅有2k了。如果之前大家用od调试过mingw的程序，可以看到大部分的代码都不是我们所写，调试也不方便，但通过这种方式生成，用ollydbg反汇编后，剩下的大部分都是我们所写的有效代码，而且基本与我们的代码一一对应。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/practice-16-asm-real-mode.md/">← 汇编语言练习-实模式下的汇编</a>
+        
+        
+        <a class="next" href="/posts/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

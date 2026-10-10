@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latex 数学公式整理 · 闲亩</title>
+<meta name="description" content="基本字符 大多数普通字符跟数学公式中的是一样的，除了：#$%&amp;~_^\{}，这几个，如果需要表示，需要使用\进行转义。
+例如：
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Latex 数学公式整理</h1>
+        <div class="post-meta">
+            <time datetime="2011-04-15">2011-04-15</time>
+            <span class="sep">·</span>
+            <span>226 字</span>
+            <span class="sep">·</span>
+            <span>约 1 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <h1 id="基本字符">基本字符</h1>
+<p>大多数普通字符跟数学公式中的是一样的，除了：<code>#$%&amp;~_^\{}</code>，这几个，如果需要表示，需要使用<code>\</code>进行转义。</p>
+<p>例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\$a = \{\}.
+</span></span></code></pre></div><p>展示为：</p>
+<p>$$\$a = \{\}.$$</p>
+<h1 id="上标和下标">上标和下标</h1>
+<p>公式中使用<code>^</code>表示上标，使用<code>_</code>表示下标，比如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">x_1^2
+</span></span><span class="line"><span class="cl">x_{y^2}
+</span></span></code></pre></div><p>展示为：</p>
+<p>$$x_1^2$$</p>
+<p>$$x_{y^2}$$</p>
+<h1 id="分式">分式</h1>
+<p>分式的写法为：<code>\frac{分子}{分母}</code>：</p>
+<p>例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\frac{10}{5}=2
+</span></span></code></pre></div><p>展示为：</p>
+<p>$$\frac{10}{5}=2$$</p>
+<h1 id="根式">根式</h1>
+<p>二次根式表达为：<code>\sqrt{表达式}</code>，n 次根式表达为：<code>\sqrt[n]{表达式}</code>:</p>
+<p>例如：</p>
+<p>例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\sqrt{a}
+</span></span><span class="line"><span class="cl">\sqrt[3]{a}
+</span></span></code></pre></div><p>展示为：</p>
+<p>$$\sqrt{a}$$
+$$\sqrt[3]{a}$$</p>
+<h1 id="数学公式">数学公式</h1>
+<p>数学函数前加<code>\</code>，例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\sin x
+</span></span><span class="line"><span class="cl">\sum_{x=1}^n a_n=\frac{(a_1+a_n)n}{2}
+</span></span></code></pre></div><p>展示为：</p>
+<p>$$\sin x$$</p>
+<p>$$\sum_{x=1}^n a_n=\frac{(a_1+a_n)n}{2}$$</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/objective-c-brief-course/">← Objective-C 简明教程</a>
+        
+        
+        <a class="next" href="/posts/meaning-of-c-11/">C&#43;&#43;11 详解 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

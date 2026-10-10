@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux性能调优之硬件篇 · 闲亩</title>
+<meta name="description" content="CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Linux性能调优之硬件篇</h1>
+        <div class="post-meta">
+            <time datetime="2014-07-02">2014-07-02</time>
+            <span class="sep">·</span>
+            <span>1370 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">#工程实践</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <h2 id="cpu性能">CPU性能</h2>
+<p>早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。</p>
+<p>经典的多核CPU架构为SMP，在一个计算机上汇集一组CPU，他们之间对称工作，无主次或者从属关系，共享相同的物理内存及总线。每个CPU可以有多个核心，每个核心有各自的L1d Cache（L1指令缓存）及Lli Cache（L1指令缓存），同一个CPU的多个核心共享L2及L3 Cache。不同的CPU共享系统总线和内存地址。</p>
+<p>SMP架构主要的特征就是共享，共享系统中的所有资源，内存，IO，由于多CPU对前端总线的竞争，SMP的扩展能力非常有限，所以目前主流服务器架构一般为 NUMA。系统有多个NUMA节点，每个节点是一个SMP结构，并且具有独立的本地内存，IO槽口等。</p>
+<p>NUMA节点可以快速访问本地内存，也可以通过NUMA互联模块访问其他NUMA节点的内存，但访问本地内存的速度远远高于远程访问速度，所以，应用开发过程中，需要尽可能减少不同NUMA节点之间的通信。</p>
+<h2 id="io-总线">IO 总线</h2>
+<p>很多存储系统的瓶颈都在于IO，以Intel x48主板为例，是典型的南、北桥架构，北桥芯片通过前端总线与CPU相连，内存模块，以及PCI-E设备（如高端SSD设备Fusion-IO）挂接在北桥上，北桥和南桥通过DMI相连，DMI宽带为1G/s，网卡，硬盘，以及中低端固态硬盘挂接在南桥上，如果采用SATA2接口，最大宽带为300M/s。</p>
+<h2 id="磁盘">磁盘</h2>
+<p>磁盘读写性能分两个部分，一个是磁头的移动，一个是读写效率，性能瓶颈主要在于磁头的移动。15000转的SATA盘的顺序读取宽带可以达到100MB以上，由于磁头寻道时间大约10ms，顺序读取1MB数据的时间为：磁盘寻址时间+数据读取时间=20ms。应用程序设计时要考虑随机读写的问题，尽量要减少磁盘的读写，或者把随机读写转化为顺序读写。</p>
+<p>固态硬盘SSD的应用越来越广泛，SSD特点是随机读取延迟小，能够提供很高的IOPS（每秒读写性能）。主要问题在于容量有限，价格较高，而且容易损坏。</p>
+<p>不同存储的对比如下：</p>
+<table>
+	<thead>
+			<tr>
+					<th>类别</th>
+					<th>IOPS</th>
+					<th>每GB价格（元）</th>
+					<th>随机读取</th>
+					<th>随机写入</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>内存</td>
+					<td>千万</td>
+					<td>150</td>
+					<td>友好</td>
+					<td>友好</td>
+			</tr>
+			<tr>
+					<td>SSD盘</td>
+					<td>35000</td>
+					<td>20</td>
+					<td>友好</td>
+					<td>写入放大</td>
+			</tr>
+			<tr>
+					<td>SAS磁盘</td>
+					<td>180</td>
+					<td>3</td>
+					<td>磁盘寻道</td>
+					<td>磁盘寻道</td>
+			</tr>
+			<tr>
+					<td>SATA磁盘</td>
+					<td>90</td>
+					<td>0.5</td>
+					<td>磁盘寻道</td>
+					<td>磁盘寻道</td>
+			</tr>
+	</tbody>
+</table>
+<h2 id="网络">网络</h2>
+<p>传统的网络数据中心是三层的拓扑结构，分为核心层、汇聚层和接入层。接入层交换机包含48个1G端口以及4个10G的上行端口，汇聚层以及核心层的交换机包含128个10G的端口。统一个接入层下的服务器之间宽带为1G，不同接入层交换机下的服务器之间的宽带小于1G，由于同一个接入层的服务器常部署于在一个机架，应用设计的时候需要考虑服务是否在一个机架内。</p>
+<p>为了减少系统对网络拓扑结构的依赖，Google将网络修改为扁平化拓扑结构，三级CLOS网络，同一个集群内最多支持20480台服务器，任何两台机器之间有1G宽带，方便将整个集群做成一个资源池。</p>
+<p>单机房内网络来回1ms左右，北京和深圳之间，网络来回延迟达到30ms以上。</p>
+<h2 id="性能参数">性能参数</h2>
+<table>
+	<thead>
+			<tr>
+					<th>类别</th>
+					<th>延迟</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>访问 L1 Cache</td>
+					<td>0.5ns</td>
+			</tr>
+			<tr>
+					<td>分支预测失败</td>
+					<td>5ns</td>
+			</tr>
+			<tr>
+					<td>访问 L2 Cache</td>
+					<td>7ns</td>
+			</tr>
+			<tr>
+					<td>Mutex锁操作</td>
+					<td>100ns</td>
+			</tr>
+			<tr>
+					<td>内存访问</td>
+					<td>100ns</td>
+			</tr>
+			<tr>
+					<td>千兆网络发送1MB数据</td>
+					<td>10ms</td>
+			</tr>
+			<tr>
+					<td>从内存顺序读取1MB数据</td>
+					<td>0.25 ms</td>
+			</tr>
+			<tr>
+					<td>机房内网络来回</td>
+					<td>0.5ms</td>
+			</tr>
+			<tr>
+					<td>异地机房来回</td>
+					<td>30-100ms</td>
+			</tr>
+			<tr>
+					<td>SATA磁盘寻道</td>
+					<td>10ms</td>
+			</tr>
+			<tr>
+					<td>从SATA磁盘顺序读取 1MB 数据</td>
+					<td>20ms</td>
+			</tr>
+			<tr>
+					<td>固态SSD访问延迟</td>
+					<td>01-0.2ms</td>
+			</tr>
+	</tbody>
+</table>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#cpu性能">CPU性能</a></li>
+    <li><a href="#io-总线">IO 总线</a></li>
+    <li><a href="#磁盘">磁盘</a></li>
+    <li><a href="#网络">网络</a></li>
+    <li><a href="#性能参数">性能参数</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/linux-performance-monitor-tools/">← Linux性能调优之工具篇</a>
+        
+        
+        <a class="next" href="/posts/linux-performance-kernel/">Linux性能调优之内核篇 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

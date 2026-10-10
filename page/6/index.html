@@ -1,676 +1,266 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head>
-	<meta name="generator" content="Hugo 0.152.2"><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Pager 6 - 涸泽之鱼</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="涸泽之鱼">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="涸泽之鱼">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+	<meta name="generator" content="Hugo 0.167.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/" class="active">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
+<main class="container">
+
+
+<section class="hero">
+    <p>世有繁务，自留闲亩</p>
 </section>
 
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/meaning-of-c-11/">C&#43;&#43;11 详解</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
+题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：
+</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    
-    
-    
-    
-
-    <section class="article-list">
-        
             
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
-                汇编语言
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 28, 2014</time>
+            <div class="post-meta">
+                <time datetime="2011-04-15">2011-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    阅读时长: 13 分钟
-                </time>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/latex-formula/">Latex 数学公式整理</a></h2>
+            
+            
+            <p class="post-summary">基本字符 大多数普通字符跟数学公式中的是一样的，除了：#$%&amp;~_^\{}，这几个，如果需要表示，需要使用\进行转义。
+例如：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-04-15">2011-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-    </footer>
+        </article>
+    </li>
     
-
-    
-</div>
-
-</header>
-</article>
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/objective-c-brief-course/">Objective-C 简明教程</a></h2>
             
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
-                汇编语言
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-assembler-gas-win32/">汇编语言练习-AT&amp;T汇编win32窗口</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 27, 2014</time>
+            
+            <p class="post-summary">本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
+基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-04-10">2011-04-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    阅读时长: 3 分钟
-                </time>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/everything-under-control/">一切尽在掌握</a></h2>
+            
+            
+            <p class="post-summary"> 长兄于病视神，未有形而除之，故名不出于家。中兄治病，其在毫毛，故名不出于闾。若扁鹊者，镵血脉，投毒药，副肌肤，闲而名出闻于诸侯。———— 扁鹊
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-12">2011-01-12</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-    </footer>
+        </article>
+    </li>
     
-
-    
-</div>
-
-</header>
-</article>
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/do-best-system-design-using-paradigm/">做最好的架构-范式和总结</a></h2>
             
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
-                汇编语言
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/practice-16-asm-real-mode.md/">汇编语言练习-实模式下的汇编</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 26, 2014</time>
+            
+            <p class="post-summary">武侠中的境界 《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-11">2011-01-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    阅读时长: 3 分钟
-                </time>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/how-to-understand-open-source-code/">如何阅读源代码</a></h2>
+            
+            
+            <p class="post-summary">为什么阅读源码 最早在学习 C++ 基本语法的时候，看到 Bjarne Stroustrup 大师在《The C++ Programming Language》一书中讲到，如何学好C++语言呢？跟学习英语相同——多看，多写。很多年过去了，身 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-10">2011-01-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-    </footer>
+        </article>
+    </li>
     
-
-    
-</div>
-
-</header>
-</article>
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/large-concurrent-software-design/">大并发程序设计的思考</a></h2>
             
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
-                汇编语言
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/14.-assembler-sse-instruct/">汇编语言学习笔记(十四)-SSE指令集</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 25, 2014</time>
+            
+            <p class="post-summary">之前设计 VPN 大并发时候，第一次听到大并发的时候，心头一片迷茫，不知道如何设计才算是大并发的，网上找了很多资料，基本都没有对此进行过详细的说明，可能需要一些经验，或者阅读更为出色的代码才能得知，但在大并发 VPN 的设计当中，我总结了很 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-01-09">2011-01-09</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    阅读时长: 5 分钟
-                </time>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/message-queue-development/">指令队列设计</a></h2>
+            
+            
+            <p class="post-summary">最近有时间赶紧开始NC项目的开发，今天刚写到指令队列的处理，我的最初的设计是让整个VPN系统能够自动运转，分多个线程不断的处理数据，类似流水线工厂，外界通过压入数据包供处理线程加解密，或者压入指令包，处理线程识别并且执行，方便服务器客户端之 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2010-11-20">2010-11-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-    </footer>
+        </article>
+    </li>
     
-
-    
-</div>
-
-</header>
-</article>
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/thinking-of-software-design/">软件设计的思考</a></h2>
             
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" >
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" >
-                汇编语言
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">汇编语言学习笔记(十三)-MMX指令集</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 24, 2014</time>
+            
+            <p class="post-summary">最近回想之前写烂的程序，对软件设计方式进行了一些思考，经历了迷茫的过度之后，多少也有了一些认识，不管认识是否正确，人总是在思考中前进的。引用毕加索的话：画乃我思所获，非我见所得。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2010-11-05">2010-11-05</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
             </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    阅读时长: 5 分钟
-                </time>
-            </div>
-        
-    </footer>
+        </article>
+    </li>
     
+</ul>
 
+
+<nav class="pagination">
     
-</div>
+    <a href="/page/5/">← 上一页</a>
+    
+    <span class="page-info">6 / 6</span>
+    
+    <span class="disabled">下一页 →</span>
+    
+</nav>
 
-</header>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
 
-        
-            
-                    <a class='page-link' href='/'>1</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/page/5/'>5</a>
-                
-            
-            
-                <span class='page-link current'>6</span>
-                
-            
-            
-                    <a class='page-link' href='/page/7/'>7</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/page/12/'>12</a>
-                
-            
-    </nav>
 
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+<script src="/js/theme.js" defer></script>
 
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

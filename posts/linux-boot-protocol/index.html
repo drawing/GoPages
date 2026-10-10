@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux内核笔记-启动协议 · 闲亩</title>
+<meta name="description" content="Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Linux内核笔记-启动协议</h1>
+        <div class="post-meta">
+            <time datetime="2014-05-22">2014-05-22</time>
+            <span class="sep">·</span>
+            <span>2319 字</span>
+            <span class="sep">·</span>
+            <span>约 5 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/linux%E5%86%85%E6%A0%B8/">#Linux内核</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。</p>
+<p>我在这里对我分析的部分做一个记录，一来防止以后遗忘，二来把分析过程写出来能更加清楚的理解内核。分析的内核版本为 2.6.34，可从 这里 下载，或者使用 lxr 在线阅读代码。</p>
+<p>Linux源码 arch 目录下是构架相关的代码，其中有x86，arm等不同平台的实现，这里仅看x86平台，boot目录是系统启动部分代码，我将会逐一分析启动代码。</p>
+<p>2.6.34 版本较之以前有了很大的变动，内核启动过程需要大量的汇编操作，这个版本尽量去除汇编，仅仅在必须的地方提供汇编提供接口，供c代码调用。</p>
+<p>先来看引导协议部分代码， arch/x86/boot/header.S</p>
+<p>在之前BIOS中断部分讲过引导程序，位于启动介质0柱面0磁道1扇区的512字节，以0x55AA结尾，header.S中也同样含有这段代码，但是仅仅输出几行文字，并没有做实质性操作，Linux内核把引导的工作交付给专业的引导程序如grub、lilo，BIOS启动时首先加载grub程序，grub作为引导程序根据配置再去加载相应的内核。如此一来便需要grub和内核之间遵循一定的协议，协议文档位于 linux-2.6.34\Documentation\x86\boot.txt，可以作为参考。</p>
+<p>header.S开始的代码：</p>
+<pre><code>	.code16
+	.section &quot;.bstext&quot;, &quot;ax&quot;
+
+	.global bootsect_start
+bootsect_start:
+
+	# Normalize the start address
+	ljmp	$BOOTSEG, $start2
+
+start2:
+	movw	%cs, %ax
+	movw	%ax, %ds
+	movw	%ax, %es
+	movw	%ax, %ss
+	xorw	%sp, %sp
+	sti
+	cld
+
+	movw	$bugger_off_msg, %si
+
+msg_loop:
+	lodsb
+	andb	%al, %al
+	jz	bs_die
+	movb	$0xe, %ah
+	movw	$7, %bx
+	int	$0x10
+	jmp	msg_loop
+
+bs_die:
+	# Allow the user to press a key, then reboot
+	xorw	%ax, %ax
+	int	$0x16
+	int	$0x19
+
+	# int 0x19 should never return.  In case it does anyway,
+	# invoke the BIOS reset code...
+	ljmp	$0xf000,$0xfff0
+
+	.section &quot;.bsdata&quot;, &quot;a&quot;
+bugger_off_msg:
+	.ascii	&quot;Direct booting from floppy is no longer supported.\r\n&quot;
+	.ascii	&quot;Please use a boot loader program instead.\r\n&quot;
+	.ascii	&quot;\n&quot;
+	.ascii	&quot;Remove disk and press any key to reboot . . .\r\n&quot;
+	.byte	0
+
+	# Kernel attributes; used by setup.  This is part 1 of the
+	# header, from the old boot sector.
+
+	.section &quot;.header&quot;, &quot;a&quot;
+	.globl	hdr
+hdr:
+setup_sects:	.byte 0			/* Filled in by build.c */
+root_flags:	.word ROOT_RDONLY
+syssize:	.long 0			/* Filled in by build.c */
+ram_size:	.word 0			/* Obsolete */
+vid_mode:	.word SVGA_MODE
+root_dev:	.word 0			/* Filled in by build.c */
+boot_flag:	.word 0xAA55
+</code></pre>
+<p>这部分是完整的引导区代码，这段代码有三个段，.bstext .bsdata .header，由编译脚本setup.ld可以看到，.header是编译到497地址，除去一些变量，到boot_flag: .word 0xAA55刚好位于512字节，是一个引导扇区的长度。.bsdata 段仅定义了一个字符串，指明boot方式不再支持。</p>
+<p>来看下代码部分 .bstext 段，首先由start2初始化一些变量，<code>msg_loop</code>调用int $0×10输出文字，bs_die部分首先调用int $0×16输入一个字符，然后调用int $0×19重启系统。</p>
+<p>可以看到这里的引导程序并没有做什么操作，也不会被执行到，真正的代码再之后才开始，之前说过内核的引导是靠grub等引导程序，他们之间有一定的协议，协议有一个协议头，再看header.S之后的代码都是一些变量的定义，所以得先看一下协议头到底是什么，在boot.txt文档中有以下内容：</p>
+<pre><code>The header looks like:
+
+Offset	Proto	Name		Meaning
+/Size
+
+01F1/1	ALL(1	setup_sects	The size of the setup in sectors
+01F2/2	ALL	root_flags	If set, the root is mounted readonly
+01F4/4	2.04+(2	syssize		The size of the 32-bit code in 16-byte paras
+01F8/2	ALL	ram_size	DO NOT USE - for bootsect.S use only
+01FA/2	ALL	vid_mode	Video mode control
+01FC/2	ALL	root_dev	Default root device number
+01FE/2	ALL	boot_flag	0xAA55 magic number
+0200/2	2.00+	jump		Jump instruction
+0202/4	2.00+	header		Magic signature &quot;HdrS&quot;
+0206/2	2.00+	version		Boot protocol version supported
+...
+0258/8	2.10+	pref_address	Preferred loading address
+0260/4	2.10+	init_size	Linear memory required during initialization
+</code></pre>
+<p>说的正是协议头的定义，这里的01F1/1前面表示地址，后面表示大小，01F1十进制为497，刚好与.header段的起始地址相同，看来，.header段名副其实，正是启动协议的头部信息，一直到236行的init_size定义为止。头部内容的详细信息在boot.txt文件中已有详细解释，不过现在还不需要知道，头部大部分信息由grub填充，供操作系统使用。后面会看到内核获取这些信息。</p>
+<p>好了，header.S后面的.entrytext段就是真正的内核入口了。</p>
+<pre><code>	movw	$0x0000, %ax		# Reset disk controller
+	movb	$0x80, %dl		# All disks
+	int	$0x13
+</code></pre>
+<p>这里调用BIOS的13号中断重置硬盘。</p>
+<pre><code>	movw	$__bss_start, %di
+	movw	$_end+3, %cx
+	xorl	%eax, %eax
+	subw	%di, %cx
+	shrw	$2, %cx
+	rep; stosl
+</code></pre>
+<p><code>__bss_start</code>是bss段的起始地址，_end为结束位置，这两个符号定义于setup.ld脚本，这段代码既是对此段清零。</p>
+<p>接下来调用main函数 calll main，这里的main是c函数，定义于main.c。</p>
+<p>之后有符号<code>setup_bad</code>，调用puts输出”No setup signature found…\n”，最后定义了一个函数die，执行休息指令hlt的死循环。</p>
+<p>最后再来看main函数中的开始部分代码 linux-2.6.34\arch\x86\boot\main.c</p>
+<pre><code>void main(void)
+{
+	/* First, copy the boot header into the &quot;zeropage&quot; */
+	copy_boot_params();
+
+	/* End of heap check */
+	init_heap();
+	...
+</code></pre>
+<p>可以看到main首先调用copy_boot_params函数，在29行有其定义，其中关键的一句如下：</p>
+<pre><code>memcpy(&amp;boot_params.hdr, &amp;hdr, sizeof hdr);
+</code></pre>
+<p>hdr 是引导协议头部0x1f1地址处，即刚才分析的.header段开始的标号，<code>boot_params</code>为结构体<code>boot_params</code>的实例，存储启动参数相关信息，结构定义于arch/x86/include/asm/bootparam.h:85，成员hdr定义为<code>struct setup_header hdr;</code>而<code>setup_header</code>结构定义于相同文件的24行：</p>
+<pre><code>struct setup_header {
+	__u8	setup_sects;
+	__u16	root_flags;
+	__u32	syssize;
+	__u16	ram_size;
+#define RAMDISK_IMAGE_START_MASK	0x07FF
+#define RAMDISK_PROMPT_FLAG		0x8000
+#define RAMDISK_LOAD_FLAG		0x4000
+	__u16	vid_mode;
+	__u16	root_dev;
+	__u16	boot_flag;
+	__u16	jump;
+	__u32	header;
+	__u16	version;
+	__u32	realmode_swtch;
+	__u16	start_sys;
+	__u16	kernel_version;
+	...
+</code></pre>
+<p>可以看到其中的成员正是引导协议头部，拷贝代码正是把grub填充的启动信息复制到结构实例boot_params.hdr中，以便在c程序中使用。</p>
+<p>最后总结一下grub的引导过程，grub被BIOS载入内存并获得控制权后，读取配置信息/boot/grub.conf，载入实模式代码到0×090000，并根据内核镜像的前512字节中的.header信息，将大内核载入到内存，并交控制权于内核执行。载入内存地址的计算公式为：</p>
+<pre><code>is_bzImage = (protocol &gt;= 0x0200) &amp;&amp; (loadflags &amp; 0x01);
+load_address = is_bzImage ? 0x100000 : 0x10000;
+</code></pre>
+<p>这里通过分析header.S，对引导协议做了一些说明，更详尽的说明在文档 Documentation\x86\boot.txt，可随时对其查阅。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/linux-vfs-source/">← Linux内核笔记-VFS</a>
+        
+        
+        <a class="next" href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

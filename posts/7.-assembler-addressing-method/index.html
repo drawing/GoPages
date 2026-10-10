@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇编语言学习笔记(七)-寻址方式 · 闲亩</title>
+<meta name="description" content="寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>汇编语言学习笔记(七)-寻址方式</h1>
+        <div class="post-meta">
+            <time datetime="2014-04-18">2014-04-18</time>
+            <span class="sep">·</span>
+            <span>1401 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">#汇编语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。</p>
+<p>对于实模式，处理器可以寻址20位的地址空间，但是寄存器只有16位，为了能达到20位的寻址，需要使用 段：偏移 这样的方式寻址，格式为 <code>segreg:offset</code>，计算出的直接偏移地址为 <code>segreg * 16 + offset</code>，相当于段基址左移4位后加上偏移，这样刚好有20位的地址，可以达到2M内存寻址。
+在平坦内存模式下，寻址类似于c的指针，一个基址加上偏移。</p>
+<p>对AT&amp;T来说，寻址方式比较怪异，但又非常简洁，语法格式如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	segreg:base_address(offset_address, index, size)
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	;例子
+</span></span><span class="line"><span class="cl">	movl %eax, label1(, $2, $4)
+</span></span><span class="line"><span class="cl">	movl %ebx, (label2, $2,)
+</span></span><span class="line"><span class="cl">	movl %ecx, (%esp)
+</span></span></code></pre></div><p>其效果为 <code>segreg:base_address + offset_address + index * size</code>
+segreg为分段模式下段寄存器，<code>base_address</code>为基址，<code>offset_address</code> 为偏移，<code>index * size</code>决定了第几个元素，其中size为元素长度，只能为1,2,4,8等等，这些元素都是可选的，index默认为0，size默认为1。</p>
+<p>对于MASM，表达相同含义的语法如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	segreg:[base_address + index * scale + offset_address]
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	;例子
+</span></span><span class="line"><span class="cl">	mov label1[2 * 4], eax
+</span></span><span class="line"><span class="cl">	mov [label2 + 2], ebx
+</span></span><span class="line"><span class="cl">	mov [esp], ecx
+</span></span></code></pre></div><p>对MASM，有些指令并不知道寻址以后是该取1字节还是多字节，也就是说需要制定寻址以后数据的长度，这个长度可由ptr操作符声明，比如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	movzx eax, word ptr [base + 2];
+</span></span></code></pre></div><p>这样指定在base + 2地址处读取word宽度字节。而在AT&amp;T中，由于指令可跟w,l等后缀，无需再次指令，这里可以看到AT&amp;T简洁之处。</p>
+<p>另外，对AT&amp;T，如果需要取全局符号的地址，可以使用$var（见框架），对于MASM，还需另外一个操作符：offset，相同的功能可写为offset var。当然也可使用lea指令，lea指令为取地址指令，语法如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">offset</span> <span class="k">var</span>
+</span></span><span class="line"><span class="cl">	<span class="n">lea</span> <span class="n">eax</span><span class="p">,</span> <span class="p">[</span><span class="k">var</span><span class="p">]</span>
+</span></span></code></pre></div><p>这里跟offset的区别在于，offset在编译期间可以指定全局变量的位置，无需运行时计算，但是offset无法取得局部变量的 地址，因为局部变量位于堆栈，是在运行时才可得知其地址，而lea指令与之相反，是在运行时计算变量（可为全局和局部变量）的地址，二者的另一个区别在于 lea为cpu指令，AT&amp;T同样有与之对应的指令（同其他指令一样，操作数相反，且指令可跟长度后缀），而offset仅仅为编译器指令，编译 成机器码之后只有一个地址，没有offset的影子。</p>
+<p>下面举一个简单的例子，仍然是翻译c代码到汇编：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	void swap(int * a, int * b)
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		int tmp = *a;
+</span></span><span class="line"><span class="cl">		*a = *b;
+</span></span><span class="line"><span class="cl">		*b = tmp;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	int main()
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		int a[10] = {1, 3, 5, 7, 9, 2, 4, 6, 8, 0};
+</span></span><span class="line"><span class="cl">		for (int i = 0; i &lt; 10; ++i)
+</span></span><span class="line"><span class="cl">			for (int j = i; j &lt; 10; ++j)
+</span></span><span class="line"><span class="cl">			{
+</span></span><span class="line"><span class="cl">				if (a[i] &gt; a[j])
+</span></span><span class="line"><span class="cl">					swap(a + i, a + j);
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		return 0;
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></div><p>这里c代码是一个效率比较低的排序，我们改写成AT&amp;T汇编 sort.s ：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.section .data
+</span></span><span class="line"><span class="cl">		array: .int 1, 3, 5, 7, 9, 2, 4, 6, 8, 0
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.section .text
+</span></span><span class="line"><span class="cl">	.globl _main
+</span></span><span class="line"><span class="cl">	_main:
+</span></span><span class="line"><span class="cl">		xorl %eax, %eax
+</span></span><span class="line"><span class="cl">	loop1:
+</span></span><span class="line"><span class="cl">		movl %eax, %ebx
+</span></span><span class="line"><span class="cl">	loop2:
+</span></span><span class="line"><span class="cl">		movl array(, %ebx, 4), %ecx
+</span></span><span class="line"><span class="cl">		cmpl %ecx, array(, %eax, 4)
+</span></span><span class="line"><span class="cl">		jbe label1
+</span></span><span class="line"><span class="cl">		xchg %ecx, array(, %eax, 4)
+</span></span><span class="line"><span class="cl">		movl %ecx, array(, %ebx, 4)
+</span></span><span class="line"><span class="cl">	label1:
+</span></span><span class="line"><span class="cl">		incl %ebx
+</span></span><span class="line"><span class="cl">		cmpl $10, %ebx
+</span></span><span class="line"><span class="cl">		jb loop2
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		incl %eax
+</span></span><span class="line"><span class="cl">		cmpl $10, %eax
+</span></span><span class="line"><span class="cl">		jb loop1
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	label2:
+</span></span><span class="line"><span class="cl">		pushl $0
+</span></span><span class="line"><span class="cl">		call _exit
+</span></span></code></pre></div><p>这里的代码并不复杂，loop1, 和loop2为两个循环，之间的操作与c的含义相同，这里不做解释，其中的诸多细节需要细细体会，这里再给出MASM的一个版本，完全是从AT&amp;T版本直译过来的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">	array	dd 1, 3, 5, 7, 9, 2, 4, 6, 8, 0
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">	    xor eax, eax
+</span></span><span class="line"><span class="cl">	loop1:
+</span></span><span class="line"><span class="cl">		mov ebx, eax
+</span></span><span class="line"><span class="cl">	loop2:
+</span></span><span class="line"><span class="cl">		mov ecx, array[ebx * 4]
+</span></span><span class="line"><span class="cl">		cmp array[eax * 4], ecx
+</span></span><span class="line"><span class="cl">		jbe label1
+</span></span><span class="line"><span class="cl">		xchg ecx, array[eax * 4]
+</span></span><span class="line"><span class="cl">		mov array[ebx * 4], ecx
+</span></span><span class="line"><span class="cl">	label1:
+</span></span><span class="line"><span class="cl">		inc ebx
+</span></span><span class="line"><span class="cl">		cmp ebx, 10
+</span></span><span class="line"><span class="cl">		jb loop2
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		inc eax
+</span></span><span class="line"><span class="cl">		cmp eax, 10
+</span></span><span class="line"><span class="cl">		jb loop1
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	label2:
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>这里可以充分看出AT&amp;T和MASM的语言的不同之处。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/6.-assembler-math-instruct/">← 汇编语言学习笔记(六)-数学运算</a>
+        
+        
+        <a class="next" href="/posts/8.-assembler-string-instruct/">汇编语言学习笔记(八)-字符串 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

@@ -1,356 +1,279 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Tag: 编程语言 - Pager 2 - 涸泽之鱼</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Tag: 编程语言 - 涸泽之鱼">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="Tag: 编程语言 - 涸泽之鱼">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>编程语言 · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/" class="active">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
-</section>
+<main class="container">
 
+
+<p class="page-crumb">标签</p>
+
+<h1 class="page-title">编程语言</h1>
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/8.-assembler-string-instruct/">汇编语言学习笔记(八)-字符串</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的 …</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <header>
-        <h3 class="section-title">
             
-                Tags
-            
-        </h3>
-
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">22 个页面</h3>
-                <h1 class="section-term">编程语言</h1>
+            <div class="post-meta">
+                <time datetime="2014-04-19">2014-04-19</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
                 
             </div>
-        </div>
-    </header>
+        </article>
+    </li>
     
-    <section class="article-list--compact">
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/13.-assembler-mmx-instruct/">
-        <div class="article-details">
-            <h2 class="article-title">汇编语言学习笔记(十三)-MMX指令集</h2>
-            <footer class="article-time">
-                <time datetime='2014-04-24T01:18:03&#43;08:00'>Apr 24, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/12.-assembler-float-instruct/">
-        <div class="article-details">
-            <h2 class="article-title">汇编语言学习笔记(十二)-浮点指令</h2>
-            <footer class="article-time">
-                <time datetime='2014-04-23T01:18:03&#43;08:00'>Apr 23, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/11.-assembler-precompile-macro/">
-        <div class="article-details">
-            <h2 class="article-title">汇编语言学习笔记(十一)-预编译宏</h2>
-            <footer class="article-time">
-                <time datetime='2014-04-22T01:18:03&#43;08:00'>Apr 22, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.-assembler-c-inline/">
-        <div class="article-details">
-            <h2 class="article-title">汇编语言学习笔记(十)-内联汇编</h2>
-            <footer class="article-time">
-                <time datetime='2014-04-21T01:18:03&#43;08:00'>Apr 21, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.-assembler-function/">
-        <div class="article-details">
-            <h2 class="article-title">汇编语言学习笔记(九)-函数</h2>
-            <footer class="article-time">
-                <time datetime='2014-04-20T01:18:03&#43;08:00'>Apr 20, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/7.-assembler-addressing-method/">汇编语言学习笔记(七)-寻址方式</a></h2>
+            
+            
+            <p class="post-summary">寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-18">2014-04-18</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/6.-assembler-math-instruct/">汇编语言学习笔记(六)-数学运算</a></h2>
+            
+            
+            <p class="post-summary">在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-17">2014-04-17</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/5.-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a></h2>
+            
+            
+            <p class="post-summary">程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-16">2014-04-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/4.-assembler-mov-instruct/">汇编语言学习笔记(四)-MOV指令</a></h2>
+            
+            
+            <p class="post-summary">汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-15">2014-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/3.-assembler-datastruct/">汇编语言学习笔记(三)-数据结构</a></h2>
+            
+            
+            <p class="post-summary">其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-14">2014-04-14</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/2.-assembler-framework/">汇编语言学习笔记(二)-代码框架</a></h2>
+            
+            
+            <p class="post-summary">前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。
+GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-13">2014-04-13</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/1.-assembler-register/">汇编语言学习笔记(一)-寄存器</a></h2>
+            
+            
+            <p class="post-summary">一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-12">2014-04-12</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/0.-assembler-why-learning/">汇编语言学习笔记(零)-为什么开始</a></h2>
+            
+            
+            <p class="post-summary">为什么开始 从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-11">2014-04-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/meaning-of-c-11/">C&#43;&#43;11 详解</a></h2>
+            
+            
+            <p class="post-summary">C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
+题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2011-04-15">2011-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
 
-        
-            
-                    <a class='page-link' href='/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/'>1</a>
-                
-            
-            
-                <span class='page-link current'>2</span>
-                
-            
-            
-                    <a class='page-link' href='/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/page/3/'>3</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    <a class='page-link' href='/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/page/5/'>5</a>
-                
-            
-    </nav>
 
+<nav class="pagination">
+    
+    <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">← 上一页</a>
+    
+    <span class="page-info">2 / 3</span>
+    
+    <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/page/3/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
+<script src="/js/theme.js" defer></script>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

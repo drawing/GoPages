@@ -1,345 +1,280 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
-    <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="涸泽之鱼，犹希升水。">
-<title>Tag: Linux内核 - 涸泽之鱼</title>
-
-<link rel='canonical' href='https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/'>
-
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Tag: Linux内核 - 涸泽之鱼">
-<meta property='og:description' content="涸泽之鱼，犹希升水。">
-<meta property='og:url' content='https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/'>
-<meta property='og:site_name' content='涸泽之鱼'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-11T22:50:04&#43;08:00 '/>
-<meta name="twitter:title" content="Tag: Linux内核 - 涸泽之鱼">
-<meta name="twitter:description" content="涸泽之鱼，犹希升水。"><link rel="alternate" type="application/rss&#43;xml" href="https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux内核 · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/tags/linux%E5%86%85%E6%A0%B8/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
         }
-    })();
+    }
+    root.dataset.theme = t;
+})();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
 
-    <header>
-        
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
             
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hu_50b065d24a9bf4d8.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">📖</span>
-                
-            </figure>
             
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">涸泽之鱼</a></h1>
-            <h2 class="site-description">涸泽之鱼，犹希升水。</h2>
-        </div>
-    </header><ol class="menu-social">
             
-                <li>
-                    <a 
-                        href='https://github.com/drawing/'
-                        target="_blank"
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
+            <a href="/archives/">归档</a>
             
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>暗色模式</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
             
-                
             
-        
+            <a href="/categories/">分类</a>
             
-                
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+            <a href="/tags/" class="active">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
     </div>
-    <h2 class="widget-title section-title">分类</h2>
+</header>
 
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/%E7%BC%96%E7%A8%8B/" class="font_size_58">
-                编程
-            </a>
-        
-            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-    </div>
-</section>
+<main class="container">
 
+
+<p class="page-crumb">标签</p>
+
+<h1 class="page-title">Linux内核</h1>
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/redis-failed-when-out-of-memory/">overcommit 对 fork 的影响</a></h2>
             
-        
             
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="font_size_22">
-                编程语言
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_18">
-                汇编语言
-            </a>
-        
-            <a href="/tags/linux%E5%86%85%E6%A0%B8/" class="font_size_15">
-                Linux内核
-            </a>
-        
-            <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="font_size_11">
-                工程实践
-            </a>
-        
-            <a href="/tags/%E6%8A%80%E6%9C%AF/" class="font_size_7">
-                技术
-            </a>
-        
-            <a href="/tags/%E7%AE%97%E6%B3%95/" class="font_size_3">
-                算法
-            </a>
-        
-    </div>
-</section>
+            <p class="post-summary">问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
+Redis is configured to save RDB snapshots, but is …</p>
             
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <header>
-        <h3 class="section-title">
             
-                Tags
-            
-        </h3>
-
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">15 个页面</h3>
-                <h1 class="section-term">Linux内核</h1>
+            <div class="post-meta">
+                <time datetime="2014-06-10">2014-06-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
                 
             </div>
-        </div>
-    </header>
+        </article>
+    </li>
     
-    <section class="article-list--compact">
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/redis-failed-when-out-of-memory/">
-        <div class="article-details">
-            <h2 class="article-title">overcommit 对 fork 的影响</h2>
-            <footer class="article-time">
-                <time datetime='2014-06-10T01:16:33&#43;08:00'>Jun 10, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-process-sched/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-进程调度</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-23T01:16:33&#43;08:00'>May 23, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-boot-protocol/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-启动协议</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-22T01:16:33&#43;08:00'>May 22, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-vfs-source/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-VFS</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-21T01:16:33&#43;08:00'>May 21, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-            <article>
-    <a href="/posts/program/linux%E5%86%85%E6%A0%B8/linux-kernel-interrupt-and-exception/">
-        <div class="article-details">
-            <h2 class="article-title">Linux内核笔记-中断和异常</h2>
-            <footer class="article-time">
-                <time datetime='2014-05-20T01:16:33&#43;08:00'>May 20, 2014</time>
-            </footer>
-        </div>
-    </a>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度</a></h2>
+            
+            
+            <p class="post-summary">现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-23">2014-05-23</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议</a></h2>
+            
+            
+            <p class="post-summary">Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-22">2014-05-22</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-vfs-source/">Linux内核笔记-VFS</a></h2>
+            
+            
+            <p class="post-summary">Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-21">2014-05-21</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常</a></h2>
+            
+            
+            <p class="post-summary">中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-virtual-address/">Linxu内核笔记-虚拟地址空间</a></h2>
+            
+            
+            <p class="post-summary">在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-debugging/">Linux 内核调试</a></h2>
+            
+            
+            <p class="post-summary">UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-19">2014-05-19</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-slab-allocator/">Linux 内核 slab 分配器</a></h2>
+            
+            
+            <p class="post-summary">slab 介绍 内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-18">2014-05-18</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-data-structure/">Linux内核数据结构</a></h2>
+            
+            
+            <p class="post-summary">内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-17">2014-05-17</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-system-call/">Linux系统调用</a></h2>
+            
+            
+            <p class="post-summary">操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-16">2014-05-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
 
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/tags/linux%E5%86%85%E6%A0%B8/page/2/'>2</a>
-                
-            
-            
-                    <a class='page-link' href='/tags/linux%E5%86%85%E6%A0%B8/page/3/'>3</a>
-                
-            
-    </nav>
 
+<nav class="pagination">
+    
+    <span class="disabled">← 上一页</span>
+    
+    <span class="page-info">1 / 2</span>
+    
+    <a href="/tags/linux%E5%86%85%E6%A0%B8/page/2/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
 <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
         
-            2020 - 
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
         
-        2025 涸泽之鱼
-    </section>
-    
-    <section class="powerby">
-        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
-        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
 </footer>
 
+<script src="/js/theme.js" defer></script>
 
-            </main>
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+</body>
 </html>

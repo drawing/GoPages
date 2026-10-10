@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指令队列设计 · 闲亩</title>
+<meta name="description" content="最近有时间赶紧开始NC项目的开发，今天刚写到指令队列的处理，我的最初的设计是让整个VPN系统能够自动运转，分多个线程不断的处理数据，类似流水线工厂，外界通过压入数据包供处理线程加解密，或者压入指令包，处理线程识别并且执行，方便服务器客户端之 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>指令队列设计</h1>
+        <div class="post-meta">
+            <time datetime="2010-11-20">2010-11-20</time>
+            <span class="sep">·</span>
+            <span>611 字</span>
+            <span class="sep">·</span>
+            <span>约 2 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">#工程实践</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>最近有时间赶紧开始NC项目的开发，今天刚写到指令队列的处理，我的最初的设计是让整个VPN系统能够自动运转，分多个线程不断的处理数据，类似流水线工厂，外界通过压入数据包供处理线程加解密，或者压入指令包，处理线程识别并且执行，方便服务器客户端之间互相控制，也可在本地直接压入指令包控制，当时觉得这种设计是非常和谐的，而现在看来这样虽然能让系统更易扩展，但却不利于即时控制。</p>
+<p>这种方法给我的感觉是我无法接触核心的控制，外界只是简单的send几个指令包而已，对外界调用是方便很多，而且扩展性更强，不过有种拿不住核心的感觉，调用send指令包函数返回，所要执行的功能并未立即实现，而是有一定的延时性，这种延时性会造成几个问题：</p>
+<ul>
+<li>系统反应迟钝，因为不是函数返回就会即时生效，而且甚至都不知道何时开始生效；</li>
+<li>如果执行功能出错，虽然有重试机制，但不可预知的错误随时可能发生，最终结果如何也未可知；</li>
+<li>增加了系统的不可预知性，因为有延时存在，如果同时执行若干命令，相互之间是否会有影响；</li>
+</ul>
+<p>当然，这样处理的优点就是简洁性，所有事件的处理过程都经过统一的分发处理，像一个命令处理工厂，不断的接受命令，执行命令即可，不用抽取各种操作接口，命令本身也更易扩展，而且不用区分是本地指令还是服务器指令或者客户端之间点对点协议，想来这种设计的优点还是大于缺点的，要看如何处理各种让人纠结的问题了。现在感觉项目处于悬浮状态，是易扩展还是易崩溃，就得看这里的实现如何了。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/thinking-of-software-design/">← 软件设计的思考</a>
+        
+        
+        <a class="next" href="/posts/large-concurrent-software-design/">大并发程序设计的思考 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>

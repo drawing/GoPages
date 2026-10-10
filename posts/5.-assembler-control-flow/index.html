@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇编语言学习笔记(五)-控制流 · 闲亩</title>
+<meta name="description" content="程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>汇编语言学习笔记(五)-控制流</h1>
+        <div class="post-meta">
+            <time datetime="2014-04-16">2014-04-16</time>
+            <span class="sep">·</span>
+            <span>1273 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">#汇编语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	label:
+</span></span><span class="line"><span class="cl">		...
+</span></span><span class="line"><span class="cl">		jmp label
+</span></span></code></pre></div><p>跳转分为段跳转（小于128字节），远跳转（分段模式下跨段跳转），近跳转（其他），不过这些在AT&amp;T里编译器会根据参数的 变化而选择性的生成机器码，但对于MASM，需要自己指定，<code>jmp near ptr label</code>, <code>jmp far ptr label</code>。</p>
+<p>但本质上讲，倘若只有这样的jmp，那不论如何跳都将是个死循环，所以便有了条件跳转（Jcond），在一定条件下进行跳转，这里所谓的条件，仍然是eflags的不同标记位，如下：</p>
+<table>
+	<thead>
+			<tr>
+					<th>指令</th>
+					<th>跳转条件</th>
+					<th>eflags标志</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>JA</td>
+					<td>Jump if above</td>
+					<td>CF=0 &amp; ZF=0</td>
+			</tr>
+			<tr>
+					<td>JAE</td>
+					<td>Jump if above or equal</td>
+					<td>CF=0</td>
+			</tr>
+			<tr>
+					<td>JB</td>
+					<td>Jump if below</td>
+					<td>CF=1</td>
+			</tr>
+			<tr>
+					<td>JBE</td>
+					<td>Jump if below or equal</td>
+					<td>CF=1 or ZF=1</td>
+			</tr>
+			<tr>
+					<td>JC</td>
+					<td>Jump if carry</td>
+					<td>CF=1</td>
+			</tr>
+			<tr>
+					<td>JCXZ</td>
+					<td>Jump if CX=0</td>
+					<td>register CX=0</td>
+			</tr>
+			<tr>
+					<td>JE</td>
+					<td>(is the same as JZ) Jump if equal</td>
+					<td>ZF=1</td>
+			</tr>
+			<tr>
+					<td>JG</td>
+					<td>Jump if greater (signed)</td>
+					<td>ZF=0 &amp; SF=OF</td>
+			</tr>
+			<tr>
+					<td>JGE</td>
+					<td>Jump if greater or equal (signed)</td>
+					<td>SF=OF</td>
+			</tr>
+			<tr>
+					<td>JL</td>
+					<td>Jump if less (signed)</td>
+					<td>SF != OF</td>
+			</tr>
+			<tr>
+					<td>JLE</td>
+					<td>Jump if less or equal (signed)</td>
+					<td>ZF=1 or SF!=OF</td>
+			</tr>
+			<tr>
+					<td>JMP</td>
+					<td>Unconditional Jump</td>
+					<td>-</td>
+			</tr>
+			<tr>
+					<td>JNA</td>
+					<td>Jump if not above</td>
+					<td>CF=1 or ZF=1</td>
+			</tr>
+			<tr>
+					<td>JNAE</td>
+					<td>Jump if not above or equal</td>
+					<td>CF=1</td>
+			</tr>
+			<tr>
+					<td>JNB</td>
+					<td>Jump if not below</td>
+					<td>CF=0</td>
+			</tr>
+			<tr>
+					<td>JNBE</td>
+					<td>Jump if not below or equal</td>
+					<td>CF=1 &amp; ZF=0</td>
+			</tr>
+			<tr>
+					<td>JNC</td>
+					<td>Jump if not carry</td>
+					<td>CF=0</td>
+			</tr>
+			<tr>
+					<td>JNE</td>
+					<td>Jump if not equal</td>
+					<td>ZF=0</td>
+			</tr>
+			<tr>
+					<td>JNG</td>
+					<td>Jump if not greater (signed)</td>
+					<td>ZF=1 or SF!=OF</td>
+			</tr>
+			<tr>
+					<td>JNGE</td>
+					<td>Jump if not greater or equal (signed)</td>
+					<td>SF!=OF</td>
+			</tr>
+			<tr>
+					<td>JNL</td>
+					<td>Jump if not less (signed)</td>
+					<td>SF=OF</td>
+			</tr>
+			<tr>
+					<td>JNLE</td>
+					<td>Jump if not less or equal (signed)</td>
+					<td>ZF=0 &amp; SF=OF</td>
+			</tr>
+			<tr>
+					<td>JNO</td>
+					<td>Jump if not overflow (signed)</td>
+					<td>OF=0</td>
+			</tr>
+			<tr>
+					<td>JNP</td>
+					<td>Jump if no parity</td>
+					<td>PF=0</td>
+			</tr>
+			<tr>
+					<td>JNS</td>
+					<td>Jump if not signed (signed)</td>
+					<td>SF=0</td>
+			</tr>
+			<tr>
+					<td>JNZ</td>
+					<td>Jump if not zero</td>
+					<td>ZF=0</td>
+			</tr>
+			<tr>
+					<td>JO</td>
+					<td>Jump if overflow (signed)</td>
+					<td>OF=1</td>
+			</tr>
+			<tr>
+					<td>JP</td>
+					<td>Jump if parity</td>
+					<td>PF=1</td>
+			</tr>
+			<tr>
+					<td>JPE</td>
+					<td>Jump if parity even</td>
+					<td>PF=1</td>
+			</tr>
+			<tr>
+					<td>JPO</td>
+					<td>Jump if paity odd</td>
+					<td>PF=0</td>
+			</tr>
+			<tr>
+					<td>JS</td>
+					<td>Jump if signed (signed)</td>
+					<td>SF=1</td>
+			</tr>
+			<tr>
+					<td>JZ</td>
+					<td>Jump if zero</td>
+					<td>ZF=1</td>
+			</tr>
+	</tbody>
+</table>
+<p>根据上次的规律很容易理解，这里我们举几个例子，把c语言的流程控制语句转化为汇编：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">num</span> <span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+</span></span></code></pre></div><p>对应的汇编语言写成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gas" data-lang="gas"><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">sum:</span> <span class="na">.int</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">num:</span> <span class="na">.int</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="na">.section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="na">.globl</span> <span class="no">_main</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">_main:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">cmpl</span> <span class="no">$10</span><span class="p">,</span> <span class="no">num</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">jbe</span> <span class="no">label1</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">incl</span> <span class="no">num</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">label1:</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">		<span class="nf">movl</span> <span class="no">$0</span><span class="p">,</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">label2:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">addl</span> <span class="nv">%eax</span><span class="p">,</span> <span class="no">sum</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">incl</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">cmp</span> <span class="no">$10</span><span class="p">,</span> <span class="nv">%eax</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">jb</span> <span class="no">label2</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="nl">label3:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">pushl</span> <span class="no">$0</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">call</span> <span class="no">_exit</span>
+</span></span></code></pre></div><p>编译使用<code>gcc hello.s -g</code>，加上调试信息，之后使用gdb调试，这里直接使用<code>br label3</code>在<code>label3</code>处下断，然后<code>print sum</code>打印信息查看结果。</p>
+<p>这段程序开始 <code>cmpl $10, num</code>，比较num和10，jbe跳转，相当于<code>if (num &gt; 10)</code> 部分，incl把操作数加一。</p>
+<p>对于for循环比较麻烦，这里把eax寄存器当做循环计数，先初始化eax为0，紧接着调用addl %eax, sum把eax加到sum上，再把eax加一，后面的比较就与if相同了，如果小于则跳转到label2。</p>
+<p>汇编中还有一类分支结构，就是循环loop，有三种形式：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	loop 循环到ecx为0，每次循环ecx减一
+</span></span><span class="line"><span class="cl">	loope/loopz 循环到ecx为0或者没有设置ZF标志
+</span></span><span class="line"><span class="cl">	loopne/loopnz 循环到ecx为0，或者设置了ZF标志
+</span></span></code></pre></div><p>还记得在寄存器那里提到，ecx被用作循环计数器，全部体现在这里了。loop本质上讲每次先把ecx减一，如果不为零则跳转到label，通过实现上面的for循环，很容易理解loop的使用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">		sum dd 0
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">		mov ecx, 9;
+</span></span><span class="line"><span class="cl">	label1:
+</span></span><span class="line"><span class="cl">		add sum, ecx
+</span></span><span class="line"><span class="cl">		loop label1
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>当然准确的从逻辑上讲其实这样是少一个循环的，不过最后一次加的是0，忽略掉吧。
+注意这里loop是先把ecx减一后判断是否为0，如果ecx开始为0，则不会停止，ecx直接溢出，被减成负数。</p>
+<p>在学习汇编时，可以多参阅编译器生成的汇编代码，用编译器gcc -S，便可生成汇编代码，也可使用不同的优化参数-O1 -O3优化生成的汇编，这样一来可以更好的学习汇编，而来可以理解c和汇编的对应关系，方便阅读反汇编代码。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/4.-assembler-mov-instruct/">← 汇编语言学习笔记(四)-MOV指令</a>
+        
+        
+        <a class="next" href="/posts/6.-assembler-math-instruct/">汇编语言学习笔记(六)-数学运算 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+</body>
+</html>
