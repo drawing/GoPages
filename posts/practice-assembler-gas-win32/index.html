@@ -71,7 +71,7 @@
         <div class="post-meta">
             <time datetime="2014-04-27">2014-04-27</time>
             <span class="sep">·</span>
-            <span>1238 字</span>
+            <span>1240 字</span>
             <span class="sep">·</span>
             <span>约 3 分钟</span>
             
@@ -222,14 +222,14 @@ ENTRY(_main)
 
 SECTIONS
 {
-. = 0X40000;
+. = 0X400000;
 .text : {*(.text)}
 .data : {*(.data)}
 }
 </code></pre>
-<p>脚本开始定义一下搜索路径，方便找到引用的头文件和库，ENTRY定义了程序的入口函数符号，SECTIONS定义各个段，从0×40000开始，依次是代码段和数据段。</p>
+<p>脚本开始定义一下搜索路径，方便找到引用的头文件和库，ENTRY定义了程序的入口函数符号，SECTIONS定义各个段，从0×400000开始，依次是代码段和数据段。</p>
 <p>之后再进行分步编译：</p>
-<pre><code>as win.s -o
+<pre><code>as win.s -o a.out
 ld win.lds a.out -lgdi32 -luser32
 strip a.exe
 </code></pre>
@@ -242,10 +242,10 @@ strip a.exe
 
     <nav class="post-nav">
         
-        <a class="prev" href="/posts/practice-16-asm-real-mode.md/">← 汇编语言练习-实模式下的汇编</a>
+        <a class="prev" href="/posts/practice-assembler-real-mode/">← 汇编语言练习-实模式下的汇编</a>
         
         
-        <a class="next" href="/posts/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口 →</a>
+        <a class="next" href="/posts/practice-assembler-bios/">汇编语言练习-BIOS模式下的汇编 →</a>
         
     </nav>
 </article>
@@ -262,6 +262,8 @@ strip a.exe
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
 
 
 

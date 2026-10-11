@@ -67,11 +67,47 @@
 
 <h1 class="page-title">Posts</h1>
 
+
 <ul class="post-list">
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/13.-assembler-mmx-instruct/">汇编语言学习笔记(十三)-MMX指令集</a></h2>
+            <h2 class="post-title"><a href="/posts/practice-assembler-real-mode/">汇编语言练习-实模式下的汇编</a></h2>
+            
+            
+            <p class="post-summary">在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-26">2014-04-26</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/14-assembler-sse-instruction/">汇编语言学习笔记(十四)-SSE指令集</a></h2>
+            
+            
+            <p class="post-summary">本篇介绍sse指令集，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-25">2014-04-25</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/13-assembler-mmx-instruction/">汇编语言学习笔记(十三)-MMX指令集</a></h2>
             
             
             <p class="post-summary">这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是 …</p>
@@ -80,7 +116,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-24">2014-04-24</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -88,7 +124,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/12.-assembler-float-instruct/">汇编语言学习笔记(十二)-浮点指令</a></h2>
+            <h2 class="post-title"><a href="/posts/12-assembler-float-instruction/">汇编语言学习笔记(十二)-浮点指令</a></h2>
             
             
             <p class="post-summary">浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。
@@ -98,7 +134,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-23">2014-04-23</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -106,7 +142,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/11.-assembler-precompile-macro/">汇编语言学习笔记(十一)-预编译宏</a></h2>
+            <h2 class="post-title"><a href="/posts/11-assembler-preprocessor-macro/">汇编语言学习笔记(十一)-预编译宏</a></h2>
             
             
             <p class="post-summary">在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
@@ -117,7 +153,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-22">2014-04-22</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -125,7 +161,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/10.-assembler-c-inline/">汇编语言学习笔记(十)-内联汇编</a></h2>
+            <h2 class="post-title"><a href="/posts/10-assembler-c-inline/">汇编语言学习笔记(十)-内联汇编</a></h2>
             
             
             <p class="post-summary">这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法 …</p>
@@ -134,7 +170,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-21">2014-04-21</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -142,7 +178,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/9.-assembler-function/">汇编语言学习笔记(九)-函数</a></h2>
+            <h2 class="post-title"><a href="/posts/09-assembler-function/">汇编语言学习笔记(九)-函数</a></h2>
             
             
             <p class="post-summary">编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈， …</p>
@@ -151,7 +187,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-20">2014-04-20</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -159,7 +195,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/8.-assembler-string-instruct/">汇编语言学习笔记(八)-字符串</a></h2>
+            <h2 class="post-title"><a href="/posts/08-assembler-string-instruction/">汇编语言学习笔记(八)-字符串</a></h2>
             
             
             <p class="post-summary">字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的 …</p>
@@ -168,7 +204,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-19">2014-04-19</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -176,7 +212,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/7.-assembler-addressing-method/">汇编语言学习笔记(七)-寻址方式</a></h2>
+            <h2 class="post-title"><a href="/posts/07-assembler-addressing-method/">汇编语言学习笔记(七)-寻址方式</a></h2>
             
             
             <p class="post-summary">寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
@@ -186,7 +222,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-18">2014-04-18</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -194,7 +230,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/6.-assembler-math-instruct/">汇编语言学习笔记(六)-数学运算</a></h2>
+            <h2 class="post-title"><a href="/posts/06-assembler-math-instruction/">汇编语言学习笔记(六)-数学运算</a></h2>
             
             
             <p class="post-summary">在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
@@ -204,42 +240,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-17">2014-04-17</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/5.-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a></h2>
-            
-            
-            <p class="post-summary">程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-16">2014-04-16</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/4.-assembler-mov-instruct/">汇编语言学习笔记(四)-MOV指令</a></h2>
-            
-            
-            <p class="post-summary">汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-15">2014-04-15</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -252,7 +253,7 @@
     
     <a href="/posts/page/3/">← 上一页</a>
     
-    <span class="page-info">4 / 6</span>
+    <span class="page-info">4 / 7</span>
     
     <a href="/posts/page/5/">下一页 →</a>
     

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>技术 · 闲亩</title>
+<meta name="description" content="软件技术文集：Linux 内核、编程语言、工程实践与算法。按标签可进一步筛选具体方向。">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/categories/%E6%8A%80%E6%9C%AF/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/" class="active">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+
+<p class="page-crumb">分类</p>
+
+<h1 class="page-title">技术</h1>
+
+<p class="page-desc">软件技术文集：Linux 内核、编程语言、工程实践与算法。按标签可进一步筛选具体方向。</p>
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/alert-optimization-practice/">告警优化实践总结</a></h2>
+            
+            
+            <p class="post-summary">一、背景 对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2023-04-11">2023-04-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/swig-cross-language-call/">SWIG 跨语言调用</a></h2>
+            
+            
+            <p class="post-summary">一、跨平台调用 在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2023-04-10">2023-04-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-kernel/">Linux性能调优之内核篇</a></h2>
+            
+            
+            <p class="post-summary">进程管理 进程 进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为task_struct，包含了进程的所有信息。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-03">2014-07-03</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-hardware/">Linux性能调优之硬件篇</a></h2>
+            
+            
+            <p class="post-summary">CPU性能 早期工程师热衷于提升单核CPU的性能，但随着时间发展，很快就意识到，仅仅提升单核性能会产生过多的热量而且无法带来相应的性能改善，于是多核的时代便来临了。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-02">2014-07-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-performance-monitor-tools/">Linux性能调优之工具篇</a></h2>
+            
+            
+            <p class="post-summary">在Linux性能调优之前，首先需要了解当前服务的运行状态，找到程序瓶颈，这就需要用到Linux上一系列性能监控工具，以下对常用工具做一些总结。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-07-01">2014-07-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/overcommit-effect-on-fork/">overcommit 对 fork 的影响</a></h2>
+            
+            
+            <p class="post-summary">问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
+Redis is configured to save RDB snapshots, but is …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-10">2014-06-10</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/algorithm-lcs/">算法学习笔记-最长公共子序列</a></h2>
+            
+            
+            <p class="post-summary">概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。
+公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-02">2014-06-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/algorithm-dynamic-programming/">算法学习笔记-动态规划</a></h2>
+            
+            
+            <p class="post-summary">动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是&quot;名不副实&quot;，从名称上很难直观地对算法有个认识。要说动态规划，还得从分治法说起。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-01">2014-06-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度</a></h2>
+            
+            
+            <p class="post-summary">现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-23">2014-05-23</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议</a></h2>
+            
+            
+            <p class="post-summary">Linux 是非常出色的操作系统，通过阅读内核源码，能够清楚的理解现代操作系统的构架和任意细节，但 Linux 内核代码非常庞大，而且有很多与硬件相关的细节，阅读代码有些吃力，不过只要了解内核代码的构架，可对自己迷惑的部分单独分析。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-22">2014-05-22</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
+
+
+<nav class="pagination">
+    
+    <span class="disabled">← 上一页</span>
+    
+    <span class="page-info">1 / 6</span>
+    
+    <a href="/categories/%E6%8A%80%E6%9C%AF/page/2/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

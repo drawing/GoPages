@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>情节设计的本质与落地工艺 · 闲亩</title>
+<meta name="description" content=" 从&quot;为什么俗套&quot;到&quot;主线定了之后怎么设计情节与支线&quot;的完整方法论
+引子：三个观察，一个内核 在讨论情节设计时，有三类现象反复出现：
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>情节设计的本质与落地工艺</h1>
+        <div class="post-meta">
+            <time datetime="2026-10-11">2026-10-11</time>
+            <span class="sep">·</span>
+            <span>13502 字</span>
+            <span class="sep">·</span>
+            <span>约 28 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E5%86%99%E4%BD%9C%E6%96%B9%E6%B3%95/">#写作方法</a><span class="sep">·</span><a class="tag" href="/tags/ai/">#AI</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <blockquote>
+<p>从&quot;为什么俗套&quot;到&quot;主线定了之后怎么设计情节与支线&quot;的完整方法论</p>
+</blockquote>
+<h3 id="引子三个观察一个内核">引子：三个观察，一个内核</h3>
+<p>在讨论情节设计时，有三类现象反复出现：</p>
+<ol>
+<li><strong>俗套套路</strong>：天赋觉醒类（高考觉醒天赋 → 被前女友甩 → 结识新友 → 天赋升级 → 前女友后悔）、都市修仙类（被甩 → 奇遇 → 买房买车装逼打脸 → 与官方高层合作）。流程俗套，却有固定的叙事逻辑。</li>
+<li><strong>出色作品的对照</strong>（以《一人之下》为例）：设置一个大悬念，每次只展露一角，激发读者探究完整真相的欲望；许多小情节服务于大悬念，既不显俗套又富有趣味。</li>
+<li><strong>常见问题</strong>：部分小说开头设定和背景很有意思，但几十章后出现重复性和疲惫感，缺乏持续的大悬念和吸引力。</li>
+</ol>
+<p>这三个现象，其实是<strong>同一个底层机制</strong>的三种表现。本文分两部分：先讲清本质区别（为什么），再给出可落地的设计工艺（怎么做）。</p>
+<hr>
+<h2 id="第一部分本质区别靠什么驱动读者往下读">第一部分　本质区别：靠什么驱动读者往下读</h2>
+<h3 id="11-分野不在用不用套路而在驱动力来源">1.1 分野不在&quot;用不用套路&quot;，而在&quot;驱动力来源&quot;</h3>
+<p>俗套与不俗套的区别，<strong>不在于是否使用套路</strong>。《一人之下》也用大量套路（打斗、扮猪吃虎、搞笑配角、势力博弈），金庸古龙全是套路。真正的区别是<strong>驱动力的来源</strong>：</p>
+<ul>
+<li><strong>俗套小说靠&quot;预期的兑现&quot;驱动</strong>：读者已经知道结局（会觉醒、会打脸、会成功、前女友会后悔），悬念不在&quot;会发生什么&quot;，而在&quot;怎么发生、什么时候轮到我爽&quot;。它交付的是<strong>确定性的多巴胺</strong>——像吃一道熟悉的菜，图的就是那口已知的好吃。</li>
+<li><strong>不俗套小说靠&quot;认知缺口&quot;驱动</strong>：读者不知道真相，而且这个&quot;不知道&quot;是<strong>结构性的、持续的</strong>。它交付的是<strong>好奇心的探索快感</strong>。</li>
+</ul>
+<p>心理学上这叫 <strong>information gap theory</strong>（Loewenstein）：好奇心来自&quot;已知&quot;和&quot;想知&quot;之间的落差。俗套小说早早把落差关掉了（你知道他会赢），不俗套小说则<strong>持续制造并精确管理这个落差</strong>。这一个透镜，能解释上面全部三个现象。</p>
+<h3 id="12-从内核推出的四个可验证差异">1.2 从内核推出的四个可验证差异</h3>
+<p><strong>差异一：欲望对象——消耗品 vs 增值品</strong></p>
+<p>这是最关键的一条，直接解释&quot;疲惫感&quot;。</p>
+<ul>
+<li>俗套小说的欲望对象是<strong>具体、可兑现的</strong>：报复前女友、买房买车、天赋升到某境界。这类欲望的致命属性是——<strong>一旦兑现就消失</strong>，必须立刻补充新的。于是作者陷入军备竞赛：打脸对象越来越强、财富数字越来越大、境界层层上叠。但<strong>爽点会脱敏</strong>（边际效应递减），这就是几十章后疲惫的经济学根源。</li>
+<li>不俗套小说的欲望对象是<strong>抽象、结构性的</strong>：这个世界的规则到底是什么？&ldquo;甲申之乱&quot;发生了什么？主角身世之谜？这种欲望<strong>不会因为部分满足而消失，反而会因为部分满足而增强</strong>——看到冰山一角，更想知道全貌。</li>
+</ul>
+<blockquote>
+<p><strong>一句话：爽点是消耗品，谜团是增值品。</strong></p>
+</blockquote>
+<p><strong>差异二：情节组织——线性堆叠 vs 层级嵌套</strong></p>
+<ul>
+<li>俗套情节是<strong>线性堆叠</strong>：遇困难 → 获机缘 → 变强 → 打脸，换个更强的对手再来一遍。问题不是&quot;俗&rdquo;，而是<strong>任意抽一段出来模式都相似</strong>，读者很快识别模板，产生预测疲劳。</li>
+<li>《一人之下》是<strong>层级嵌套</strong>：一个&quot;元问题&quot;统领全局，每个小情节既是<strong>独立趣味单元</strong>（这场打斗好看、这个梗好笑），又是<strong>元问题的一块证据碎片或视角切片</strong>。高明之处在于——小情节本身也好看，不是纯粹推主线的工具。</li>
+</ul>
+<p>由此得到一条判据：<strong>好情节同时服务多个层次。</strong></p>
+<table>
+	<thead>
+			<tr>
+					<th>层次</th>
+					<th>内容</th>
+					<th>俗套情节</th>
+					<th>不俗套情节</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>表层</td>
+					<td>当下的趣味（爽点/笑点/打斗）</td>
+					<td>有</td>
+					<td>有</td>
+			</tr>
+			<tr>
+					<td>中层</td>
+					<td>人物弧光 / 关系变化</td>
+					<td>常缺</td>
+					<td>有</td>
+			</tr>
+			<tr>
+					<td>深层</td>
+					<td>元问题推进 / 世界观揭示</td>
+					<td>空</td>
+					<td>有</td>
+			</tr>
+	</tbody>
+</table>
+<p>俗套情节往往<strong>只有表层</strong>，深层是空的，所以抽出来都长一样；不俗套情节三层都有货，所以既耐读又推进。</p>
+<p><strong>差异三：信息管理——平铺透明 vs 控制信息差</strong></p>
+<ul>
+<li>俗套小说的信息是透明的，世界规则早早交代完，读者和主角知道的基本一样，没有信息不对称制造的张力。</li>
+<li>不俗套小说<strong>精确控制两种信息差</strong>：读者 vs 主角（悬念），以及读者 vs 读者（伏笔回收时的恍然大悟）。《一人之下》的杀手锏是——早期一个不起眼的细节，几十章后发现是关键伏笔。这带来最强的阅读快感：<strong>recontextualization（重新解读）</strong>，即每次揭示都让读者回头重新评估之前读过的所有内容，&ldquo;原来如此&rdquo;。俗套小说没有这种复利，因为信息是平铺的，不需要重新解读。</li>
+</ul>
+<p><strong>差异四：人物——功能件 vs 有内在矛盾的主体</strong></p>
+<ul>
+<li>俗套小说里，前女友的功能是&quot;提供打脸对象&quot;，新朋友是&quot;提供助力&quot;，反派是&quot;提供升级台阶&quot;——他们是<strong>功能件</strong>，没有自己的欲望逻辑，可随意替换，所以情节能互相套用。</li>
+<li>不俗套小说里，人物有<strong>独立的欲望和内在矛盾</strong>，且这些矛盾会<strong>反过来推动情节</strong>，而不是被情节推着走。</li>
+</ul>
+<blockquote>
+<p><strong>铁律：情节应该是人物选择的必然结果，而不是作者安排的巧合。</strong> 俗套靠巧合（刚好遇到奇遇、刚好前女友在场目睹），不俗套靠性格（因为他是这样的人，所以他会这么选，所以导致了这个后果）。</p>
+</blockquote>
+<h3 id="13-专门诊断几十章后疲惫的四个病灶">1.3 专门诊断：&ldquo;几十章后疲惫&quot;的四个病灶</h3>
+<p>把上面几条合起来，疲惫感有四个可定位的病灶，可直接当自检清单：</p>
+<ol>
+<li><strong>欲望对象耗尽</strong>——主线引擎用的是消耗型爽点，用完即弃，只能靠通胀续命。</li>
+<li><strong>元问题断供</strong>——没有贯穿始终的大问题在后台运行。读者读完一章，脑子里没有&quot;未完成的认知任务&quot;挂着，就没有&quot;必须读下一章&quot;的<strong>结构性动力</strong>，只靠爽的惯性，而惯性会脱敏。</li>
+<li><strong>世界观是布景而非谜题</strong>——世界观交代完就固定成背景板，不再产生新问题，故事失去纵深。《一人之下》的&quot;炁&quot;&ldquo;八奇技&quot;&ldquo;三十六贼&quot;都是<strong>层层揭示的世界观谜题</strong>，世界观本身在持续供能。</li>
+<li><strong>人物关系固化</strong>——谁是队友谁是敌人早早定型，不再变化，张力归零。</li>
+</ol>
+<h3 id="14-本质部分的收束">1.4 本质部分的收束</h3>
+<blockquote>
+<p><strong>俗套小说是&quot;已知爽点的确定性交付&rdquo;，会脱敏；不俗套小说是&quot;未知真相的复利式探索&rdquo;，会增值。前者靠通胀续命，后者靠信息差供能。</strong></p>
+</blockquote>
+<hr>
+<h2 id="第二部分落地工艺主线定了之后怎么设计情节与支线">第二部分　落地工艺：主线定了之后，怎么设计情节与支线</h2>
+<p>第一部分回答&quot;为什么&rdquo;，这一部分回答&quot;怎么做&quot;。业界在&quot;主线确定后如何落地&quot;这件事上有一套成熟工艺，散落在两个体系里——好莱坞编剧法（Save the Cat、Story Grid、Snowflake、McKee《故事》）和网文连载经验（起点/番茄）。下面把两边打通，提炼成一条<strong>从主线到章节、再到单个情节单元的完整流水线</strong>。</p>
+<h3 id="20-关键认知情节设计是分层切片不是从头往下想">2.0 关键认知：情节设计是&quot;分层切片&quot;，不是&quot;从头往下想&quot;</h3>
+<p>新手最常见的错误：定了大思想，就从第一章顺着往下编。这样必然在中段崩，因为你是在<strong>用局部灵感对抗全局结构</strong>。</p>
+<p>成熟做法是<strong>自上而下逐层&quot;切片&quot;</strong>——把一句话前提，逐层扩写、拆解，每一层都是对上一层的展开，且<strong>每一层都要符合上一层的目标，同时保有自己的小起伏</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">核心思想 / 元问题（一句话前提）
+</span></span><span class="line"><span class="cl">   ↓ 扩写
+</span></span><span class="line"><span class="cl">故事种子（一段话：谁、想要什么、遇到什么阻力、结局走向）
+</span></span><span class="line"><span class="cl">   ↓ 拆解
+</span></span><span class="line"><span class="cl">全局结构（三幕 / 起承转合 / 分卷）
+</span></span><span class="line"><span class="cl">   ↓ 钉点
+</span></span><span class="line"><span class="cl">节拍表（15-20 个关键转折点）
+</span></span><span class="line"><span class="cl">   ↓ 挂载
+</span></span><span class="line"><span class="cl">支线网络（每条支线挂到节拍上）
+</span></span><span class="line"><span class="cl">   ↓ 细化
+</span></span><span class="line"><span class="cl">分卷大纲 → 章纲（每章：核心事件 + 情绪基调 + 章末钩子 + 伏笔）
+</span></span><span class="line"><span class="cl">   ↓ 拆分
+</span></span><span class="line"><span class="cl">场景节拍（单章拆 3-5 个节拍）
+</span></span><span class="line"><span class="cl">   ↓ 落地
+</span></span><span class="line"><span class="cl">情节单元（目标 / 阻力 / 转折 / 结局）→ 对白与描写
+</span></span></code></pre></div><p>这条链路的价值在于：<strong>任何一层卡住，都能向上追溯目标、向下细化颗粒</strong>，而不是对着空白文档硬憋。下面逐层给可操作的方法。</p>
+<h3 id="21-第一层把大思想翻译成全局价值冲突story-grid-五诫">2.1 第一层：把&quot;大思想&quot;翻译成&quot;全局价值冲突&quot;（Story Grid 五诫）</h3>
+<p>光有&quot;大思想&quot;（如&quot;自由与秩序的对抗&quot;）没法写情节，太抽象。Story Grid 要求把它落成一条<strong>可正可负的价值轴</strong>，再用&quot;五诫&quot;卡住全局结构的五个必到点：</p>
+<ul>
+<li><strong>激励事件（Inciting Incident）</strong>：打破主角原有平衡的那件事。</li>
+<li><strong>递进式复杂化（Progressive Complications）</strong>：冲突不断升级，且<strong>每次升级都要提高赌注</strong>，不能原地打转。</li>
+<li><strong>危机（Crisis）</strong>：主角面临一个<strong>两难抉择</strong>——全书最重要的设计点。好的危机是&quot;两个都想要但不能兼得&quot;或&quot;两个都不想要但必须选一个&quot;，而不是&quot;打不打得过&quot;。</li>
+<li><strong>高潮（Climax）</strong>：危机抉择后的行动及其决定性后果。</li>
+<li><strong>结局（Resolution）</strong>：新平衡。</li>
+</ul>
+<blockquote>
+<p><strong>可操作动作</strong>：动笔前，用一张纸把这五个点针对你的元问题各写一句话。<strong>写不出&quot;危机&quot;的两难，说明主线还停留在&quot;事件&quot;层面，没上升到&quot;价值冲突&quot;层面</strong>——这正是很多小说中段乏力的根源（只有事件升级，没有价值拷问）。</p>
+</blockquote>
+<h3 id="22-第二层用节拍表把全局拆成-15-20-个不可逆转折点">2.2 第二层：用节拍表把全局拆成 15-20 个&quot;不可逆转折点&quot;</h3>
+<p>这是 Save the Cat 最有工程价值的地方：把三幕进一步切成 15 个节拍，每个节拍是一个<strong>改变故事走向的转折点</strong>。网文不必照搬 15 个，但有几个是<strong>跨类型通用的硬骨头</strong>，必须显式设计：</p>
+<ul>
+<li><strong>B Story（副线登场）</strong>：Save the Cat 里被严重低估的设计——<strong>B 故事通常在主线冲突确立后不久登场，承载主题、提供喘息节奏，且往往是&quot;关系线&quot;</strong>（感情、师徒、友情）。作用：当主线（A 故事）进入高强度对抗时，B 故事负责调节节奏和深化主题。</li>
+<li><strong>中点（Midpoint）</strong>：故事正中间的一次<strong>假胜利或假失败</strong>，之后主角从&quot;被动应对&quot;转为&quot;主动出击&quot;。很多小说中段疲软，就是因为没设计中点这个&quot;换挡时刻&quot;。</li>
+<li><strong>一无所有（All Is Lost）</strong>：高潮前的最低谷，常伴随&quot;死亡气息&quot;（某个重要的人/事/信念的丧失）。</li>
+<li><strong>灵魂暗夜 → 结局</strong>：从谷底找到新的领悟，冲向高潮。</li>
+</ul>
+<p><strong>雪花法（Snowflake）的递进拆解</strong>可以配合节拍表使用，它强调&quot;逐步长出来&quot;而非一次成型：一句话前提 → 一段话（补上三幕转折与结局）→ 人物简表（每个主要人物一句话弧光）→ 一页纸（把关键事件铺开）→ 四页纸（把一页扩成有因果的段落）→ 场景清单（把每一页拆成一个个具体场景，用表格管理）。它的精髓是：<strong>每一步都只在上一步的基础上加一层细节，永远不跳级</strong>，因此结构不会失控。</p>
+<blockquote>
+<p><strong>可操作动作</strong>：画一条时间轴，先把五诫的五个点钉上去，再在它们之间填入中点、B 故事登场、一无所有等节拍，形成 15-20 个&quot;故事必须经过的站&quot;。<strong>每个节拍写一句话：谁、发生了什么、故事因此不可逆地转向哪里。</strong> 这张表就是&quot;防崩骨架&quot;——中段再迷茫，也知道下一站是哪。</p>
+</blockquote>
+<h3 id="23-第三层情节单元的详细设计从站到戏">2.3 第三层：情节单元的详细设计（从&quot;站&quot;到&quot;戏&quot;）</h3>
+<p>节拍表给的是&quot;故事要经过哪些站&quot;，但每一站内部怎么写出张力，需要更细的工艺。这是很多作者最缺的一层。</p>
+<p><strong>（1）情节单元四要素：目标 / 阻力 / 转折 / 结局</strong></p>
+<p>任何一个完整的情节单元（可以是一章，也可以是章内的一场戏），都由四个要素构成：</p>
+<ul>
+<li><strong>目标</strong>：主角在这一段里<strong>具体想要什么</strong>（不是全书大目标，而是当下的、可感的小目标）。</li>
+<li><strong>阻力</strong>：什么在阻止他达成（人、环境、内心矛盾、信息缺失）。</li>
+<li><strong>转折</strong>：事情<strong>没有按主角预期发展</strong>，出现了意料之外的变化。</li>
+<li><strong>结局</strong>：这一段的结果，且这个结果<strong>改变了下一段的目标</strong>（形成因果链）。</li>
+</ul>
+<blockquote>
+<p>判据：如果一个情节单元只有&quot;目标达成&quot;而没有&quot;转折&quot;，它就是流水账；如果转折与目标无关，它就是硬凑。</p>
+</blockquote>
+<p><strong>（2）三维冲突模型：目标 / 价值 / 资源</strong></p>
+<p>冲突不能只停留在&quot;两个人抢一样东西&quot;。成熟的冲突设计是三维的：</p>
+<ul>
+<li><strong>目标冲突</strong>：双方想要同一个不可兼得的东西（抢一个位置、一个人、一件宝物）。</li>
+<li><strong>价值冲突</strong>：双方的信念/立场根本对立（秩序 vs 自由，忠诚 vs 良知）——这一维直接呼应主线的价值轴。</li>
+<li><strong>资源冲突</strong>：时间、信息、力量、人脉的不对等与争夺。</li>
+</ul>
+<p>确立冲突核心后，还要<strong>推演升级路径与代价</strong>：这场冲突如果升级，会付出什么代价？代价越大，张力越强。<strong>没有代价的冲突是假冲突。</strong></p>
+<p><strong>（3）转折点（反转）的设计纪律</strong></p>
+<p>反转最忌&quot;凭空捏造&quot;。合格的转折必须：</p>
+<ul>
+<li><strong>围绕人物动机与已布置的线索</strong>——反转的根，早在前面就埋下了。</li>
+<li><strong>推演合理性与前置铺垫</strong>——读者回头看，会觉得&quot;意料之外、情理之中&quot;。</li>
+<li>制造 <strong>&ldquo;预期与结果的落差&rdquo;（McKee 的 gap）</strong>：主角采取行动时预期某个结果，但现实给出的反应超出预期，逼他付出更多、改变策略。这个&quot;落差&quot;正是场景产生张力的引擎。</li>
+</ul>
+<p><strong>（4）场景必须&quot;转向&quot;（McKee 的价值电荷）</strong></p>
+<p>McKee 在《故事》里的核心判据：<strong>一个场景之所以成立，是因为它让某个&quot;价值&quot;的电荷发生了正负翻转</strong>（如：希望→绝望、信任→背叛、安全→危险）。场景是&quot;冲突中的动作&quot;，发生在相对连续的时空中。</p>
+<blockquote>
+<p>自检：写完一个场景，问自己——<strong>进入这个场景时主角的处境是&quot;正&quot;还是&quot;负&quot;，离开时翻转了吗？</strong> 如果进出场景价值电荷没变，这个场景就是废戏，该删或该合并。</p>
+</blockquote>
+<p><strong>（5）单章拆成 3-5 个&quot;场景节拍&quot;</strong></p>
+<p>落到章节，单章内容建议拆成 3-5 个场景节拍，典型序列是：<strong>建立场景 → 推进 → 情绪高点 → 结尾钩子</strong>。目的是实现&quot;节奏一张一弛，情绪一沉一扬&quot;，避免整章一个调门。</p>
+<h3 id="24-第四层支线网络设计核心">2.4 第四层：支线网络设计（核心）</h3>
+<p>这是长篇最容易失控的地方。先厘清概念，再给设计规则。</p>
+<p><strong>（0）先分清四种&quot;线&quot;</strong></p>
+<table>
+	<thead>
+			<tr>
+					<th>线型</th>
+					<th>定义</th>
+					<th>与主线的关系</th>
+					<th>典型篇幅</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>主线</strong></td>
+					<td>承载元问题、决定结局的核心冲突</td>
+					<td>——</td>
+					<td>60-80%</td>
+			</tr>
+			<tr>
+					<td><strong>支线</strong></td>
+					<td>有独立起承转合、服务主线的次级情节</td>
+					<td>挂回主线节拍，最终汇合</td>
+					<td>递减</td>
+			</tr>
+			<tr>
+					<td><strong>辅线</strong></td>
+					<td>辅助某条线推进的更小单元（如某配角的个人小传）</td>
+					<td>服务支线或主线局部</td>
+					<td>少量</td>
+			</tr>
+			<tr>
+					<td><strong>填充线</strong></td>
+					<td>过渡、调剂、日常向内容</td>
+					<td>调节节奏，不承担推进</td>
+					<td>极少量，慎用</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>关键纪律：填充线是&quot;水&quot;的高发区。</strong> 一段内容如果既没推进主线、也没深化人物、也没揭示世界观，它就是填充，该压缩或删除。</p>
+<p><strong>（1）每条支线必须绑定明确功能，且能挂回主线节拍。</strong></p>
+<p>给支线先&quot;上户口&quot;，合法功能就这么几类：</p>
+<table>
+	<thead>
+			<tr>
+					<th>支线类型</th>
+					<th>功能</th>
+					<th>备注</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>感情线（与女主/伴侣）</td>
+					<td>承载 B Story，调节节奏、深化主题</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>友情/团队线（与同伴）</td>
+					<td>提供助力、制造内部张力</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>师徒/传承线（与导师）</td>
+					<td>推动能力成长和世界观揭示</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>世界观探索线</td>
+					<td>揭示元问题的碎片</td>
+					<td>对《一人之下》式作品最关键</td>
+			</tr>
+			<tr>
+					<td>反派线</td>
+					<td>用视角切换制造信息差和压迫感</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>成长/复仇线</td>
+					<td>承载人物弧光，提供阶段性爽点</td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<p>一条支线如果<strong>说不出它属于哪类、服务哪个主线节拍</strong>，它就是&quot;水&quot;，该砍。</p>
+<p><strong>（2）构思一条支线的标准动作：拆出&quot;人物线 + 任务线&quot;。</strong></p>
+<p>一条有血肉的支线，通常由两股拧成：</p>
+<ul>
+<li><strong>人物线</strong>：这条支线里，某个角色<strong>想要什么、缺什么、经历后变成什么</strong>（他的小弧光）。</li>
+<li><strong>任务线</strong>：这条支线里，具体要<strong>解决的事件/目标</strong>是什么（有起承转合的一件事）。</li>
+</ul>
+<p>两股拧在一起，支线才既有&quot;事&quot;又有&quot;人&quot;，不会沦为纯工具。设计时明确它的<strong>起承转合与&quot;回扣点&quot;</strong>——即这条支线在哪个节点、以什么方式<strong>回扣主线</strong>（提供关键信息、改变主角、引出下一个主线节拍）。</p>
+<p><strong>（3）编织规则：配比、回归、汇合、视角。</strong></p>
+<ul>
+<li><strong>字数配比主次分明</strong>：核心主线占 <strong>60-80%</strong>，支线依次递减。<strong>定期统计调整</strong>——很多作者写着写着支线喧宾夺主，自己都没察觉。建议每写完一卷回头数一下各线占比。</li>
+<li><strong>定期回归</strong>：推进支线时，每隔几章要让主线元问题&quot;露一下脸&quot;（一个线索、一次提及、一个悬念钩子），维持读者对主线的记忆和期待。</li>
+<li><strong>最终汇合</strong>：所有平时各自发展的支线，要在关键节点（通常是高潮）<strong>汇聚引爆</strong>。设计时<strong>倒着想</strong>：先确定汇合点，再反推每条支线该在哪里埋、在哪里收。</li>
+<li><strong>视角切换制造信息差</strong>：让读者比主角<strong>提前知道</strong>反派阴谋 → 产生&quot;替主角捏把汗&quot;的悬念（戏剧性反讽）。</li>
+<li><strong>平行蒙太奇制造紧迫感</strong>：高潮前用&quot;同一时间、不同地点&quot;的平行剪辑，把多条线并列推进 → 制造史诗感。但<strong>单次视角的字数不能太少</strong>（否则读者还没入戏就切走），一个视角单元至少撑满一个完整场景。</li>
+</ul>
+<p><strong>（4）支线的收尾与回收。</strong></p>
+<p>支线最忌&quot;开了不收&quot;（挖坑不填）。每条支线在规划时就要写明<strong>回收方式</strong>，常见三种：</p>
+<ul>
+<li><strong>汇入型</strong>：支线成果成为主线决战的关键（最常见、最爽）。</li>
+<li><strong>闭环型</strong>：支线自身完成一个小弧光后自然收束（多用于人物线）。</li>
+<li><strong>伏笔型</strong>：支线看似结束，实则埋下更长线的伏笔，在后续卷回收。</li>
+</ul>
+<blockquote>
+<p>用附录 C 的&quot;支线规划表&quot;逐条登记埋点、回归节奏、汇合点、回收方式，是防止&quot;挖坑不填&quot;的最有效工程手段。</p>
+</blockquote>
+<h3 id="25-第五层章节工艺每章都要有推进">2.5 第五层：章节工艺——&ldquo;每章都要有推进&rdquo;</h3>
+<p>再好的大纲，落到章节也会垮，如果章节层面没有工艺。核心纪律是**&ldquo;每章都要有推进&rdquo;**，具体化为：</p>
+<ul>
+<li><strong>节奏张弛交替</strong>：紧张 → 放松循环，&ldquo;主线高潮 + 支线过渡 = 张弛有度&rdquo;。连续高强度会让读者疲劳，连续平淡会掉订阅。</li>
+<li><strong>章末钩子（cliffhanger）</strong>：每章结尾留一个未完成的认知任务。钩子有四种常用类型——<strong>悬念型</strong>（抛出新谜团）、<strong>反转型</strong>（局势突变）、<strong>情绪型</strong>（强烈情感悬置）、<strong>危险型</strong>（危机逼近）。这是连载留住读者的命脉，正好呼应第一部分的&quot;结构性动力&quot;。</li>
+<li><strong>换地图</strong>：网文特有的防疲劳手段，通常 <strong>20-50 万字</strong>换一次场景/势力范围，用新环境注入新挑战和新人物。</li>
+<li><strong>伏笔分短中长</strong>：短伏笔几章内回收，中伏笔一卷内，长伏笔跨卷甚至到结局。原则是&quot;<strong>自然提及、及时回收</strong>&quot;——埋的时候不刻意，收的时候不遗忘。<strong>理想状态：每章要么回收一个旧伏笔，要么埋下一个新伏笔。</strong></li>
+</ul>
+<p><strong>初稿&quot;干瘪&quot;的改写五步法</strong>（当情节写得平、没张力时）：</p>
+<ol>
+<li><strong>补动因</strong>：主角为什么非做这件事不可？动机不足则行动无力。</li>
+<li><strong>加阻力</strong>：让达成目标更难，冲突立起来。</li>
+<li><strong>做阶梯</strong>：把一步到位拆成&quot;尝试→受挫→调整→再尝试&quot;的递进。</li>
+<li><strong>换呈现</strong>：把直白叙述转成具体动作、生理反应、感官细节（&ldquo;他很紧张&rdquo;→&ldquo;他的指尖在桌沿敲出细密的节奏&rdquo;）。</li>
+<li><strong>留钩子</strong>：结尾不要收干净，留一个未完成的引子。</li>
+</ol>
+<h3 id="26-大纲的三级体系总纲--卷纲--细纲">2.6 大纲的三级体系：总纲 / 卷纲 / 细纲</h3>
+<p>上面五层最终要沉淀成可执行的大纲。网文成熟的三级大纲体系：</p>
+<ul>
+<li><strong>总纲（全书框架）</strong>：书名、题材、预计总字数、世界观、力量体系、主要人物设定；规划开局/前期/中期/后期/结局的<strong>字数分配与核心目标</strong>；标注核心金手指与整体基调。</li>
+<li><strong>卷纲（分卷大纲）</strong>：每卷的字数区间（如 0-30 万字）、卷概述、核心情节、<strong>卷目标</strong>与<strong>卷高潮</strong>、换地图时机。</li>
+<li><strong>细纲（章纲）</strong>：建议先做 1-2 万字的细纲（最适合新人），落实到每一章的<strong>详细内容、该章爽点、章末钩子、伏笔标注</strong>。</li>
+</ul>
+<h3 id="27-避免卡文的工作流">2.7 避免卡文的工作流</h3>
+<p>大纲的最大价值是&quot;减少卡文&quot;，避免码字时临时构思。具体工作流：</p>
+<ul>
+<li><strong>动笔前</strong>：通读大纲 + 建立素材库，明确&quot;今天写什么&quot;。</li>
+<li><strong>创作中</strong>：以大纲为基准推进；遇到新灵感可<strong>灵活调整细节，但主线不变</strong>。</li>
+<li><strong>完稿后</strong>：及时把最新剧情<strong>同步回大纲</strong>，检查是否偏离主线，并提前规划下一步。</li>
+</ul>
+<h3 id="28-章节六项自检清单防注水防断裂">2.8 章节六项自检清单（防注水、防断裂）</h3>
+<p>每章写完，用这六条过一遍：</p>
+<ol>
+<li><strong>动作驱动</strong>：主角是否做出了<strong>主动选择</strong>？（通篇被动反应会让节奏崩塌）</li>
+<li><strong>情绪与节奏</strong>：本章是否有情绪起伏？是否与上一章形成节奏对比？（防止连续慢节奏抒情）</li>
+<li><strong>悬念设置</strong>：章末是否留了钩子（悬念/反转/情绪/危险）？（章末绝不能平淡）</li>
+<li><strong>伏笔管理</strong>：本章是否回收了一个旧伏笔，或埋下了一个新伏笔？</li>
+<li><strong>信息控制</strong>：单章信息量是否过载？（一次塞太多反转，读者消化不了）</li>
+<li><strong>价值转向</strong>：本章核心场景的价值电荷是否发生了翻转？（没翻转 = 废戏）</li>
+</ol>
+<h3 id="29-把上面串成一条可执行流水线落地清单">2.9 把上面串成一条可执行流水线（落地清单）</h3>
+<p>主线和大思想确定后，按这个顺序做：</p>
+<ol>
+<li><strong>翻译价值冲突</strong>：把大思想写成正负价值轴，用五诫钉出激励事件/递进/危机/高潮/结局五句话。<strong>重点打磨&quot;危机&quot;的两难。</strong></li>
+<li><strong>搭节拍骨架</strong>：时间轴上填出 15-20 个不可逆转折点，显式设计 B 故事登场、中点换挡、一无所有；可配合雪花法逐层扩写。</li>
+<li><strong>规划支线网络</strong>：为每条支线上&quot;功能户口&quot;，拆出人物线 + 任务线，绑定主线节拍；预设汇合点与回收方式，倒推埋点与收点。</li>
+<li><strong>分配比与回归节奏</strong>：主线 60-80%，设定&quot;每 N 章回归主线一次&quot;的钩子。</li>
+<li><strong>拆卷 → 拆章 → 拆场景</strong>：每卷一个小高潮（铺垫-爆发-落定）；每章一个推进 + 一个章末钩子；每章拆 3-5 个场景节拍。</li>
+<li><strong>设计情节单元</strong>：每场戏落实&quot;目标/阻力/转折/结局&quot;，用三维冲突加张力，确保场景价值转向。</li>
+<li><strong>建三张跟踪表 + 一张自检清单</strong>（把直觉变工程的关键工具）：
+<ul>
+<li><strong>信息差表</strong>：读者已知 / 未知 / 计划第几章揭示 / 揭示后引出的新问题。</li>
+<li><strong>伏笔表</strong>：埋点章节 / 类型（短中长）/ 计划回收点 / 状态。</li>
+<li><strong>支线规划表</strong>：功能类型 / 服务节拍 / 埋点 / 回归节奏 / 汇合点 / 回收方式 / 字数占比。</li>
+<li><strong>章节六项自检清单</strong>：每章写完过一遍。</li>
+<li>定期（每卷末）复盘这些表 + 各支线字数占比，防止遗忘和失衡。</li>
+</ul>
+</li>
+</ol>
+<h3 id="210-落地部分的收束">2.10 落地部分的收束</h3>
+<blockquote>
+<p><strong>主线定了之后，情节设计不是&quot;顺着编&quot;，而是&quot;自上而下逐层切片、自下而上填充血肉、用三张表 + 一张清单做过程管控&quot;。支线的纪律是——每条都有功能户口、都拆出人物线与任务线、都挂回主线节拍、都定期回归、都在终点汇合、都有明确回收方式。</strong></p>
+</blockquote>
+<hr>
+<h2 id="第三部分ai-协同在每一层流水线上人和-ai-各干什么">第三部分　AI 协同：在每一层流水线上，人和 AI 各干什么</h2>
+<p>前两部分是&quot;人怎么设计情节&quot;。但本书的主题是<strong>人机协同</strong>——所以真正要回答的是：在这条从主线到情节单元的流水线上，<strong>每一步该给 AI 什么输入、让 AI 产出什么、人又必须亲自把关什么</strong>。</p>
+<h3 id="30-一条总原则ai-管发散与一致性人管判断与独创性">3.0 一条总原则：AI 管&quot;发散与一致性&quot;，人管&quot;判断与独创性&quot;</h3>
+<p>先立分工的总纲，后面每一层都是它的具体化：</p>
+<ul>
+<li><strong>AI 的强项</strong>：穷举可能性（一次给 20 个转折）、结构化填充（把一句话扩成节拍表）、一致性检查（伏笔有没有回收、时间线有没有矛盾）、模式套用（按模板生成章纲）。这些是&quot;体力活 + 检索活&quot;，AI 比人快且不遗漏。</li>
+<li><strong>人的不可替代</strong>：<strong>元问题的独创性</strong>（这个故事到底想探究什么）、<strong>价值判断</strong>（哪个转折&quot;对味&quot;、哪个俗了）、<strong>审美取舍</strong>（AI 给的 20 个选项里挑哪个、怎么改）、<strong>情感真实性</strong>（人物在这一刻&quot;应该&quot;怎么感受）。这些是&quot;品味活 + 灵魂活&quot;，AI 只能提供候选，不能替你决定。</li>
+</ul>
+<blockquote>
+<p><strong>一句话：AI 负责把&quot;可能性空间&quot;铺满，人负责在这个空间里做出&quot;这一个&quot;的选择。</strong> 用 AI 替代判断，会得到平庸的正确；用人替代穷举，会累死且遗漏。协同的本质是各归其位。</p>
+</blockquote>
+<p>一个贯穿始终的纪律：<strong>AI 产出的任何情节，都要过第一部分的&quot;三层判据&quot;</strong>（表层趣味 / 中层人物 / 深层元问题）。AI 天然擅长造&quot;表层爽点&quot;，天然不擅长&quot;深层元问题推进&quot;——因为后者依赖你对全书的独特构思。所以<strong>越是靠近元问题的环节，人的把关权重要越高；越是靠近文字落地的环节，AI 的自动化程度可以越高。</strong></p>
+<h3 id="31-逐层的人机分工">3.1 逐层的人机分工</h3>
+<p>下面对应第二部分的流水线，逐层给出&quot;输入 → AI 产出 → 人把关&quot;的操作范式。</p>
+<p><strong>第一层｜价值冲突与五诫（2.1）——人主导，AI 只做压力测试</strong></p>
+<ul>
+<li><strong>给 AI 的输入</strong>：你的元问题一句话 + 初步的价值轴。</li>
+<li><strong>让 AI 产出</strong>：① 针对你的&quot;危机&quot;设计，列出 5-8 种可能的两难抉择；② 扮演&quot;挑剔读者&quot;，指出你的价值冲突哪里可能立不住、哪里容易滑向俗套。</li>
+<li><strong>人必须把关</strong>：<strong>最终选哪个危机、价值轴到底是什么，只能你定。</strong> 这是全书的灵魂，AI 给的都是&quot;通用款两难&quot;，你要的是&quot;只属于这个故事的两难&quot;。AI 在这一层的角色是<strong>陪练和杠精</strong>，不是决策者。</li>
+</ul>
+<p><strong>第二层｜节拍表与雪花法扩写（2.2）——AI 强项，人做取舍</strong></p>
+<ul>
+<li><strong>给 AI 的输入</strong>：五诫的五个点 + 类型 + 预计篇幅。</li>
+<li><strong>让 AI 产出</strong>：① 把一句话前提按雪花法逐层扩写（一段话 → 一页 → 四页）；② 生成 15-20 个节拍的<strong>候选清单</strong>，每个节拍给 2-3 个备选转折；③ 标出哪些节拍是&quot;类型必备&quot;（如中点换挡、一无所有）。</li>
+<li><strong>人必须把关</strong>：从候选里<strong>挑选 + 排序 + 改写</strong>。AI 铺的节拍往往&quot;结构正确但平庸&quot;，你的价值在于把其中几个换成&quot;意料之外&quot;的设计。<strong>特别检查：AI 是否把节拍写成了&quot;线性堆叠&quot;（第一部分差异二）——如果是，要求它重构为&quot;层级嵌套&quot;，让小节拍同时服务元问题。</strong></li>
+</ul>
+<p><strong>第三层｜情节单元设计（2.3）——AI 做穷举，人做&quot;对味&quot;判断</strong></p>
+<ul>
+<li><strong>给 AI 的输入</strong>：某个节拍 + 涉及人物 + 当下的目标。</li>
+<li><strong>让 AI 产出</strong>：① 按&quot;目标/阻力/转折/结局&quot;四要素，生成这场戏的 3-5 个版本；② 用三维冲突模型（目标/价值/资源）检查每个版本的冲突够不够立体；③ 标出每个版本的&quot;价值电荷&quot;进出（正→负还是负→正）。</li>
+<li><strong>人必须把关</strong>：<strong>哪个版本&quot;对味&quot;、转折是否&quot;意料之外情理之中&quot;。</strong> AI 最容易在这里露馅——它造的转折常常&quot;意料之外但情理不足&quot;（凭空反转，违反 2.3 的反转纪律）。你要用&quot;这个反转的根，前面埋了吗&quot;来卡它。</li>
+</ul>
+<p><strong>第四层｜支线网络（2.4）——AI 管登记与一致性，人管功能定位</strong></p>
+<ul>
+<li><strong>给 AI 的输入</strong>：已定的主线节拍 + 你想加的支线想法。</li>
+<li><strong>让 AI 产出</strong>：① 为每条支线拆出&quot;人物线 + 任务线&quot;；② 填好支线规划表（附录 C），自动标注它服务哪个主线节拍；③ <strong>一致性巡检</strong>：哪些支线开了没收、哪条支线字数占比超标、哪些支线其实功能重复可以合并。</li>
+<li><strong>人必须把关</strong>：<strong>支线的&quot;功能户口&quot;由你定</strong>——它到底是承载 B Story、还是揭示世界观碎片？AI 会倾向于把支线写成&quot;独立好看的小故事&quot;，但你要的是&quot;挂回主线的小故事&quot;。<strong>定期让 AI 跑一遍&quot;挖坑不填&quot;检查，是 AI 在长篇里最实用的价值之一</strong>（人脑记不住 80 万字里埋的所有坑，AI 能）。</li>
+</ul>
+<p><strong>第五层｜章节工艺与章纲（2.5-2.6）——AI 高度自动化，人守钩子质量</strong></p>
+<ul>
+<li><strong>给 AI 的输入</strong>：卷纲 + 本卷要推进的节拍 + 支线状态。</li>
+<li><strong>让 AI 产出</strong>：① 批量生成章纲（附录 E：核心事件/情绪基调/场景节拍/爽点/章末钩子/伏笔标注）；② 检查节奏是否张弛交替（有没有连续三章都是高强度或都是平淡）；③ 提示&quot;该换地图了&quot;（字数到了 20-50 万区间）。</li>
+<li><strong>人必须把关</strong>：<strong>章末钩子的质量。</strong> AI 生成的钩子常常是&quot;廉价的悬念&quot;（强行断章、假危机），你要判断这个钩子是&quot;真认知缺口&quot;还是&quot;套路式吊胃口&quot;。这直接决定读者是否&quot;必须读下一章&quot;。</li>
+</ul>
+<p><strong>贯穿全程｜三张跟踪表的维护（2.9）——这是 AI 最能替你省命的地方</strong></p>
+<ul>
+<li><strong>信息差表 / 伏笔表 / 支线规划表</strong>，本质是&quot;长篇的一致性数据库&quot;。人脑在几十万字后会遗忘、会矛盾，<strong>AI 不会</strong>。</li>
+<li><strong>协同方式</strong>：每写完一卷，把新增剧情喂给 AI，让它<strong>自动更新三张表 + 跑一遍六项自检清单（附录 H）+ 报告所有&quot;未回收伏笔&quot;和&quot;信息差穿帮&quot;</strong>（比如某角色知道了他不该知道的信息）。</li>
+<li><strong>人把关</strong>：AI 报告的&quot;疑似问题&quot;里，哪些是真 bug、哪些是你有意为之，由你裁定。</li>
+</ul>
+<h3 id="32-一个可复用的人机协同回合模板">3.2 一个可复用的&quot;人机协同回合&quot;模板</h3>
+<p>把上面抽象成分工，落到每一章/每一节的实际协作，可以固定成这样一个回合：</p>
+<ol>
+<li><strong>人定意图</strong>：这一节要推进哪个节拍、服务哪个元问题碎片、涉及哪条线。（一句话，人写）</li>
+<li><strong>AI 发散</strong>：给 3-5 个候选方案，每个标注四要素 + 价值电荷 + 冲突维度。（AI 产出）</li>
+<li><strong>人选择 + 改写</strong>：挑一个，或杂交几个，注入&quot;只属于这个故事&quot;的细节和情感。（人主导）</li>
+<li><strong>AI 落地</strong>：把选定方案扩写成场景/对白初稿，并做一致性检查。（AI 产出）</li>
+<li><strong>人润色 + 把关</strong>：改文字、调节奏、验钩子、过六项自检。（人主导）</li>
+<li><strong>AI 归档</strong>：更新三张跟踪表，报告新埋/新收的伏笔与潜在穿帮。（AI 产出）</li>
+</ol>
+<blockquote>
+<p>这个回合的关键是<strong>第 3 步和第 5 步永远是人</strong>——选择权和终审权不能让渡。AI 在第 2、4、6 步替你干掉了 80% 的体力活和遗漏风险，让你把精力集中在&quot;判断&quot;和&quot;注入灵魂&quot;上。这正是&quot;人机协同&quot;区别于&quot;AI 代写&quot;的分界线。</p>
+</blockquote>
+<h3 id="33-协同的三条红线避免-ai-把故事写平">3.3 协同的三条红线（避免 AI 把故事写&quot;平&quot;）</h3>
+<p>最后给三条警示，都是 AI 协同里最容易踩的坑：</p>
+<ol>
+<li><strong>别让 AI 定元问题。</strong> 元问题是全书的独创性来源，一旦交给 AI，你会得到一部&quot;结构完美但谁都能写出来&quot;的平庸之作。AI 可以帮你打磨元问题的表达，但<strong>元问题的内核必须是你的</strong>。</li>
+<li><strong>别用 AI 的&quot;第一个答案&quot;。</strong> AI 的默认输出是&quot;统计上最可能的&quot;，也就是<strong>最俗套的</strong>（正好落在第一部分批判的区间）。协同的价值在于逼 AI 给第 5、第 10 个候选，或给它加约束（&ldquo;不要用失忆/巧合/突然出现的强敌&rdquo;），把俗套选项排除掉。</li>
+<li><strong>别让 AI 替代&quot;情感真实性&quot;的判断。</strong> AI 能写出&quot;语法正确的情绪&quot;，但判断&quot;这个人物在这一刻是否真的会这样感受&quot;，需要对人性的体察——这是人的领地。<strong>凡是涉及人物弧光和情感转折的地方，人的把关权重要拉到最高。</strong></li>
+</ol>
+<h3 id="34-ai-协同部分的收束">3.4 AI 协同部分的收束</h3>
+<blockquote>
+<p><strong>人机协同不是&quot;让 AI 写、人来改&quot;，而是&quot;AI 铺满可能性空间、人在空间里做选择并注入灵魂&quot;。越靠近元问题和情感，人越主导；越靠近文字落地和一致性维护，AI 越自动。守住&quot;选择权&quot;和&quot;终审权&quot;这两样，就守住了这部作品之所以是&quot;你的&quot;作品的那部分。</strong></p>
+</blockquote>
+<hr>
+<h2 id="附录可直接填写的模板工具">附录　可直接填写的模板工具</h2>
+<h3 id="附录-a五诫填空表全局价值冲突">附录 A　五诫填空表（全局价值冲突）</h3>
+<table>
+	<thead>
+			<tr>
+					<th>要素</th>
+					<th>你的填写</th>
+					<th>自检问题</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>价值轴（正/负）</td>
+					<td>例：自由 ↔ 秩序</td>
+					<td>这条轴能同时吸引主角和读者吗？</td>
+			</tr>
+			<tr>
+					<td>激励事件</td>
+					<td></td>
+					<td>它是否不可逆地打破了原有平衡？</td>
+			</tr>
+			<tr>
+					<td>递进式复杂化</td>
+					<td></td>
+					<td>每次升级是否提高了赌注（而非原地打转）？</td>
+			</tr>
+			<tr>
+					<td>危机（两难）</td>
+					<td></td>
+					<td>是否是&quot;两难抉择&quot;而非&quot;能否打赢&quot;？</td>
+			</tr>
+			<tr>
+					<td>高潮</td>
+					<td></td>
+					<td>是否是危机抉择的必然后果？</td>
+			</tr>
+			<tr>
+					<td>结局</td>
+					<td></td>
+					<td>新平衡是否回应了元问题？</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-b节拍表模板15-20-个转折点">附录 B　节拍表模板（15-20 个转折点）</h3>
+<table>
+	<thead>
+			<tr>
+					<th>序号</th>
+					<th>节拍名</th>
+					<th>谁</th>
+					<th>发生了什么</th>
+					<th>故事不可逆地转向哪里</th>
+					<th>所属幕/卷</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>1</td>
+					<td>开场画面</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>2</td>
+					<td>激励事件</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>3</td>
+					<td>B 故事登场</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>…</td>
+					<td>中点（假胜利/假失败）</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>…</td>
+					<td>一无所有</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>…</td>
+					<td>灵魂暗夜</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>…</td>
+					<td>高潮</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>…</td>
+					<td>结局</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-c支线规划表">附录 C　支线规划表</h3>
+<table>
+	<thead>
+			<tr>
+					<th>支线名</th>
+					<th>功能类型</th>
+					<th>人物线（角色弧光）</th>
+					<th>任务线（要解决的事）</th>
+					<th>服务的主线节拍</th>
+					<th>埋点章节</th>
+					<th>回归节奏</th>
+					<th>汇合点</th>
+					<th>回收方式</th>
+					<th>字数占比</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td>感情/友情/师徒/世界观/反派/成长</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>每 N 章</td>
+					<td></td>
+					<td>汇入/闭环/伏笔</td>
+					<td>%</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-d情节单元设计表每场戏一行">附录 D　情节单元设计表（每场戏一行）</h3>
+<table>
+	<thead>
+			<tr>
+					<th>场景</th>
+					<th>目标</th>
+					<th>阻力</th>
+					<th>转折（预期与结果的落差）</th>
+					<th>结局（如何改变下一目标）</th>
+					<th>价值电荷（进→出）</th>
+					<th>三维冲突（目标/价值/资源）</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>例：希望→绝望</td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-e章纲模板每章一行">附录 E　章纲模板（每章一行）</h3>
+<table>
+	<thead>
+			<tr>
+					<th>章号</th>
+					<th>核心事件</th>
+					<th>情绪基调</th>
+					<th>场景节拍（3-5 个）</th>
+					<th>本章爽点</th>
+					<th>章末钩子（类型）</th>
+					<th>伏笔（埋/收）</th>
+					<th>所属线</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>建立→推进→高点→钩子</td>
+					<td></td>
+					<td>悬念/反转/情绪/危险</td>
+					<td></td>
+					<td>主/支/辅</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-f信息差表">附录 F　信息差表</h3>
+<table>
+	<thead>
+			<tr>
+					<th>编号</th>
+					<th>读者已知</th>
+					<th>读者未知</th>
+					<th>计划揭示章节</th>
+					<th>揭示后引出的新问题</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-g伏笔表">附录 G　伏笔表</h3>
+<table>
+	<thead>
+			<tr>
+					<th>编号</th>
+					<th>伏笔内容</th>
+					<th>埋点章节</th>
+					<th>类型（短/中/长）</th>
+					<th>计划回收章节</th>
+					<th>状态（未收/已收）</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="附录-h章节六项自检清单">附录 H　章节六项自检清单</h3>
+<ul>
+<li><input disabled="" type="checkbox"> 动作驱动：主角做出了主动选择？</li>
+<li><input disabled="" type="checkbox"> 情绪与节奏：有起伏？与上一章形成对比？</li>
+<li><input disabled="" type="checkbox"> 悬念设置：章末留了钩子？</li>
+<li><input disabled="" type="checkbox"> 伏笔管理：回收了旧伏笔，或埋下了新伏笔？</li>
+<li><input disabled="" type="checkbox"> 信息控制：单章信息量没有过载？</li>
+<li><input disabled="" type="checkbox"> 价值转向：核心场景的价值电荷发生了翻转？</li>
+</ul>
+<h3 id="附录-i人机协同回合模板每章每节一轮">附录 I　人机协同回合模板（每章/每节一轮）</h3>
+<table>
+	<thead>
+			<tr>
+					<th>步骤</th>
+					<th>谁主导</th>
+					<th>动作</th>
+					<th>产出/检查点</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>1 定意图</td>
+					<td>人</td>
+					<td>本节推进哪个节拍、服务哪个元问题碎片、涉及哪条线</td>
+					<td>一句话意图</td>
+			</tr>
+			<tr>
+					<td>2 发散</td>
+					<td>AI</td>
+					<td>给 3-5 个候选方案</td>
+					<td>每个标注四要素 + 价值电荷 + 冲突维度</td>
+			</tr>
+			<tr>
+					<td>3 选择+改写</td>
+					<td><strong>人</strong></td>
+					<td>挑选/杂交，注入独特细节与情感</td>
+					<td>不可让渡的选择权</td>
+			</tr>
+			<tr>
+					<td>4 落地</td>
+					<td>AI</td>
+					<td>扩写成场景/对白初稿 + 一致性检查</td>
+					<td>初稿</td>
+			</tr>
+			<tr>
+					<td>5 润色+把关</td>
+					<td><strong>人</strong></td>
+					<td>改文字、调节奏、验钩子、过六项自检</td>
+					<td>不可让渡的终审权</td>
+			</tr>
+			<tr>
+					<td>6 归档</td>
+					<td>AI</td>
+					<td>更新信息差表/伏笔表/支线表，报告穿帮</td>
+					<td>三张表同步</td>
+			</tr>
+	</tbody>
+</table>
+<blockquote>
+<p>红线：① 元问题内核必须是人定的；② 不用 AI 的第一个答案（最俗套）；③ 情感真实性由人终审。</p>
+</blockquote>
+<hr>
+<h2 id="参考来源">参考来源</h2>
+<ul>
+<li>网文俱乐部《情节设计》《多线叙事技巧》《大纲方法》</li>
+<li>话本小说《情节设计密码》第 11 章&quot;情节设计实战：从大纲到成稿&quot;</li>
+<li>笔灵 AI《网文小说情节设计技巧》</li>
+<li>Save the Cat（Blake Snyder）15 节拍法</li>
+<li>Story Grid（Shawn Coyne）五诫与价值轴方法</li>
+<li>Snowflake Method（Randy Ingermanson）递进拆解法</li>
+<li>Robert McKee《故事》场景价值电荷与&quot;预期-结果落差&quot;理论</li>
+<li>《编剧点金术》次要情节章节</li>
+</ul>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#引子三个观察一个内核">引子：三个观察，一个内核</a></li>
+      </ul>
+    </li>
+    <li><a href="#第一部分本质区别靠什么驱动读者往下读">第一部分　本质区别：靠什么驱动读者往下读</a>
+      <ul>
+        <li><a href="#11-分野不在用不用套路而在驱动力来源">1.1 分野不在&quot;用不用套路&quot;，而在&quot;驱动力来源&quot;</a></li>
+        <li><a href="#12-从内核推出的四个可验证差异">1.2 从内核推出的四个可验证差异</a></li>
+        <li><a href="#13-专门诊断几十章后疲惫的四个病灶">1.3 专门诊断：&ldquo;几十章后疲惫&quot;的四个病灶</a></li>
+        <li><a href="#14-本质部分的收束">1.4 本质部分的收束</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二部分落地工艺主线定了之后怎么设计情节与支线">第二部分　落地工艺：主线定了之后，怎么设计情节与支线</a>
+      <ul>
+        <li><a href="#20-关键认知情节设计是分层切片不是从头往下想">2.0 关键认知：情节设计是&quot;分层切片&quot;，不是&quot;从头往下想&quot;</a></li>
+        <li><a href="#21-第一层把大思想翻译成全局价值冲突story-grid-五诫">2.1 第一层：把&quot;大思想&quot;翻译成&quot;全局价值冲突&quot;（Story Grid 五诫）</a></li>
+        <li><a href="#22-第二层用节拍表把全局拆成-15-20-个不可逆转折点">2.2 第二层：用节拍表把全局拆成 15-20 个&quot;不可逆转折点&quot;</a></li>
+        <li><a href="#23-第三层情节单元的详细设计从站到戏">2.3 第三层：情节单元的详细设计（从&quot;站&quot;到&quot;戏&quot;）</a></li>
+        <li><a href="#24-第四层支线网络设计核心">2.4 第四层：支线网络设计（核心）</a></li>
+        <li><a href="#25-第五层章节工艺每章都要有推进">2.5 第五层：章节工艺——&ldquo;每章都要有推进&rdquo;</a></li>
+        <li><a href="#26-大纲的三级体系总纲--卷纲--细纲">2.6 大纲的三级体系：总纲 / 卷纲 / 细纲</a></li>
+        <li><a href="#27-避免卡文的工作流">2.7 避免卡文的工作流</a></li>
+        <li><a href="#28-章节六项自检清单防注水防断裂">2.8 章节六项自检清单（防注水、防断裂）</a></li>
+        <li><a href="#29-把上面串成一条可执行流水线落地清单">2.9 把上面串成一条可执行流水线（落地清单）</a></li>
+        <li><a href="#210-落地部分的收束">2.10 落地部分的收束</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三部分ai-协同在每一层流水线上人和-ai-各干什么">第三部分　AI 协同：在每一层流水线上，人和 AI 各干什么</a>
+      <ul>
+        <li><a href="#30-一条总原则ai-管发散与一致性人管判断与独创性">3.0 一条总原则：AI 管&quot;发散与一致性&quot;，人管&quot;判断与独创性&quot;</a></li>
+        <li><a href="#31-逐层的人机分工">3.1 逐层的人机分工</a></li>
+        <li><a href="#32-一个可复用的人机协同回合模板">3.2 一个可复用的&quot;人机协同回合&quot;模板</a></li>
+        <li><a href="#33-协同的三条红线避免-ai-把故事写平">3.3 协同的三条红线（避免 AI 把故事写&quot;平&quot;）</a></li>
+        <li><a href="#34-ai-协同部分的收束">3.4 AI 协同部分的收束</a></li>
+      </ul>
+    </li>
+    <li><a href="#附录可直接填写的模板工具">附录　可直接填写的模板工具</a>
+      <ul>
+        <li><a href="#附录-a五诫填空表全局价值冲突">附录 A　五诫填空表（全局价值冲突）</a></li>
+        <li><a href="#附录-b节拍表模板15-20-个转折点">附录 B　节拍表模板（15-20 个转折点）</a></li>
+        <li><a href="#附录-c支线规划表">附录 C　支线规划表</a></li>
+        <li><a href="#附录-d情节单元设计表每场戏一行">附录 D　情节单元设计表（每场戏一行）</a></li>
+        <li><a href="#附录-e章纲模板每章一行">附录 E　章纲模板（每章一行）</a></li>
+        <li><a href="#附录-f信息差表">附录 F　信息差表</a></li>
+        <li><a href="#附录-g伏笔表">附录 G　伏笔表</a></li>
+        <li><a href="#附录-h章节六项自检清单">附录 H　章节六项自检清单</a></li>
+        <li><a href="#附录-i人机协同回合模板每章每节一轮">附录 I　人机协同回合模板（每章/每节一轮）</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考来源">参考来源</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/layered-information-collection/">← 信息获取的分层方法</a>
+        
+        
+        <a class="next" href="/posts/how-to-write-about-the-environment/">环境描写的本质、原理与分类型实践 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

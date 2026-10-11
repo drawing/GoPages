@@ -70,7 +70,7 @@
         <div class="post-meta">
             <time datetime="2014-05-18">2014-05-18</time>
             <span class="sep">·</span>
-            <span>4297 字</span>
+            <span>4299 字</span>
             <span class="sep">·</span>
             <span>约 9 分钟</span>
             
@@ -81,15 +81,15 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <h1 id="slab-介绍">slab 介绍</h1>
+            <h2 id="slab-介绍">slab 介绍</h2>
 <p>内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。</p>
-<p>Linux内核一种分配内存的方式是alloc_pages，使用伙伴算法，但这个只适应于按页分配，如果需要几个字节的内存都分配4k，显然会是极大的浪费，所以内核又提供了一种小内存的分配方式，称之为slab，另外还有两种可选的分配方式，slob和slub，slob是为了在嵌入式环境中使用，slub在一些大型设备中币slab有更优秀的性能。但作为程序开发者来说，无需关心内核选用了哪种分配方式，三者具有相同的接口，调用者可以忽略其中的差别。</p>
+<p>Linux内核一种分配内存的方式是alloc_pages，使用伙伴算法，但这个只适应于按页分配，如果需要几个字节的内存都分配4k，显然会是极大的浪费，所以内核又提供了一种小内存的分配方式，称之为slab，另外还有两种可选的分配方式，slob和slub，slob是为了在嵌入式环境中使用，slub在一些大型设备中比slab有更优秀的性能。但作为程序开发者来说，无需关心内核选用了哪种分配方式，三者具有相同的接口，调用者可以忽略其中的差别。</p>
 <p>因为在内核中需要频繁分配同类型的对象，比如频繁分配socket，task_struct等结构体对象，slab一个核心思想就是一个slab分配器只分配一种对象，这样做的好处便是每个slab只分配等大小的内存，能够很好的兼顾效率和内存碎片的问题，当然slab最终也是通过alloc_pages按页分配的内存。</p>
-<h2 id="直观认识">直观认识</h2>
+<h3 id="直观认识">直观认识</h3>
 <p>先来通过命令直观的了解一下slab的情况：</p>
 <pre><code>cat /proc/slabinfo
 slabinfo - version: 2.1
-# name                 : tunables    : slabdata   
+# name                 : tunables    : slabdata
 kmalloc_dma-512        8      8    512    8    1 : tunables    0    0    0 : slabdata      1      1      0
 UDPLITEv6              0      0    704   11    2 : tunables    0    0    0 : slabdata      0      0      0
 UDPv6                 11     11    704   11    2 : tunables    0    0    0 : slabdata      1      1      0
@@ -99,181 +99,179 @@ kmalloc-192          352    420    192   21    1 : tunables    0    0    0 : sla
 kmalloc-96         14293  14322     96   42    1 : tunables    0    0    0 : slabdata    341    341      0
 </code></pre>
 <p>可以很直观的看到每种对象的slab分配情况，从名称不难看出每种slab的作用，从名字kmalloc-8等也能猜测出这是调用kmalloc时分配的内存，内存也是按照一定规则递增分配。</p>
-<h2 id="结构">结构</h2>
-<p>slab分配器的结构如下：</p>
-<p><img src="/keep/2014/0_kernel-slab-design.gif" alt="slab allocator"></p>
-<p>每种具体的内存分配器都由kmem_cache表示，多个kmem_cache组成分配器链，kmem_cache又由三部分组成，slabs_full表示已经完全分配出去的slab，slabs_partial表示部分分配，slabs_empty表示未进行分配。具体的实现原理分析可以放到最后，这里可以查看一下如何使用：</p>
+<h3 id="结构">结构</h3>
+<p>slab分配器的核心结构如下：每种具体的内存分配器都由kmem_cache表示，多个kmem_cache组成分配器链，kmem_cache又由三部分组成，slabs_full表示已经完全分配出去的slab，slabs_partial表示部分分配，slabs_free表示未进行分配。具体的实现原理分析可以放到最后，这里可以查看一下如何使用：</p>
 <pre><code>// 定义一个slab实例
-struct struct kmem_cache * test_cache;
+struct kmem_cache * test_cache;
 // 创建一个新缓存
 struct kmem_cache *kmem_cache_create(const char *, size_t, size_t,
                         unsigned long,
                         void (*)(void *));
 // 销毁缓存
-void kmem_cache_destroy(struct kmem_cache *); 
+void kmem_cache_destroy(struct kmem_cache *);
 // 分配内存
 void *kmem_cache_alloc(struct kmem_cache *, gfp_t);
 // 释放内存
 void kmem_cache_free(struct kmem_cache *, void *);
 </code></pre>
-<h2 id="用法例子">用法例子</h2>
-<p>接下来可以写一段代码来体验一下slab的用法，这里在 Linux字符设备框架 的基础上添加代码实现：</p>
-<pre><code>#include&lt;linux/init.h&gt; 
-#include&lt;linux/module.h&gt; 
- 
-#include&lt;linux/fs.h&gt; 
-#include&lt;linux/types.h&gt; 
-#include&lt;linux/cdev.h&gt; 
-#include&lt;linux/mm.h&gt; 
-#include&lt;linux/sched.h&gt; 
-#include&lt;asm/io.h&gt; 
-#include&lt;asm/uaccess.h&gt; 
-#include&lt;asm/system.h&gt; 
- 
-#include&lt;linux/device.h&gt; 
- 
-#define OBJECT_SIZE        27 
-#define OBJECT_NUM        10 
-dev_t devno; 
-struct class * simple_class; 
-static struct cdev cdev; 
- 
-struct kmem_cache * cppbreak_cache; 
- 
-struct cache_object { 
-    void * object; 
-    struct list_head list; 
-}; 
- 
-LIST_HEAD(head); 
- 
-ssize_t simple_write(struct file * filp, 
-    const char __user * buf, size_t size, loff_t * ppos) 
-{ 
-    char command[OBJECT_SIZE] = {}; 
-    int num = 0; 
-    int i = 0; 
-    if (size &gt;= OBJECT_SIZE || size &lt; 3) { 
-        return -EFAULT; 
-    } 
-    if (copy_from_user(command, buf, size)) 
-        return -EFAULT; 
-    command[size] = '0'; 
- 
-    printk(&quot;Cache name is %s\n&quot;, kmem_cache_name(cppbreak_cache)); 
-    printk(&quot;Cache object size is %d\n&quot;, kmem_cache_size(cppbreak_cache)); 
- 
-    num = simple_strtol(command + 2, NULL, 10); 
- 
-    printk(&quot;command is %s, num=%d\n&quot;, command, num); 
-    if (command[0] == 'i') { 
-        for (i = 0; i &lt; num; i++) { 
-            struct cache_object * object = (struct cache_object *)kmem_cache_alloc(cppbreak_cache, GFP_KERNEL); 
-            list_add_tail(&amp;object-&gt;list, &amp;head); 
-        } 
-    } 
-    else if (command[0] == 'd') { 
-        for (i = 0; i &lt; num &amp;&amp; !list_empty(&amp;head); i++) { 
-            struct cache_object * object = 
-                (struct cache_object *)list_entry( 
-                    head.next, 
-                    struct cache_object, 
-                    list); 
-            list_del(&amp;object-&gt;list); 
-            kmem_cache_free(cppbreak_cache, object); 
-        } 
-    } 
-    else { 
-        return -EFAULT; 
-    } 
-    return size; 
-} 
- 
-int simple_open(struct inode * pnode, struct file * pfile) 
-{ 
-    printk(KERN_INFO &quot;open simple\n&quot;); 
-    return 0; 
-} 
- 
-int simple_release(struct inode * pnode, struct file * pfile) 
-{ 
-    printk(KERN_INFO &quot;close simple\n&quot;); 
-    return 0; 
-} 
- 
-static struct file_operations simple_op =  
-{ 
-    .owner = THIS_MODULE, 
-    .write = simple_write, 
-    .open = simple_open, 
-    .release = simple_release, 
-}; 
- 
-static int __init initialization(void) 
-{ 
-    int result; 
- 
-    result = alloc_chrdev_region(&amp;devno, 0, 1, &quot;simple&quot;); 
-    if (result &lt; 0) 
-        return result; 
- 
-    cdev_init(&amp;cdev, &amp;simple_op); 
-    result = cdev_add(&amp;cdev, devno, 1); 
- 
-    simple_class = class_create(THIS_MODULE, &quot;simple&quot;); 
-    device_create(simple_class, NULL, devno, NULL, &quot;simple&quot;); 
- 
-    printk(KERN_INFO &quot; init simple\n&quot;); 
- 
-    cppbreak_cache = kmem_cache_create(&quot;cppbreak&quot;, OBJECT_SIZE, 0, SLAB_HWCACHE_ALIGN, NULL); 
-    if (cppbreak_cache == NULL) { 
-        printk(KERN_INFO &quot; kmem_cache_create failed\n&quot;); 
-        return -10; 
-    } 
-    printk(KERN_INFO &quot; kmem_cache_create succ\n&quot;); 
-    return result; 
-} 
- 
-static void __exit cleanup(void) 
-{ 
-    if (cppbreak_cache) { 
-        kmem_cache_destroy(cppbreak_cache); 
-        printk(KERN_INFO &quot; kmem_cache_destroy succ\n&quot;); 
-    } 
-    device_destroy(simple_class, devno); 
-    class_destroy(simple_class); 
- 
-    cdev_del(&amp;cdev); 
-    unregister_chrdev_region(devno, 1); 
-    printk(KERN_INFO &quot; cleanup simple\n&quot;); 
-} 
- 
-module_init(initialization); 
-module_exit(cleanup); 
- 
-MODULE_AUTHOR(&quot;cppbreak@gmail.com&quot;); 
-MODULE_DESCRIPTION(&quot;slab tester&quot;); 
-MODULE_VERSION(&quot;V0.1&quot;); 
-MODULE_LICENSE(&quot;Dual BSD/GPL&quot;); 
+<h3 id="用法例子">用法例子</h3>
+<p>接下来可以写一段代码来体验一下slab的用法，这里在 <a href="/posts/linux-character-driver/">Linux字符设备驱动开发</a> 的基础上添加代码实现：</p>
+<pre><code>#include&lt;linux/init.h&gt;
+#include&lt;linux/module.h&gt;
+
+#include&lt;linux/fs.h&gt;
+#include&lt;linux/types.h&gt;
+#include&lt;linux/cdev.h&gt;
+#include&lt;linux/mm.h&gt;
+#include&lt;linux/sched.h&gt;
+#include&lt;asm/io.h&gt;
+#include&lt;asm/uaccess.h&gt;
+#include&lt;asm/system.h&gt;
+
+#include&lt;linux/device.h&gt;
+
+#define OBJECT_SIZE        27
+#define OBJECT_NUM        10
+dev_t devno;
+struct class * simple_class;
+static struct cdev cdev;
+
+struct kmem_cache * cppbreak_cache;
+
+struct cache_object {
+    void * object;
+    struct list_head list;
+};
+
+LIST_HEAD(head);
+
+ssize_t simple_write(struct file * filp,
+    const char __user * buf, size_t size, loff_t * ppos)
+{
+    char command[OBJECT_SIZE] = {};
+    int num = 0;
+    int i = 0;
+    if (size &gt;= OBJECT_SIZE || size &lt; 3) {
+        return -EFAULT;
+    }
+    if (copy_from_user(command, buf, size))
+        return -EFAULT;
+    command[size] = '\0';
+
+    printk(&quot;Cache name is %s\n&quot;, kmem_cache_name(cppbreak_cache));
+    printk(&quot;Cache object size is %d\n&quot;, kmem_cache_size(cppbreak_cache));
+
+    num = simple_strtol(command + 2, NULL, 10);
+
+    printk(&quot;command is %s, num=%d\n&quot;, command, num);
+    if (command[0] == 'i') {
+        for (i = 0; i &lt; num; i++) {
+            struct cache_object * object = (struct cache_object *)kmem_cache_alloc(cppbreak_cache, GFP_KERNEL);
+            list_add_tail(&amp;object-&gt;list, &amp;head);
+        }
+    }
+    else if (command[0] == 'd') {
+        for (i = 0; i &lt; num &amp;&amp; !list_empty(&amp;head); i++) {
+            struct cache_object * object =
+                (struct cache_object *)list_entry(
+                    head.next,
+                    struct cache_object,
+                    list);
+            list_del(&amp;object-&gt;list);
+            kmem_cache_free(cppbreak_cache, object);
+        }
+    }
+    else {
+        return -EFAULT;
+    }
+    return size;
+}
+
+int simple_open(struct inode * pnode, struct file * pfile)
+{
+    printk(KERN_INFO &quot;open simple\n&quot;);
+    return 0;
+}
+
+int simple_release(struct inode * pnode, struct file * pfile)
+{
+    printk(KERN_INFO &quot;close simple\n&quot;);
+    return 0;
+}
+
+static struct file_operations simple_op =
+{
+    .owner = THIS_MODULE,
+    .write = simple_write,
+    .open = simple_open,
+    .release = simple_release,
+};
+
+static int __init initialization(void)
+{
+    int result;
+
+    result = alloc_chrdev_region(&amp;devno, 0, 1, &quot;simple&quot;);
+    if (result &lt; 0)
+        return result;
+
+    cdev_init(&amp;cdev, &amp;simple_op);
+    result = cdev_add(&amp;cdev, devno, 1);
+
+    simple_class = class_create(THIS_MODULE, &quot;simple&quot;);
+    device_create(simple_class, NULL, devno, NULL, &quot;simple&quot;);
+
+    printk(KERN_INFO &quot; init simple\n&quot;);
+
+    cppbreak_cache = kmem_cache_create(&quot;cppbreak&quot;, OBJECT_SIZE, 0, SLAB_HWCACHE_ALIGN, NULL);
+    if (cppbreak_cache == NULL) {
+        printk(KERN_INFO &quot; kmem_cache_create failed\n&quot;);
+        return -10;
+    }
+    printk(KERN_INFO &quot; kmem_cache_create succ\n&quot;);
+    return result;
+}
+
+static void __exit cleanup(void)
+{
+    if (cppbreak_cache) {
+        kmem_cache_destroy(cppbreak_cache);
+        printk(KERN_INFO &quot; kmem_cache_destroy succ\n&quot;);
+    }
+    device_destroy(simple_class, devno);
+    class_destroy(simple_class);
+
+    cdev_del(&amp;cdev);
+    unregister_chrdev_region(devno, 1);
+    printk(KERN_INFO &quot; cleanup simple\n&quot;);
+}
+
+module_init(initialization);
+module_exit(cleanup);
+
+MODULE_AUTHOR(&quot;cppbreak@gmail.com&quot;);
+MODULE_DESCRIPTION(&quot;slab tester&quot;);
+MODULE_VERSION(&quot;V0.1&quot;);
+MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
 </code></pre>
-<p>这里的代码比较简单，modprobe 模块时创建一个文件系统节点和slab分配器，之后便可在<code>echo “i n” &gt; /dev/simple</code> 来分配n个object，<code>echo “d n” &gt; /dev/simple</code> 来释放n个object。关于内核链表的应用，可以查看 内核数据结构-链表。</p>
-<p>使用modprobe加载内核之后，便可看到 /proc/slabinfo 增加了 <code>cppbreak_slab</code> 节点，可以看到<code>object_size</code>信息，之后便可通过添加节点删除节点来查看响应的分配数值变化。</p>
+<p>这里的代码比较简单，modprobe 模块时创建一个文件系统节点和slab分配器，之后便可在<code>echo “i n” &gt; /dev/simple</code> 来分配n个object，<code>echo “d n” &gt; /dev/simple</code> 来释放n个object。关于内核链表的应用，可以查看 <a href="/posts/linux-kernel-data-structure/">内核数据结构-链表</a>。</p>
+<p>使用modprobe加载内核之后，便可看到 /proc/slabinfo 增加了 <code>cppbreak</code> 节点，可以看到<code>object_size</code>信息，之后便可通过添加节点删除节点来查看响应的分配数值变化。</p>
 <pre><code>[root@localhost module]# insmod simple.ko
 [root@localhost module]# cat /proc/slabinfo | grep cppbreak
 cppbreak               0      0     32  112    1 : tunables  120   60    0 : slabdata      0      0      0
-[root@localhost module]# echo &quot;i 10&quot; &gt; /dev/simple 
+[root@localhost module]# echo &quot;i 10&quot; &gt; /dev/simple
 [root@localhost module]# cat /proc/slabinfo | grep cppbreak
 cppbreak              10    112     32  112    1 : tunables  120   60    0 : slabdata      1      1      0
-[root@localhost module]# echo &quot;d 10&quot; &gt; /dev/simple 
+[root@localhost module]# echo &quot;d 10&quot; &gt; /dev/simple
 [root@localhost module]# cat /proc/slabinfo | grep cppbreak
 cppbreak               5    112     32  112    1 : tunables  120   60    0 : slabdata      1      1      0
 [root@localhost module]#
 </code></pre>
 <p>这里便介绍了slab的调用方法，具体的细节和实现过程需要下篇分解了。</p>
-<h1 id="slab-实现">slab 实现</h1>
-<p>slab 除了作为内存分配器以外，还有一个重要的功能便是做CPU的高速缓存，slab会把当前cpu释放的对象保存在对应cpu的数组上，这样如果下次还是这个cpu分配相同的对象，直接从对应数组返回，这里利用了cpu的告诉缓存，cpu刚释放的空间仍然存在于它的高速缓存中的概率会很大。</p>
+<h2 id="slab-实现">slab 实现</h2>
+<p>slab 除了作为内存分配器以外，还有一个重要的功能便是做CPU的高速缓存，slab会把当前cpu释放的对象保存在对应cpu的数组上，这样如果下次还是这个cpu分配相同的对象，直接从对应数组返回，这里利用了cpu的高速缓存，cpu刚释放的空间仍然存在于它的高速缓存中的概率会很大。</p>
 <p>分析slab的具体实现。首先可以浏览一下关键数据结构 kmem_cache 的实现（注意这里结构体的定义有三个分别是slab，slub，slob的实现，slab的实现位于文件 include/linux/slab_def.h）</p>
-<h2 id="第一部分kmem_cache-结构体">第一部分：kmem_cache 结构体</h2>
+<h3 id="第一部分kmem_cache-结构体">第一部分：kmem_cache 结构体</h3>
 <p>根据内核代码注释，kmem_cache分为6个部分，第一部分是 Cache tunables</p>
 <pre><code>struct kmem_cache {
 /* 1) Cache tunables. Protected by cache_chain_mutex */
@@ -288,7 +286,7 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 </code></pre>
 <p>batchcount 表示在per-CPU列表为空的情况下，从缓存的slab获取对象的数目。limit指定per-CPU列表中保存的对象最大数目，如果超过该值，内核会将batchcount个对象返回到slab。这里的参数便是与cpu高速缓存相关的控制参数。</p>
 <p><code>buffer_size</code>表示缓存管理对象的长度。</p>
-<h2 id="第二部分">第二部分：</h2>
+<h3 id="第二部分">第二部分</h3>
 <pre><code>struct kmem_cache {
 		...
 /* 2) touched by every alloc &amp; free from the backend */
@@ -298,7 +296,7 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 </code></pre>
 <p>num 是每个slab中的object数量。</p>
-<h2 id="第三部分">第三部分：</h2>
+<h3 id="第三部分">第三部分</h3>
 <pre><code>struct kmem_cache {
 		...
 /* 3) cache_grow/shrink */
@@ -319,8 +317,8 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 		...
 };
 </code></pre>
-<p>这里于分配相关的参数，主要的参数是颜色范围。</p>
-<h2 id="第四部分">第四部分：</h2>
+<p>这里与分配相关的参数，主要的参数是颜色范围。</p>
+<h3 id="第四部分">第四部分</h3>
 <pre><code>struct kmem_cache {
 		...
 /* 4) cache creation/removal */
@@ -333,7 +331,7 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 };
 </code></pre>
 <p>这部分存储了缓存的名称和缓存的list_head节点。</p>
-<h2 id="第五部分">第五部分</h2>
+<h3 id="第五部分">第五部分</h3>
 <p>主要是统计之用，开启了<code>CONFIG_DEBUG_SLAB</code>宏才会生效，与slab分配算法无关。</p>
 <pre><code>struct kmem_cache {
 		...
@@ -363,7 +361,7 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 		...
 };
 </code></pre>
-<h2 id="第六部分">第六部分</h2>
+<h3 id="第六部分">第六部分</h3>
 <pre><code>struct kmem_cache {
 		...
 /* 6) per-cpu/per-node data, touched during every alloc/free */
@@ -379,10 +377,10 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 		...
 };
 </code></pre>
-<p>最后这部分是per-CPU相关变量，array很容易理解，既是每个cpu对应的数组。另外一个成员nodelists存储了 <code>slabs_partia</code>l，<code>slabs_full</code>，<code>slabs_free</code>链表，并记录链表空闲节点等信息，这个结构体便是给per-CPU数组提供object的缓存池，注意这里是一个指针的指针，是 <code>kmem_list3</code> 的二维数组，其中第一个维度是与cpu最接近的内存块索引。</p>
-<h1 id="创建过程">创建过程</h1>
+<p>最后这部分是per-CPU相关变量，array很容易理解，即是每个cpu对应的数组。另外一个成员nodelists存储了 <code>slabs_partial</code>，<code>slabs_full</code>，<code>slabs_free</code>链表，并记录链表空闲节点等信息，这个结构体便是给per-CPU数组提供object的缓存池，注意这里是一个指针的指针，是 <code>kmem_list3</code> 的二维数组，其中第一个维度是与cpu最接近的内存块索引。</p>
+<h2 id="创建过程">创建过程</h2>
 <p>接下来看<code>kmem_cache</code>节点的创建过程，<code>kmem_cache_create</code> 分为几个部分：</p>
-<h2 id="一检查参数的合理性">一、检查参数的合理性</h2>
+<h3 id="一检查参数的合理性">一、检查参数的合理性</h3>
 <pre><code>if (!name || in_interrupt() || (size &lt; BYTES_PER_WORD) ||             size &gt; KMALLOC_MAX_SIZE) {
         printk(KERN_ERR &quot;%s: Early error in slab %s\n&quot;, __func__,
                         name);
@@ -390,20 +388,20 @@ cppbreak               5    112     32  112    1 : tunables  120   60    0 : sla
 }
 </code></pre>
 <p>查看名字是否为空，分配大小是否大于分配的最大值KMALLOC_MAX_SIZE，是否小于CPU字长等，之后进行了去重检测，防止创建相同名称的缓存。</p>
-<h2 id="二计算对齐">二、计算对齐</h2>
+<h3 id="二计算对齐">二、计算对齐</h3>
 <pre><code>if (size &amp; (BYTES_PER_WORD - 1)) {
         size += (BYTES_PER_WORD - 1);
         size &amp;= ~(BYTES_PER_WORD - 1);
 }
 </code></pre>
-<p>按照处理器字长对其。之后根据flag 的ARCH参数计算对齐。</p>
-<h2 id="三分配缓存结构">三、分配缓存结构</h2>
+<p>按照处理器字长对齐。之后根据flag 的ARCH参数计算对齐。</p>
+<h3 id="三分配缓存结构">三、分配缓存结构</h3>
 <pre><code>cachep = kmem_cache_zalloc(&amp;cache_cache, gfp);
 if (!cachep)
         goto oops;
 </code></pre>
-<p>cache_cache 是缓存的slab分配器，这里创建出一个新的cache实例，存入cachep，这里就会出现一个问题，便是mem_cache的创建需要调用alloc，但是cache_cache是如何分配出来的呢，这里涉及到slab的初始化问题，之后再讨论。</p>
-<h2 id="四确定slab头的存储位置">四、确定slab头的存储位置</h2>
+<p>cache_cache 是缓存的slab分配器，这里创建出一个新的cache实例，存入cachep，这里就会出现一个问题，便是kmem_cache的创建需要调用alloc，但是cache_cache是如何分配出来的呢，这里涉及到slab的初始化问题，之后再讨论。</p>
+<h3 id="四确定slab头的存储位置">四、确定slab头的存储位置</h3>
 <pre><code>if ((size &gt;= (PAGE_SIZE &gt;&gt; 3)) &amp;&amp; !slab_early_init &amp;&amp;
     !(flags &amp; SLAB_NOLEAKTRACE))
         /*
@@ -413,22 +411,23 @@ if (!cachep)
         flags |= CFLGS_OFF_SLAB;
 </code></pre>
 <p>如果object大小大于页帧的八分之一，则将管理数据放到slab之外。</p>
-<h2 id="五calculate_slab_order">五、calculate_slab_order</h2>
+<h3 id="五calculate_slab_order">五、calculate_slab_order</h3>
 <p>现在已经确定缓存对象的size，现在需要估算slab的长度，函数<code>calculate_slab_order</code>通过对象size，align和flags计算slab应该使用多少页帧，如果页帧过少则存储的对象过少，增加分配管理的开销，如果页帧过多，则空间过于浪费。</p>
-<pre><code>for (gfporder = 0; gfporder
+<pre><code>for (gfporder = 0; gfporder &lt;= KMALLOC_MAX_ORDER; gfporder++) {
 </code></pre>
 <p>函数循环中gfporder为页帧数量，对指定的页帧，通过函数cache_estimate计算能够存储的数量num以及浪费的空间remainder，计算的公式为： PAGE_SIZE &laquo; gfporder = head + num * size + left_over。
 如果对象存储在slab之外，则<code>head（mgmt_size）</code>为0，如果对象存储于slab之内，则 <code>head = sizeof(struct slab) + num*sizeof(kmem_bufctl_t)</code>。接着<code>calculate_slab_order</code>之后便是循环退出的各种条件。</p>
-<h2 id="六着色">六、着色</h2>
+<h3 id="六着色">六、着色</h3>
 <pre><code>cachep-&gt;colour_off = cache_line_size();
 /* Offset must be a multiple of the alignment. */
-if (cachep-&gt;colour_off &lt; align)                 cachep-&gt;colour_off = align;
+if (cachep-&gt;colour_off &lt; align)
+	cachep-&gt;colour_off = align;
 cachep-&gt;colour = left_over / cachep-&gt;colour_off;
 </code></pre>
 <p><code>colour_off</code> 计算颜色偏移，colour颜色数量，紧接着初始化函数对cache的变量赋值。</p>
-<h2 id="七setup_cpu_cache">七、setup_cpu_cache</h2>
+<h3 id="七setup_cpu_cache">七、setup_cpu_cache</h3>
 <p>调用enable_cpucache初始化per-CPU变量。</p>
-<h2 id="八加入全局链表">八、加入全局链表</h2>
+<h3 id="八加入全局链表">八、加入全局链表</h3>
 <p>函数的最后加入全局链表<code>cache_chain</code>。</p>
 <p>接下来看缓存分配过程，<code>kmem_cache_alloc</code>，函数调用<code>__cache_alloc</code> -&gt; <code>____cache_alloc</code> 完成主要功能：</p>
 <pre><code>ac = cpu_cache_get(cachep);
@@ -443,7 +442,7 @@ if (likely(ac-&gt;avail)) {
 cache_grow 执行时首先计算颜色值，颜色值加一，如果超过最大值，则返回从0开始，这里的颜色值主要是一个偏移。</p>
 <p>slab所需的内存使用是<code>kmem_getpages</code>从伙伴系统分配的，如果slab头存储在slab之外，则调用 <code>alloc_slabmgmt</code>函数分配所需要的空间。</p>
 <p>最后对slab对象初始化之后添加到nodelists的free链表中。</p>
-<p>分配完毕如果对象对象释放，使用函数 <code>kmem_cache_free</code>，释放过程如果per-CPU中尚有剩余位置，讲对象放入对应数组中，如果没有，则释放到对应的nodelists中。</p>
+<p>分配完毕如果对象释放，使用函数 <code>kmem_cache_free</code>，释放过程如果per-CPU中尚有剩余位置，将对象放入对应数组中，如果没有，则释放到对应的nodelists中。</p>
 
         </div>
         
@@ -453,29 +452,35 @@ cache_grow 执行时首先计算颜色值，颜色值加一，如果超过最大
                 <summary>目录</summary>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#直观认识">直观认识</a></li>
-    <li><a href="#结构">结构</a></li>
-    <li><a href="#用法例子">用法例子</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#第一部分kmem_cache-结构体">第一部分：kmem_cache 结构体</a></li>
-    <li><a href="#第二部分">第二部分：</a></li>
-    <li><a href="#第三部分">第三部分：</a></li>
-    <li><a href="#第四部分">第四部分：</a></li>
-    <li><a href="#第五部分">第五部分</a></li>
-    <li><a href="#第六部分">第六部分</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#一检查参数的合理性">一、检查参数的合理性</a></li>
-    <li><a href="#二计算对齐">二、计算对齐</a></li>
-    <li><a href="#三分配缓存结构">三、分配缓存结构</a></li>
-    <li><a href="#四确定slab头的存储位置">四、确定slab头的存储位置</a></li>
-    <li><a href="#五calculate_slab_order">五、calculate_slab_order</a></li>
-    <li><a href="#六着色">六、着色</a></li>
-    <li><a href="#七setup_cpu_cache">七、setup_cpu_cache</a></li>
-    <li><a href="#八加入全局链表">八、加入全局链表</a></li>
+    <li><a href="#slab-介绍">slab 介绍</a>
+      <ul>
+        <li><a href="#直观认识">直观认识</a></li>
+        <li><a href="#结构">结构</a></li>
+        <li><a href="#用法例子">用法例子</a></li>
+      </ul>
+    </li>
+    <li><a href="#slab-实现">slab 实现</a>
+      <ul>
+        <li><a href="#第一部分kmem_cache-结构体">第一部分：kmem_cache 结构体</a></li>
+        <li><a href="#第二部分">第二部分</a></li>
+        <li><a href="#第三部分">第三部分</a></li>
+        <li><a href="#第四部分">第四部分</a></li>
+        <li><a href="#第五部分">第五部分</a></li>
+        <li><a href="#第六部分">第六部分</a></li>
+      </ul>
+    </li>
+    <li><a href="#创建过程">创建过程</a>
+      <ul>
+        <li><a href="#一检查参数的合理性">一、检查参数的合理性</a></li>
+        <li><a href="#二计算对齐">二、计算对齐</a></li>
+        <li><a href="#三分配缓存结构">三、分配缓存结构</a></li>
+        <li><a href="#四确定slab头的存储位置">四、确定slab头的存储位置</a></li>
+        <li><a href="#五calculate_slab_order">五、calculate_slab_order</a></li>
+        <li><a href="#六着色">六、着色</a></li>
+        <li><a href="#七setup_cpu_cache">七、setup_cpu_cache</a></li>
+        <li><a href="#八加入全局链表">八、加入全局链表</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
             </details>
@@ -505,6 +510,8 @@ cache_grow 执行时首先计算颜色值，颜色值加一，如果超过最大
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
 
 
 <script src="/js/toc.js" defer></script>

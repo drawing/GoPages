@@ -5,8 +5,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Linxu内核笔记-虚拟地址空间 · 闲亩</title>
-<meta name="description" content="在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+<title>Linux内核笔记-虚拟地址空间 · 闲亩</title>
+<meta name="description" content="在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
 ">
 
 <link rel="stylesheet" href="/css/style.css">
@@ -67,11 +67,11 @@
 
 <article class="post">
     <header class="post-header">
-        <h1>Linxu内核笔记-虚拟地址空间</h1>
+        <h1>Linux内核笔记-虚拟地址空间</h1>
         <div class="post-meta">
             <time datetime="2014-05-20">2014-05-20</time>
             <span class="sep">·</span>
-            <span>865 字</span>
+            <span>858 字</span>
             <span class="sep">·</span>
             <span>约 2 分钟</span>
             
@@ -82,8 +82,8 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <p>在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。</p>
-<p>在进程结构 <code>task_struct</code> 中包含一个<code>mm_struct</code>实例，这个实例便保存的进程的虚拟地址空间：</p>
+            <p>在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。</p>
+<p>在进程结构 <code>task_struct</code> 中包含一个<code>mm_struct</code>实例，这个实例便保存了进程的虚拟地址空间：</p>
 <pre><code>struct mm_struct {
         struct vm_area_struct * mmap;           /* list of VMAs */
         struct rb_root mm_rb;
@@ -91,7 +91,7 @@
         ...
 };
 </code></pre>
-<p><code>vm_area_struct</code>结构中存储映射的虚拟内存细节，每个<code>vm_area_struct</code>节点即存储在单链表mmap中，又存储于红黑树<code>mm_rb</code>中。</p>
+<p><code>vm_area_struct</code>结构中存储映射的虚拟内存细节，每个<code>vm_area_struct</code>节点既存储在单链表mmap中，又存储于红黑树<code>mm_rb</code>中。</p>
 <p>内核提供了若干函数对内存映射区域操作：</p>
 <pre><code>查找给定地址后的第一个区域  find_vma
 确认边界区间是否在一个现存的vma区域 find_vma_intersection
@@ -104,18 +104,18 @@
         .fault          = filemap_fault,
 };
 </code></pre>
-<p>虚拟地址的映射可以通过系统调用 mmap和munmap。</p>
-<p>堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层地用来讲，仅仅使用brk来扩张和收缩堆。</p>
+<p>虚拟地址的映射可以通过系统调用 mmap 和 munmap 来建立与解除。</p>
+<p>堆是进程中动态分配内存的内存区域，对程序员来说使用malloc便可分配内存，使用起来非常便捷，但是malloc在用户态做了很多操作，对底层来讲，仅仅使用brk来扩张和收缩堆。</p>
 <p>堆是连续的内存空间，扩张自下至上，<code>mm_struct</code>中包含了起始和结束地址<code>start_brk</code>和<code>brk</code>。</p>
 <p>另外系统分配虚拟地址时并不会马上关联到文件或者内存，当用户实际访问内存时才会进行分配，访问虚拟地址空间，如果内存页尚未映射，便会产生缺页异常，由系统捕获，随后调用 do_page_fault进行内存映射，这是一个非常复杂的实现。</p>
 <p>另外，内核提供了一系列函数从内核空间和用户空间交换数据：</p>
 <pre><code>copy_from_user
 get_user
-strncopy_from_user
+strncpy_from_user
 put_user
 copy_to_user
 </code></pre>
-<p>最后，每个进程都都有自己独立的虚拟空间，这里的硬件实现原理便是页表项，每个进程都有自己的一组页表项，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不看忍受了。</p>
+<p>最后，每个进程都有自己独立的虚拟空间，这里的硬件实现原理便是页表，每个进程都有自己的一组页表，fork进程时需要复制一份独立的页表项，这也是创建进程相对创建线程的瓶颈所在，如果一个进程独立的页表项很少，fork的性能会很好，如果有大量的页表项，fork的性能便不堪忍受了。</p>
 
         </div>
         
@@ -124,10 +124,10 @@ copy_to_user
 
     <nav class="post-nav">
         
-        <a class="prev" href="/posts/linux-kernel-debugging/">← Linux 内核调试</a>
+        <a class="prev" href="/posts/linux-kernel-interrupt-and-exception/">← Linux内核笔记-中断和异常</a>
         
         
-        <a class="next" href="/posts/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常 →</a>
+        <a class="next" href="/posts/linux-vfs-source/">Linux内核笔记-VFS →</a>
         
     </nav>
 </article>
@@ -144,6 +144,8 @@ copy_to_user
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
 
 
 

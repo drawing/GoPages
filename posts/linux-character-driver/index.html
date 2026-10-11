@@ -70,7 +70,7 @@
         <div class="post-meta">
             <time datetime="2014-05-11">2014-05-11</time>
             <span class="sep">·</span>
-            <span>2246 字</span>
+            <span>2247 字</span>
             <span class="sep">·</span>
             <span>约 5 分钟</span>
             
@@ -81,9 +81,9 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <h1 id="什么是字符驱动">什么是字符驱动？</h1>
-<p>所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。</p>
-<h1 id="如何实现">如何实现？</h1>
+            <h2 id="什么是字符驱动">什么是字符驱动？</h2>
+<p>所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动如硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。</p>
+<h2 id="如何实现">如何实现？</h2>
 <p>操作系统对字符设备驱动提供 file_operations 结构，该结构成员大部分都是回调函数（以下代码摘自Linux 2.6.34内核源码）：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">file_operations</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span>
@@ -180,7 +180,7 @@
 </span></span></code></pre></div><p>对于read函数，因为需要把内核态的数据返回到用户态，而二者是具有堆栈隔离的，需要借助几个函数：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">copy_from_user</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">to</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">from</span><span class="p">,</span> <span class="kt">long</span> <span class="n">n</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">copy_to_user</span><span class="p">(</span><span class="kt">void</span> <span class="n">__user</span> <span class="o">*</span><span class="n">to</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">from</span><span class="p">,</span> <span class="kt">long</span> <span class="n">n</span><span class="p">);</span>
-</span></span></code></pre></div><p>copy_from_user 是把用户态数据from拷贝至内核态内存to中，coyp_to_user与之相反，返回结果为不能被复制的字节数，如果成功，则返回0，对于内核编程，错误处理非常重要，因为一微不足道的错误就可能导致系统崩溃，所以对于函数调用，要异常小心，需要区分每一个传入参数，以及判断每一个函数返回值，read函数可以实现如下：</p>
+</span></span></code></pre></div><p>copy_from_user 是把用户态数据from拷贝至内核态内存to中，copy_to_user与之相反，返回结果为不能被复制的字节数，如果成功，则返回0，对于内核编程，错误处理非常重要，因为一个微不足道的错误就可能导致系统崩溃，所以对于函数调用，要异常小心，需要区分每一个传入参数，以及判断每一个函数返回值，read函数可以实现如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="kt">ssize_t</span> <span class="nf">simple_read</span><span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span> <span class="n">pfile</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">		<span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">loff_t</span> <span class="o">*</span> <span class="n">ppos</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">{</span>
@@ -192,7 +192,7 @@
 </span></span></code></pre></div><p>到这里回调函数都已实现，但用户态进程如何才能访问驱动呢？这还得从初始化内核时说起，要访问一个设备，需要进行三个基本操作：
 第一，对于一个设备驱动，需要分配一个设备号来唯一标识；
 第二，需要注册回调函数至文件系统，以便上层回调；
-第三，需要创建一个设备节点，挂接至/dev/下，这样用户层就可类似打开文件驱动方式打开设备驱动了。</p>
+第三，需要创建一个设备节点，挂接至/dev/下，这样用户层就可以类似打开文件的方式打开设备驱动了。</p>
 <p>由以上三点，重写设备初始化函数如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="k">static</span> <span class="kt">int</span> <span class="n">__init</span> <span class="nf">initialization</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">{</span>
@@ -304,11 +304,23 @@
         </div>
         
         
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是字符驱动">什么是字符驱动？</a></li>
+    <li><a href="#如何实现">如何实现？</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
     </div>
 
     <nav class="post-nav">
         
-        <a class="prev" href="/posts/practice-assembler-bios/">← 汇编语言练习-AT&amp;T汇编win32窗口</a>
+        <a class="prev" href="/posts/practice-assembler-bios/">← 汇编语言练习-BIOS模式下的汇编</a>
         
         
         <a class="next" href="/posts/linux-tap-tun-driver/">tun/tap 驱动源码分析 →</a>
@@ -329,6 +341,10 @@
 
 <script src="/js/theme.js" defer></script>
 
+
+
+
+<script src="/js/toc.js" defer></script>
 
 
 </body>

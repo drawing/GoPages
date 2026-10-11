@@ -10,14 +10,28 @@
 		
 		
 		
-			<lastBuildDate>Fri, 09 Oct 2026 23:00:33 +0800</lastBuildDate>
+			<lastBuildDate>Sun, 11 Oct 2026 23:00:33 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/tags/index.xml" rel="self" type="application/rss+xml" />
 			<item>
-				<title>信息</title>
-				<link>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF/</link>
+				<title>AI</title>
+				<link>https://drawing.fancymore.com/tags/ai/</link>
+				<pubDate>Sun, 11 Oct 2026 23:00:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/ai/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>写作方法</title>
+				<link>https://drawing.fancymore.com/tags/%E5%86%99%E4%BD%9C%E6%96%B9%E6%B3%95/</link>
+				<pubDate>Sun, 11 Oct 2026 23:00:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E5%86%99%E4%BD%9C%E6%96%B9%E6%B3%95/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>学习方法</title>
+				<link>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</link>
 				<pubDate>Fri, 09 Oct 2026 23:00:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF/</guid>
+				<guid>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -35,10 +49,10 @@
 				<description></description>
 			</item>
 			<item>
-				<title>技术</title>
-				<link>https://drawing.fancymore.com/tags/%E6%8A%80%E6%9C%AF/</link>
+				<title>管理</title>
+				<link>https://drawing.fancymore.com/tags/%E7%AE%A1%E7%90%86/</link>
 				<pubDate>Sat, 26 Sep 2015 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E6%8A%80%E6%9C%AF/</guid>
+				<guid>https://drawing.fancymore.com/tags/%E7%AE%A1%E7%90%86/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -60,6 +74,20 @@
 				<link>https://drawing.fancymore.com/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</link>
 				<pubDate>Mon, 28 Apr 2014 01:18:03 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>职业发展</title>
+				<link>https://drawing.fancymore.com/tags/%E8%81%8C%E4%B8%9A%E5%8F%91%E5%B1%95/</link>
+				<pubDate>Thu, 02 Jun 2011 01:16:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E8%81%8C%E4%B8%9A%E5%8F%91%E5%B1%95/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>沟通</title>
+				<link>https://drawing.fancymore.com/tags/%E6%B2%9F%E9%80%9A/</link>
+				<pubDate>Wed, 01 Jun 2011 01:16:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E6%B2%9F%E9%80%9A/</guid>
 				<description></description>
 			</item>
 	</channel>

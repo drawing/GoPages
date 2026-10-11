@@ -2,46 +2,64 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://drawing.fancymore.com/tags/ai/</loc>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
+  </url><url>
     <loc>https://drawing.fancymore.com/categories/</loc>
-    <lastmod>2026-10-09T23:00:33+08:00</lastmod>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/</loc>
-    <lastmod>2026-10-09T23:00:33+08:00</lastmod>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/</loc>
-    <lastmod>2026-10-09T23:00:33+08:00</lastmod>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/how-to-write-about-the-environment/</loc>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/</loc>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/categories/%E5%86%99%E4%BD%9C/</loc>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/tags/%E5%86%99%E4%BD%9C%E6%96%B9%E6%B3%95/</loc>
+    <lastmod>2026-10-11T23:00:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/plot-design-craft/</loc>
+    <lastmod>2026-10-11T10:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/</loc>
     <lastmod>2026-10-09T23:00:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF/</loc>
+    <loc>https://drawing.fancymore.com/posts/layered-information-collection/</loc>
     <lastmod>2026-10-09T23:00:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/collect-information/</loc>
+    <loc>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</loc>
     <lastmod>2026-10-09T23:00:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/categories/%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2026-10-09T23:00:33+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/categories/%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</loc>
+    <loc>https://drawing.fancymore.com/posts/alert-optimization-practice/</loc>
     <lastmod>2023-04-11T22:50:04+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2023-04-11T22:50:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/swig_cross_language_call/</loc>
+    <loc>https://drawing.fancymore.com/categories/%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/swig-cross-language-call/</loc>
     <lastmod>2023-04-10T22:40:04+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2023-04-10T22:40:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/tags/%E6%8A%80%E6%9C%AF/</loc>
+    <loc>https://drawing.fancymore.com/tags/%E7%AE%A1%E7%90%86/</loc>
     <lastmod>2015-09-26T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/management-training-sentiment/</loc>
+    <loc>https://drawing.fancymore.com/posts/management-training-reflections/</loc>
+    <lastmod>2015-09-26T01:16:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/categories/%E8%81%8C%E5%9C%BA/</loc>
     <lastmod>2015-09-26T01:16:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/curriculum-development/</loc>
@@ -62,7 +80,7 @@
     <loc>https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/</loc>
     <lastmod>2014-06-10T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/redis-failed-when-out-of-memory/</loc>
+    <loc>https://drawing.fancymore.com/posts/overcommit-effect-on-fork/</loc>
     <lastmod>2014-06-10T01:16:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E7%AE%97%E6%B3%95/</loc>
@@ -83,10 +101,10 @@
     <loc>https://drawing.fancymore.com/posts/linux-vfs-source/</loc>
     <lastmod>2014-05-21T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</loc>
+    <loc>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</loc>
     <lastmod>2014-05-20T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</loc>
+    <loc>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</loc>
     <lastmod>2014-05-20T01:16:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/linux-kernel-debugging/</loc>
@@ -101,13 +119,13 @@
     <loc>https://drawing.fancymore.com/posts/linux-kernel-system-call/</loc>
     <lastmod>2014-05-16T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/linux-driver-select-implement/</loc>
+    <loc>https://drawing.fancymore.com/posts/linux-driver-poll-programming/</loc>
     <lastmod>2014-05-15T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/</loc>
+    <loc>https://drawing.fancymore.com/posts/linux-kernel-wait-queue/</loc>
     <lastmod>2014-05-14T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/linux-kernel-epoll/</loc>
+    <loc>https://drawing.fancymore.com/posts/epoll-source-analysis/</loc>
     <lastmod>2014-05-13T01:16:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/linux-tap-tun-driver/</loc>
@@ -115,9 +133,6 @@
   </url><url>
     <loc>https://drawing.fancymore.com/posts/linux-character-driver/</loc>
     <lastmod>2014-05-11T01:16:33+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</loc>
-    <lastmod>2014-04-28T01:18:03+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2014-04-28T01:18:03+08:00</lastmod>
@@ -128,73 +143,79 @@
     <loc>https://drawing.fancymore.com/posts/practice-assembler-gas-win32/</loc>
     <lastmod>2014-04-27T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/practice-16-asm-real-mode.md/</loc>
+    <loc>https://drawing.fancymore.com/posts/practice-assembler-real-mode/</loc>
     <lastmod>2014-04-26T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/14.-assembler-sse-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/14-assembler-sse-instruction/</loc>
     <lastmod>2014-04-25T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/13.-assembler-mmx-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/13-assembler-mmx-instruction/</loc>
     <lastmod>2014-04-24T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/12.-assembler-float-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/12-assembler-float-instruction/</loc>
     <lastmod>2014-04-23T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/11.-assembler-precompile-macro/</loc>
+    <loc>https://drawing.fancymore.com/posts/11-assembler-preprocessor-macro/</loc>
     <lastmod>2014-04-22T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/10.-assembler-c-inline/</loc>
+    <loc>https://drawing.fancymore.com/posts/10-assembler-c-inline/</loc>
     <lastmod>2014-04-21T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/9.-assembler-function/</loc>
+    <loc>https://drawing.fancymore.com/posts/09-assembler-function/</loc>
     <lastmod>2014-04-20T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/8.-assembler-string-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/08-assembler-string-instruction/</loc>
     <lastmod>2014-04-19T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/7.-assembler-addressing-method/</loc>
+    <loc>https://drawing.fancymore.com/posts/07-assembler-addressing-method/</loc>
     <lastmod>2014-04-18T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/6.-assembler-math-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/06-assembler-math-instruction/</loc>
     <lastmod>2014-04-17T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/5.-assembler-control-flow/</loc>
+    <loc>https://drawing.fancymore.com/posts/05-assembler-control-flow/</loc>
     <lastmod>2014-04-16T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/4.-assembler-mov-instruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/04-assembler-mov-instruction/</loc>
     <lastmod>2014-04-15T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/3.-assembler-datastruct/</loc>
+    <loc>https://drawing.fancymore.com/posts/03-assembler-data-structure/</loc>
     <lastmod>2014-04-14T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/2.-assembler-framework/</loc>
+    <loc>https://drawing.fancymore.com/posts/02-assembler-framework/</loc>
     <lastmod>2014-04-13T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/1.-assembler-register/</loc>
+    <loc>https://drawing.fancymore.com/posts/01-assembler-register/</loc>
     <lastmod>2014-04-12T01:18:03+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/0.-assembler-why-learning/</loc>
+    <loc>https://drawing.fancymore.com/posts/00-assembler-why-learning/</loc>
     <lastmod>2014-04-11T01:16:33+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/effective-executive/</loc>
     <lastmod>2011-06-03T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/become-an-influential-programmers/</loc>
+    <loc>https://drawing.fancymore.com/posts/become-an-influential-programmer/</loc>
     <lastmod>2011-06-02T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/probability-double-color/</loc>
+    <loc>https://drawing.fancymore.com/posts/lottery-winning-probability/</loc>
     <lastmod>2011-06-02T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/software-version-compare-for-design/</loc>
+    <loc>https://drawing.fancymore.com/tags/%E8%81%8C%E4%B8%9A%E5%8F%91%E5%B1%95/</loc>
+    <lastmod>2011-06-02T01:16:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/software-versioning-and-architecture/</loc>
     <lastmod>2011-06-01T22:50:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/how-to-reply-for-technology/</loc>
+    <loc>https://drawing.fancymore.com/tags/%E6%B2%9F%E9%80%9A/</loc>
     <lastmod>2011-06-01T01:16:33+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/how-to-publish-server-program/</loc>
+    <loc>https://drawing.fancymore.com/posts/technical-review-reflections/</loc>
+    <lastmod>2011-06-01T01:16:33+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/server-release-best-practices/</loc>
     <lastmod>2011-04-16T22:40:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/meaning-of-c-11/</loc>
+    <loc>https://drawing.fancymore.com/posts/cpp11-explained/</loc>
     <lastmod>2011-04-15T22:40:04+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/latex-formula/</loc>
@@ -206,7 +227,7 @@
     <loc>https://drawing.fancymore.com/posts/everything-under-control/</loc>
     <lastmod>2011-01-12T22:50:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/posts/do-best-system-design-using-paradigm/</loc>
+    <loc>https://drawing.fancymore.com/posts/system-design-paradigms/</loc>
     <lastmod>2011-01-11T22:50:04+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/how-to-understand-open-source-code/</loc>

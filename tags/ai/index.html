@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/tags/ai/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/" class="active">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+
+<p class="page-crumb">标签</p>
+
+<h1 class="page-title">AI</h1>
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/how-to-write-about-the-environment/">环境描写的本质、原理与分类型实践</a></h2>
+            
+            
+            <p class="post-summary"> 从&quot;白房间综合征&quot;的争议出发，追问环境描写到底为什么存在、什么时候必须写、什么时候可以省，以及不同类型该如何构建各自的环境。 本文可作为《高质量长篇故事 AI 创作指南》&ldquo;环境描写&quot;章节的素材底稿 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2026-10-11">2026-10-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E5%86%99%E4%BD%9C/">写作</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/plot-design-craft/">情节设计的本质与落地工艺</a></h2>
+            
+            
+            <p class="post-summary"> 从&quot;为什么俗套&quot;到&quot;主线定了之后怎么设计情节与支线&quot;的完整方法论
+引子：三个观察，一个内核 在讨论情节设计时，有三类现象反复出现：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2026-10-11">2026-10-11</time>
+                
+                <span class="sep">·</span><a href="/categories/%E5%86%99%E4%BD%9C/">写作</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
+
+
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

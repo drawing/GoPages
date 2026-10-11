@@ -67,7 +67,43 @@
 
 <h1 class="page-title">Posts</h1>
 
+
 <ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-slab-allocator/">Linux 内核 slab 分配器</a></h2>
+            
+            
+            <p class="post-summary">slab 介绍 内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-18">2014-05-18</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-data-structure/">Linux内核数据结构</a></h2>
+            
+            
+            <p class="post-summary">内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-17">2014-05-17</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
     
     <li>
         <article>
@@ -81,7 +117,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-16">2014-05-16</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -89,7 +125,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-driver-select-implement/">Linux 设备驱动轮询编程</a></h2>
+            <h2 class="post-title"><a href="/posts/linux-driver-poll-programming/">Linux 设备驱动轮询编程</a></h2>
             
             
             <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
@@ -98,7 +134,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-15">2014-05-15</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -106,16 +142,16 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-waiting-queue/">Linux 内核等待队列解析</a></h2>
+            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
             
             
-            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞 …</p>
+            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-14">2014-05-14</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -123,16 +159,16 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-epoll/">select/poll 源码分析</a></h2>
+            <h2 class="post-title"><a href="/posts/epoll-source-analysis/">epoll 源码分析</a></h2>
             
             
-            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程 …</p>
+            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，它如何高效，高效到什么程 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-13">2014-05-13</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -149,7 +185,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-12">2014-05-12</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -166,7 +202,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-11">2014-05-11</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -174,7 +210,7 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/practice-assembler-bios/">汇编语言练习-AT&amp;T汇编win32窗口</a></h2>
+            <h2 class="post-title"><a href="/posts/practice-assembler-bios/">汇编语言练习-BIOS模式下的汇编</a></h2>
             
             
             <p class="post-summary">AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
@@ -184,7 +220,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-28">2014-04-28</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -202,42 +238,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-27">2014-04-27</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/practice-16-asm-real-mode.md/">汇编语言练习-实模式下的汇编</a></h2>
-            
-            
-            <p class="post-summary">在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-26">2014-04-26</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/14.-assembler-sse-instruct/">汇编语言学习笔记(十四)-SSE指令集</a></h2>
-            
-            
-            <p class="post-summary">本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-25">2014-04-25</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -250,7 +251,7 @@
     
     <a href="/posts/page/2/">← 上一页</a>
     
-    <span class="page-info">3 / 6</span>
+    <span class="page-info">3 / 7</span>
     
     <a href="/posts/page/4/">下一页 →</a>
     

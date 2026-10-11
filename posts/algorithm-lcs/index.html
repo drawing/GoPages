@@ -6,7 +6,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>算法学习笔记-最长公共子序列 · 闲亩</title>
-<meta name="description" content="概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。 公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。 最长公共子序列：如果没有比 …">
+<meta name="description" content="概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。
+公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。
+">
 
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/chroma.css">
@@ -70,7 +72,7 @@
         <div class="post-meta">
             <time datetime="2014-06-02">2014-06-02</time>
             <span class="sep">·</span>
-            <span>929 字</span>
+            <span>943 字</span>
             <span class="sep">·</span>
             <span>约 2 分钟</span>
             
@@ -81,26 +83,26 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <h1 id="概念">概念</h1>
-<p>子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。
-公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。
-最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。</p>
-<h1 id="定义">定义</h1>
+            <h2 id="概念">概念</h2>
+<p>子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。</p>
+<p>公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。</p>
+<p>最长公共子序列：如果没有比公共子序列Z包含更多元素的公共子序列，则称Z为最长公共子序列。</p>
+<h2 id="定义">定义</h2>
 <p>问题描述：给定两个序列<code>X={x1, x2, x3, …, xm}</code>和<code>Y={y1, y2, y3, …, yn}</code>，找出X和Y的最长公共子序列。</p>
-<h1 id="解决">解决</h1>
+<h2 id="解决">解决</h2>
 <p>解决最长公共子序列一个比较直接暴力的办法是枚举所有X的子序列，检查是否同时是Y的子序列，从公共子序列中找到最长的一个。</p>
-<p>X中元素有m个，X中的子序列有<code>2^m</code>个，算法的复杂度需要指数时间，最于长序列来讲耗时过长。</p>
-<p>另一种比较合理的解决办法是<a href="/reading/algorithm-dynamic-programming.html">动态规划</a>。LCS具有最优子序列结构：</p>
+<p>X中元素有m个，X中的子序列有<code>2^m</code>个，算法的复杂度需要指数时间，对于长序列来讲耗时过长。</p>
+<p>另一种比较合理的解决办法是<a href="/posts/algorithm-dynamic-programming/">动态规划</a>。LCS具有最优子序列结构：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn} 为两个序列，Z={z1, z2, …, zk} 为X和Y的任意一个LCS。
 </span></span><span class="line"><span class="cl">	1）如果xm=yn，则 zk=xm=yn而且Z(k-1)是X(m-1)和Y(n-1)的一个LCS。
 </span></span><span class="line"><span class="cl">	2）如果xm!=yn，则zk!=xm表示Z是X(m-1)和Y的一个LCS。
 </span></span><span class="line"><span class="cl">	3）如果xm!=yn，则zk!=yn表示Z是X和Y(n-1)的一个LCS。
 </span></span></code></pre></div><p>最优子结构是使用动态规划的基础，由以上结论便可归纳出具体的计算方法：</p>
-<p>标记c[i,j]是Xi和Xj的最长公共子序列，则有：</p>
+<p>记c[i,j]为Xi和Yj的最长公共子序列的长度，则有：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	c[i,j] = 0                i=0 or j=0
 </span></span><span class="line"><span class="cl">	c[i,j] = c[i-1,j-1] + 1             i,j&gt;0 and xi == yj
-</span></span><span class="line"><span class="cl">	c[i,j] =max{c[i,j-1], c[i-1,j]}         i,j&gt;0 and xi != yj
-</span></span></code></pre></div><p>通过递归便可得到所有i,j下最长公共子序列。</p>
+</span></span><span class="line"><span class="cl">	c[i,j] = max{c[i,j-1], c[i-1,j]}    i,j&gt;0 and xi != yj
+</span></span></code></pre></div><p>通过递推便可得到所有i,j下最长公共子序列的长度。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl">	<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
@@ -145,11 +147,25 @@
 </span></span><span class="line"><span class="cl">	    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span></code></pre></div><p>如果需要得到具体的子序列，可从<code>c[i,j]</code>回溯，很容易找到最大子序列是什么，从而得到整个序列。</p>
-<h1 id="复杂度">复杂度</h1>
-<p>这里的空间复杂度和时间复杂度都是O(m+n)，如果只要得到最大公共子序列的大小，而不求具体的序列，可以优化空间复杂度，虽然结果是个二维数组，但使用的时候仅仅用到上一层，这里完全可以优化一下空间复杂度，仅用O(m)便可实现。</p>
+<h2 id="复杂度">复杂度</h2>
+<p>LCS的时间复杂度是O(m<em>n)，空间复杂度也是O(m</em>n)。如果只要得到最大公共子序列的大小，而不求具体的序列，可以优化空间复杂度，虽然结果是个二维数组，但计算的时候仅仅用到上一层，完全可以优化一下空间复杂度，仅用O(m)便可实现。</p>
 
         </div>
         
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概念">概念</a></li>
+    <li><a href="#定义">定义</a></li>
+    <li><a href="#解决">解决</a></li>
+    <li><a href="#复杂度">复杂度</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
         
     </div>
 
@@ -158,7 +174,7 @@
         <a class="prev" href="/posts/algorithm-dynamic-programming/">← 算法学习笔记-动态规划</a>
         
         
-        <a class="next" href="/posts/redis-failed-when-out-of-memory/">overcommit 对 fork 的影响 →</a>
+        <a class="next" href="/posts/overcommit-effect-on-fork/">overcommit 对 fork 的影响 →</a>
         
     </nav>
 </article>
@@ -176,6 +192,10 @@
 
 <script src="/js/theme.js" defer></script>
 
+
+
+
+<script src="/js/toc.js" defer></script>
 
 
 </body>

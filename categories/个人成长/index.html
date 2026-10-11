@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>个人成长 · 闲亩</title>
+<meta name="description" content="放之四海皆准的方法论：学习、思维与信息素养。">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/" class="active">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+
+<p class="page-crumb">分类</p>
+
+<h1 class="page-title">个人成长</h1>
+
+<p class="page-desc">放之四海皆准的方法论：学习、思维与信息素养。</p>
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/layered-information-collection/">信息获取的分层方法</a></h2>
+            
+            
+            <p class="post-summary"> 一份写给所有人的通用指南。不绑定任何单一领域，技术、经济、医疗、政策、投资、行业研究都适用。 目标：让一个从未思考过&quot;信息是怎么产生和传播的&quot;的人，也能看懂全貌，并据此优化自己的信息获取方式。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2026-10-09">2026-10-09</time>
+                
+                <span class="sep">·</span><a href="/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/">个人成长</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
+
+
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

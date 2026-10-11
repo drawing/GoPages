@@ -18,21 +18,21 @@
 				<link>https://drawing.fancymore.com/posts/algorithm-lcs/</link>
 				<pubDate>Mon, 02 Jun 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/algorithm-lcs/</guid>
-				<description>&lt;h1 id=&#34;概念&#34;&gt;概念&lt;/h1&gt;&#xA;&lt;p&gt;子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。&#xA;公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。&#xA;最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;&#xA;&lt;p&gt;子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。&lt;/p&gt;&#xA;&lt;p&gt;公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>算法学习笔记-动态规划</title>
 				<link>https://drawing.fancymore.com/posts/algorithm-dynamic-programming/</link>
 				<pubDate>Sun, 01 Jun 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/algorithm-dynamic-programming/</guid>
-				<description>&lt;p&gt;动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。&lt;/p&gt;</description>
+				<description>&lt;p&gt;动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是&amp;quot;名不副实&amp;quot;，从名称上很难直观地对算法有个认识。要说动态规划，还得从分治法说起。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>双色球必胜秘籍</title>
-				<link>https://drawing.fancymore.com/posts/probability-double-color/</link>
+				<link>https://drawing.fancymore.com/posts/lottery-winning-probability/</link>
 				<pubDate>Thu, 02 Jun 2011 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/probability-double-color/</guid>
-				<description>&lt;p&gt;几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万，我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/lottery-winning-probability/</guid>
+				<description>&lt;p&gt;几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万。我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>

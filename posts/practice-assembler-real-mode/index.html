@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇编语言练习-实模式下的汇编 · 闲亩</title>
+<meta name="description" content="在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>汇编语言练习-实模式下的汇编</h1>
+        <div class="post-meta">
+            <time datetime="2014-04-26">2014-04-26</time>
+            <span class="sep">·</span>
+            <span>1144 字</span>
+            <span class="sep">·</span>
+            <span>约 3 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">#汇编语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的MASM，仅仅利用 Windows的虚拟8086模式编程，虚拟8086是Intel为了兼容实模式程序推出的，此模式可以让用户程序在32位系统上进行16位操作，模拟了 8086处理器。</p>
+<p>在16位实模式下，由于寻址空间的限制，必须把内存划分为多个段，如果单纯的使用一个offset，由于16位的操作数，最多能寻址 64k 的地址空间，但8086 cpu的数据总线有20位，也就是能够寻址1M的地址，所以intel处理器想出了 seg:offset 的方式，去寻址，首先由seg段寄存器定位一个地址，在此地址上进行偏移，具体计算 seg * 16 + offset ，如此便可达到20位的寻址。所以在实模式下编程，还需要注意段寄存器，在寻址之前要看使用的段。</p>
+<p>还有一个问题是编译最后的格式，之前在windows保护模式下，编译最后都是windows可执行文件PE格式，这显然是不能在实模式下运行的，所以还需要把我们的程序编译成能够在实模式下运行的文件。</p>
+<p>在MS-DOS下支持一种COM二进制执行文件，COM格式是纯二进制代码，系统加载时把此文件加载至100h内存处。现来写一个简单的COM程序框架：</p>
+<pre><code>.model tiny
+.code
+org 100h
+
+main proc
+	mov ah, 2
+	mov dl, 'A'
+	int 21h
+die:
+	jmp die
+	ret
+main endp
+end main
+</code></pre>
+<p>代码开始首先使用.model设置当前内存模式是tiny，而非之前的flat模式，然后在代码开始的地方使用org伪指令指定程序将要载入内存的位置，这在设置段基址时有用，如果设置错误将会找不到定义的数据字符。</p>
+<p>接下来使用了int 21h，int 21h是DOS调用，DOS调用相比BIOS调用就方便的多了：</p>
+<pre><code>首先把功能号存储于AH寄存器 
+把参数传入指定寄存器
+int 21h 
+</code></pre>
+<p>这里使用功能号2，输出一个字符，DOS调用的其他功能网上有大量教程，而且DOS调用至今或许也没太大价值，这里便不再叙述。</p>
+<p>最后再来看如何编译我们的程序：</p>
+<pre><code>ml /c 16bit.asm
+link16 /TINY 16bit.obj
+</code></pre>
+<p>这里的连接程序使用了link16处理16位程序，之后双击16bit.com，便可看到控制台窗口输出字符A，程序进入死循环。</p>
+<p>当然，可以利用刚才所述内容结合下篇BIOS视频控制来制作系统的引导程序，仅仅需要在程序之后填充至512字节并且以 55AA结尾便可，这里列举一下填充部分代码：</p>
+<pre><code>fill db (510 - (fill - main)) dup (0)
+db 55h
+db 0AAh
+</code></pre>
+<p>这里进行了一次计算，fill为当前位置，减去程序开始地址，即到当前所用去的字节数，再被510减，得到需要填充的字节数，用0补足，最后再定义 55AA 标志字即可，当然DOS调用是无法使用的，需要替换成BIOS调用。</p>
+<p>关于AT&amp;T实模式编程，可参考后面的BIOS模式下的汇编编程</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/14-assembler-sse-instruction/">← 汇编语言学习笔记(十四)-SSE指令集</a>
+        
+        
+        <a class="next" href="/posts/practice-assembler-gas-win32/">汇编语言练习-AT&amp;T汇编win32窗口 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+
+</body>
+</html>

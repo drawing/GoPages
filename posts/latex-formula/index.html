@@ -5,8 +5,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Latex 数学公式整理 · 闲亩</title>
-<meta name="description" content="基本字符 大多数普通字符跟数学公式中的是一样的，除了：#$%&amp;~_^\{}，这几个，如果需要表示，需要使用\进行转义。
+<title>LaTeX 数学公式整理 · 闲亩</title>
+<meta name="description" content="基本字符 大多数普通字符可以直接在数学公式中使用，除了：#$%&amp;~_^\{}，这几个如果需要表示，需要使用\进行转义。
 例如：
 ">
 
@@ -68,11 +68,11 @@
 
 <article class="post">
     <header class="post-header">
-        <h1>Latex 数学公式整理</h1>
+        <h1>LaTeX 数学公式整理</h1>
         <div class="post-meta">
             <time datetime="2011-04-15">2011-04-15</time>
             <span class="sep">·</span>
-            <span>226 字</span>
+            <span>223 字</span>
             <span class="sep">·</span>
             <span>约 1 分钟</span>
             
@@ -84,7 +84,7 @@
     <div class="post-layout">
         <div class="post-content">
             <h1 id="基本字符">基本字符</h1>
-<p>大多数普通字符跟数学公式中的是一样的，除了：<code>#$%&amp;~_^\{}</code>，这几个，如果需要表示，需要使用<code>\</code>进行转义。</p>
+<p>大多数普通字符可以直接在数学公式中使用，除了：<code>#$%&amp;~_^\{}</code>，这几个如果需要表示，需要使用<code>\</code>进行转义。</p>
 <p>例如：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\$a = \{\}.
 </span></span></code></pre></div><p>展示为：</p>
@@ -105,19 +105,18 @@
 <h1 id="根式">根式</h1>
 <p>二次根式表达为：<code>\sqrt{表达式}</code>，n 次根式表达为：<code>\sqrt[n]{表达式}</code>:</p>
 <p>例如：</p>
-<p>例如：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\sqrt{a}
 </span></span><span class="line"><span class="cl">\sqrt[3]{a}
 </span></span></code></pre></div><p>展示为：</p>
 <p>$$\sqrt{a}$$
 $$\sqrt[3]{a}$$</p>
-<h1 id="数学公式">数学公式</h1>
+<h1 id="常用函数">常用函数</h1>
 <p>数学函数前加<code>\</code>，例如：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">\sin x
-</span></span><span class="line"><span class="cl">\sum_{x=1}^n a_n=\frac{(a_1+a_n)n}{2}
+</span></span><span class="line"><span class="cl">\sum_{i=1}^n a_i=\frac{(a_1+a_n)n}{2}
 </span></span></code></pre></div><p>展示为：</p>
 <p>$$\sin x$$</p>
-<p>$$\sum_{x=1}^n a_n=\frac{(a_1+a_n)n}{2}$$</p>
+<p>$$\sum_{i=1}^n a_i=\frac{(a_1+a_n)n}{2}$$</p>
 
         </div>
         
@@ -129,7 +128,7 @@ $$\sqrt[3]{a}$$</p>
         <a class="prev" href="/posts/objective-c-brief-course/">← Objective-C 简明教程</a>
         
         
-        <a class="next" href="/posts/meaning-of-c-11/">C&#43;&#43;11 详解 →</a>
+        <a class="next" href="/posts/cpp11-explained/">C&#43;&#43;11 详解 →</a>
         
     </nav>
 </article>
@@ -146,6 +145,17 @@ $$\sqrt[3]{a}$$</p>
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
+<link rel="stylesheet" href="https://registry.npmmirror.com/katex/0.16.11/files/dist/katex.min.css"
+    integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://registry.npmmirror.com/katex/0.16.11/files/dist/katex.min.js"
+    integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://registry.npmmirror.com/katex/0.16.11/files/dist/contrib/auto-render.min.js"
+    integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, { delimiters: [{ left: '$$', right: '$$', display: true }], throwOnError: false });"></script>
+
+
 
 
 

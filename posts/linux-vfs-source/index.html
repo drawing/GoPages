@@ -6,7 +6,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Linux内核笔记-VFS · 闲亩</title>
-<meta name="description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux …">
+<meta name="description" content="Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux …">
 
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/chroma.css">
@@ -81,29 +81,29 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <p>Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。</p>
-<h1 id="概念">概念</h1>
+            <p>Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。</p>
+<h2 id="概念">概念</h2>
 <p>之前已经提到，Linux 文件系统的概念繁多，这里做一些简短的介绍，不会清楚解释每一个细节，只会去“感性”的解释，程序虽然是一种很理性化的东西，但想以一个更高的层次去看他，必须对其有所“感觉”。</p>
-<h2 id="分层">分层</h2>
+<h3 id="分层">分层</h3>
 <p>Linux 秉承了 Unix 的 KISS 原则：Keep It Simple, Stupid！简洁的一个最主要体现就是：万物皆文件。不论是虚拟文件，或是驱动设备，对用户态程序而言都与操作普通文件方式无异（也有少数设备操作例外，比如网络设备）。这种机制的实现得益于VFS，VFS作为一个中间层，抽象底层驱动的差异。万物皆文件的思想与Java中的万物皆对象的思想相同，都是面向对象的体现，所不同的是，万物皆文件是从更高层次进行抽象，VFS仅仅为一个接口层，底层的文件系统或者设备驱动都是接口的实现，这便是多态的思想，只不过C++的类多态机制是细节上的多态，而Linux的多态却是系统级别的多态；类级别的多态容易跌入细节的泥沼，而系统级别的面向对象实现可以合理的为体系分层，使实现更为清晰，虽然面向对象，但仍保持 Simple，Linux 虽然使用纯 C 实现，却是体现面向对象思想的典范。</p>
 <p>VFS 作为一个接口层，需要对上层提供统一的调用接口，同时又要为底层提供实现接口，以致VFS需要引入一些概念。</p>
-<h2 id="inode">inode</h2>
+<h3 id="inode">inode</h3>
 <p>内核使用 inode 表示文件信息数据，最重要的是存储了文件操作的集合 file_operations 和 inode 集合 <code>inode_operations</code> ，这里的操作集合全部是函数指针，作为抽象接口，具体函数由底层设备提供。<code>file_operations</code> 实现文件内容操作，如read、write等等，<code>inode_operations</code> 实现 inode 本身操作，如mkdir, link 等等，另外，inode并非硬盘中的实体，仅存在于内存。</p>
-<h2 id="file">file</h2>
+<h3 id="file">file</h3>
 <p>inode 对所有进程可见，仍有一套进程相关的结构，files_struct保存打开文件信息，其中包含 file 结构，file 结构包含文件读写偏移。另外进程还保存一套文件系统信息 fs_struct。</p>
-<h2 id="dentry">dentry</h2>
+<h3 id="dentry">dentry</h3>
 <p>dentry 为目录缓存，包含目录对应 inode，以及 dentry_operations，以及 d_subdirs 子文件子目录列表。</p>
-<h2 id="file_system_type">file_system_type</h2>
+<h3 id="file_system_type">file_system_type</h3>
 <p>file_system_type 用来表示文件系统，比如 ext2，ext3 结构，所有文件系统组成链表，新文件系统使用 <code>register_filesystem</code> 向内核注册，函数只是简单的把 <code>file_system_type</code> 插入链表，其中最关键的成员就是 get_sb，得到 <code>super_block</code> 结构。</p>
-<h2 id="super_block">super_block</h2>
+<h3 id="super_block">super_block</h3>
 <p>super_block 储存了文件系统本身和挂载点有关信息，设备块大小，所有inode链表。</p>
-<h2 id="vfsmount">vfsmount</h2>
-<p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对与挂接点来说，都是唯一的。</p>
-<h2 id="path">path</h2>
+<h3 id="vfsmount">vfsmount</h3>
+<p>对于挂接点，还需保存一个 vfsmount 结构，保存了挂接信息，每一个挂接点都包含一个 vfsmount 结构实体。vfsmount 和 <code>super_block</code> 对于挂接点来说，都是唯一的。</p>
+<h3 id="path">path</h3>
 <p>path 包含 vfsmount 和 dentry 结构。</p>
-<h2 id="nameidata">nameidata</h2>
-<p>nameidata 结构用于查找，想查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
-<h1 id="sys_mount-实现">sys_mount 实现</h1>
+<h3 id="nameidata">nameidata</h3>
+<p>nameidata 结构用于查找，向查找函数传递参数，并保存结果，包括 dentry 和 vfsmount 结构。</p>
+<h2 id="sys_mount-实现">sys_mount 实现</h2>
 <p><code>sys_mount</code> 展现了文件系统加载的所有细节，为学习文件系统提供一个很好的切入点，首先来看 <code>sys_mount</code> 的函数原型：</p>
 <pre><code># 源码中的原型
 SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
@@ -113,10 +113,10 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
 
 #define SYSCALL_DEFINEx(x, sname, ...)				\
-	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__
+	__SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
 
 #define __SYSCALL_DEFINEx(x, name, ...)					\
-	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__)
+	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__))
 
 #define __SC_DECL1(t1, a1)	t1 a1
 #define __SC_DECL2(t2, a2, ...) t2 a2, __SC_DECL1(__VA_ARGS__)
@@ -155,7 +155,7 @@ dput_out:
 }
 </code></pre>
 <p>可以看到 <code>do_mount</code> 的主干是非常清晰的，开始省去一些参数校验代码，紧接着调用 <code>kern_path</code> 根据 <code>dir_name</code> 指示的路径名获取其 path 结构，<code>security_sb_mount</code> 做一些安全校验工作，如果没有设置，这个函数为空，否则去调用 <code>security_ops-&gt;sb_mount</code> 成员实现。这里不去研究 LSM 安全模块，省去这个函数的分析。紧接着根据flags进行判断，决定是重新加载，或者移动，或者更改文件系统，这里仅跟加载新的 mount 作为分析对象，其他部分类似。最后使用<code>path_put</code>回收path资源。</p>
-<p>这里可以看书，<code>do_mount</code>其实也只是一个分发函数，首先获得path，然后调用各分支的mount函数，接下来分析 <code>kern_path</code> 和 <code>do_new_mount</code> 函数。</p>
+<p>这里可以看出，<code>do_mount</code>其实也只是一个分发函数，首先获得path，然后调用各分支的mount函数，接下来分析 <code>kern_path</code> 和 <code>do_new_mount</code> 函数。</p>
 <pre><code>int kern_path(const char *name, unsigned int flags, struct path *path)
 {
 	struct nameidata nd;
@@ -238,7 +238,12 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void 
 	/** 省去无关代码 */
 
 	error = type-&gt;get_sb(type, flags, name, data, mnt);
-	if (error &lt; 0) 		goto out_free_secdata; 	/** 省去 LSM 安全模块代码 */ 	mnt-&gt;mnt_mountpoint = mnt-&gt;mnt_root;
+	if (error &lt; 0)
+		goto out_free_secdata;
+
+	/** 省去 LSM 安全模块代码 */
+
+	mnt-&gt;mnt_mountpoint = mnt-&gt;mnt_root;
 	mnt-&gt;mnt_parent = mnt;
 	up_write(&amp;mnt-&gt;mnt_sb-&gt;s_umount);
 	free_secdata(secdata);
@@ -250,7 +255,7 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void 
 }
 </code></pre>
 <p>经过抽取函数的骨干，可以清楚看到函数所作操作，首先 alloc_vfsmnt 为 vfsmount 结构分配空间，并初始化成员。再调用对应文件系统的 file_system_type 成员 get_sb 填充 mnt结构。分配空间并初始化代码并无关键之处，而 get_sb 函数却是相应文件系统的实现，比如 ext2 的 ext2_get_sb 函数。</p>
-<p>先不去研究文件系统的具体实现，这与VFS无关，<code>do_kern_mount</code> 便以分析完毕，所作功能便是为 vfsmount 分配空间，再去调用文件系统的 <code>get_sb</code> 实现填充 vfsmount 结构。</p>
+<p>先不去研究文件系统的具体实现，这与VFS无关，<code>do_kern_mount</code> 便已分析完毕，所作功能便是为 vfsmount 分配空间，再去调用文件系统的 <code>get_sb</code> 实现填充 vfsmount 结构。</p>
 <p>接下来查看 <code>do_add_mount</code> 的实现：</p>
 <pre><code>int do_add_mount(struct vfsmount *newmnt, struct path *path,
 		 int mnt_flags, struct list_head *fslist)
@@ -331,15 +336,20 @@ out_unlock:
                 <summary>目录</summary>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#分层">分层</a></li>
-    <li><a href="#inode">inode</a></li>
-    <li><a href="#file">file</a></li>
-    <li><a href="#dentry">dentry</a></li>
-    <li><a href="#file_system_type">file_system_type</a></li>
-    <li><a href="#super_block">super_block</a></li>
-    <li><a href="#vfsmount">vfsmount</a></li>
-    <li><a href="#path">path</a></li>
-    <li><a href="#nameidata">nameidata</a></li>
+    <li><a href="#概念">概念</a>
+      <ul>
+        <li><a href="#分层">分层</a></li>
+        <li><a href="#inode">inode</a></li>
+        <li><a href="#file">file</a></li>
+        <li><a href="#dentry">dentry</a></li>
+        <li><a href="#file_system_type">file_system_type</a></li>
+        <li><a href="#super_block">super_block</a></li>
+        <li><a href="#vfsmount">vfsmount</a></li>
+        <li><a href="#path">path</a></li>
+        <li><a href="#nameidata">nameidata</a></li>
+      </ul>
+    </li>
+    <li><a href="#sys_mount-实现">sys_mount 实现</a></li>
   </ul>
 </nav>
             </details>
@@ -349,7 +359,7 @@ out_unlock:
 
     <nav class="post-nav">
         
-        <a class="prev" href="/posts/linux-kernel-interrupt-and-exception/">← Linux内核笔记-中断和异常</a>
+        <a class="prev" href="/posts/linux-kernel-virtual-address/">← Linux内核笔记-虚拟地址空间</a>
         
         
         <a class="next" href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议 →</a>
@@ -369,6 +379,8 @@ out_unlock:
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
 
 
 <script src="/js/toc.js" defer></script>

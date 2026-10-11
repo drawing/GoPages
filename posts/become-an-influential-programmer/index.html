@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>成为有影响力的开发者 · 闲亩</title>
+<meta name="description" content="腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好地融入公司的企业文化，也能更有针对性地面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>成为有影响力的开发者</h1>
+        <div class="post-meta">
+            <time datetime="2011-06-02">2011-06-02</time>
+            <span class="sep">·</span>
+            <span>1753 字</span>
+            <span class="sep">·</span>
+            <span>约 4 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E8%81%8C%E4%B8%9A%E5%8F%91%E5%B1%95/">#职业发展</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好地融入公司的企业文化，也能更有针对性地面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。</p>
+<h2 id="关于技术">关于技术</h2>
+<p>每个有追求的程序员都想通过有&quot;技术含量&quot;的项目来锻炼自身的技术水平，不过这样的工作不多，而且需要在普通的项目上证明自身的能力后，才有机会参与更重要的项目。所以先来谈谈如何磨练技术水平：面对任何一个开发者都能胜任的项目，不同的人来做，虽然最终可能都能完成，但过程却体现出很多差异。</p>
+<p>首先从代码质量角度，优秀的开发者能以更优雅的方式实现，写出更漂亮、更灵活、更易扩展的代码。小到变量命名，大到模块架构，其中的设计细节都有高下之分，考虑得多与少，对一个人的成长至关重要。</p>
+<p>另外，对于周边模块，开发中了解得越多，越能掌握项目的主动权、把控全局。在一个团队中，对系统模块了解越多的人，越有可能成为别人依赖的对象，这对影响力的提升至关重要。</p>
+<p>还有一点，即使&quot;技术含量&quot;不高，也有很多可挖掘的细节。也许单个细节都不起眼，但养成良好的习惯，日久天长，积累出的成就便会逐渐拉开差距。</p>
+<h2 id="关于独当一面">关于独当一面</h2>
+<p>作为新人，在工作岗位上最容易产生依赖心理：一个函数的声明、一个模块的设计，因为不熟悉，总需要有人把关。但如果经常被动地跟着别人的要求去做，一旦养成依赖的习惯，便很难自己独立做出决定，别人也不会放心把整个模块全权交给你。</p>
+<p>从这个角度考虑，新人即使对环境还不熟悉，面对问题或决策时，也最好根据已掌握的信息做出自己的思考和判断，让导师或 leader 做决策者——指出你方案的不足，而不是做指挥者——事事指挥你去做。随着对环境逐渐熟悉，你做的决定会越来越靠谱，leader 也会看到你面对问题有独立的想法，从而更放心地把模块交给你独立负责，相互之间的信任关系便逐渐建立起来。</p>
+<h2 id="关于分享">关于分享</h2>
+<p>所谓影响力，说白了没什么神秘：努力让更多的人认识自己、认可自己。这就要把握一切机会展示自己，其中很重要的一项就是&quot;分享&quot;。</p>
+<p>想让人更快地认识自己，就要找到自己的长处，或者努力让自己在某一方面成为专家：先学习，再应用，最后把所学分享给他人。周围的人不擅长算法，可以精研算法；周围的人对设计不在行，可以学习设计模式并在项目中合理应用，然后再把这些分享出去。开发者对于自己不擅长而又实用的分享，通常都抱有开放的态度。一旦成为别人眼中某一方面的&quot;专家&quot;，就会有更多的人前来咨询探讨；而为了保住这份&quot;专家&quot;身份，又会促使自己更加精研这个领域，直到某一天发现，自己真的成了专家。</p>
+<h2 id="关于主动性">关于主动性</h2>
+<p>每个人都希望把工作交给&quot;省心&quot;的人。接到一个任务，能够主动 cover 到任务的各个方面，自己 cover 不住的点才会流到 leader 手里。一个人能 cover 的部分越多，leader 就越省心，其能力也越能得到体现；积极主动地 cover 更多方面，影响力自然随之增长。</p>
+<p>主动性还包括主动优化项目中的不足，每优化一次就是一个亮点。真正的思考和优化能力是不可替代的，也是别人所欣赏的。</p>
+<h2 id="关于沟通">关于沟通</h2>
+<p>在日常工作和项目中，沟通也是至关重要的一项能力。沟通时需要了解对方想知道什么：对产品同学解释代码细节，对方可能并不关心，只想要结论；如果对方想了解技术难点，也要转化为对方能听懂的方式表达，尽量减少对方的沟通成本，别人才会乐于与你沟通。满嘴高深的技术细节，并不一定会让人觉得你厉害，反而可能让对方因为听不懂而自觉能力不足，从此不愿与你沟通。</p>
+<p>沟通也包括工作汇报。向产品或 leader 汇报工作时，需要突出难点、有理有据：一方面让人觉得你思路清晰，另一方面也展现了工作中的难点，突出成绩。相反，如果没有重点、平铺直叙，工作的难点容易被忽略，别人可能以为你的工作很简单。</p>
+<h2 id="关于时间管理">关于时间管理</h2>
+<p>当自己负责的模块越来越多，影响力增大，找自己处理问题的人也会越来越多，这时就需要考虑自己的时间分配。如果总是被人打断去处理各种问题，真正属于自己的工作时间就会变得很少，这就需要学习如何正确地处理中断：合理安排时间，集中精力解决紧急而重要的问题；对于反复出现、重复解答的问题，不妨沉淀成文档或工具，一次投入，长期受益；还要经常思考，如何把自己从繁重而无意义的事情中解脱出来。</p>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#关于技术">关于技术</a></li>
+    <li><a href="#关于独当一面">关于独当一面</a></li>
+    <li><a href="#关于分享">关于分享</a></li>
+    <li><a href="#关于主动性">关于主动性</a></li>
+    <li><a href="#关于沟通">关于沟通</a></li>
+    <li><a href="#关于时间管理">关于时间管理</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/lottery-winning-probability/">← 双色球必胜秘籍</a>
+        
+        
+        <a class="next" href="/posts/effective-executive/">如何有效决策-《卓有成效的管理者》读感 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

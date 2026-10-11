@@ -76,7 +76,42 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/3.-assembler-datastruct/">汇编语言学习笔记(三)-数据结构</a></h2>
+            <h2 class="post-title"><a href="/posts/05-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a></h2>
+            
+            
+            <p class="post-summary">程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-16">2014-04-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/04-assembler-mov-instruction/">汇编语言学习笔记(四)-MOV指令</a></h2>
+            
+            
+            <p class="post-summary">汇编语言和高级语言不同，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-15">2014-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/03-assembler-data-structure/">汇编语言学习笔记(三)-数据结构</a></h2>
             
             
             <p class="post-summary">其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存 …</p>
@@ -85,7 +120,7 @@
             <div class="post-meta">
                 <time datetime="2014-04-14">2014-04-14</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -93,17 +128,17 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/2.-assembler-framework/">汇编语言学习笔记(二)-代码框架</a></h2>
+            <h2 class="post-title"><a href="/posts/02-assembler-framework/">汇编语言学习笔记(二)-代码框架</a></h2>
             
             
-            <p class="post-summary">前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。
-GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置 …</p>
+            <p class="post-summary">前面总结了一下普通寄存器的知识，这里介绍下汇编程序的基本框架。
+GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-04-13">2014-04-13</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -111,7 +146,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/1.-assembler-register/">汇编语言学习笔记(一)-寄存器</a></h2>
+            <h2 class="post-title"><a href="/posts/01-assembler-register/">汇编语言学习笔记(一)-寄存器</a></h2>
             
             
             <p class="post-summary">一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做 …</p>
@@ -120,7 +155,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
             <div class="post-meta">
                 <time datetime="2014-04-12">2014-04-12</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -128,7 +163,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/0.-assembler-why-learning/">汇编语言学习笔记(零)-为什么开始</a></h2>
+            <h2 class="post-title"><a href="/posts/00-assembler-why-learning/">汇编语言学习笔记(零)-为什么开始</a></h2>
             
             
             <p class="post-summary">为什么开始 从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无 …</p>
@@ -137,7 +172,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
             <div class="post-meta">
                 <time datetime="2014-04-11">2014-04-11</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="sep">·</span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -148,13 +183,13 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
             <h2 class="post-title"><a href="/posts/effective-executive/">如何有效决策-《卓有成效的管理者》读感</a></h2>
             
             
-            <p class="post-summary">在工作管理中经常需要进行决策，所谓决策，即是决定一些策略，按照常识来讲，决策是管理者的一种普遍行为，而《卓有成效管理者》中却又说明管理者不做太多的决策，只做重大的决策，与印象中管理者的形象相左，随着深入学习，逐渐开始理解只做重大决策的含义。 …</p>
+            <p class="post-summary">在工作管理中经常需要进行决策。所谓决策，即是决定一些策略。按照常识来讲，决策是管理者的一种普遍行为，而《卓有成效的管理者》中却说，有效的管理者不做太多的决策，只做重大的决策。这与印象中管理者的形象相左，随着深入学习，逐渐开始理解只做重大决策 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2011-06-03">2011-06-03</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E8%81%8C%E5%9C%BA/">职场</a>
                 
             </div>
         </article>
@@ -162,17 +197,17 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/become-an-influential-programmers/">成为有影响力的开发者</a></h2>
+            <h2 class="post-title"><a href="/posts/become-an-influential-programmer/">成为有影响力的开发者</a></h2>
             
             
-            <p class="post-summary">腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好的融入公司的企业文化，也能更有针对性的面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。
+            <p class="post-summary">腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好地融入公司的企业文化，也能更有针对性地面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。
 </p>
             
             
             <div class="post-meta">
                 <time datetime="2011-06-02">2011-06-02</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E8%81%8C%E5%9C%BA/">职场</a>
                 
             </div>
         </article>
@@ -180,17 +215,17 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/probability-double-color/">双色球必胜秘籍</a></h2>
+            <h2 class="post-title"><a href="/posts/lottery-winning-probability/">双色球必胜秘籍</a></h2>
             
             
-            <p class="post-summary">几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万，我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。
+            <p class="post-summary">几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万。我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。
 </p>
             
             
             <div class="post-meta">
                 <time datetime="2011-06-02">2011-06-02</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -198,7 +233,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/software-version-compare-for-design/">软件版本对系统架构的理解</a></h2>
+            <h2 class="post-title"><a href="/posts/software-versioning-and-architecture/">软件版本对系统架构的理解</a></h2>
             
             
             <p class="post-summary">之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需 …</p>
@@ -207,43 +242,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
             <div class="post-meta">
                 <time datetime="2011-06-01">2011-06-01</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/how-to-reply-for-technology/">技术答辩感悟</a></h2>
-            
-            
-            <p class="post-summary">昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
-准备 成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-06-01">2011-06-01</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/how-to-publish-server-program/">发布后台程序注意总结</a></h2>
-            
-            
-            <p class="post-summary">QQ后台服务承载过亿的在线用户，即使是很小的事故也会影响大量的用户，造成极其不好的影响，而百分之八九十的事故都是由于上线发布引起的，所以要对服务上线发布足够的重视。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-04-16">2011-04-16</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -256,7 +255,7 @@ GAS语法框架 程序员学习语言都是从hello world开始的，这样能�
     
     <a href="/page/4/">← 上一页</a>
     
-    <span class="page-info">5 / 6</span>
+    <span class="page-info">5 / 7</span>
     
     <a href="/page/6/">下一页 →</a>
     

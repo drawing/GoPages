@@ -10,50 +10,64 @@
 		
 		
 		
-			<lastBuildDate>Fri, 09 Oct 2026 23:00:33 +0800</lastBuildDate>
+			<lastBuildDate>Sun, 11 Oct 2026 23:00:33 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/index.xml" rel="self" type="application/rss+xml" />
 			<item>
+				<title>环境描写的本质、原理与分类型实践</title>
+				<link>https://drawing.fancymore.com/posts/how-to-write-about-the-environment/</link>
+				<pubDate>Sun, 11 Oct 2026 23:00:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/how-to-write-about-the-environment/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;从&amp;quot;白房间综合征&amp;quot;的争议出发，追问环境描写到底为什么存在、什么时候必须写、什么时候可以省，以及不同类型该如何构建各自的环境。&#xA;本文可作为《高质量长篇故事 AI 创作指南》&amp;ldquo;环境描写&amp;quot;章节的素材底稿。&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>情节设计的本质与落地工艺</title>
+				<link>https://drawing.fancymore.com/posts/plot-design-craft/</link>
+				<pubDate>Sun, 11 Oct 2026 10:00:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/plot-design-craft/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;从&amp;quot;为什么俗套&amp;quot;到&amp;quot;主线定了之后怎么设计情节与支线&amp;quot;的完整方法论&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h3 id=&#34;引子三个观察一个内核&#34;&gt;引子：三个观察，一个内核&lt;/h3&gt;&#xA;&lt;p&gt;在讨论情节设计时，有三类现象反复出现：&lt;/p&gt;</description>
+			</item>
+			<item>
 				<title>信息获取的分层方法</title>
-				<link>https://drawing.fancymore.com/posts/collect-information/</link>
+				<link>https://drawing.fancymore.com/posts/layered-information-collection/</link>
 				<pubDate>Fri, 09 Oct 2026 23:00:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/collect-information/</guid>
+				<guid>https://drawing.fancymore.com/posts/layered-information-collection/</guid>
 				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给所有人的通用指南。不绑定任何单一领域，技术、经济、医疗、政策、投资、行业研究都适用。&#xA;目标：让一个从未思考过&amp;quot;信息是怎么产生和传播的&amp;quot;的人，也能看懂全貌，并据此优化自己的信息获取方式。&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
 			</item>
 			<item>
 				<title>告警优化实践总结</title>
-				<link>https://drawing.fancymore.com/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</link>
+				<link>https://drawing.fancymore.com/posts/alert-optimization-practice/</link>
 				<pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</guid>
+				<guid>https://drawing.fancymore.com/posts/alert-optimization-practice/</guid>
 				<description>&lt;h2 id=&#34;一背景&#34;&gt;一、背景&lt;/h2&gt;&#xA;&lt;p&gt;对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>SWIG 跨语言调用</title>
-				<link>https://drawing.fancymore.com/posts/swig_cross_language_call/</link>
+				<link>https://drawing.fancymore.com/posts/swig-cross-language-call/</link>
 				<pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/swig_cross_language_call/</guid>
+				<guid>https://drawing.fancymore.com/posts/swig-cross-language-call/</guid>
 				<description>&lt;h2 id=&#34;一跨平台调用&#34;&gt;一、跨平台调用&lt;/h2&gt;&#xA;&lt;p&gt;在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>腾讯-育龙培训感悟</title>
-				<link>https://drawing.fancymore.com/posts/management-training-sentiment/</link>
+				<link>https://drawing.fancymore.com/posts/management-training-reflections/</link>
 				<pubDate>Sat, 26 Sep 2015 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/management-training-sentiment/</guid>
-				<description>&lt;p&gt;育龙培训，通过读书、小组嘉宾采访和为期一天半的集中培训，受益良多，培训中讲师通过各种活动以及理论的讲解，深入浅出的解释了从一个技术骨干到管理者转身所必须的知识。其中有几点感触很深。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/management-training-reflections/</guid>
+				<description>&lt;p&gt;育龙培训，通过读书、小组嘉宾采访和为期一天半的集中培训，受益良多。培训中讲师通过各种活动以及理论的讲解，深入浅出地解释了从一个技术骨干到管理者转身所必需的知识。其中有几点感触很深。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>课程设计与开发入门</title>
 				<link>https://drawing.fancymore.com/posts/curriculum-development/</link>
 				<pubDate>Fri, 25 Sep 2015 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/curriculum-development/</guid>
-				<description>&lt;p&gt;学习知识的过程分为几个阶段，学习、应用、共享、创新。在上学的时候，我们多数情况都在不断的学习知识，工作以后，更多的是实践中锤炼自身的技艺，但能够做到开发课程去传承共享知识的人很少，工作中遇到的同事，如果经常写博客，参与一些开源项目等，技术往往比一般人更胜一筹，想做到共享知识，需要对知识的掌握和理解比会用更深入，而开发一门新的课程甚至写一本书，往往比写几篇博客更难，写博客需要理解一个点即可，而开发课程需要对知识体系有着完整的理解，甚至在讲课的过程中，需要实时的表达呈现方式，而且随时面对学员的提问，比写书在技巧性上又难了一些。&lt;/p&gt;</description>
+				<description>&lt;p&gt;学习知识的过程分为几个阶段：学习、应用、共享、创新。在上学的时候，我们多数情况都在不断地学习知识，工作以后，更多的是在实践中锤炼自身的技艺，但能够做到开发课程去传承共享知识的人很少。工作中遇到的同事，如果经常写博客，参与一些开源项目等，技术往往比一般人更胜一筹。想做到共享知识，需要对知识的掌握和理解比会用更深入，而开发一门新的课程甚至写一本书，往往比写几篇博客更难：写博客需要理解一个点即可，而开发课程需要对知识体系有着完整的理解，甚至在讲课的过程中，需要实时的表达呈现方式，而且随时面对学员的提问，比写书在技巧性上又难了一些。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>腾讯-育龙-cola访谈记录</title>
 				<link>https://drawing.fancymore.com/posts/interview-cola/</link>
 				<pubDate>Thu, 24 Sep 2015 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/interview-cola/</guid>
-				<description>&lt;p&gt;育龙cola访谈记录&lt;/p&gt;&#xA;&lt;p&gt;时间 2015年9月24日，地点万利达303&lt;/p&gt;&#xA;&lt;h2 id=&#34;问题请问您刚上任时印象最深刻的困难是什么您是如何应对的&#34;&gt;问题：请问您刚上任时，印象最深刻的困难是什么，您是如何应对的？&lt;/h2&gt;&#xA;&lt;p&gt;答：刚上任的时候，当时是新的团队负责新的项目，最困难的是没有人，需要快速招人负责项目。&lt;/p&gt;</description>
+				<description>&lt;p&gt;时间：2015年9月24日，地点：万利达303&lt;/p&gt;&#xA;&lt;h2 id=&#34;问题请问您刚上任时印象最深刻的困难是什么您是如何应对的&#34;&gt;问题：请问您刚上任时，印象最深刻的困难是什么，您是如何应对的？&lt;/h2&gt;&#xA;&lt;p&gt;答：刚上任的时候，当时是新的团队负责新的项目，最困难的是没有人，需要快速招人负责项目。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux性能调优之内核篇</title>
@@ -78,24 +92,24 @@
 			</item>
 			<item>
 				<title>overcommit 对 fork 的影响</title>
-				<link>https://drawing.fancymore.com/posts/redis-failed-when-out-of-memory/</link>
+				<link>https://drawing.fancymore.com/posts/overcommit-effect-on-fork/</link>
 				<pubDate>Tue, 10 Jun 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/redis-failed-when-out-of-memory/</guid>
-				<description>&lt;h1 id=&#34;问题&#34;&gt;问题&lt;/h1&gt;&#xA;&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/overcommit-effect-on-fork/</guid>
+				<description>&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;&#xA;&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>算法学习笔记-最长公共子序列</title>
 				<link>https://drawing.fancymore.com/posts/algorithm-lcs/</link>
 				<pubDate>Mon, 02 Jun 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/algorithm-lcs/</guid>
-				<description>&lt;h1 id=&#34;概念&#34;&gt;概念&lt;/h1&gt;&#xA;&lt;p&gt;子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。&#xA;公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。&#xA;最长公共子序列：如果没有比公共子序列Z元素更多的子序列，则称Z为最长公共子序列。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;&#xA;&lt;p&gt;子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。&lt;/p&gt;&#xA;&lt;p&gt;公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>算法学习笔记-动态规划</title>
 				<link>https://drawing.fancymore.com/posts/algorithm-dynamic-programming/</link>
 				<pubDate>Sun, 01 Jun 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/algorithm-dynamic-programming/</guid>
-				<description>&lt;p&gt;动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是“名不符其实”，从名称上很难直观的对算法有个认识，要说动态规划，还得从分治法说起。&lt;/p&gt;</description>
+				<description>&lt;p&gt;动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是&amp;quot;名不副实&amp;quot;，从名称上很难直观地对算法有个认识。要说动态规划，还得从分治法说起。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核笔记-进程调度</title>
@@ -116,42 +130,42 @@
 				<link>https://drawing.fancymore.com/posts/linux-vfs-source/</link>
 				<pubDate>Wed, 21 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-vfs-source/</guid>
-				<description>&lt;p&gt;Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。&lt;/p&gt;</description>
+				<description>&lt;p&gt;Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Linux内核笔记-虚拟地址空间</title>
+				<link>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</link>
+				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</guid>
+				<description>&lt;p&gt;在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核笔记-中断和异常</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</link>
 				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</guid>
-				<description>&lt;h1 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义&lt;/h1&gt;&#xA;&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;</description>
-			</item>
-			<item>
-				<title>Linxu内核笔记-虚拟地址空间</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</link>
-				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</guid>
-				<description>&lt;p&gt;在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义&lt;/h2&gt;&#xA;&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核调试</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-debugging/</link>
 				<pubDate>Mon, 19 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-debugging/</guid>
-				<description>&lt;h1 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核&lt;/h1&gt;&#xA;&lt;p&gt;最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核&lt;/h2&gt;&#xA;&lt;p&gt;最近看了些Linux内核源码，之前认为调试内核源码最好的方式是使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核 slab 分配器</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-slab-allocator/</link>
 				<pubDate>Sun, 18 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-slab-allocator/</guid>
-				<description>&lt;h1 id=&#34;slab-介绍&#34;&gt;slab 介绍&lt;/h1&gt;&#xA;&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;slab-介绍&#34;&gt;slab 介绍&lt;/h2&gt;&#xA;&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核数据结构</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-data-structure/</link>
 				<pubDate>Sat, 17 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-data-structure/</guid>
-				<description>&lt;h1 id=&#34;内核链表&#34;&gt;内核链表&lt;/h1&gt;&#xA;&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;内核链表&#34;&gt;内核链表&lt;/h2&gt;&#xA;&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux系统调用</title>
@@ -162,24 +176,24 @@
 			</item>
 			<item>
 				<title>Linux 设备驱动轮询编程</title>
-				<link>https://drawing.fancymore.com/posts/linux-driver-select-implement/</link>
+				<link>https://drawing.fancymore.com/posts/linux-driver-poll-programming/</link>
 				<pubDate>Thu, 15 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-driver-select-implement/</guid>
-				<description>&lt;p&gt;Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为&lt;a href=&#34;https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/&#34;&gt;等待队列&lt;/a&gt;，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/linux-driver-poll-programming/</guid>
+				<description>&lt;p&gt;Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为&lt;a href=&#34;https://drawing.fancymore.com/posts/linux-kernel-wait-queue/&#34;&gt;等待队列&lt;/a&gt;，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核等待队列解析</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/</link>
+				<link>https://drawing.fancymore.com/posts/linux-kernel-wait-queue/</link>
 				<pubDate>Wed, 14 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/</guid>
-				<description>&lt;p&gt;在阅读Tun驱动时看到，有一些类似 &lt;code&gt;add_wait_queue&lt;/code&gt; 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/linux-kernel-wait-queue/</guid>
+				<description>&lt;p&gt;在阅读Tun驱动时看到，有一些类似 &lt;code&gt;add_wait_queue&lt;/code&gt; 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>select/poll 源码分析</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-epoll/</link>
+				<title>epoll 源码分析</title>
+				<link>https://drawing.fancymore.com/posts/epoll-source-analysis/</link>
 				<pubDate>Tue, 13 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-epoll/</guid>
-				<description>&lt;p&gt;select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/epoll-source-analysis/</guid>
+				<description>&lt;p&gt;select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，它如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我将分析epoll模型的框架，体会其高效。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>tun/tap 驱动源码分析</title>
@@ -193,10 +207,10 @@
 				<link>https://drawing.fancymore.com/posts/linux-character-driver/</link>
 				<pubDate>Sun, 11 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-character-driver/</guid>
-				<description>&lt;h1 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？&lt;/h1&gt;&#xA;&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？&lt;/h2&gt;&#xA;&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动如硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>汇编语言练习-AT&amp;T汇编win32窗口</title>
+				<title>汇编语言练习-BIOS模式下的汇编</title>
 				<link>https://drawing.fancymore.com/posts/practice-assembler-bios/</link>
 				<pubDate>Mon, 28 Apr 2014 01:18:03 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/practice-assembler-bios/</guid>
@@ -211,114 +225,114 @@
 			</item>
 			<item>
 				<title>汇编语言练习-实模式下的汇编</title>
-				<link>https://drawing.fancymore.com/posts/practice-16-asm-real-mode.md/</link>
+				<link>https://drawing.fancymore.com/posts/practice-assembler-real-mode/</link>
 				<pubDate>Sat, 26 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/practice-16-asm-real-mode.md/</guid>
+				<guid>https://drawing.fancymore.com/posts/practice-assembler-real-mode/</guid>
 				<description>&lt;p&gt;在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的MASM，仅仅利用 Windows的虚拟8086模式编程，虚拟8086是Intel为了兼容实模式程序推出的，此模式可以让用户程序在32位系统上进行16位操作，模拟了 8086处理器。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十四)-SSE指令集</title>
-				<link>https://drawing.fancymore.com/posts/14.-assembler-sse-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/14-assembler-sse-instruction/</link>
 				<pubDate>Fri, 25 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/14.-assembler-sse-instruct/</guid>
-				<description>&lt;p&gt;本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/14-assembler-sse-instruction/</guid>
+				<description>&lt;p&gt;本篇介绍sse指令集，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十三)-MMX指令集</title>
-				<link>https://drawing.fancymore.com/posts/13.-assembler-mmx-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/13-assembler-mmx-instruction/</link>
 				<pubDate>Thu, 24 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/13.-assembler-mmx-instruct/</guid>
-				<description>&lt;p&gt;这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/13-assembler-mmx-instruction/</guid>
+				<description>&lt;p&gt;这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用这两种特性，一定要注意这点，避免出现莫名的错误。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十二)-浮点指令</title>
-				<link>https://drawing.fancymore.com/posts/12.-assembler-float-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/12-assembler-float-instruction/</link>
 				<pubDate>Wed, 23 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/12.-assembler-float-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/12-assembler-float-instruction/</guid>
 				<description>&lt;h1 id=&#34;浮点数如何存储&#34;&gt;浮点数如何存储&lt;/h1&gt;&#xA;&lt;p&gt;浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。&lt;/p&gt;&#xA;&lt;p&gt;现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十一)-预编译宏</title>
-				<link>https://drawing.fancymore.com/posts/11.-assembler-precompile-macro/</link>
+				<link>https://drawing.fancymore.com/posts/11-assembler-preprocessor-macro/</link>
 				<pubDate>Tue, 22 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/11.-assembler-precompile-macro/</guid>
+				<guid>https://drawing.fancymore.com/posts/11-assembler-preprocessor-macro/</guid>
 				<description>&lt;p&gt;在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。&lt;/p&gt;&#xA;&lt;p&gt;先来看MASM中宏的语法规范：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十)-内联汇编</title>
-				<link>https://drawing.fancymore.com/posts/10.-assembler-c-inline/</link>
+				<link>https://drawing.fancymore.com/posts/10-assembler-c-inline/</link>
 				<pubDate>Mon, 21 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/10.-assembler-c-inline/</guid>
+				<guid>https://drawing.fancymore.com/posts/10-assembler-c-inline/</guid>
 				<description>&lt;p&gt;这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(九)-函数</title>
-				<link>https://drawing.fancymore.com/posts/9.-assembler-function/</link>
+				<link>https://drawing.fancymore.com/posts/09-assembler-function/</link>
 				<pubDate>Sun, 20 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/9.-assembler-function/</guid>
+				<guid>https://drawing.fancymore.com/posts/09-assembler-function/</guid>
 				<description>&lt;p&gt;编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(八)-字符串</title>
-				<link>https://drawing.fancymore.com/posts/8.-assembler-string-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/08-assembler-string-instruction/</link>
 				<pubDate>Sat, 19 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/8.-assembler-string-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/08-assembler-string-instruction/</guid>
 				<description>&lt;p&gt;字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(七)-寻址方式</title>
-				<link>https://drawing.fancymore.com/posts/7.-assembler-addressing-method/</link>
+				<link>https://drawing.fancymore.com/posts/07-assembler-addressing-method/</link>
 				<pubDate>Fri, 18 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/7.-assembler-addressing-method/</guid>
+				<guid>https://drawing.fancymore.com/posts/07-assembler-addressing-method/</guid>
 				<description>&lt;p&gt;寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(六)-数学运算</title>
-				<link>https://drawing.fancymore.com/posts/6.-assembler-math-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/06-assembler-math-instruction/</link>
 				<pubDate>Thu, 17 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/6.-assembler-math-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/06-assembler-math-instruction/</guid>
 				<description>&lt;p&gt;在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(五)-控制流</title>
-				<link>https://drawing.fancymore.com/posts/5.-assembler-control-flow/</link>
+				<link>https://drawing.fancymore.com/posts/05-assembler-control-flow/</link>
 				<pubDate>Wed, 16 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/5.-assembler-control-flow/</guid>
+				<guid>https://drawing.fancymore.com/posts/05-assembler-control-flow/</guid>
 				<description>&lt;p&gt;程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(四)-MOV指令</title>
-				<link>https://drawing.fancymore.com/posts/4.-assembler-mov-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/04-assembler-mov-instruction/</link>
 				<pubDate>Tue, 15 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/4.-assembler-mov-instruct/</guid>
-				<description>&lt;p&gt;汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/04-assembler-mov-instruction/</guid>
+				<description>&lt;p&gt;汇编语言和高级语言不同，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(三)-数据结构</title>
-				<link>https://drawing.fancymore.com/posts/3.-assembler-datastruct/</link>
+				<link>https://drawing.fancymore.com/posts/03-assembler-data-structure/</link>
 				<pubDate>Mon, 14 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/3.-assembler-datastruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/03-assembler-data-structure/</guid>
 				<description>&lt;p&gt;其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(二)-代码框架</title>
-				<link>https://drawing.fancymore.com/posts/2.-assembler-framework/</link>
+				<link>https://drawing.fancymore.com/posts/02-assembler-framework/</link>
 				<pubDate>Sun, 13 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/2.-assembler-framework/</guid>
-				<description>&lt;p&gt;前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。&lt;/p&gt;&#xA;&lt;h1 id=&#34;gas语法框架&#34;&gt;GAS语法框架&lt;/h1&gt;&#xA;&lt;p&gt;程序员学习语言都是从&lt;code&gt;hello world&lt;/code&gt;开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/02-assembler-framework/</guid>
+				<description>&lt;p&gt;前面总结了一下普通寄存器的知识，这里介绍下汇编程序的基本框架。&lt;/p&gt;&#xA;&lt;h1 id=&#34;gas语法框架&#34;&gt;GAS语法框架&lt;/h1&gt;&#xA;&lt;p&gt;程序员学习语言都是从&lt;code&gt;hello world&lt;/code&gt;开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(一)-寄存器</title>
-				<link>https://drawing.fancymore.com/posts/1.-assembler-register/</link>
+				<link>https://drawing.fancymore.com/posts/01-assembler-register/</link>
 				<pubDate>Sat, 12 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/1.-assembler-register/</guid>
+				<guid>https://drawing.fancymore.com/posts/01-assembler-register/</guid>
 				<description>&lt;p&gt;一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(零)-为什么开始</title>
-				<link>https://drawing.fancymore.com/posts/0.-assembler-why-learning/</link>
+				<link>https://drawing.fancymore.com/posts/00-assembler-why-learning/</link>
 				<pubDate>Fri, 11 Apr 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/0.-assembler-why-learning/</guid>
+				<guid>https://drawing.fancymore.com/posts/00-assembler-why-learning/</guid>
 				<description>&lt;h1 id=&#34;为什么开始&#34;&gt;为什么开始&lt;/h1&gt;&#xA;&lt;p&gt;从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。&lt;/p&gt;</description>
 			</item>
 			<item>
@@ -326,63 +340,63 @@
 				<link>https://drawing.fancymore.com/posts/effective-executive/</link>
 				<pubDate>Fri, 03 Jun 2011 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/effective-executive/</guid>
-				<description>&lt;p&gt;在工作管理中经常需要进行决策，所谓决策，即是决定一些策略，按照常识来讲，决策是管理者的一种普遍行为，而《卓有成效管理者》中却又说明管理者不做太多的决策，只做重大的决策，与印象中管理者的形象相左，随着深入学习，逐渐开始理解只做重大决策的含义。&lt;/p&gt;</description>
+				<description>&lt;p&gt;在工作管理中经常需要进行决策。所谓决策，即是决定一些策略。按照常识来讲，决策是管理者的一种普遍行为，而《卓有成效的管理者》中却说，有效的管理者不做太多的决策，只做重大的决策。这与印象中管理者的形象相左，随着深入学习，逐渐开始理解只做重大决策的含义。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>成为有影响力的开发者</title>
-				<link>https://drawing.fancymore.com/posts/become-an-influential-programmers/</link>
+				<link>https://drawing.fancymore.com/posts/become-an-influential-programmer/</link>
 				<pubDate>Thu, 02 Jun 2011 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/become-an-influential-programmers/</guid>
-				<description>&lt;p&gt;腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好的融入公司的企业文化，也能更有针对性的面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/become-an-influential-programmer/</guid>
+				<description>&lt;p&gt;腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好地融入公司的企业文化，也能更有针对性地面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>双色球必胜秘籍</title>
-				<link>https://drawing.fancymore.com/posts/probability-double-color/</link>
+				<link>https://drawing.fancymore.com/posts/lottery-winning-probability/</link>
 				<pubDate>Thu, 02 Jun 2011 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/probability-double-color/</guid>
-				<description>&lt;p&gt;几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万，我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/lottery-winning-probability/</guid>
+				<description>&lt;p&gt;几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万。我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>软件版本对系统架构的理解</title>
-				<link>https://drawing.fancymore.com/posts/software-version-compare-for-design/</link>
+				<link>https://drawing.fancymore.com/posts/software-versioning-and-architecture/</link>
 				<pubDate>Wed, 01 Jun 2011 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/software-version-compare-for-design/</guid>
+				<guid>https://drawing.fancymore.com/posts/software-versioning-and-architecture/</guid>
 				<description>&lt;p&gt;之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>技术答辩感悟</title>
-				<link>https://drawing.fancymore.com/posts/how-to-reply-for-technology/</link>
+				<link>https://drawing.fancymore.com/posts/technical-review-reflections/</link>
 				<pubDate>Wed, 01 Jun 2011 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/how-to-reply-for-technology/</guid>
-				<description>&lt;p&gt;昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。&lt;/p&gt;&#xA;&lt;h1 id=&#34;准备&#34;&gt;准备&lt;/h1&gt;&#xA;&lt;p&gt;成功的答辩离不开充分的准备，这里的准备分几个方面，第一个也是最重要的就是平时的准备，答辩之前可以针对性的考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做想尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/technical-review-reflections/</guid>
+				<description>&lt;p&gt;昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。&lt;/p&gt;&#xA;&lt;h2 id=&#34;准备&#34;&gt;准备&lt;/h2&gt;&#xA;&lt;p&gt;成功的答辩离不开充分的准备。这里的准备分几个方面，第一个也是最重要的就是平时的准备。答辩之前可以针对性地考虑一些可能问到的问题，增加成功率，但很多问题是无法预测的，这就需要打铁还需自身硬，在平时设计开发的时候就做详尽的考虑，事无巨细，尽量做到对自己所做的东西了如指掌，这需要平时的习惯养成。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>发布后台程序注意总结</title>
-				<link>https://drawing.fancymore.com/posts/how-to-publish-server-program/</link>
+				<link>https://drawing.fancymore.com/posts/server-release-best-practices/</link>
 				<pubDate>Sat, 16 Apr 2011 22:40:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/how-to-publish-server-program/</guid>
+				<guid>https://drawing.fancymore.com/posts/server-release-best-practices/</guid>
 				<description>&lt;p&gt;QQ后台服务承载过亿的在线用户，即使是很小的事故也会影响大量的用户，造成极其不好的影响，而百分之八九十的事故都是由于上线发布引起的，所以要对服务上线发布足够的重视。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>C&#43;&#43;11 详解</title>
-				<link>https://drawing.fancymore.com/posts/meaning-of-c-11/</link>
+				<link>https://drawing.fancymore.com/posts/cpp11-explained/</link>
 				<pubDate>Fri, 15 Apr 2011 22:40:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/meaning-of-c-11/</guid>
+				<guid>https://drawing.fancymore.com/posts/cpp11-explained/</guid>
 				<description>&lt;p&gt;C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。&lt;/p&gt;&#xA;&lt;h1 id=&#34;题外话&#34;&gt;题外话&lt;/h1&gt;&#xA;&lt;p&gt;C++语言是一门非常繁复的语言，支持的编程范式很多：&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>Latex 数学公式整理</title>
+				<title>LaTeX 数学公式整理</title>
 				<link>https://drawing.fancymore.com/posts/latex-formula/</link>
 				<pubDate>Fri, 15 Apr 2011 22:40:04 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/latex-formula/</guid>
-				<description>&lt;h1 id=&#34;基本字符&#34;&gt;基本字符&lt;/h1&gt;&#xA;&lt;p&gt;大多数普通字符跟数学公式中的是一样的，除了：&lt;code&gt;#$%&amp;amp;~_^\{}&lt;/code&gt;，这几个，如果需要表示，需要使用&lt;code&gt;\&lt;/code&gt;进行转义。&lt;/p&gt;&#xA;&lt;p&gt;例如：&lt;/p&gt;</description>
+				<description>&lt;h1 id=&#34;基本字符&#34;&gt;基本字符&lt;/h1&gt;&#xA;&lt;p&gt;大多数普通字符可以直接在数学公式中使用，除了：&lt;code&gt;#$%&amp;amp;~_^\{}&lt;/code&gt;，这几个如果需要表示，需要使用&lt;code&gt;\&lt;/code&gt;进行转义。&lt;/p&gt;&#xA;&lt;p&gt;例如：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Objective-C 简明教程</title>
 				<link>https://drawing.fancymore.com/posts/objective-c-brief-course/</link>
 				<pubDate>Sun, 10 Apr 2011 22:40:04 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/objective-c-brief-course/</guid>
-				<description>&lt;p&gt;本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;&#xA;&lt;h2 id=&#34;c语言的扩展&#34;&gt;C语言的扩展&lt;/h2&gt;&#xA;&lt;p&gt;Objective-C很大程度上兼容C语言，是C语言的扩展，所有以&lt;code&gt;@&lt;/code&gt;开头的语言，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。&lt;/p&gt;</description>
+				<description>&lt;p&gt;本文假定读者具备 C 语言或者其他语言的背景，快速上手Objective-C，或做参考之用。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;&#xA;&lt;h2 id=&#34;c语言的扩展&#34;&gt;C语言的扩展&lt;/h2&gt;&#xA;&lt;p&gt;Objective-C很大程度上兼容C语言，是C语言的扩展，所有以&lt;code&gt;@&lt;/code&gt;开头的语法，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>一切尽在掌握</title>
@@ -393,9 +407,9 @@
 			</item>
 			<item>
 				<title>做最好的架构-范式和总结</title>
-				<link>https://drawing.fancymore.com/posts/do-best-system-design-using-paradigm/</link>
+				<link>https://drawing.fancymore.com/posts/system-design-paradigms/</link>
 				<pubDate>Tue, 11 Jan 2011 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/do-best-system-design-using-paradigm/</guid>
+				<guid>https://drawing.fancymore.com/posts/system-design-paradigms/</guid>
 				<description>&lt;h1 id=&#34;武侠中的境界&#34;&gt;武侠中的境界&lt;/h1&gt;&#xA;&lt;p&gt;《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？&lt;/p&gt;</description>
 			</item>
 			<item>

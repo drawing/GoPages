@@ -15,9 +15,9 @@
 			<atom:link href="https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml" />
 			<item>
 				<title>告警优化实践总结</title>
-				<link>https://drawing.fancymore.com/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</link>
+				<link>https://drawing.fancymore.com/posts/alert-optimization-practice/</link>
 				<pubDate>Tue, 11 Apr 2023 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/%E5%91%8A%E8%AD%A6%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/</guid>
+				<guid>https://drawing.fancymore.com/posts/alert-optimization-practice/</guid>
 				<description>&lt;h2 id=&#34;一背景&#34;&gt;一、背景&lt;/h2&gt;&#xA;&lt;p&gt;对于 7*24 小时不间断运行的后台服务，监控告警是稳定性运行的基石。很多开发者都有过这样的经历，对服务的每一个指标都做了严格的监控和告警，唯恐漏掉告警导致问题无法发现，导致每天接收到大量的无效告警，告警的泛滥逐渐麻痹了警惕性，结果真实的问题初漏端倪时却被忽略，最终导致了严重的故障。&lt;/p&gt;</description>
 			</item>
 			<item>
@@ -43,10 +43,17 @@
 			</item>
 			<item>
 				<title>软件版本对系统架构的理解</title>
-				<link>https://drawing.fancymore.com/posts/software-version-compare-for-design/</link>
+				<link>https://drawing.fancymore.com/posts/software-versioning-and-architecture/</link>
 				<pubDate>Wed, 01 Jun 2011 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/software-version-compare-for-design/</guid>
+				<guid>https://drawing.fancymore.com/posts/software-versioning-and-architecture/</guid>
 				<description>&lt;p&gt;之前阅读开源软件总习惯性的拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需要查阅不同软件版本之间的差别。&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>发布后台程序注意总结</title>
+				<link>https://drawing.fancymore.com/posts/server-release-best-practices/</link>
+				<pubDate>Sat, 16 Apr 2011 22:40:04 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/server-release-best-practices/</guid>
+				<description>&lt;p&gt;QQ后台服务承载过亿的在线用户，即使是很小的事故也会影响大量的用户，造成极其不好的影响，而百分之八九十的事故都是由于上线发布引起的，所以要对服务上线发布足够的重视。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>一切尽在掌握</title>
@@ -57,9 +64,9 @@
 			</item>
 			<item>
 				<title>做最好的架构-范式和总结</title>
-				<link>https://drawing.fancymore.com/posts/do-best-system-design-using-paradigm/</link>
+				<link>https://drawing.fancymore.com/posts/system-design-paradigms/</link>
 				<pubDate>Tue, 11 Jan 2011 22:50:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/do-best-system-design-using-paradigm/</guid>
+				<guid>https://drawing.fancymore.com/posts/system-design-paradigms/</guid>
 				<description>&lt;h1 id=&#34;武侠中的境界&#34;&gt;武侠中的境界&lt;/h1&gt;&#xA;&lt;p&gt;《射雕英雄传》郭靖的父亲资质不高，曾说道，人一生精力是有限的，学的太多往往分心，哪样都学不好。郭靖遗传了父亲的资质和世界观，在洪七公教郭靖降龙十八掌时，也对洪七公说道，降龙十八掌很厉害，能把一样练好就行了，这句话还受到了洪七公的赞赏。不过资质平平的郭靖最终成为屈指可数的高手，真的是因为专心学习一样高深的武学么？&lt;/p&gt;</description>
 			</item>
 			<item>

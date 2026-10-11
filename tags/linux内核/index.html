@@ -69,11 +69,12 @@
 
 <h1 class="page-title">Linux内核</h1>
 
+
 <ul class="post-list">
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/redis-failed-when-out-of-memory/">overcommit 对 fork 的影响</a></h2>
+            <h2 class="post-title"><a href="/posts/overcommit-effect-on-fork/">overcommit 对 fork 的影响</a></h2>
             
             
             <p class="post-summary">问题 线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：
@@ -83,7 +84,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-06-10">2014-06-10</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -101,7 +102,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-05-23">2014-05-23</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -119,7 +120,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-05-22">2014-05-22</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -130,13 +131,31 @@ Redis is configured to save RDB snapshots, but is …</p>
             <h2 class="post-title"><a href="/posts/linux-vfs-source/">Linux内核笔记-VFS</a></h2>
             
             
-            <p class="post-summary">Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux …</p>
+            <p class="post-summary">Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-21">2014-05-21</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-virtual-address/">Linux内核笔记-虚拟地址空间</a></h2>
+            
+            
+            <p class="post-summary">在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -154,25 +173,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-05-20">2014-05-20</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-virtual-address/">Linxu内核笔记-虚拟地址空间</a></h2>
-            
-            
-            <p class="post-summary">在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-20">2014-05-20</time>
-                
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -183,13 +184,13 @@ Redis is configured to save RDB snapshots, but is …</p>
             <h2 class="post-title"><a href="/posts/linux-kernel-debugging/">Linux 内核调试</a></h2>
             
             
-            <p class="post-summary">UML调试Linux内核 最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器 …</p>
+            <p class="post-summary">UML调试Linux内核 最近看了些Linux内核源码，之前认为调试内核源码最好的方式是使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-19">2014-05-19</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -206,7 +207,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-05-18">2014-05-18</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -217,14 +218,14 @@ Redis is configured to save RDB snapshots, but is …</p>
             <h2 class="post-title"><a href="/posts/linux-kernel-data-structure/">Linux内核数据结构</a></h2>
             
             
-            <p class="post-summary">内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+            <p class="post-summary">内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
 </p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-17">2014-05-17</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -242,7 +243,7 @@ Redis is configured to save RDB snapshots, but is …</p>
             <div class="post-meta">
                 <time datetime="2014-05-16">2014-05-16</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>

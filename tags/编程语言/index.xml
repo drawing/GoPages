@@ -15,13 +15,13 @@
 			<atom:link href="https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml" />
 			<item>
 				<title>SWIG 跨语言调用</title>
-				<link>https://drawing.fancymore.com/posts/swig_cross_language_call/</link>
+				<link>https://drawing.fancymore.com/posts/swig-cross-language-call/</link>
 				<pubDate>Mon, 10 Apr 2023 22:40:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/swig_cross_language_call/</guid>
+				<guid>https://drawing.fancymore.com/posts/swig-cross-language-call/</guid>
 				<description>&lt;h2 id=&#34;一跨平台调用&#34;&gt;一、跨平台调用&lt;/h2&gt;&#xA;&lt;p&gt;在开发过程中，尤其是对外提供的类库，往往需要跨平台/跨语言支持，跨平台的优势很明显，开发成本极大降低，测试成本也相应降低，多端逻辑对齐等。所以有很多跨平台方案。&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>汇编语言练习-AT&amp;T汇编win32窗口</title>
+				<title>汇编语言练习-BIOS模式下的汇编</title>
 				<link>https://drawing.fancymore.com/posts/practice-assembler-bios/</link>
 				<pubDate>Mon, 28 Apr 2014 01:18:03 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/practice-assembler-bios/</guid>
@@ -36,136 +36,136 @@
 			</item>
 			<item>
 				<title>汇编语言练习-实模式下的汇编</title>
-				<link>https://drawing.fancymore.com/posts/practice-16-asm-real-mode.md/</link>
+				<link>https://drawing.fancymore.com/posts/practice-assembler-real-mode/</link>
 				<pubDate>Sat, 26 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/practice-16-asm-real-mode.md/</guid>
+				<guid>https://drawing.fancymore.com/posts/practice-assembler-real-mode/</guid>
 				<description>&lt;p&gt;在MS-DOS下，没有保护模式与32位寄存器，程序可以直接调用BIOS中断，虽然DOS系统已经离我们远去，但是Intel CPU进入保护模式之前需在实模式下进行设置和跳转，所以实模式编程仍然具有一定的意义，在本篇中不介绍纯DOS环境下的MASM，仅仅利用 Windows的虚拟8086模式编程，虚拟8086是Intel为了兼容实模式程序推出的，此模式可以让用户程序在32位系统上进行16位操作，模拟了 8086处理器。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十四)-SSE指令集</title>
-				<link>https://drawing.fancymore.com/posts/14.-assembler-sse-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/14-assembler-sse-instruction/</link>
 				<pubDate>Fri, 25 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/14.-assembler-sse-instruct/</guid>
-				<description>&lt;p&gt;本篇介绍sse指令接，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/14-assembler-sse-instruction/</guid>
+				<description>&lt;p&gt;本篇介绍sse指令集，sse是流化SIMD扩展（Streaming SIMD Extension, SSE)，提供全新的一组寄存器，处理128位打包数据。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十三)-MMX指令集</title>
-				<link>https://drawing.fancymore.com/posts/13.-assembler-mmx-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/13-assembler-mmx-instruction/</link>
 				<pubDate>Thu, 24 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/13.-assembler-mmx-instruct/</guid>
-				<description>&lt;p&gt;这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用 着两种特性，一定要注意这点，避免出现莫名的错误。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/13-assembler-mmx-instruction/</guid>
+				<description>&lt;p&gt;这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是复用了上篇说到的fpu数据堆栈寄存器，也就是说使用mmx指令集会破坏fpu的计算，如果同时使用这两种特性，一定要注意这点，避免出现莫名的错误。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十二)-浮点指令</title>
-				<link>https://drawing.fancymore.com/posts/12.-assembler-float-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/12-assembler-float-instruction/</link>
 				<pubDate>Wed, 23 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/12.-assembler-float-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/12-assembler-float-instruction/</guid>
 				<description>&lt;h1 id=&#34;浮点数如何存储&#34;&gt;浮点数如何存储&lt;/h1&gt;&#xA;&lt;p&gt;浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。&lt;/p&gt;&#xA;&lt;p&gt;现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的数据呢，答案是通过科学计数，科学计数由符号，尾数和指数表示，这三部分都是一个整数值，具体来看一下IEEE二进制浮点标准：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十一)-预编译宏</title>
-				<link>https://drawing.fancymore.com/posts/11.-assembler-precompile-macro/</link>
+				<link>https://drawing.fancymore.com/posts/11-assembler-preprocessor-macro/</link>
 				<pubDate>Tue, 22 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/11.-assembler-precompile-macro/</guid>
+				<guid>https://drawing.fancymore.com/posts/11-assembler-preprocessor-macro/</guid>
 				<description>&lt;p&gt;在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。&lt;/p&gt;&#xA;&lt;p&gt;先来看MASM中宏的语法规范：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(十)-内联汇编</title>
-				<link>https://drawing.fancymore.com/posts/10.-assembler-c-inline/</link>
+				<link>https://drawing.fancymore.com/posts/10-assembler-c-inline/</link>
 				<pubDate>Mon, 21 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/10.-assembler-c-inline/</guid>
+				<guid>https://drawing.fancymore.com/posts/10-assembler-c-inline/</guid>
 				<description>&lt;p&gt;这篇介绍一下c内联汇编的使用，准确的说，内联汇编不算是汇编的语法，而是c/c++的语法，虽然c/c++是有标准参考的，但是不同编译器使用的 汇编不同，导致内联汇编是编译器相关的。这里介绍vc和gcc下c的内联汇编使用，vc使用masm语法，gcc自然是AT&amp;amp;T语法。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(九)-函数</title>
-				<link>https://drawing.fancymore.com/posts/9.-assembler-function/</link>
+				<link>https://drawing.fancymore.com/posts/09-assembler-function/</link>
 				<pubDate>Sun, 20 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/9.-assembler-function/</guid>
+				<guid>https://drawing.fancymore.com/posts/09-assembler-function/</guid>
 				<description>&lt;p&gt;编程语言为了不至于使代码过于庞大，便于管理，都提供了函数的功能，提供输入和输出接口，完成独立的功能，细分代码。汇编语言同样也有函数的概念， 但是这里函数有其本身的复杂性，像高级语言，直接提供声明格式，输入输出便可，而汇编需要透彻的理解堆栈，如果需要与c函数进行交互，还需理解c的堆栈处 理过程，所以此篇最复杂的不是定义一个函数，而是理解堆栈的处理过程。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(八)-字符串</title>
-				<link>https://drawing.fancymore.com/posts/8.-assembler-string-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/08-assembler-string-instruction/</link>
 				<pubDate>Sat, 19 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/8.-assembler-string-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/08-assembler-string-instruction/</guid>
 				<description>&lt;p&gt;字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(七)-寻址方式</title>
-				<link>https://drawing.fancymore.com/posts/7.-assembler-addressing-method/</link>
+				<link>https://drawing.fancymore.com/posts/07-assembler-addressing-method/</link>
 				<pubDate>Fri, 18 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/7.-assembler-addressing-method/</guid>
+				<guid>https://drawing.fancymore.com/posts/07-assembler-addressing-method/</guid>
 				<description>&lt;p&gt;寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(六)-数学运算</title>
-				<link>https://drawing.fancymore.com/posts/6.-assembler-math-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/06-assembler-math-instruction/</link>
 				<pubDate>Thu, 17 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/6.-assembler-math-instruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/06-assembler-math-instruction/</guid>
 				<description>&lt;p&gt;在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(五)-控制流</title>
-				<link>https://drawing.fancymore.com/posts/5.-assembler-control-flow/</link>
+				<link>https://drawing.fancymore.com/posts/05-assembler-control-flow/</link>
 				<pubDate>Wed, 16 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/5.-assembler-control-flow/</guid>
+				<guid>https://drawing.fancymore.com/posts/05-assembler-control-flow/</guid>
 				<description>&lt;p&gt;程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(四)-MOV指令</title>
-				<link>https://drawing.fancymore.com/posts/4.-assembler-mov-instruct/</link>
+				<link>https://drawing.fancymore.com/posts/04-assembler-mov-instruction/</link>
 				<pubDate>Tue, 15 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/4.-assembler-mov-instruct/</guid>
-				<description>&lt;p&gt;汇编语言和高级语言不通，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/04-assembler-mov-instruction/</guid>
+				<description>&lt;p&gt;汇编语言和高级语言不同，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现，在汇编里，几乎有一半多的代码都是mov。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(三)-数据结构</title>
-				<link>https://drawing.fancymore.com/posts/3.-assembler-datastruct/</link>
+				<link>https://drawing.fancymore.com/posts/03-assembler-data-structure/</link>
 				<pubDate>Mon, 14 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/3.-assembler-datastruct/</guid>
+				<guid>https://drawing.fancymore.com/posts/03-assembler-data-structure/</guid>
 				<description>&lt;p&gt;其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存的操作）。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(二)-代码框架</title>
-				<link>https://drawing.fancymore.com/posts/2.-assembler-framework/</link>
+				<link>https://drawing.fancymore.com/posts/02-assembler-framework/</link>
 				<pubDate>Sun, 13 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/2.-assembler-framework/</guid>
-				<description>&lt;p&gt;前面总结了一下普通寄存器的知识，这里绍下汇编程序的基本框架。&lt;/p&gt;&#xA;&lt;h1 id=&#34;gas语法框架&#34;&gt;GAS语法框架&lt;/h1&gt;&#xA;&lt;p&gt;程序员学习语言都是从&lt;code&gt;hello world&lt;/code&gt;开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/02-assembler-framework/</guid>
+				<description>&lt;p&gt;前面总结了一下普通寄存器的知识，这里介绍下汇编程序的基本框架。&lt;/p&gt;&#xA;&lt;h1 id=&#34;gas语法框架&#34;&gt;GAS语法框架&lt;/h1&gt;&#xA;&lt;p&gt;程序员学习语言都是从&lt;code&gt;hello world&lt;/code&gt;开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配置，只需要 有gcc编译环境即可，调试时需要使用gdb，另外，由于AT&amp;amp;T汇编的跨平台性，在Windows系统下可以使用MinGW编译器，具备gcc 的全套功能，但是毕竟与纯粹的linux平台还是有些差别，为了使用AT&amp;amp;T和MASM两种语言方便切换，这里将使用MinGW编译器介绍，并且 将说明与Linux环境的差别。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(一)-寄存器</title>
-				<link>https://drawing.fancymore.com/posts/1.-assembler-register/</link>
+				<link>https://drawing.fancymore.com/posts/01-assembler-register/</link>
 				<pubDate>Sat, 12 Apr 2014 01:18:03 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/1.-assembler-register/</guid>
+				<guid>https://drawing.fancymore.com/posts/01-assembler-register/</guid>
 				<description>&lt;p&gt;一直在犹豫汇编语言开始讲什么，如果只说指令，常用的也就几十条甚至十几条指令，如果认为学习汇编就是学习一些指令，那未免有点舍本逐末，如果从IA-32构架开始，又过于晦涩，纠结之下还是先对下基本寄存器做个介绍，为了完整性，顺便对其他高级寄存器做一个列举。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>汇编语言学习笔记(零)-为什么开始</title>
-				<link>https://drawing.fancymore.com/posts/0.-assembler-why-learning/</link>
+				<link>https://drawing.fancymore.com/posts/00-assembler-why-learning/</link>
 				<pubDate>Fri, 11 Apr 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/0.-assembler-why-learning/</guid>
+				<guid>https://drawing.fancymore.com/posts/00-assembler-why-learning/</guid>
 				<description>&lt;h1 id=&#34;为什么开始&#34;&gt;为什么开始&lt;/h1&gt;&#xA;&lt;p&gt;从开始学习汇编到现在也有很长时间了，虽算不上刻苦钻研，但接触久了多少也有些感悟，打算就此做一些总结，一来算是备忘，二来也可以梳理知识使之融会贯通。我自小就不是一个勤奋的人，写这个东西也不会很积极，只当做是闲暇时的消遣，希望不要无疾而终便好。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>C&#43;&#43;11 详解</title>
-				<link>https://drawing.fancymore.com/posts/meaning-of-c-11/</link>
+				<link>https://drawing.fancymore.com/posts/cpp11-explained/</link>
 				<pubDate>Fri, 15 Apr 2011 22:40:04 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/meaning-of-c-11/</guid>
+				<guid>https://drawing.fancymore.com/posts/cpp11-explained/</guid>
 				<description>&lt;p&gt;C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。&lt;/p&gt;&#xA;&lt;h1 id=&#34;题外话&#34;&gt;题外话&lt;/h1&gt;&#xA;&lt;p&gt;C++语言是一门非常繁复的语言，支持的编程范式很多：&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>Latex 数学公式整理</title>
+				<title>LaTeX 数学公式整理</title>
 				<link>https://drawing.fancymore.com/posts/latex-formula/</link>
 				<pubDate>Fri, 15 Apr 2011 22:40:04 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/latex-formula/</guid>
-				<description>&lt;h1 id=&#34;基本字符&#34;&gt;基本字符&lt;/h1&gt;&#xA;&lt;p&gt;大多数普通字符跟数学公式中的是一样的，除了：&lt;code&gt;#$%&amp;amp;~_^\{}&lt;/code&gt;，这几个，如果需要表示，需要使用&lt;code&gt;\&lt;/code&gt;进行转义。&lt;/p&gt;&#xA;&lt;p&gt;例如：&lt;/p&gt;</description>
+				<description>&lt;h1 id=&#34;基本字符&#34;&gt;基本字符&lt;/h1&gt;&#xA;&lt;p&gt;大多数普通字符可以直接在数学公式中使用，除了：&lt;code&gt;#$%&amp;amp;~_^\{}&lt;/code&gt;，这几个如果需要表示，需要使用&lt;code&gt;\&lt;/code&gt;进行转义。&lt;/p&gt;&#xA;&lt;p&gt;例如：&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Objective-C 简明教程</title>
 				<link>https://drawing.fancymore.com/posts/objective-c-brief-course/</link>
 				<pubDate>Sun, 10 Apr 2011 22:40:04 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/objective-c-brief-course/</guid>
-				<description>&lt;p&gt;本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;&#xA;&lt;h2 id=&#34;c语言的扩展&#34;&gt;C语言的扩展&lt;/h2&gt;&#xA;&lt;p&gt;Objective-C很大程度上兼容C语言，是C语言的扩展，所有以&lt;code&gt;@&lt;/code&gt;开头的语言，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。&lt;/p&gt;</description>
+				<description>&lt;p&gt;本文假定读者具备 C 语言或者其他语言的背景，快速上手Objective-C，或做参考之用。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;&#xA;&lt;h2 id=&#34;c语言的扩展&#34;&gt;C语言的扩展&lt;/h2&gt;&#xA;&lt;p&gt;Objective-C很大程度上兼容C语言，是C语言的扩展，所有以&lt;code&gt;@&lt;/code&gt;开头的语法，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>

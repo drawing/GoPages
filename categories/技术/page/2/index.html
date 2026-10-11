@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>技术 · 闲亩</title>
+<meta name="description" content="软件技术文集：Linux 内核、编程语言、工程实践与算法。按标签可进一步筛选具体方向。">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/categories/%E6%8A%80%E6%9C%AF/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/" class="active">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+
+<p class="page-crumb">分类</p>
+
+<h1 class="page-title">技术</h1>
+
+<p class="page-desc">软件技术文集：Linux 内核、编程语言、工程实践与算法。按标签可进一步筛选具体方向。</p>
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-vfs-source/">Linux内核笔记-VFS</a></h2>
+            
+            
+            <p class="post-summary">Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-21">2014-05-21</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-virtual-address/">Linux内核笔记-虚拟地址空间</a></h2>
+            
+            
+            <p class="post-summary">在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常</a></h2>
+            
+            
+            <p class="post-summary">中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-debugging/">Linux 内核调试</a></h2>
+            
+            
+            <p class="post-summary">UML调试Linux内核 最近看了些Linux内核源码，之前认为调试内核源码最好的方式是使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-19">2014-05-19</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-slab-allocator/">Linux 内核 slab 分配器</a></h2>
+            
+            
+            <p class="post-summary">slab 介绍 内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-18">2014-05-18</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-data-structure/">Linux内核数据结构</a></h2>
+            
+            
+            <p class="post-summary">内核链表 Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-17">2014-05-17</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-system-call/">Linux系统调用</a></h2>
+            
+            
+            <p class="post-summary">操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-16">2014-05-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-driver-poll-programming/">Linux 设备驱动轮询编程</a></h2>
+            
+            
+            <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-15">2014-05-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
+            
+            
+            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-14">2014-05-14</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/epoll-source-analysis/">epoll 源码分析</a></h2>
+            
+            
+            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，它如何高效，高效到什么程 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-13">2014-05-13</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
+
+
+<nav class="pagination">
+    
+    <a href="/categories/%E6%8A%80%E6%9C%AF/">← 上一页</a>
+    
+    <span class="page-info">2 / 6</span>
+    
+    <a href="/categories/%E6%8A%80%E6%9C%AF/page/3/">下一页 →</a>
+    
+</nav>
+
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

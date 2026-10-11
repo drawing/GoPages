@@ -15,10 +15,10 @@
 			<atom:link href="https://drawing.fancymore.com/tags/linux%E5%86%85%E6%A0%B8/index.xml" rel="self" type="application/rss+xml" />
 			<item>
 				<title>overcommit 对 fork 的影响</title>
-				<link>https://drawing.fancymore.com/posts/redis-failed-when-out-of-memory/</link>
+				<link>https://drawing.fancymore.com/posts/overcommit-effect-on-fork/</link>
 				<pubDate>Tue, 10 Jun 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/redis-failed-when-out-of-memory/</guid>
-				<description>&lt;h1 id=&#34;问题&#34;&gt;问题&lt;/h1&gt;&#xA;&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/overcommit-effect-on-fork/</guid>
+				<description>&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;&#xA;&lt;p&gt;线上的一个服务使用Redis作为中转队列，今天读写队列操作突然错误，相关功能处于不可用状态，错误显示读队列时返回异常：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;RDB 是 Redis 持久化数据的一种方式，其主要原理就是在某个时间点把内存中的所有数据的快照保存一份到磁盘上。在条件达到时通过fork一个子进程把内存中的数据写到一个临时文件中来实现保存数据快照。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核笔记-进程调度</title>
@@ -39,42 +39,42 @@
 				<link>https://drawing.fancymore.com/posts/linux-vfs-source/</link>
 				<pubDate>Wed, 21 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-vfs-source/</guid>
-				<description>&lt;p&gt;Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺利成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。&lt;/p&gt;</description>
+				<description>&lt;p&gt;Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux运行平台版本和分析的源码都以linux-2.6.36.2作为基准，其他相近版本的差别很小。也很容易理解。这里先归纳一下 Linux 文件系统的概念和机制。&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Linux内核笔记-虚拟地址空间</title>
+				<link>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</link>
+				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</guid>
+				<description>&lt;p&gt;在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核笔记-中断和异常</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</link>
 				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-interrupt-and-exception/</guid>
-				<description>&lt;h1 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义&lt;/h1&gt;&#xA;&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;</description>
-			</item>
-			<item>
-				<title>Linxu内核笔记-虚拟地址空间</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</link>
-				<pubDate>Tue, 20 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-virtual-address/</guid>
-				<description>&lt;p&gt;在程序中打印变量地址时，往往再不同的程序中都可能打印相同的地址，显然他们并不是占用相同的物理空间，他们之所以地址相同，得益于内核提供的虚拟地址空间的机制。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;中断和异常的定义&#34;&gt;中断和异常的定义&lt;/h2&gt;&#xA;&lt;p&gt;中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核调试</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-debugging/</link>
 				<pubDate>Mon, 19 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-debugging/</guid>
-				<description>&lt;h1 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核&lt;/h1&gt;&#xA;&lt;p&gt;最近看了些Linux内核源码，之前认为最好的调试内核源码最好的方式使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;uml调试linux内核&#34;&gt;UML调试Linux内核&lt;/h2&gt;&#xA;&lt;p&gt;最近看了些Linux内核源码，之前认为调试内核源码最好的方式是使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但速度太慢。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核 slab 分配器</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-slab-allocator/</link>
 				<pubDate>Sun, 18 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-slab-allocator/</guid>
-				<description>&lt;h1 id=&#34;slab-介绍&#34;&gt;slab 介绍&lt;/h1&gt;&#xA;&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;slab-介绍&#34;&gt;slab 介绍&lt;/h2&gt;&#xA;&lt;p&gt;内存分配与释放向来是程序设计中的难点，在C语言中有malloc可以方便使用，但还是有更多的针对具体业务的实现。内存分配需要考虑分配效率和内存使用率的平衡，当用户申请一块内存，程序需要在空闲内存中查找合适的内存块返回，这里可以选择一个最快获取的算法（first-fit），或者最优选择（best-fit）。二者往往无法两全。另外需要考虑一个根本性的问题就是内存碎片，释放内存时往往与申请顺序不同，会在内存中留下大量的空洞，当有大量不连续的小内存即碎片出现时，便会产生空闲内存很多但是无法分配大块内存的情况。对于操作系统，需要长时间运行，内存碎片的问题便显得非常突出了。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux内核数据结构</title>
 				<link>https://drawing.fancymore.com/posts/linux-kernel-data-structure/</link>
 				<pubDate>Sat, 17 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-kernel-data-structure/</guid>
-				<description>&lt;h1 id=&#34;内核链表&#34;&gt;内核链表&lt;/h1&gt;&#xA;&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;内核链表&#34;&gt;内核链表&lt;/h2&gt;&#xA;&lt;p&gt;Linux内核有一些基本的数据结构，这些数据结构是Linux实现的基础，对于链表相信大家都不陌生，但是Linux内核中的链表与平常我们所使用的链表略有不同，第一次遇到或许会感到困惑。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux系统调用</title>
@@ -85,24 +85,24 @@
 			</item>
 			<item>
 				<title>Linux 设备驱动轮询编程</title>
-				<link>https://drawing.fancymore.com/posts/linux-driver-select-implement/</link>
+				<link>https://drawing.fancymore.com/posts/linux-driver-poll-programming/</link>
 				<pubDate>Thu, 15 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-driver-select-implement/</guid>
-				<description>&lt;p&gt;Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为&lt;a href=&#34;https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/&#34;&gt;等待队列&lt;/a&gt;，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/linux-driver-poll-programming/</guid>
+				<description>&lt;p&gt;Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为&lt;a href=&#34;https://drawing.fancymore.com/posts/linux-kernel-wait-queue/&#34;&gt;等待队列&lt;/a&gt;，其他模型，如poll和epoll，对驱动来说并无区别，驱动只是返回数据状态而已。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Linux 内核等待队列解析</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/</link>
+				<link>https://drawing.fancymore.com/posts/linux-kernel-wait-queue/</link>
 				<pubDate>Wed, 14 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-waiting-queue/</guid>
-				<description>&lt;p&gt;在阅读Tun驱动时看到，有一些类似 &lt;code&gt;add_wait_queue&lt;/code&gt; 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/linux-kernel-wait-queue/</guid>
+				<description>&lt;p&gt;在阅读Tun驱动时看到，有一些类似 &lt;code&gt;add_wait_queue&lt;/code&gt; 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞状态，如果此时给相应进程分配时间片做调度，无疑是浪费系统资源，所以系统内每个进程都有自己的状态标志 task-&amp;gt;state，这些状态定义于文件 include/linux/sched.h&lt;/p&gt;</description>
 			</item>
 			<item>
-				<title>select/poll 源码分析</title>
-				<link>https://drawing.fancymore.com/posts/linux-kernel-epoll/</link>
+				<title>epoll 源码分析</title>
+				<link>https://drawing.fancymore.com/posts/epoll-source-analysis/</link>
 				<pubDate>Tue, 13 May 2014 01:16:33 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/posts/linux-kernel-epoll/</guid>
-				<description>&lt;p&gt;select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我讲分析epoll模型的框架，体会其高效。&lt;/p&gt;</description>
+				<guid>https://drawing.fancymore.com/posts/epoll-source-analysis/</guid>
+				<description>&lt;p&gt;select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，它如何高效，高效到什么程度，还是一知半解，在之前的一篇博客，我简要分析了select模型代码，的确正如前人所言，使用轮询方式处理连接，这里我将分析epoll模型的框架，体会其高效。&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>tun/tap 驱动源码分析</title>
@@ -116,7 +116,7 @@
 				<link>https://drawing.fancymore.com/posts/linux-character-driver/</link>
 				<pubDate>Sun, 11 May 2014 01:16:33 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/posts/linux-character-driver/</guid>
-				<description>&lt;h1 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？&lt;/h1&gt;&#xA;&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动入硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;</description>
+				<description>&lt;h2 id=&#34;什么是字符驱动&#34;&gt;什么是字符驱动？&lt;/h2&gt;&#xA;&lt;p&gt;所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动，只能顺次读取数据，块设备驱动如硬盘等，可以随机分块读取。而有些程序虽然符合驱动程序规范，但却不真正驱动硬件，而是对操作系统功能的扩充，也称作内核模块。所以驱动程序和内核模块本质上讲属于同一种类别。&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>

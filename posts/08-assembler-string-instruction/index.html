@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇编语言学习笔记(八)-字符串 · 闲亩</title>
+<meta name="description" content="字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>汇编语言学习笔记(八)-字符串</h1>
+        <div class="post-meta">
+            <time datetime="2014-04-19">2014-04-19</time>
+            <span class="sep">·</span>
+            <span>1803 字</span>
+            <span class="sep">·</span>
+            <span>约 4 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">#汇编语言</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <p>字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的库可用，但是Intel提供了一系列字串处理相 关的指令，可以相对方便的处理字符串。</p>
+<p>先来看几个简单的拷贝操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	;AT&amp;T 语法格式
+</span></span><span class="line"><span class="cl">	movsb 传递一个字节
+</span></span><span class="line"><span class="cl">	movsw 传递两个字节
+</span></span><span class="line"><span class="cl">	movsl 传递四个字节
+</span></span></code></pre></div><p>因为这组操作没有操作数，所以MASM语法相同，但是movsl不同，l在AT&amp;T语言中表示long，是4字节，但是在MASM中，4字节是dword，所以最后一个指令被写做 movsd</p>
+<p>虽说这里movsb没有操作数，但是没有操作数如何拷贝字符？其实这有关字串处理的操作，有两个操作数，源字符串和目标字符串，这里的操作数是隐含操作数，记得寄存器那篇说过，esi为源操作数，edi为目标操作数，所体现的就是这里了。</p>
+<p>另外一个问题是，如果仅仅移动一个字符，mov指令完全可以胜任，那还要movsb干什么呢？的确如此，movsb本身来讲并不见得方便，但是结合一个指令前缀rep，就不同了。</p>
+<p>rep是一个指令前缀，就是在其他指令之前表示一种特性，rep为repeat，重复之意，就是它可以不停的执行，直到ecx为0，与之相关的还有两个指令，一起总结如下：</p>
+<table>
+	<thead>
+			<tr>
+					<th>指令</th>
+					<th>说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>rep</td>
+					<td>ecx &gt; 0时重复</td>
+			</tr>
+			<tr>
+					<td>repz/repe</td>
+					<td>零标志置位 并且 ecx &gt; 0时重复</td>
+			</tr>
+			<tr>
+					<td>repnz/repne</td>
+					<td>零标志为清零 并且 ecx &gt; 0时重复</td>
+			</tr>
+	</tbody>
+</table>
+<p>如果还记得loop和loopz指令，应该熟悉汇编中的这种后缀规律。</p>
+<p>如果movsb能够重复执行，那另外一个问题就出来了，重复复制一个字节有什么意思呢？其实movsb指令不单复制，同时还修改esi和edi的值。至于如何修改，是加还是减，需要看DF标志，方向标识。当DF清零，则esi和edi递增；反之递减。</p>
+<p>为了方便操作DF标志，Intel还专门提供了两个清零和置位的指令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cld 	DF 清零 	esi 和 edi 递增
+</span></span><span class="line"><span class="cl">std 	DF 置位 	esi 和 edi 递减
+</span></span></code></pre></div><p>与这两个指令相类似的还有cli, sti来控制中断标志，clc, stc控制CF标志，其中的规律一看便知。</p>
+<p>回头来看字串的复制步骤，先填充源目的寄存器，再用cld/std设置方向，之后设置ecx控制循环次数，再rep movsb即可。
+现举一个memcpy函数的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	char src[100] = &#34;test data&#34;;
+</span></span><span class="line"><span class="cl">	char dest[100];
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	int main()
+</span></span><span class="line"><span class="cl">	{
+</span></span><span class="line"><span class="cl">		memcpy(dest, src, 100);
+</span></span><span class="line"><span class="cl">		return 0;
+</span></span><span class="line"><span class="cl">	}
+</span></span></code></pre></div><p>对应的MASM语法格式的汇编如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">	src	db &#34;test data&#34;, 91 dup(0)
+</span></span><span class="line"><span class="cl">	dest db 100 dup(0)
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">		cld
+</span></span><span class="line"><span class="cl">		mov esi, offset src
+</span></span><span class="line"><span class="cl">		mov edi, offset dest
+</span></span><span class="line"><span class="cl">		mov ecx, 100
+</span></span><span class="line"><span class="cl">		rep movsb
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>这里代码很少，操作也非常明了，对于AT&amp;T语法，这里就不单写一个了，不过，从原理上讲，不管是AT&amp;T还是 MASM语法，最终都得编译成intel cpu可以识别的机器码，所以我们把这段MASM写成的程序用AT&amp;T语法的反汇编器反汇编即可得到AT&amp;T的写法，Ollydbg 2.0 可以反汇编程序到多种汇编语法，不过我感觉AT&amp;T翻译效果不大好看，还是使用gcc套件里的工具吧，这个工具是objdump，参数-D 为反汇编参数，直接使用命令行 objdump -D memcpy.exe 即可输出AT&amp;T语法的汇编，这里简单摘要一些：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	401000:       fc                      cld
+</span></span><span class="line"><span class="cl">	401001:       be 00 30 40 00          mov    $0x403000,%esi
+</span></span><span class="line"><span class="cl">	401006:       bf 64 30 40 00          mov    $0x403064,%edi
+</span></span><span class="line"><span class="cl">	40100b:       b9 64 00 00 00          mov    $0x64,%ecx
+</span></span><span class="line"><span class="cl">	401010:       f3 a4                   rep movsb %ds:(%esi),%es:(%edi)
+</span></span><span class="line"><span class="cl">	401012:       6a 00                   push   $0x0
+</span></span><span class="line"><span class="cl">	401014:       e8 01 00 00 00          call   0x40101a
+</span></span></code></pre></div><p>其中大致流程还是看的很清楚的。</p>
+<p>介绍了这么多，仅仅只介绍了一个字符拷贝命令movsb，其他的一些诸如比较、加载的指令，但是其他指令与movsb类似，没有什么难点，这里仅仅做一些列举：</p>
+<table>
+	<thead>
+			<tr>
+					<th>指令</th>
+					<th>操作</th>
+					<th>源操作数</th>
+					<th>目的操作数</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>lodsb</td>
+					<td>加载字节</td>
+					<td>esi</td>
+					<td>al</td>
+			</tr>
+			<tr>
+					<td>lodsw</td>
+					<td>加载双字节</td>
+					<td>esi</td>
+					<td>ax</td>
+			</tr>
+			<tr>
+					<td>lodsl(MASM lodsd)</td>
+					<td>加载四字节</td>
+					<td>esi</td>
+					<td>eax</td>
+			</tr>
+			<tr>
+					<td>stosb</td>
+					<td>保存字节到目的</td>
+					<td>al</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>stosw</td>
+					<td>保存双字节到目的</td>
+					<td>ax</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>stosl(MASM stosd)</td>
+					<td>保存四字节到目的</td>
+					<td>eax</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>cmpsb</td>
+					<td>比较字节</td>
+					<td>esi</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>cmpsw</td>
+					<td>比较双字节</td>
+					<td>esi</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>cmpsl(MASM cmpsd)</td>
+					<td>比较四字节</td>
+					<td>esi</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>scasb</td>
+					<td>比较内存和AL</td>
+					<td>al</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>scasw</td>
+					<td>比较内存和AX</td>
+					<td>ax</td>
+					<td>edi</td>
+			</tr>
+			<tr>
+					<td>scasl(MASM scasd)</td>
+					<td>比较内存和EAX</td>
+					<td>eax</td>
+					<td>edi</td>
+			</tr>
+	</tbody>
+</table>
+<p>这里举一个简单的strlen例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">	<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">ss</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;test data&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">len</span> <span class="o">=</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">ss</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>对应的MASM汇编如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	.386
+</span></span><span class="line"><span class="cl">	.model flat,stdcall
+</span></span><span class="line"><span class="cl">	option casemap:none
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	include    windows.inc
+</span></span><span class="line"><span class="cl">	include    kernel32.inc
+</span></span><span class="line"><span class="cl">	includelib kernel32.lib
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.data
+</span></span><span class="line"><span class="cl">	string	db &#34;test data&#34;, 91 dup(0)
+</span></span><span class="line"><span class="cl">	len dd 0
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	.code
+</span></span><span class="line"><span class="cl">	start:
+</span></span><span class="line"><span class="cl">		cld
+</span></span><span class="line"><span class="cl">		mov edi, offset string
+</span></span><span class="line"><span class="cl">		mov al, 0
+</span></span><span class="line"><span class="cl">		mov ecx, 100
+</span></span><span class="line"><span class="cl">		repne scasb
+</span></span><span class="line"><span class="cl">		sub ecx, 100
+</span></span><span class="line"><span class="cl">		neg ecx
+</span></span><span class="line"><span class="cl">		dec ecx
+</span></span><span class="line"><span class="cl">		mov len, ecx
+</span></span><span class="line"><span class="cl">	    invoke ExitProcess, NULL
+</span></span><span class="line"><span class="cl">	end start
+</span></span></code></pre></div><p>这里把al设置为0，使用scasb指令，即在edi指向的字符中查找0，找到以后ecx所减少的数字就是移动的次数，注意其中是包含0的，最后经过运算便可得到字串长度。</p>
+<p>使用此类指令操作字符串，比用c语言好的地方是不需要循环，这个在之前提到，由于预载入指令的问题，如果进行跳转（循环）将会是一件很损耗效率的事情，使用此类指令可以避免这个问题。</p>
+
+        </div>
+        
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/07-assembler-addressing-method/">← 汇编语言学习笔记(七)-寻址方式</a>
+        
+        
+        <a class="next" href="/posts/09-assembler-function/">汇编语言学习笔记(九)-函数 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+
+</body>
+</html>

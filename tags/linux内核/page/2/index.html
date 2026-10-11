@@ -69,11 +69,12 @@
 
 <h1 class="page-title">Linux内核</h1>
 
+
 <ul class="post-list">
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-driver-select-implement/">Linux 设备驱动轮询编程</a></h2>
+            <h2 class="post-title"><a href="/posts/linux-driver-poll-programming/">Linux 设备驱动轮询编程</a></h2>
             
             
             <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
@@ -82,7 +83,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-15">2014-05-15</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -90,16 +91,16 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-waiting-queue/">Linux 内核等待队列解析</a></h2>
+            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
             
             
-            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内进程，分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程处于阻塞 …</p>
+            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-14">2014-05-14</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -107,16 +108,16 @@
     
     <li>
         <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-epoll/">select/poll 源码分析</a></h2>
+            <h2 class="post-title"><a href="/posts/epoll-source-analysis/">epoll 源码分析</a></h2>
             
             
-            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，他如何高效，高效到什么程 …</p>
+            <p class="post-summary">select/poll模型一直是Linux长期以来使用较多的服务器模型，自从2.6内核引入epoll模型以后，我们又有了一种更加有效的服务器模型，一直以来都耳闻epoll模型对比select模型的优点，赞誉之声一片，它如何高效，高效到什么程 …</p>
             
             
             <div class="post-meta">
                 <time datetime="2014-05-13">2014-05-13</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -133,7 +134,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-12">2014-05-12</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>
@@ -150,7 +151,7 @@
             <div class="post-meta">
                 <time datetime="2014-05-11">2014-05-11</time>
                 
-                <span class="sep">·</span><a href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
             </div>
         </article>

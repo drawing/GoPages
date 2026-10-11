@@ -6,8 +6,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Objective-C 简明教程 · 闲亩</title>
-<meta name="description" content="本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
-基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语言，都是扩展语法。在Objective-C中写 …">
+<meta name="description" content="本文假定读者具备 C 语言或者其他语言的背景，快速上手Objective-C，或做参考之用。
+基础 C语言的扩展 Objective-C很大程度上兼容C语言，是C语言的扩展，所有以@开头的语法，都是扩展语法。在Objective-C中写 …">
 
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/chroma.css">
@@ -71,7 +71,7 @@
         <div class="post-meta">
             <time datetime="2011-04-10">2011-04-10</time>
             <span class="sep">·</span>
-            <span>2079 字</span>
+            <span>2088 字</span>
             <span class="sep">·</span>
             <span>约 5 分钟</span>
             
@@ -82,12 +82,12 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <p>本文假定读者具备c语言或者其他语言的背景，快速上手Objective-C，或做参考之用。</p>
+            <p>本文假定读者具备 C 语言或者其他语言的背景，快速上手Objective-C，或做参考之用。</p>
 <h1 id="基础">基础</h1>
 <h2 id="c语言的扩展">C语言的扩展</h2>
-<p>Objective-C很大程度上兼容C语言，是C语言的扩展，所有以<code>@</code>开头的语言，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。</p>
+<p>Objective-C很大程度上兼容C语言，是C语言的扩展，所有以<code>@</code>开头的语法，都是扩展语法。在Objective-C中写C/C++是很容易的事情，只需要使用.cpp文件即可，Objective-C完全兼容。虽然OC是兼容C++的，但如果使用后缀m的文件编译，会找不到标准stl库，需要修改m后缀为mm。</p>
 <h2 id="hello-world">Hello World</h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1">#import &lt;Foundatioin/Foundation.h&gt;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1">#import &lt;Foundation/Foundation.h&gt;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="ne">int</span> <span class="n">main</span><span class="p">(</span><span class="ne">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="n">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
@@ -100,7 +100,7 @@
 <h2 id="导入">导入</h2>
 <p>与C语言中的 <code>#include &lt;&gt;</code> 相对应的导入 <code>#import &lt;&gt;</code></p>
 <h2 id="基本类型">基本类型</h2>
-<p>Objective-C 中的基本类型同C，包括 <code>bool</code>, <code>char</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, <code>int</code> 等。另外，在<code>Foundation</code>库中，这些类型还定义了别名，<code>NSInteger</code>对应有符号整数，<code>NSUInteger</code>对应无符号整数，<code>CGFloat</code>对应浮点数，<code>BOOL</code>对应布尔值。</p>
+<p>Objective-C 中的基本类型同C，包括 <code>bool</code>, <code>char</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code> 等。另外，在<code>Foundation</code>库中，这些类型还定义了别名，<code>NSInteger</code>对应有符号整数，<code>NSUInteger</code>对应无符号整数，<code>CGFloat</code>对应浮点数，<code>BOOL</code>对应布尔值。</p>
 <p>数字对应的对象还有 <code>NSNumber</code>，可以跟基本的数字类型相互转化，详细信息可参阅 <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/index.html#//apple_ref/occ/instp/NSNumber/longValue">NSNumber Class Reference</a>。</p>
 <h2 id="字符串">字符串</h2>
 <p>常量字符串可以用<code>@&quot;&quot;</code>结构表示，另外变量使用<code>NSString</code>表示不可变字符串 ，<code>NSMutableString</code>表示可变字符串。具体<code>NSString</code>和普通C字符串的转换，可参阅<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/index.html#//apple_ref/occ/instp/NSString/UTF8String">NSString Class Reference</a></p>
@@ -111,7 +111,7 @@
 </span></span><span class="line"><span class="cl">[array addObject:[NSNumber numberWithUnsignedLongLong:123]];
 </span></span><span class="line"><span class="cl">[array addObject:[NSNumber numberWithUnsignedLongLong:456]];
 </span></span></code></pre></div><p>遍历操作：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">NSLog</span><span class="p">(</span><span class="err">@</span><span class="s2">&#34;Array Size: </span><span class="si">%u</span><span class="s2">&#34;</span><span class="p">,</span> <span class="p">(</span><span class="ne">int</span><span class="p">)[</span><span class="n">userIdList</span> <span class="n">count</span><span class="p">]);</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">NSLog</span><span class="p">(</span><span class="err">@</span><span class="s2">&#34;Array Size: </span><span class="si">%u</span><span class="s2">&#34;</span><span class="p">,</span> <span class="p">(</span><span class="ne">int</span><span class="p">)[</span><span class="n">array</span> <span class="n">count</span><span class="p">]);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">method</span> <span class="n">one</span>
 </span></span><span class="line"><span class="cl"><span class="k">for</span><span class="p">(</span><span class="ne">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">[</span><span class="n">array</span> <span class="n">count</span><span class="p">];</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
@@ -133,7 +133,7 @@
 </span></span><span class="line"><span class="cl">		<span class="n">NSLog</span><span class="p">(</span><span class="err">@</span><span class="s2">&#34;Elem: %llu&#34;</span><span class="p">,</span> <span class="p">[</span><span class="n">num</span> <span class="n">unsignedLongLongValue</span><span class="p">]);</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>可以看出，<code>NSArray</code>可以插入任何对象，遍历可使用<code>isKindOfClass</code>识别哪种数据类型。详细的操作可参照<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSMutableArray_Class/index.html#//apple_ref/occ/cl/NSMutableArray">NSMutableArray Class Reference</a>。</p>
+</span></span></code></pre></div><p>可以看出，<code>NSMutableArray</code>可以插入任何对象，遍历可使用<code>isKindOfClass</code>识别哪种数据类型。详细的操作可参照<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSMutableArray_Class/index.html#//apple_ref/occ/cl/NSMutableArray">NSMutableArray Class Reference</a>。</p>
 <h1 id="面向对象">面向对象</h1>
 <h2 id="interface">interface</h2>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@interface Circle : NSObject
@@ -146,7 +146,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">@end
 </span></span></code></pre></div><ul>
-<li>程序开始 <code>@interface</code> 表示C的扩展语法，表示接口，继承自<code>NSObject</code></li>
+<li><code>@interface</code> 是 C 的扩展语法，表示接口声明，这里继承自<code>NSObject</code></li>
 <li><code>ShapeColor fillColor;</code> 声明了成员</li>
 <li><code>- (void) draw;</code>表示方法，前面的括号中表示方法的返回类型</li>
 <li><code>- (void) setFillColor : (ShapeColor) fillColor;</code> 冒号后面的部分，表示有一个参数 <code>fillColor</code>，类型是<code>ShapeColor</code></li>
@@ -158,7 +158,7 @@
 </span></span></code></pre></div><p>同样可以调用类的方法：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">id myObject = [NSString string];
 </span></span></code></pre></div><p>其中<code>id</code>表示<code>myObject</code>类型，可以承载任何对象。</p>
-<p>在很多语言中支持嵌套调用，如<code>function1 ( function2() );</code>，Objective-C中可以同样可以写为：</p>
+<p>在很多语言中支持嵌套调用，如<code>function1 ( function2() );</code>，Objective-C 中同样可以写为：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[NSString stringWithFormat:[prefs format]];
 </span></span></code></pre></div><p>多参数调用：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 声明：-(BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile;
@@ -181,7 +181,7 @@
 </span></span></code></pre></div><p>解释：</p>
 <ul>
 <li>开始 <code>@implementation Circle</code> 表示为某个类提供代码。</li>
-<li>接下来是方法定义，<code>fillColor = c</code> 隐含 <code>self-&gt;fillColor</code>，表示当前对象的成员，调用方法时，<code>circle setFillColor: kRedColor</code>，方法将<code>circle</code>作为<code>self</code>参数进行传递。</li>
+<li>接下来是方法定义，<code>fillColor = c</code> 隐含 <code>self-&gt;fillColor</code>，表示当前对象的成员，调用方法时，<code>[circle setFillColor: kRedColor]</code>，方法将<code>circle</code>作为<code>self</code>参数进行传递。</li>
 </ul>
 <h2 id="属性">属性</h2>
 <p><code>@interface</code>属性定义：</p>
@@ -194,7 +194,7 @@
 </span></span><span class="line"><span class="cl">@end
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">// 实现文件
-</span></span><span class="line"><span class="cl">@implementation IMMessage
+</span></span><span class="line"><span class="cl">@implementation TestMessage
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">@synthesize elems;
 </span></span><span class="line"><span class="cl">
@@ -221,12 +221,12 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></div><p>声明property的语法格式为：<code>@property (参数1,参数2) 类型 名字;</code></p>
 <p>参数的含义如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">readwrite: 产生setter\getter方法
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">readwrite: 产生setter/getter方法
 </span></span><span class="line"><span class="cl">readonly: 只产生简单的getter,没有setter。
 </span></span><span class="line"><span class="cl">assign: 默认类型,setter方法直接赋值，而不进行retain操作
 </span></span><span class="line"><span class="cl">retain: setter方法对参数进行release旧值，再retain新值。
 </span></span><span class="line"><span class="cl">copy: setter方法进行Copy操作，与retain一样
-</span></span><span class="line"><span class="cl">nonatomic: 禁止多线程，变量保护，提高性能
+</span></span><span class="line"><span class="cl">nonatomic: 不进行原子操作，不保证线程安全，但性能更好
 </span></span></code></pre></div><h2 id="实例化">实例化</h2>
 <p>对象的实例化：<code>shape = [Circle new];</code></p>
 <h2 id="私有成员">私有成员</h2>
@@ -239,7 +239,7 @@
 </span></span><span class="line"><span class="cl">- (NSString*) GetName;
 </span></span><span class="line"><span class="cl">@end
 </span></span></code></pre></div><h2 id="class">@class</h2>
-<p>当两个类有循环依赖，如A类引用到B，B类又引用到A，import的时候没办法把两个类都放到自身前面，无法编译通过，这事可以A类中使用<code>@class B</code>来声明有一个类B，具体实现在其他地方，来解决循环依赖问题。</p>
+<p>当两个类有循环依赖，如A类引用到B，B类又引用到A，import的时候没办法把两个类都放到自身前面，无法编译通过，这时可以在A类中使用<code>@class B</code>来声明有一个类B，具体实现在其他地方，来解决循环依赖问题。</p>
 <h1 id="高级特性">高级特性</h1>
 <h2 id="selector">selector</h2>
 <p><code>Objective-C</code>中的方法调用就是消息传递，除了使用<code>[]</code>来传递消息以外，还有一种在运行期间进行消息传递的方法，就是<code>selector</code>方式，不同参数的消息传递如下：</p>
@@ -251,7 +251,7 @@
 </span></span><span class="line"><span class="cl">[self performSelector:@selector(fooNoInputs)];
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">// 一个参数
-</span></span><span class="line"><span class="cl">- (void) fooOneIput:(NSString*) first {
+</span></span><span class="line"><span class="cl">- (void) fooOneInput:(NSString*) first {
 </span></span><span class="line"><span class="cl">	NSLog(@&#34;Logs %@&#34;, first);
 </span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
@@ -264,7 +264,7 @@
 </span></span><span class="line"><span class="cl">[self performSelector:@selector(fooFirstInput:secondInput:) withObject:@&#34;first&#34; withObject:@&#34;second&#34;];
 </span></span></code></pre></div><p>另外，在<code>selector</code>中可以使用<code>onThread</code>参数指定所执行方法的线程。</p>
 <h2 id="内存管理">内存管理</h2>
-<p>在之前的OC版本中，需要对象操作<code>alloc</code>，<code>release</code>等手工进行分配释放，一旦管理不善，容易出现内存泄漏或者崩溃。在Xcode 4.2中，增加了自动引用计数<code>Automatic Reference Counting, ARC</code>，不需要开发者考虑<code>release</code>的问题，详情可参考<a href="http://www.oschina.net/translate/objc-automatic-reference-counting-in-xcode-explained">理解 Objective-C 的 ARC</a>。</p>
+<p>在之前的OC版本中，对象的<code>alloc</code>、<code>release</code>等操作需要手工进行，一旦管理不善，容易出现内存泄漏或者崩溃。在Xcode 4.2中，增加了自动引用计数<code>Automatic Reference Counting, ARC</code>，不需要开发者考虑<code>release</code>的问题，详情可参考<a href="http://www.oschina.net/translate/objc-automatic-reference-counting-in-xcode-explained">理解 Objective-C 的 ARC</a>。</p>
 <h1 id="参考资源">参考资源</h1>
 <ul>
 <li><a href="http://cocoadevcentral.com/d/learn_objectivec/">http://cocoadevcentral.com/d/learn_objectivec/</a></li>
@@ -312,7 +312,7 @@
         <a class="prev" href="/posts/everything-under-control/">← 一切尽在掌握</a>
         
         
-        <a class="next" href="/posts/latex-formula/">Latex 数学公式整理 →</a>
+        <a class="next" href="/posts/latex-formula/">LaTeX 数学公式整理 →</a>
         
     </nav>
 </article>
@@ -329,6 +329,8 @@
 </footer>
 
 <script src="/js/theme.js" defer></script>
+
+
 
 
 <script src="/js/toc.js" defer></script>
