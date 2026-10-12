@@ -71,7 +71,7 @@
         <div class="post-meta">
             <time datetime="2014-07-03">2014-07-03</time>
             <span class="sep">·</span>
-            <span>1593 字</span>
+            <span>1576 字</span>
             <span class="sep">·</span>
             <span>约 4 分钟</span>
             
@@ -82,19 +82,19 @@
 
     <div class="post-layout">
         <div class="post-content">
-            <h1 id="进程管理">进程管理</h1>
-<h2 id="进程">进程</h2>
+            <h2 id="进程管理">进程管理</h2>
+<h3 id="进程">进程</h3>
 <p>进程管理是操作系统一个重要的内容，包括进程调度，中断管理，信号，进程优先级，进程状态和切换，进程内存管理等各个方面。进程是可执行文件在系统中的执行实例，内核中的表达为<code>task_struct</code>，包含了进程的所有信息。</p>
-<p>进程可通过fork一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。</p>
+<p>进程可通过fork复制一份相同的进程，具有fork之前完全一样的状态。fork的性能在 60-8000/s。之所以有这么大的跨越，在于不同的进程使用了不同数量的页表，如果进程使用内存很少，页表数量很少，fork的性能便会很高，如果进程映射的内存很多，页表数量很多，fork虽然由于写时复制的优化，可以不进行内存的复制，但还是需要复制页表，会导致性能急剧下降。</p>
 <p>而单CPU的进程之间的切换性能，在30w-100w/s之间。K级以上并发，稳定在30w/s左右。</p>
-<p>更加详细的内容可查阅Linux内核代码，<a href="../linux_kernel/linux-kernel-process-sched/">进程调度</a>。</p>
-<h2 id="线程">线程</h2>
+<p>更加详细的内容可查阅Linux内核代码，<a href="/posts/linux-kernel-process-sched/">进程调度</a>。</p>
+<h3 id="线程">线程</h3>
 <p>线程可以认为是更轻量级的进程，线程与进程的区别在于线程之间可共享资源，除了栈空间独享以外，其他的资源如内存空间，文件，都可以共享。</p>
 <p>线程可通过<code>pthread_create</code>创建，由于共享内存等资源，所以性能会更高，创建性能在5w-10w/s，随着并发数的增加而降低，并发1w创建性能会稳定在5w/s。</p>
 <p>线程切换的效率，单CPU切换在50w-150w之间，K级以上并发，稳定在50w/s左右。</p>
-<h2 id="中断">中断</h2>
-<p>进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统<code>/proc/interrupt</code>查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。</p>
-<h1 id="函数调用">函数调用</h1>
+<h3 id="中断">中断</h3>
+<p>进程管理中，中断也是非常重要的一个方面，目前的中断信息，可通过虚拟文件系统<code>/proc/interrupts</code>查看。对于多核CPU，之前的内核版本有出现过中断在一个CPU，处理网络包导致单CPU过载的情况。</p>
+<h2 id="函数调用">函数调用</h2>
 <p>函数调用分为两种，一种有系统调用，跟普通函数调用的区别在于系统调用会进行内核态和用户态的切换，性能略有下降，以架构师的水准要求自己，需要了解主要函数调用的瓶颈。</p>
 <table>
 	<thead>
@@ -117,7 +117,7 @@
 					<td>1000w</td>
 			</tr>
 			<tr>
-					<td>getimeofday</td>
+					<td>gettimeofday</td>
 					<td>30w-400w</td>
 			</tr>
 			<tr>
@@ -130,13 +130,13 @@
 			</tr>
 	</tbody>
 </table>
-<p>更详细系统调用相关内容，可参考：<a href="../linux_kernel/reading/linux-kernel-system-call/">系统调用</a>。</p>
-<h1 id="文件系统">文件系统</h1>
+<p>更详细系统调用相关内容，可参考：<a href="/posts/linux-kernel-system-call/">系统调用</a>。</p>
+<h2 id="文件系统">文件系统</h2>
 <p>文件系统是一个复杂的系统，其包含的模块也非常丰富，对于性能来讲，需要了解的是文件系统和硬件之间有一层 Page Cache，当读写文件时，并不一定非要从磁盘读取，如果 Page Cache 中存在，直接操作Cache层，性能会有大幅提高。但同时存在的一个问题是，如果只写入Cache层，当系统宕机后写入的内容将会丢失，内核启用pdflush进程进行后台回写，当到达一定条件就把Cache层的变更写入硬件，系统函数<code>fsync</code>可以把更改写入磁盘，对数据安全性要求非常高的模块，就必须更改完成后调用<code>fsync</code>把数据刷入磁盘硬件，当然，由于绕过了Cache系统，性能会大幅下降，而且会造成系统性能的不稳定。</p>
-<p>在&rsquo;/proc/vm&rsquo;文件系统下，有参数进行设置系统执行pdflush的执行条件。<code>dirty_background_ratio</code>表示脏页占内存多少比例时，开始进行回收。<code>dirty_expire_centisecs</code>表示当脏页存在多长时间以后回收。</p>
-<h1 id="系统指标">系统指标</h1>
+<p>在<code>/proc/sys/vm/</code>目录下，有相关参数设置回写的执行条件。<code>dirty_background_ratio</code>表示脏页占内存多少比例时，开始进行回收。<code>dirty_expire_centisecs</code>表示当脏页存在多长时间以后回收。</p>
+<h2 id="系统指标">系统指标</h2>
 <p>Linux系统可以查看各种执行参数，不同的参数对应不同子系统的性能状况，了解哪些参数是需要了解的，哪些参数对应的含义，是了解当前系统执行性能必须要了解的，下面逐一查看各项指标的含义。</p>
-<h2 id="cpu">CPU</h2>
+<h3 id="cpu">CPU</h3>
 <p>判别CPU当前执行效能，可通过以下指标查看：</p>
 <ul>
 <li>CPU利用率：CPU利用率直接体现了CPU使用情况，长期处于80%到90%以上，可能CPU出现瓶颈</li>
@@ -147,20 +147,20 @@
 <li>Interrupts：中断</li>
 <li>Load average：等待CPU的进程队列大小</li>
 </ul>
-<h2 id="内存">内存</h2>
+<h3 id="内存">内存</h3>
 <ul>
 <li>空闲内存</li>
 <li>swap使用大小</li>
 <li>Buffer和Cache大小</li>
 <li>Slabs 大小</li>
 </ul>
-<h2 id="网络">网络</h2>
+<h3 id="网络">网络</h3>
 <ul>
 <li>收包和发包量</li>
 <li>收包和发包大小</li>
 <li>丢包量</li>
 </ul>
-<h2 id="磁盘">磁盘</h2>
+<h3 id="磁盘">磁盘</h3>
 <ul>
 <li>iowait，CPU等待IO时间</li>
 <li>平均等待时间</li>
@@ -177,16 +177,23 @@
                 <summary>目录</summary>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#进程">进程</a></li>
-    <li><a href="#线程">线程</a></li>
-    <li><a href="#中断">中断</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#cpu">CPU</a></li>
-    <li><a href="#内存">内存</a></li>
-    <li><a href="#网络">网络</a></li>
-    <li><a href="#磁盘">磁盘</a></li>
+    <li><a href="#进程管理">进程管理</a>
+      <ul>
+        <li><a href="#进程">进程</a></li>
+        <li><a href="#线程">线程</a></li>
+        <li><a href="#中断">中断</a></li>
+      </ul>
+    </li>
+    <li><a href="#函数调用">函数调用</a></li>
+    <li><a href="#文件系统">文件系统</a></li>
+    <li><a href="#系统指标">系统指标</a>
+      <ul>
+        <li><a href="#cpu">CPU</a></li>
+        <li><a href="#内存">内存</a></li>
+        <li><a href="#网络">网络</a></li>
+        <li><a href="#磁盘">磁盘</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
             </details>

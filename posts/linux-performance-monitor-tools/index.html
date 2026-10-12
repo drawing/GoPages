@@ -71,7 +71,7 @@
         <div class="post-meta">
             <time datetime="2014-07-01">2014-07-01</time>
             <span class="sep">·</span>
-            <span>5157 字</span>
+            <span>5129 字</span>
             <span class="sep">·</span>
             <span>约 11 分钟</span>
             
@@ -108,7 +108,7 @@
 <li>load average：当前机器负载，三个数分别是1分钟、5分钟、15分钟的负载情况，程序每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。</li>
 </ul>
 <h3 id="第二行进程信息">第二行：进程信息</h3>
-<p>依次分别是，总进成数，运行进程数，sleep进程数，stop进程数，还有僵尸进程数</p>
+<p>依次分别是，总进程数，运行进程数，sleep进程数，stop进程数，还有僵尸进程数</p>
 <h3 id="第三行cpu信息">第三行：cpu信息</h3>
 <ul>
 <li>us：用户空间占用CPU的百分比</li>
@@ -139,7 +139,7 @@
 <li>PID：进程ID</li>
 <li>USER：创建者</li>
 <li>PRI：进程优先级</li>
-<li>NI：nick level，负值表示高优先级</li>
+<li>NI：nice level，负值表示高优先级</li>
 <li>VIRT：进程使用的虚拟内存总量，单位kb（VIRT=SWAP+RES）</li>
 <li>RES：进程使用的、未被换出的物理内存大小，单位kb（RES=CODE+DATA）</li>
 <li>SHR：共享内存大小，单位kb</li>
@@ -209,7 +209,7 @@
 <p>used/free：已使用内存大小和空闲内存大小，跟第二行相同字段的区别在于减去了buffer和cache，buffer和cache从操作系统角度来讲是已经使用的内存，但当系统可用内存不足时，操作系统会释放buffer和cache，对进程来讲，这部分内存也是可用的。</p>
 <p>第四行：参考 top</p>
 <h2 id="iostat">iostat</h2>
-<p>此命令用户输出cpu和磁盘io相关的统计信息，默认不加参数输出的是系统启动后到现在的统计情况，一般当系统启动很长时间以后，不具有太大的参考意义：</p>
+<p>此命令用于输出cpu和磁盘io相关的统计信息，默认不加参数输出的是系统启动后到现在的统计情况，一般当系统启动很长时间以后，不具有太大的参考意义：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Linux 2.6.32.43-tlinux-1.0.8-state (10_135_11_35_kqq)   01/13/2015      _x86_64_
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">avg-cpu:  %user   %nice %system %iowait  %steal   %idle
@@ -238,7 +238,7 @@
 <li>Blk_read:   读入的block总数</li>
 <li>Blk_wrtn:  写入的block总数</li>
 </ul>
-<p>另外，iostate可以加入一些参数执行更为丰富的功能：</p>
+<p>另外，iostat可以加入一些参数执行更为丰富的功能：</p>
 <p><code>iostat -d 2</code>：每隔两秒统计一次（注：第一行仍然显示系统启动至今的统计）
 <code>iostat -x -d 2</code>：显示更加详细的信息，2秒统计一次
 <code>iostat -d 2 6</code>：两秒统计一次，统计6次</p>
@@ -276,7 +276,7 @@
 </ul>
 <h2 id="iotop">iotop</h2>
 <p>有时机器磁盘使用率过高，想知道哪个进程占用磁盘过大，可使用 iotop 命令：</p>
-<p><code>iotop –b –n 3 –d 5</code></p>
+<p><code>iotop -b -n 3 -d 5</code></p>
 <ul>
 <li>-h, &ndash;help				#显示帮助信息</li>
 <li>-o, &ndash;only				#显示进程或者线程实际上正在做的I/O，而不是全部的，可以随时切换按o</li>
@@ -322,7 +322,7 @@
 <ul>
 <li>START: 内存开始地址</li>
 <li>SIZE: 占用内存的字节数（KB）</li>
-<li>RSS: 保留内存的字节数（KB）</li>
+<li>RSS: 常驻内存的字节数（KB）</li>
 <li>Dirty: 脏页的字节数（包括共享和私有的）</li>
 <li>PERM: 内存的权限</li>
 <li>Offset: 文件偏移</li>
@@ -330,7 +330,7 @@
 <li>MAPPING: 对应的映像文件名</li>
 </ul>
 <h2 id="netstat">netstat</h2>
-<p>netstat 是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。</p>
+<p>netstat 是用于查看网络及相关信息的程序，它能提供TCP连接、TCP和UDP监听等相关报告。</p>
 <p>该命令的一般形式：<code>netstat [-a][-e][-n][-o][-p Protocol][-r][-s][Interval]</code>，执行 <code>netstat -anop</code> 显示信息：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name Timer
 </span></span><span class="line"><span class="cl">tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN      -                off (0.00/0/0)
@@ -365,16 +365,16 @@
 <p>strace 可以查看一个进程所调用的系统api情况，在某些情况下，知道系统所调用的api，可以判断程序运行时的一些状态，该命令使用方式：<code>strace -p &lt;PID&gt;</code>。可以查看调用的api和参数。</p>
 <h2 id="lsof">lsof</h2>
 <p>lsof 是一个列出当前系统打开文件的工具。在linux环境下，任何事物都以 文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。所以如传输控制协议(TCP)和用户数据报协议(UDP)套接字等，系统在后台都为该应用程序分配了一个文件描述符，通过lsof工具能够查看这个列表的详细信息。</p>
-<p>lsof 的使用方法可以参考这里。这里列出几种常见的用法。</p>
+<p>下面列出几种常见的用法：</p>
 <ul>
 <li>查看文件系统阻塞 <code>lsof /boot</code></li>
 <li>查看端口号被哪个进程占用 <code>lsof -i :3306</code></li>
 <li>查看用户打开哪些文件 <code>lsof -u username</code></li>
 <li>查看进程打开哪些文件 <code>lsof -p 4838</code></li>
-<li>查看远程已打开的网络链接<code> lsof -i @192.168.34.128</code></li>
+<li>查看远程已打开的网络链接 <code>lsof -i @192.168.34.128</code></li>
 </ul>
 <h2 id="proc文件系统">proc文件系统</h2>
-<p>在Linux上<code>/proc/</code>是很特殊的文件系统，存储了内核当前运行状态的虚拟文件系统</p>
+<p>在Linux上<code>/proc/</code>是很特殊的文件系统，存储了内核当前运行状态的虚拟文件系统。</p>
 <ul>
 <li><code>/proc/meminfo</code>：当前系统内存状态</li>
 <li><code>/proc/cpuinfo</code>：cpu状态</li>
@@ -384,7 +384,7 @@
 <li><code>/proc/sys/net/ipv4/tcp_wmem</code>：tcp write buffer值，分别表示：最小，默认，最大</li>
 </ul>
 <h2 id="benchmark">Benchmark</h2>
-<p>除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，有时候通过测试系统固有的特定，是一个好的选择。</p>
+<p>除了监控系统和程序状态的工具，另外还有一些工具用于测试系统本身固有的性能，如果两台机器之间本身的网络传输有瓶颈，不论程序写的多优秀，也不能突破这种限制。所以适当的时候，或者评估阶段，通过测试系统固有的特性，是一个好的选择。</p>
 <table>
 	<thead>
 			<tr>
@@ -419,7 +419,7 @@
 			</tr>
 	</tbody>
 </table>
-<p>其中 Lmbench 可以测试读写内存，网络建立，上下文切换等性能，这可以提供给我们很好的参考，作为架构师，一定需要了解各种性能指标，甚至主要api调用性能，才能更合理的使用。</p>
+<p>其中 Lmbench 可以测试读写内存，网络建立，上下文切换等性能，这可以提供给我们很好的参考，作为架构师，一定需要了解各种性能指标，甚至主要api调用性能，才能更合理地使用。</p>
 
         </div>
         
