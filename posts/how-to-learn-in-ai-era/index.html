@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 时代如何学习 · 闲亩</title>
+<meta name="description" content=" 一份写给所有人的自主学习指南——当知识不再稀缺，学习的重心该放在哪里
+无论你是学计算机、学文史、学医、学法，还是任何一个领域，这份文档想回答的是同一个问题：在 AI 什么都能查、什么都能写的时代，一个人到底该学什么、怎么学、拿什么证明自己 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>AI 时代如何学习</h1>
+        <div class="post-meta">
+            <time datetime="2026-10-14">2026-10-14</time>
+            <span class="sep">·</span>
+            <span>13056 字</span>
+            <span class="sep">·</span>
+            <span>约 27 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">#学习方法</a><span class="sep">·</span><a class="tag" href="/tags/ai/">#AI</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <blockquote>
+<p>一份写给所有人的自主学习指南——当知识不再稀缺，学习的重心该放在哪里</p>
+<p>无论你是学计算机、学文史、学医、学法，还是任何一个领域，这份文档想回答的是同一个问题：<strong>在 AI 什么都能查、什么都能写的时代，一个人到底该学什么、怎么学、拿什么证明自己？</strong></p>
+</blockquote>
+<hr>
+<h2 id="一引言为什么怎么学突然变成了一个真问题">一、引言：为什么&quot;怎么学&quot;突然变成了一个真问题</h2>
+<h3 id="11-确定的学习链条被-ai-动摇了">1.1 确定的学习链条，被 AI 动摇了</h3>
+<p>过去几十年，学习的路径是确定的：掌握一个领域的知识 → 能力增长 → 价值提升。这条链条稳定到几乎没人质疑。</p>
+<p>AI 动摇了它的第一环。当 AI 能在几秒内给出海量知识、写出可用的代码、生成一首像样的诗、答出一道历史题时，&ldquo;拥有知识&quot;本身不再稀缺。教育部部长怀进鹏的表述很直接：<strong>&ldquo;AI 基本拉平了人与人之间的知识差距。&rdquo;</strong> 世界经济论坛则把随之而来的趋势命名为 <strong>&ldquo;判断型工作的兴起&rdquo;</strong>——当执行被 AI 包办，稀缺的不再是&quot;会做&rdquo;，而是&quot;知道该做什么、做得对不对&quot;。</p>
+<p>于是学习者陷入一种新的迷茫：<strong>如果知识会贬值、如果 AI 什么都能做，那我到底该学什么、怎么学？</strong></p>
+<p>这份文档不贩卖焦虑，也不盲目乐观。它想给出的是一套<strong>在学校改革追上之前、你自己就能立刻执行</strong>的学习方法论。</p>
+<h3 id="12-总纲两个极端都是错的">1.2 总纲：两个极端都是错的</h3>
+<p>面对 AI，人们很容易滑向两个相反的极端，而<strong>这两个极端都错</strong>：</p>
+<ul>
+<li><strong>极端一：过度依赖，觉得&quot;学什么都没用了&quot;。</strong> 反正 AI 都会，那我背诗、记法条、学算法还有什么意义？——这是错的。它会导致&quot;能力幻觉&quot;：你以为自己会了，其实只是 AI 会了；一旦离开 AI，你什么都做不了（后面会讲到，实测失败率高达 77%）。</li>
+<li><strong>极端二：因噎废食，觉得&quot;用 AI 会让我变笨，所以完全不用&quot;。</strong> 这也是错的。拒绝 AI 等于拒绝这个时代最强的杠杆，你会在效率上被同龄人远远甩开。</li>
+</ul>
+<p><strong>正确的姿势是第三条路：分领域、分场合地识别——哪些是&quot;必须自己内化、AI 替代不了&quot;的能力成长，哪些是&quot;可以放心交给 AI 辅助&quot;的外部任务。</strong> 学习的智慧，不在于&quot;用不用 AI&quot;，而在于<strong>精准地区分这两者，并把 AI 用在对的地方</strong>。</p>
+<p>这份文档的核心，就是给你一套<strong>可操作的区分标准</strong>。一句话概括：</p>
+<blockquote>
+<p><strong>学习的锚点，要从&quot;我记住了什么&quot;（输入、名词、会贬值），转向&quot;我能判断什么、我做成了什么&quot;（输出、动词、抗贬值）——但前提是，你得先分清哪些知识是&quot;能力本身&quot;，哪些只是&quot;能力的耗材&quot;。</strong></p>
+</blockquote>
+<p>下面第二章，就给出这个区分标准。它比&quot;基础知识有没有用&quot;这种笼统问法精确得多。</p>
+<hr>
+<h2 id="二区分两种知识构成性-vs-工具性">二、区分两种知识——&ldquo;构成性&rdquo; vs &ldquo;工具性&rdquo;</h2>
+<p>这是整份文档的地基，也是回答&quot;哪些该自己学、哪些可交给 AI&quot;的那把尺子。</p>
+<p>很多人把问题简化成&quot;基础知识还有没有用&quot;，这是问错了。正确的问法是：<strong>这份知识，和我的能力之间，是什么关系？</strong> 认知科学对此有一个精确的区分：</p>
+<ul>
+<li><strong>构成性知识（constitutive knowledge）</strong>：它<strong>本身就是能力的组成部分</strong>。抽掉它，这项能力就不复存在。→ <strong>必须自己内化，AI 替代不了。</strong></li>
+<li><strong>工具性知识（instrumental knowledge）</strong>：它只是完成任务时<strong>临时调用的外部材料</strong>，用完即弃，抽掉它不影响你的能力，随时可查。→ <strong>可以放心交给 AI 检索。</strong></li>
+</ul>
+<h3 id="21-一个任何人都能自问的判断标准">2.1 一个任何人都能自问的判断标准</h3>
+<p>怎么区分一份知识属于哪一类？问自己两个问题：</p>
+<blockquote>
+<p><strong>问题一：这份知识，是&quot;我思考时用来思考的材料&quot;，还是&quot;我思考完之后要去查的资料&quot;？</strong>
+前者是构成性（必须内化），后者是工具性（可外包）。</p>
+</blockquote>
+<blockquote>
+<p><strong>问题二（更锋利）：抽掉它，我的这项能力还在不在？</strong>
+不在了 → 构成性，必须内化；毫发无损 → 工具性，可外包。</p>
+</blockquote>
+<h3 id="22-为什么构成性知识不可替代认知科学的解释">2.2 为什么&quot;构成性知识&quot;不可替代——认知科学的解释</h3>
+<p>这不是感性主张，而是有坚实理论支撑的。认知心理学家 Daniel Willingham 有一句名言：</p>
+<blockquote>
+<p><strong>&ldquo;你无法用你不拥有的知识来思考&rdquo;（You can&rsquo;t think with knowledge you don&rsquo;t have）。</strong></p>
+</blockquote>
+<p>他的论证机制有三条，恰好解释了为什么构成性知识必须长在脑子里：</p>
+<ol>
+<li><strong>工作记忆极其有限，知识靠&quot;组块化（chunking）&ldquo;来腾空间。</strong> 你内化的知识越多，它们越能压缩成&quot;组块&rdquo;，把宝贵的工作记忆腾出来做更高级的思考（谋篇布局、鉴别诊断、法律适用）。一个腹内空空的人，光是&quot;找词、查资料&quot;就耗尽了工作记忆，根本没余力去思考&quot;怎么做得更好&quot;。</li>
+<li><strong>知识是累积的、指数增长的（&ldquo;the rich get richer&rdquo;）。</strong> 已有的知识网络越密，新知识越容易挂上去、越容易记住、越容易调用。</li>
+<li><strong>专家能&quot;看透问题的底层结构&quot;，靠的就是内化的知识，而不是临场检索。</strong> 缺乏背景知识时，仅仅&quot;理解问题本身&quot;就会耗尽你的认知资源。</li>
+</ol>
+<p>还有一个相关概念叫 <strong>&ldquo;自动化（automatization）&rdquo;</strong>：专家和新手的区别，很大程度上在于专家把大量基础技能练到了&quot;不假思索、自动执行&quot;的程度（诗人的语感、医生的鉴别诊断、律师的法条直觉）。<strong>这种自动化只能通过反复内化获得，无法通过&quot;查 AI&quot;获得</strong>——因为&quot;查 AI&quot;这个动作本身，就是非自动化的、需要中断和外部依赖的。</p>
+<h3 id="23-分领域看同一把尺子量出不同的答案">2.3 分领域看：同一把尺子，量出不同的答案</h3>
+<p>关键在于——<strong>&ldquo;构成性 / 工具性&quot;的边界，是随领域而变的，不能一刀切。</strong> 下面这张表，就是用上面那把尺子量出来的结果：</p>
+<table>
+	<thead>
+			<tr>
+					<th>领域</th>
+					<th>构成性知识（必须内化，AI 替代不了）</th>
+					<th>工具性知识（可交给 AI）</th>
+					<th>AI 的合理角色</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>文学 / 写作</strong></td>
+					<td>背诵到滚瓜烂熟的诗词文章——内化韵律、语感、意象，形成&quot;下笔时自然涌现&quot;的内在坐标系</td>
+					<td>查某个典故的出处、某句诗的全文</td>
+					<td>提供意象联想、风格参照、灵感激发</td>
+			</tr>
+			<tr>
+					<td><strong>医学</strong></td>
+					<td>内化到&quot;条件反射&quot;级的解剖 / 病理 / 药理知识——支撑实时的临床判断</td>
+					<td>查某个冷门药物的剂量、某项指标的正常范围</td>
+					<td>罕见病鉴别提示、文献检索、诊断思路发散</td>
+			</tr>
+			<tr>
+					<td><strong>法律</strong></td>
+					<td>烂熟于心的法条 / 判例 / 原则——支撑稳定、精准的法律适用</td>
+					<td>检索某个判例的编号、某条法规的原文</td>
+					<td>类案检索、论证角度发散、文书初稿</td>
+			</tr>
+			<tr>
+					<td><strong>计算机</strong></td>
+					<td>核心数据结构 / 算法的<strong>设计思想</strong>、系统取舍的直觉</td>
+					<td>手写红黑树的旋转代码、某个 API 的参数细节</td>
+					<td>生成实现代码、查 API、样板代码</td>
+			</tr>
+			<tr>
+					<td><strong>历史</strong></td>
+					<td>对历史脉络、因果、史观的整体把握——形成判断框架</td>
+					<td>某个战役的确切日期、某个条约的条款编号</td>
+					<td>史料检索、多角度解读的提示</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>注意这张表里最容易被误读的一点</strong>：在文学、医学、法律里，<strong>&ldquo;记忆的量&quot;本身就是构成性的</strong>——背得越多、内化越深，判断力越强，这部分<strong>不能外包</strong>。而在计算机里，&ldquo;能默写多少代码&quot;这种记忆的量，价值确实下降了，&ldquo;理解设计思想&quot;这种质上升了。<strong>所以&quot;基础要不要死磕记忆&rdquo;，答案是分领域的，必须用上面那把尺子逐一去量，而不是套用一句笼统的口号。</strong></p>
+<blockquote>
+<p><strong>结论：AI 时代不是&quot;基础没用了&rdquo;，而是要用&quot;构成性 / 工具性&quot;这把尺子，把基础重新分拣一遍——构成性的部分（能力本身）要更用力地内化，工具性的部分（外部耗材）可以放心地交给 AI。学习的功夫，全在这个&quot;分拣&quot;上。</strong></p>
+</blockquote>
+<p>学术支撑：2026 年 Frontiers 上的论文《被掏空的心智：为什么 AI 时代基础知识不可或缺》正是此意；CU Boulder 一位 CS 教授的观点更精辟——<strong>&ldquo;慢学习在 AI 时代反而赢&rdquo;（slow learning wins）</strong>，因为快速拿到答案不形成理解，而理解才是可迁移的资产。</p>
+<hr>
+<h2 id="三那背诵--记忆还有必要吗一个被问烂却常被答错的问题">三、那&quot;背诵 / 记忆&quot;还有必要吗？——一个被问烂、却常被答错的问题</h2>
+<p>&ldquo;AI 都会作诗了，我们为什么还要背？&ldquo;&ldquo;AI 一查就有，为什么还要记年代、记人物、记公式？&quot;——这是 AI 时代被问得最多的问题之一。</p>
+<p>用第二章的尺子一量，答案就清楚了：<strong>记忆要不要，取决于它是不是&quot;构成性&quot;的。</strong> 而这里还要再细分一层——因为&quot;记忆&quot;本身也分两种，命运完全不同。</p>
+<h3 id="31-关键区分死记硬背-vs-内化记忆">3.1 关键区分：死记硬背 vs 内化记忆</h3>
+<ul>
+<li><strong>死记硬背（为应付考试的机械重复）</strong>：背完就忘、考完就扔、和自己没有任何联系。它只是把知识&quot;暂存&quot;在脑子里应付检查，<strong>没有进入能力结构</strong>。→ 这种记忆是&quot;伪构成性&rdquo;，价值确实在大幅贬值，因为 AI 随时能替你检索。</li>
+<li><strong>内化记忆（把知识咀嚼、吸收、和自己的生命经验编织在一起）</strong>：它变成了你的一部分，会在特定情境下自然涌现，<strong>真正长进了你的能力结构里</strong>。→ 这才是第二章说的&quot;构成性知识&rdquo;，它不但没贬值，反而更珍贵了。</li>
+</ul>
+<p>真正的记忆包含&quot;吸收&quot;和&quot;回想&quot;两个过程。语言、史实、公式只有被反复咀嚼、和你的理解与经历交织在一起，才会&quot;内化成为自己的一部分&rdquo;。<strong>判断一段记忆该不该下苦功，就看它能不能从&quot;死记硬背&quot;升级为&quot;内化记忆&rdquo;——能，就值得背；不能，就交给 AI。</strong></p>
+<h3 id="32-为什么内化记忆在-ai-时代反而更重要">3.2 为什么&quot;内化记忆&quot;在 AI 时代反而更重要</h3>
+<p><strong>1. 创造力建立在记忆的基础之上。</strong>
+创造力的本质，是把看似不相关的元素连接起来。而要做出这种跨越性的连接，<strong>你的大脑里必须首先装满了素材</strong>。一个脑子里空空如也的人，谈不上创造——因为他没有任何可供连接的&quot;点&rdquo;。AI 能给你所有的点，但&quot;把点连成线&quot;的那个网络，必须长在你自己脑子里。</p>
+<p><strong>2. 判断力需要一个&quot;内部坐标系&quot;。</strong>
+这是最反直觉、也最关键的一点：<strong>AI 生成的东西越多，你越需要内在的积累去辨别优劣。</strong> 正如一位学者所言——&ldquo;AI 生成的愈多，愈让我们难以选择。&rdquo; 如果你自己没有内化过足够多的好诗、好文章、好论证，面对 AI 吐出的十个选项，你<strong>根本没有能力判断哪个更好</strong>。背诵和内化，本质上是&quot;为大脑安装一个内部语言 / 审美 / 逻辑的坐标系&quot;。</p>
+<p><strong>3. 记忆提供 AI 给不了的东西：情感慰藉与精神支撑。</strong>
+丘吉尔年轻时背诵了大量诗歌，这些记忆最终转化成了他二战演讲时的词汇与节奏灵感。当你在人生某个具体时刻——遭遇挫折、或面对美景——一句内化于心的诗句自然涌上心头，那种精神支撑，是&quot;打开 App 搜一下&quot;永远给不了的。<strong>知识只有内化，才能在你需要它的那一刻，主动来找你。</strong></p>
+<p><strong>4. 批判性思维和记忆不是对立的，而是携手的。</strong>
+很多人误以为&quot;记忆 = 死板，批判性思维 = 高级&quot;，二者对立。但记忆研究专家 Piotr Wozniak 的法则恰恰相反：<strong>&ldquo;Learn before you memorize&rdquo;（先理解，后记忆）</strong>——有效的记忆从来不是盲目重复，而是建立在理解之上。批判性思维和记忆力完全可以&quot;hand in hand&quot;。</p>
+<h3 id="33-所以记忆这件事的侧重点变了">3.3 所以，记忆这件事的&quot;侧重点&quot;变了</h3>
+<table>
+	<thead>
+			<tr>
+					<th>过去</th>
+					<th>AI 时代</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>追求记忆的<strong>量</strong>（记得越多越好）</td>
+					<td>追求记忆的<strong>质</strong>（内化那些能构建坐标系、能迁移、能滋养精神的核心内容）</td>
+			</tr>
+			<tr>
+					<td>为<strong>应付考试</strong>而背</td>
+					<td>为<strong>内化成自己的一部分</strong>而背</td>
+			</tr>
+			<tr>
+					<td>记住<strong>孤立的事实</strong>（某年某人某事）</td>
+					<td>记住<strong>事实背后的结构与因果</strong>（为什么会这样、它意味着什么）</td>
+			</tr>
+			<tr>
+					<td>把记忆当<strong>终点</strong></td>
+					<td>把记忆当<strong>思考和判断的原料</strong></td>
+			</tr>
+	</tbody>
+</table>
+<blockquote>
+<p><strong>一句话：AI 时代不是&quot;不用记了&quot;，而是&quot;不用记那些查得到、用完即弃的东西了；但要更用力地内化那些能长进你身体里、成为你判断力和精神底色的东西&quot;。</strong> 背一首诗，不是为了默写它，而是为了让它在你四十年后的某个黄昏，突然替你说话。</p>
+</blockquote>
+<hr>
+<h2 id="四知识整理与体系化ai-给学习带来的最大红利也藏着最深的坑">四、知识整理与体系化——AI 给学习带来的最大红利（也藏着最深的坑）</h2>
+<p>前面两章讲的是&quot;单个知识点该不该内化&quot;。这一章讲一个更大的变化：<strong>AI 彻底改变了&quot;把零散知识连成体系&quot;这件事的成本结构。</strong></p>
+<p>过去，学习是&quot;点状&quot;的——你遇到一个问题、学到一个知识点、记下来，但它孤立地躺在那里。要把它&quot;内涵外联&quot;（这个知识的本质是什么、它和哪些知识相通、和哪些相似知识有何异同、它在整个领域体系里处于什么位置），需要读很多书、花很多时间，自己一点点织成网。<strong>而现在，AI 能在几分钟内帮你把这张网初步织出来。</strong> 这是过去做梦都不敢想的学习效率跃迁。</p>
+<p>但这件事有一体两面：它既是 AI 时代<strong>最大的学习红利</strong>，也藏着<strong>最深的认知陷阱</strong>。下面分四层讲清楚。</p>
+<h3 id="41-红利ai-是认知版图的快速扩张器这个收益是真实的">4.1 红利：AI 是认知版图的&quot;快速扩张器&quot;，这个收益是真实的</h3>
+<p>首先要纠正一个容易走偏的极端——<strong>不能因为&quot;不是你亲手梳理的&quot;，就否定 AI 梳理体系的价值。</strong> 这种&quot;必须亲手做才算数&quot;的苦行僧论是错的。</p>
+<p>AI 梳理知识体系，带来的是**&ldquo;广度获取效率&quot;的真实、巨大提升**：</p>
+<ul>
+<li><strong>它让你从&quot;局部盲人摸象&quot;升级到&quot;看到整头象&rdquo;。</strong> 过去你只学到一个孤立知识点，现在你能立刻看到它的全局位置、上下游联系、相似与对比。这种视野的扩展是实打实的收获。</li>
+<li><strong>广度本身就是一种独立的能力，不是深度的残次品。</strong> 认知科学有句话：&ldquo;没有广度的深度会导致盲目，没有深度的广度会导致无能。&ldquo;广度和深度是两种<strong>都有独立价值</strong>的能力。AI 梳理体系，喂给你的正是&quot;横向联系&quot;这一维——<strong>&ldquo;真正的价值产生于领域之间的联系，而非单一领域的精通。&rdquo;</strong></li>
+<li><strong>看别人织好的网，也有真实收益。</strong> 被动学习（阅读、看梳理好的框架）的价值早被证实：它高效地帮你&quot;构建认知框架、熟悉关键术语、打下地基&rdquo;，尤其对入门一个陌生领域至关重要。<strong>有一张地图，远好于在原地瞎转。</strong></li>
+<li><strong>而且，见过的网越多，你亲手织网时的品味越好。</strong> 广度不是深度的对立面，它是深度的<strong>前提和放大器</strong>。</li>
+</ul>
+<blockquote>
+<p><strong>所以：AI 梳理体系，让你能以前所未有的速度拓宽知识面、建立全局视野。这是这个时代给学习者的最大红利之一，要主动、充分地用它。</strong></p>
+</blockquote>
+<h3 id="42-陷阱同一个-ai是放大器还是替代品取决于你的认知在不在场">4.2 陷阱：同一个 AI，是&quot;放大器&quot;还是&quot;替代品&rdquo;，取决于你的认知在不在场</h3>
+<p>但红利背后藏着陷阱。2026 年学习科学有一个专门的争论框架，叫 <strong>&ldquo;放大器还是替代品&rdquo;（Amplifier or Substitute）</strong>——研究 AI 对&quot;分析、综合、抽象、评价&quot;这些<strong>高阶认知能力</strong>的影响。结论不是简单的好或坏，而是：</p>
+<blockquote>
+<p><strong>AI 既可能放大你的思维，也可能替代你的思维，区别只在于一个变量——你使用它时，认知投入是&quot;前置&quot;还是&quot;后置&quot;。</strong></p>
+</blockquote>
+<ul>
+<li><strong>当放大器</strong>：你先自己思考、有了初步框架，再用 AI 帮你补全连接、发现盲区、扩展对比——AI 放大的是你<strong>已经在运转的思维</strong>。</li>
+<li><strong>当替代品</strong>：你直接让 AI 生成体系、生成总结，自己跳过思考——AI 替代的是你<strong>本该运转却没运转的思维</strong>。</li>
+</ul>
+<p>这里有一个很深的机制必须点破：<strong>&ldquo;把知识体系化&quot;这个动作本身，就是一种最高强度的学习。</strong> 当你强迫自己去想&quot;这个和那个有什么关系、能不能抽象成一个更通用的模式&quot;时，你的大脑在做<strong>深度编码</strong>——这个过程本身就在重塑你的认知结构。</p>
+<p><strong>悖论就在这里</strong>：AI 帮你&quot;梳理体系&rdquo;，给你的是一个<strong>梳理好的结果</strong>；但真正让你成长的，是<strong>梳理的那个过程</strong>。你拿到了地图，却没走过那段路——而走过那段路，才是你长出&quot;画地图能力&quot;的方式。这和那个 AI 辅助笔记的实验（全自动组满意度最高、成绩却垫底）是<strong>同一个规律在更高阶层面的重演</strong>：越省力、越爽，认知收益反而越低。</p>
+<h3 id="43-正确姿势不是二选一而是分工--时序">4.3 正确姿势：不是二选一，而是&quot;分工 + 时序&quot;</h3>
+<p>把红利和陷阱合起来看，正确的结论既不是&quot;AI 梳理没用、必须亲手做&quot;，也不是&quot;AI 梳理就够了&quot;，而是<strong>让两者各管一段、各司其职</strong>：</p>
+<p><strong>1. 分工：AI 管&quot;广度&quot;和&quot;初稿&quot;，你管&quot;深度&quot;和&quot;定稿&quot;。</strong></p>
+<ul>
+<li><strong>AI 擅长且该用的</strong>：扩展连接、发现盲区、提供对比维度、快速给出一个体系框架。这是它的绝对优势。</li>
+<li><strong>你必须亲自做的</strong>：判断哪些连接是真的、抽象出<strong>你自己的</strong>框架、把它内化成<strong>你的</strong>认知结构。AI 给你的体系是&quot;一个可能的体系&quot;，不是&quot;你的体系&quot;——它可能连得漂亮却抓错重点。<strong>你必须亲自判断、筛选、重排，这个&quot;亲自重排&quot;的过程就是深度编码，就是能力生长。</strong></li>
+</ul>
+<p><strong>2. 时序：先被动后主动，先广度后深度。</strong></p>
+<ul>
+<li><strong>先让 AI 给你广度框架</strong>（被动输入、打地基）→ <strong>再针对你要深耕的部分亲手梳理</strong>（主动加工、建深度）。这恰好是经典的&quot;先被动后主动&quot;学习路径，AI 只是把第一步的效率提高了十倍。</li>
+<li><strong>对你只需&quot;了解&quot;的领域</strong>，AI 梳理的广度就够了，不必亲手做（把时间花在刀刃上）；<strong>对你要&quot;精通&quot;的核心领域</strong>，才值得在 AI 框架之上亲手深耕。</li>
+</ul>
+<p><strong>3. 用&quot;中度辅助&quot;，别用&quot;全自动&quot;。</strong>
+呼应那个笔记实验：最佳实践是让 AI 做<strong>初步的摘要、找连接、提问题</strong>（中度辅助），但<strong>最终的梳理、结构化、下判断，必须你自己动手</strong>。别用 AI 一键生成体系然后收藏——那是效率最高、收获最低的做法。</p>
+<h3 id="44-落地学习时如何有意识地用-ai-扩宽体系">4.4 落地：学习时如何&quot;有意识地&quot;用 AI 扩宽体系</h3>
+<p>这是最实操的部分。AI 时代确实给了我们<strong>更好的学习方法</strong>——关键是要<strong>有意识地</strong>用它，而不是无意识地让它替我们思考。具体可以养成这几个习惯：</p>
+<ol>
+<li>
+<p><strong>学完一个知识点，主动让 AI 帮你&quot;外联&quot;</strong>：问它&quot;这个知识的本质是什么？它和我已经学过的哪些东西相通？有哪些相似但容易混淆的概念，区别在哪？它在整个领域体系里处于什么位置？&quot;——<strong>用 AI 快速把孤立的点连成网。</strong></p>
+</li>
+<li>
+<p><strong>让 AI 当&quot;对比器&quot;和&quot;盲区探测器&quot;</strong>：问它&quot;关于这个主题，有哪些我没考虑到的角度 / 流派 / 反例？&quot;——<strong>用 AI 拓宽你视野的边界，看到你自己看不到的地方。</strong></p>
+</li>
+<li>
+<p><strong>做&quot;抽象的接力&quot;，而不是&quot;抽象的外包&quot;</strong>：当你想把一个具体项目的经验抽象成通用方法论时——<strong>先自己抽象一版（哪怕粗糙），再让 AI 给一版，然后对比两者的差异</strong>：AI 看到了什么你没看到的？你坚持的判断里有什么是 AI 没有的？<strong>这个&quot;对比和取舍&quot;的过程，才是真正训练你抽象力的地方。</strong>（&ldquo;从具体经验抽象出通用模式&quot;是专家区别于新手的核心能力，最值钱，也最不该整个外包。）</p>
+</li>
+<li>
+<p><strong>梳理完，合上 AI，自己复述一遍这张网</strong>：能不能不看 AI 的输出，自己把这个体系的大致结构、关键连接讲出来？讲不出来的地方，就是你&quot;看过但没长进脑子&quot;的地方——那里正是你下一步要亲手深耕的。</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>一句话总结这一章：AI 梳理体系，是认知版图的&quot;快速扩张器&rdquo;——它让你的知识面以前所未有的速度变宽，这个红利要主动、充分地拿。但它唯一不能替你做的，是把其中你最在乎的那几块，从&quot;看过&quot;变成&quot;长在脑子里&quot;。所以正确的学习方法是：用 AI 极大地扩展广度（它的主场），再对你真正要精通的少数领域亲手深耕（你的主场）。广度让你看见世界，深度让你在世界里立足——AI 帮你把前者变得空前廉价，于是你终于有余力，把后者做得空前深。</strong></p>
+</blockquote>
+<hr>
+<h2 id="五ai-时代真正升值的六种能力">五、AI 时代真正升值的六种能力</h2>
+<p>当知识被商品化，以下这些&quot;动词型能力&quot;反而越来越稀缺、越来越值钱。它们是 AI 越强、越无法被替代的东西：</p>
+<ol>
+<li><strong>判断力与品味（Judgment &amp; Taste）</strong>：能分辨 AI 给的东西好不好、对不对、该不该用；能在多个方案里做出取舍。这是最核心的一条——AI 让执行变廉价后，瓶颈整个转移到了判断。</li>
+<li><strong>提出好问题的能力</strong>：当 AI 能回答一切，&ldquo;问对问题&quot;就成了稀缺技能。别急着要答案，先逼自己把问题问准、问深。</li>
+<li><strong>批判性思维与验证能力</strong>：不盲从机器生成的答案，掌握&quot;审视信息源、检验结论&quot;的能力。这是对治&quot;学会了的错觉&quot;的解药。</li>
+<li><strong>解决复杂 / 不确定问题的能力</strong>：现实难题充满不确定性，需要跨学科整合、反复试错迭代。这恰恰是 AI 目前最弱的环节。</li>
+<li><strong>把事做成的韧性（Follow-through）</strong>：AI 让&quot;开始&quot;变得极容易，于是&quot;完成并真正落地&quot;反而变珍贵了。</li>
+<li><strong>人机协作能力（AI Literacy）</strong>：&ldquo;会不会用 AI 放大自己&quot;本身已成了一项被正式度量的核心能力。</li>
+</ol>
+<hr>
+<h2 id="六方法论工具箱一套做中学的完整打法">六、方法论工具箱——一套&quot;做中学&quot;的完整打法</h2>
+<p><strong>这一章不是四个并列的方法，而是一套环环相扣、必须一起用的组合拳。</strong> 它的主线是&quot;作品集驱动学习&rdquo;，但这条主线每一步都埋着陷阱——如果不配合后面几条纪律，你很可能忙活半天，产出的却是一个&quot;AI 全包办、你自己啥也没学到&quot;的空壳。</p>
+<p>所以请按&rdquo;<strong>方法 → 会掉进什么坑 → 怎么破</strong>&ldquo;的顺序来读，重点体会每一步的<strong>利弊和张力</strong>，而不是扫一眼就过。</p>
+<h3 id="61-主线方法作品集驱动学习portfolio-driven-learning">6.1 主线方法：作品集驱动学习（Portfolio-Driven Learning）</h3>
+<p><strong>它是什么</strong>：不再用&quot;我学了什么 / 考了多少分&quot;来证明自己，而是用&quot;我做成了什么&quot;来证明。持续地做出一件件真实的、能展示的作品（一个项目、一篇深度分析、一套解决方案、一份研究），让它们串成你成长的证据链。</p>
+<p><strong>为什么有效</strong>：AI 让&quot;声称我会&quot;变得毫无成本——谁都能让 AI 帮着写漂亮简历、答面试题。于是&quot;声称&quot;这个信号贬值了，<strong>唯一没贬值的是&quot;已经做成的东西&rdquo;</strong>：它凝结了你的判断力、能动性、韧性，是 AI 无法凭空伪造的证据。</p>
+<p><strong>四步循环</strong>（每转一圈，作品集多一件、能力涨一层）：</p>
+<ol>
+<li><strong>从&quot;你自己的真实痛点&quot;选题</strong>，而不是从&quot;热门技术 / 热门话题&quot;选题。真实痛点自带&quot;为什么做&quot;的答案，这正是判断力的体现。</li>
+<li><strong>先做一个&quot;丑陋但能用&quot;的第一版</strong>，别追求完美。动手做往往比事前规划更能揭示真正的路径。</li>
+<li><strong>把它&quot;发布出去&quot;，拿到真实反馈</strong>。一个有真实读者 / 用户用过、迭代过的作品，含金量远超躺在硬盘里的练习。</li>
+<li><strong>把&quot;过程&quot;写下来，而不只是展示&quot;结果&quot;</strong>：我为什么选这个？试过哪些走不通的路？踩了什么坑？收到什么反馈、怎么迭代的？</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>但这里埋着整套方法最大的坑，也是你必须最警惕的地方 ↓</strong></p>
+</blockquote>
+<h3 id="62-坑作品集可能变成空壳ai-干了全部你啥也没练到">6.2 坑：作品集可能变成&quot;空壳&quot;——AI 干了全部，你啥也没练到</h3>
+<p><strong>这个陷阱长什么样</strong>：你遇到一个问题 → 问 AI 怎么解决 → AI 给了方案 → 你让 AI 照着实现 → 问题解决了、作品做出来了 → <strong>但你在其中起的作用极小，没有锻炼到任何能力。</strong></p>
+<p>这不是抬杠，而是被 2026 年一批研究反复证实的真实陷阱，它有三个正式名字：<strong>&ldquo;能力幻觉&rdquo;（illusion of competence）、&ldquo;vibe coding 导致的去技能化&rdquo;、&ldquo;认知债务&rdquo;（epistemic debt）</strong>。硬数据很吓人：</p>
+<ul>
+<li>主要用 AI <strong>&ldquo;生成代码 / 生成内容&rdquo;</strong> 的人，理解力得分 <strong>低于 40%</strong>；而用 AI <strong>&ldquo;提概念性问题&rdquo;</strong> 的人，得分在 <strong>65–86%</strong>。</li>
+<li>Anthropic 随机对照试验：用 AI 辅助的小组，事后理解力测验比手动做的 <strong>低 17%</strong>。</li>
+<li>认知债务研究： unrestricted 用 AI 的人，在随后 30 分钟的&quot;无 AI 任务&quot;中 <strong>失败率高达 77%</strong>；接受&quot;脚手架式引导&quot;的小组仅 39%。</li>
+<li><strong>自信错觉的鸿沟</strong>：85% 的初级开发者认为 AI 提升了他们的理解力，但只有 16% 的资深者相信他们真看懂了自己提交的东西。</li>
+</ul>
+<p><strong>一句话点破本质</strong>：一个 AI 全干、你答不出&quot;为什么这么做&quot;的作品，是空壳；它证明的不是你的能力，而是 AI 的能力。</p>
+<h3 id="63-解法三条纪律把承包商模式改造成顾问模式">6.3 解法：三条纪律，把&quot;承包商模式&quot;改造成&quot;顾问模式&quot;</h3>
+<p>破解上面那个坑的核心原则只有一句：</p>
+<blockquote>
+<p><strong>把 AI 当&quot;顾问（consultant）&quot;，而不是&quot;承包商（contractor）&quot;。</strong>
+承包商 = 你把活外包出去，它交付结果，你不用懂（→ 空壳）。
+顾问 = 它给你建议和分析，但决策和理解始终在你脑子里（→ 真金）。</p>
+</blockquote>
+<p>这条原则要落地，靠下面三条<strong>互相咬合</strong>的纪律。它们不是三个独立技巧，而是同一件事的三个动作：<strong>在 AI 动手之前、之中、之后，强行插入&quot;你自己的认知动作&quot;。</strong></p>
+<p><strong>纪律一：先思考，后提问（Think First, Prompt Second）——管住&quot;动手之前&quot;</strong></p>
+<ul>
+<li>遇到问题，<strong>先别急着问 AI</strong>。逼自己先形成一个猜测 / 假设：&ldquo;我觉得可能是 X，大概该往 Y 方向。&ldquo;哪怕猜错——猜错也在建立你的思维模型。</li>
+<li>提问时，别问&quot;帮我做这个&rdquo;，改问&quot;这背后的原理 / 模式怎么工作？有哪几种思路、各自取舍是什么？&quot;（这就是那条 40% vs 86% 数据的来源——<strong>让 AI 当老师，而不是当外包工</strong>。）</li>
+<li>一句话原则：<strong>&ldquo;谁在思考，谁就能学到东西&rdquo;（Who does the thinking, gets the learning）。</strong></li>
+</ul>
+<p><strong>纪律二：接受前先解释（Explain Before Accept）——管住&quot;动手之中&rdquo;</strong></p>
+<ul>
+<li>AI 给了方案，<strong>在你采纳之前，先用自己的话讲明白&quot;它为什么这么做、原理是什么&quot;</strong>。讲不清楚，就说明你没懂，不许用。</li>
+<li>主动去测试、修改、挑刺 AI 的输出（critique the AI），而不是照单全收。这一步直接对治&quot;自信错觉&quot;。</li>
+</ul>
+<p><strong>纪律三：刻意保留&quot;合意困难&quot;（Productive Struggle）——管住&quot;动手之后 / 长期习惯&quot;</strong></p>
+<ul>
+<li>认知科学的核心发现：<strong>恰恰是那个&quot;费劲挣扎&quot;的摩擦，让知识长进了能力里。</strong> AI 最大的副作用，就是把这种摩擦一键消除了，于是产生&quot;学会了的错觉&quot;。</li>
+<li>对策：每周保留一部分任务<strong>完全不用 AI</strong>，自己啃。这是防止能力萎缩的&quot;最低剂量健身&quot;。</li>
+<li>记住那条铁律：<strong>construct before you delegate（先自己造，再外包）</strong>——你必须先亲手建立过某个能力，才有资格把它交给 AI。</li>
+</ul>
+<h3 id="64-收尾检验三关答辩判断你的作品是真金还是空壳">6.4 收尾检验：三关答辩——判断你的作品是&quot;真金&quot;还是&quot;空壳&quot;</h3>
+<p>做完一件作品后，用这三个问题拷问自己。<strong>能流畅答上来，AI 参与得再多，它依然是你的能力证明；答不上来，再漂亮的成品也是空壳。</strong></p>
+<ol>
+<li><strong>&ldquo;你为什么选这个问题、这个方案？&rdquo;</strong> → 考判断力。答不上来，说明选题和决策都是 AI 的。</li>
+<li><strong>&ldquo;中间你踩过什么坑、试过哪些走不通的路？&rdquo;</strong> → 考韧性。AI 生成的东西是&quot;光滑&quot;的、没有弯路的；<strong>你答不出弯路，恰恰证明你没亲手挣扎过。</strong></li>
+<li><strong>&ldquo;如果我现在改掉一个需求 / 制造一个错误，你能当场定位并修好吗？&rdquo;</strong> → 考真实理解。这是最狠的一关，空壳在这里必然露馅。</li>
+</ol>
+<blockquote>
+<p><strong>这一整套的逻辑闭环是</strong>：用&quot;作品集&quot;驱动学习（主线）→ 但警惕它沦为 AI 全包办的&quot;空壳&quot;（坑）→ 用&quot;顾问模式三纪律&quot;守住认知在场（解法）→ 最后用&quot;三关答辩&quot;验真（检验）。<strong>四者是一体的，缺了任何一环，前面做的都可能白费。</strong></p>
+</blockquote>
+<hr>
+<h2 id="七给学生的双轨制行动建议">七、给学生的&quot;双轨制&quot;行动建议</h2>
+<p>学校课程的迭代周期是&quot;年&quot;级的，而 AI 的迭代是&quot;月&quot;级的，两者速度差了一个数量级（上海交大内部材料直言&quot;课程迭代远落后技术发展、学生反超老师成常态&quot;）。<strong>所以别指望学校，走双轨：</strong></p>
+<ul>
+<li><strong>对学校这一轨</strong>：该修的学分、该拿的文凭还是要拿——它是社会的&quot;信号通行证&quot;，短期不会消失。但<strong>别把课程表当成你能力成长的天花板</strong>。</li>
+<li><strong>对自己这一轨</strong>：用上面这套方法（构成性知识内化 + 作品集 + 顾问模式），<strong>在学校体系之外自建一条更快的成长曲线</strong>。这条轨不需要任何人批准，你这个周末就能开始。</li>
+</ul>
+<p><strong>一个常被忽视的补充</strong>：MIT 的 AI 教育报告提醒，AI 让学生线下沟通减少、孤独感增强、集体学习氛围变弱。而<strong>心智成熟度、协作、责任感这些，恰恰只能在真实的人际互动中长出来</strong>——这是 AI 和网课都给不了的。所以：<strong>主动保住线下的、真实的协作与讨论。</strong></p>
+<hr>
+<h2 id="八一页速查核心原则清单">八、一页速查：核心原则清单</h2>
+<p><strong>总纲：两个极端都错，要分领域分场合识别</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 别过度依赖（觉得学啥都没用 → 能力幻觉），也别因噎废食（怕变笨而完全不用 AI → 丢掉杠杆）。</li>
+<li><input disabled="" type="checkbox"> 核心功夫是&quot;分拣&quot;：哪些是能力成长（自己内化），哪些可交给 AI 辅助。</li>
+</ul>
+<p><strong>那把尺子：构成性 vs 工具性</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 构成性知识 = 能力本身，抽掉它能力就没了 → 必须内化，AI 替代不了。</li>
+<li><input disabled="" type="checkbox"> 工具性知识 = 外部耗材，用完即弃 → 可放心交给 AI 检索。</li>
+<li><input disabled="" type="checkbox"> 自问两句：它是&quot;我用来思考的材料&quot;还是&quot;我思考完去查的资料&quot;？抽掉它，我的能力还在不在？</li>
+<li><input disabled="" type="checkbox"> 边界随领域而变：文学/医学/法律里&quot;记忆的量&quot;本身是构成性的；计算机里&quot;默写代码&quot;是工具性的。别一刀切。</li>
+</ul>
+<p><strong>关于记忆</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 记忆没贬值，贬值的是&quot;死记硬背&quot;；要追求&quot;内化记忆&quot;——它构建你的判断坐标系和精神底色。</li>
+<li><input disabled="" type="checkbox"> 你无法用你不拥有的知识来思考（Willingham）。内化的知识靠&quot;组块化&quot;腾出工作记忆做高级思考。</li>
+</ul>
+<p><strong>关于知识整理与体系化</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> AI 是认知版图的&quot;快速扩张器&quot;：主动用它扩宽知识面、建立全局视野，这个广度红利是真实的，别否定。</li>
+<li><input disabled="" type="checkbox"> 但同一个 AI 是&quot;放大器&quot;还是&quot;替代品&quot;，取决于你的认知在不在场——先思考再用=放大，跳过思考直接用=替代。</li>
+<li><input disabled="" type="checkbox"> 分工：AI 管&quot;广度和初稿&quot;，你管&quot;深度和定稿&quot;；时序：先被动后主动、先广度后深度。</li>
+<li><input disabled="" type="checkbox"> 有意识地用 AI 做四件事：外联（连成网）/ 探盲区（拓边界）/ 抽象接力（先自己抽象再对比）/ 合上 AI 自己复述。</li>
+<li><input disabled="" type="checkbox"> 只需&quot;了解&quot;的领域，AI 梳理的广度就够；要&quot;精通&quot;的核心领域，才在 AI 框架上亲手深耕。</li>
+</ul>
+<p><strong>关于能力与方法</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 判断力 &gt; 执行力；提问力 &gt; 答题力。</li>
+<li><input disabled="" type="checkbox"> 用&quot;作品集&quot;证明能力，而不是用&quot;证书 / 分数&quot;。</li>
+<li><input disabled="" type="checkbox"> 警惕作品集沦为&quot;空壳&quot;：AI 干了全部，你啥也没练到。</li>
+<li><input disabled="" type="checkbox"> 把 AI 当顾问，不当承包商。</li>
+<li><input disabled="" type="checkbox"> 三纪律：先思考后提问 / 接受前先解释 / 刻意保留合意困难。</li>
+<li><input disabled="" type="checkbox"> 先自己造，再外包（construct before you delegate）。</li>
+<li><input disabled="" type="checkbox"> 每周留一段&quot;无 AI 时间&quot;，防止能力萎缩。</li>
+<li><input disabled="" type="checkbox"> 用&quot;三关答辩&quot;验真：为什么这么做 / 踩过什么坑 / 能不能当场改。</li>
+<li><input disabled="" type="checkbox"> 少而深，别多而浅；难度递增，让成长可见。</li>
+<li><input disabled="" type="checkbox"> 守住线下的真实协作与人际互动。</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>最后一句话：AI 让&quot;生产&quot;变便宜了，却让&quot;人的成长和传承&quot;这条路变得更窄、也更珍贵。在一个执行廉价的世界里，真正定义你价值的，是那些必须靠&quot;亲自挣扎、亲手做成、亲口辩护&quot;才能长出来的东西。AI 能替你写代码、写文案、作诗、答题，但它替不了你&quot;成为一个有判断力、有内在坐标系的人&quot;这个过程。这反而是一种解放——你的成长，第一次可以完全不必等任何人批准。</strong></p>
+</blockquote>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一引言为什么怎么学突然变成了一个真问题">一、引言：为什么&quot;怎么学&quot;突然变成了一个真问题</a>
+      <ul>
+        <li><a href="#11-确定的学习链条被-ai-动摇了">1.1 确定的学习链条，被 AI 动摇了</a></li>
+        <li><a href="#12-总纲两个极端都是错的">1.2 总纲：两个极端都是错的</a></li>
+      </ul>
+    </li>
+    <li><a href="#二区分两种知识构成性-vs-工具性">二、区分两种知识——&ldquo;构成性&rdquo; vs &ldquo;工具性&rdquo;</a>
+      <ul>
+        <li><a href="#21-一个任何人都能自问的判断标准">2.1 一个任何人都能自问的判断标准</a></li>
+        <li><a href="#22-为什么构成性知识不可替代认知科学的解释">2.2 为什么&quot;构成性知识&quot;不可替代——认知科学的解释</a></li>
+        <li><a href="#23-分领域看同一把尺子量出不同的答案">2.3 分领域看：同一把尺子，量出不同的答案</a></li>
+      </ul>
+    </li>
+    <li><a href="#三那背诵--记忆还有必要吗一个被问烂却常被答错的问题">三、那&quot;背诵 / 记忆&quot;还有必要吗？——一个被问烂、却常被答错的问题</a>
+      <ul>
+        <li><a href="#31-关键区分死记硬背-vs-内化记忆">3.1 关键区分：死记硬背 vs 内化记忆</a></li>
+        <li><a href="#32-为什么内化记忆在-ai-时代反而更重要">3.2 为什么&quot;内化记忆&quot;在 AI 时代反而更重要</a></li>
+        <li><a href="#33-所以记忆这件事的侧重点变了">3.3 所以，记忆这件事的&quot;侧重点&quot;变了</a></li>
+      </ul>
+    </li>
+    <li><a href="#四知识整理与体系化ai-给学习带来的最大红利也藏着最深的坑">四、知识整理与体系化——AI 给学习带来的最大红利（也藏着最深的坑）</a>
+      <ul>
+        <li><a href="#41-红利ai-是认知版图的快速扩张器这个收益是真实的">4.1 红利：AI 是认知版图的&quot;快速扩张器&quot;，这个收益是真实的</a></li>
+        <li><a href="#42-陷阱同一个-ai是放大器还是替代品取决于你的认知在不在场">4.2 陷阱：同一个 AI，是&quot;放大器&quot;还是&quot;替代品&rdquo;，取决于你的认知在不在场</a></li>
+        <li><a href="#43-正确姿势不是二选一而是分工--时序">4.3 正确姿势：不是二选一，而是&quot;分工 + 时序&quot;</a></li>
+        <li><a href="#44-落地学习时如何有意识地用-ai-扩宽体系">4.4 落地：学习时如何&quot;有意识地&quot;用 AI 扩宽体系</a></li>
+      </ul>
+    </li>
+    <li><a href="#五ai-时代真正升值的六种能力">五、AI 时代真正升值的六种能力</a></li>
+    <li><a href="#六方法论工具箱一套做中学的完整打法">六、方法论工具箱——一套&quot;做中学&quot;的完整打法</a>
+      <ul>
+        <li><a href="#61-主线方法作品集驱动学习portfolio-driven-learning">6.1 主线方法：作品集驱动学习（Portfolio-Driven Learning）</a></li>
+        <li><a href="#62-坑作品集可能变成空壳ai-干了全部你啥也没练到">6.2 坑：作品集可能变成&quot;空壳&quot;——AI 干了全部，你啥也没练到</a></li>
+        <li><a href="#63-解法三条纪律把承包商模式改造成顾问模式">6.3 解法：三条纪律，把&quot;承包商模式&quot;改造成&quot;顾问模式&quot;</a></li>
+        <li><a href="#64-收尾检验三关答辩判断你的作品是真金还是空壳">6.4 收尾检验：三关答辩——判断你的作品是&quot;真金&quot;还是&quot;空壳&quot;</a></li>
+      </ul>
+    </li>
+    <li><a href="#七给学生的双轨制行动建议">七、给学生的&quot;双轨制&quot;行动建议</a></li>
+    <li><a href="#八一页速查核心原则清单">八、一页速查：核心原则清单</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/memory-palace-guide/">← 记忆宫殿：从原理到实战</a>
+        
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>
