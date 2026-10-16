@@ -177,7 +177,7 @@ main.container {
     align-items: start;
 }
 
-.post-content { max-width: 760px; min-width: 0; }
+.post-content { max-width: 760px; min-width: 0; overflow-wrap: break-word; }
 .post-content > :first-child { margin-top: 0; }
 
 .post-content h2 { font-size: 21px; margin: 1.6em 0 .6em; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
