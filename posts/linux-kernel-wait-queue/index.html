@@ -223,7 +223,7 @@ MODULE_DESCRIPTION(&quot;A simple linux kernel module&quot;);
 MODULE_VERSION(&quot;V0.2&quot;);
 MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);
 </code></pre>
-<p>加载模块 insmod simple.ko 后，使用cat读取数据，cat /dev/simple，会发现进程处于等待状态，不会输出任何信息，新打开一个终端，输入echo &ldquo;first&rdquo; &gt; /dev/simple执行写操作，cat便会输出数据，紧接着再次处于等待状态。</p>
+<p>加载模块 insmod simple.ko 后，使用cat读取数据，cat /dev/simple，会发现进程处于等待状态，不会输出任何信息，新打开一个终端，输入echo &quot;first&quot; &gt; /dev/simple执行写操作，cat便会输出数据，紧接着再次处于等待状态。</p>
 <pre><code>insmod simple.ko
 cat /dev/simple        ---&gt;    进程等待
 first            ---&gt;    echo &quot;first&quot; &gt; /dev/simple

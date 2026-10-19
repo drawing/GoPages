@@ -278,18 +278,18 @@
 <p>有时机器磁盘使用率过高，想知道哪个进程占用磁盘过大，可使用 iotop 命令：</p>
 <p><code>iotop -b -n 3 -d 5</code></p>
 <ul>
-<li>-h, &ndash;help				#显示帮助信息</li>
-<li>-o, &ndash;only				#显示进程或者线程实际上正在做的I/O，而不是全部的，可以随时切换按o</li>
-<li>-b, &ndash;batch				#运行在非交互式的模式</li>
-<li>-n NUM, &ndash;iter=NUM		#在非交互式模式下，设置显示的次数，</li>
-<li>-d SEC, &ndash;delay=SEC		#设置显示的间隔秒数，支持非整数值</li>
-<li>-p PID, &ndash;pid=PID			#只显示指定PID的信息</li>
-<li>-u USER, &ndash;user=USER		#显示指定的用户的进程的信息</li>
-<li>-P, &ndash;processes			#只显示进程，一般为显示所有的线程</li>
-<li>-a, &ndash;accumulated			#显示从iotop启动后每个线程完成了的IO总数</li>
-<li>-k, &ndash;kilobytes			#以千字节显示</li>
-<li>-t, &ndash;time				#在每一行前添加一个当前的时间</li>
-<li>-q, &ndash;quiet				#suppress some lines of header (implies &ndash;batch). This option can be specified up to three times to remove header lines.</li>
+<li>-h, --help				#显示帮助信息</li>
+<li>-o, --only				#显示进程或者线程实际上正在做的I/O，而不是全部的，可以随时切换按o</li>
+<li>-b, --batch				#运行在非交互式的模式</li>
+<li>-n NUM, --iter=NUM		#在非交互式模式下，设置显示的次数，</li>
+<li>-d SEC, --delay=SEC		#设置显示的间隔秒数，支持非整数值</li>
+<li>-p PID, --pid=PID			#只显示指定PID的信息</li>
+<li>-u USER, --user=USER		#显示指定的用户的进程的信息</li>
+<li>-P, --processes			#只显示进程，一般为显示所有的线程</li>
+<li>-a, --accumulated			#显示从iotop启动后每个线程完成了的IO总数</li>
+<li>-k, --kilobytes			#以千字节显示</li>
+<li>-t, --time				#在每一行前添加一个当前的时间</li>
+<li>-q, --quiet				#suppress some lines of header (implies --batch). This option can be specified up to three times to remove header lines.</li>
 <li>-q     					## column names are only printed on the first iteration,</li>
 <li>-qq    					## column names are never printed,</li>
 <li>-qqq   					## the I/O summary is never printed.</li>

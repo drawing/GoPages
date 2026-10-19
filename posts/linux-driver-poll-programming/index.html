@@ -254,7 +254,7 @@ int main()
 	return 0;
 }
 </code></pre>
-<p>最终效果，加载驱动之后，使用user程序select，会进入阻塞状态，当在另一个终端下写入数据 echo &ldquo;simple&rdquo; &gt; /dev/simple 后程序解除阻塞，输出：</p>
+<p>最终效果，加载驱动之后，使用user程序select，会进入阻塞状态，当在另一个终端下写入数据 echo &quot;simple&quot; &gt; /dev/simple 后程序解除阻塞，输出：</p>
 <pre><code>[root@cpphost driver]# ./a.out
 simple can read
 	simple

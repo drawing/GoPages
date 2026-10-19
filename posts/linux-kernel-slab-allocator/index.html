@@ -415,7 +415,7 @@ if (!cachep)
 <p>现在已经确定缓存对象的size，现在需要估算slab的长度，函数<code>calculate_slab_order</code>通过对象size，align和flags计算slab应该使用多少页帧，如果页帧过少则存储的对象过少，增加分配管理的开销，如果页帧过多，则空间过于浪费。</p>
 <pre><code>for (gfporder = 0; gfporder &lt;= KMALLOC_MAX_ORDER; gfporder++) {
 </code></pre>
-<p>函数循环中gfporder为页帧数量，对指定的页帧，通过函数cache_estimate计算能够存储的数量num以及浪费的空间remainder，计算的公式为： PAGE_SIZE &laquo; gfporder = head + num * size + left_over。
+<p>函数循环中gfporder为页帧数量，对指定的页帧，通过函数cache_estimate计算能够存储的数量num以及浪费的空间remainder，计算的公式为： PAGE_SIZE &lt;&lt; gfporder = head + num * size + left_over。
 如果对象存储在slab之外，则<code>head（mgmt_size）</code>为0，如果对象存储于slab之内，则 <code>head = sizeof(struct slab) + num*sizeof(kmem_bufctl_t)</code>。接着<code>calculate_slab_order</code>之后便是循环退出的各种条件。</p>
 <h3 id="六着色">六、着色</h3>
 <pre><code>cachep-&gt;colour_off = cache_line_size();
