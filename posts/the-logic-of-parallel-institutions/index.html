@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>另起炉灶的逻辑：为什么不改革旧的，也不推倒重建 · 闲亩</title>
+<meta name="description" content=" 一篇关于&quot;制度为什么总是叠加、而不是替换&quot;的分析笔记——从明朝厂卫、清朝军机处，到今天公司里的&quot;专项小组&quot;。
+">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>另起炉灶的逻辑：为什么不改革旧的，也不推倒重建</h1>
+        <div class="post-meta">
+            <time datetime="2026-10-21">2026-10-21</time>
+            <span class="sep">·</span>
+            <span>5878 字</span>
+            <span class="sep">·</span>
+            <span>约 12 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/">#制度演化</a><span class="sep">·</span><a class="tag" href="/tags/%E7%BB%84%E7%BB%87%E7%90%86%E8%AE%BA/">#组织理论</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <blockquote>
+<p>一篇关于&quot;制度为什么总是叠加、而不是替换&quot;的分析笔记——从明朝厂卫、清朝军机处，到今天公司里的&quot;专项小组&quot;。</p>
+</blockquote>
+<p>当我们发现一个机构&quot;不好用了&quot;，从管理常识出发，最自然的反应是两种：<strong>要么把它改好（改革存量），要么把它废掉换一个（裁撤替代）</strong>。可翻开历史，你会发现统治者几乎从不这么干。他们做的是第三件事——<strong>在旁边再建一个新的，然后让新旧两套并存</strong>。</p>
+<p>明朝的锦衣卫之后有东厂，东厂之后有西厂、内行厂；清朝真正掌权的是军机处，但名义上的中枢内阁一直保留到王朝结束；今天一家公司里，老板嫌某个部门推不动事，往往不是重组那个部门，而是新设一个&quot;直属小组&quot;&quot;专项办公室&quot;，老部门照样挂着。</p>
+<blockquote>
+<p>面对&quot;旧机构失灵&quot;，逻辑上只有三个选项：<strong>改革它、废掉它、绕开它另建一个</strong>。现实却几乎一边倒地滑向第三个，而且新建之后旧的还不拆。如果这只是&quot;糊涂&quot;&quot;臃肿&quot;，不可能古今中外、上至皇帝下至 CEO 都这么做。<strong>能反复出现的选择，背后一定有它成立的道理。</strong></p>
+</blockquote>
+<p>这篇文档就想把这个道理讲清楚：为什么&quot;另起炉灶 + 保留旧的&quot;往往是当时约束下的最优解，它的代价是什么，以及——如果我们真想做得更好，最好的办法是什么。</p>
+<hr>
+<h2 id="一先厘清一个误会旧的往往没有真的不顶事">一、先厘清一个误会：旧的往往没有真的&quot;不顶事&quot;</h2>
+<p>人们常有一个直觉：&quot;既然新建了一套，老的想必就没用了，那就该取消。&quot;但真实情况通常不是&quot;没用了&quot;，而是**&quot;不再独享信任了&quot;**。</p>
+<p>这两者差别很大。以明朝为例：</p>
+<ul>
+<li><strong>锦衣卫、东厂</strong>负责的是皇帝最敏感、最需要&quot;法外裁量&quot;的活——监察百官、诏狱、密报。</li>
+<li>但帝国 99% 的日常运转——收税、断案、科举、河工、边防——仍然要靠<strong>六部、都察院、三法司、地方官府</strong>这套正式官僚系统。</li>
+</ul>
+<p>新机构接管的是&quot;皇帝最不放心的那一小块&quot;，旧机构承担的是&quot;国家每天必须照常运转的那一大片&quot;。<strong>它们是分工，不是重复。</strong> 你不可能因为建了厂卫就把六部解散——那样国家第二天就停摆了。</p>
+<p>所以&quot;旧的没被取消&quot;，第一层原因很朴素：<strong>它还在干活，只是从&quot;独苗&quot;变成了&quot;其中一条线&quot;。</strong></p>
+<hr>
+<h2 id="二核心问题为什么不改革旧的而要新建">二、核心问题：为什么不&quot;改革旧的&quot;，而要&quot;新建&quot;</h2>
+<p>这一层，可以用一个统一的模板来拆——任何一次&quot;另起炉灶&quot;，几乎都同时满足下面四个条件。</p>
+<h3 id="21-改革的前提是信任而这件事的前提恰恰是不信任">2.1 改革的前提是信任，而这件事的前提恰恰是不信任</h3>
+<p>你要&quot;重组锦衣卫让它变好&quot;，就得先相信重组的过程、相信重组后的结果、相信执行重组的人。可皇帝设立监察机构的出发点，就是&quot;我谁都不完全信&quot;。<strong>在一个以不信任为底色的系统里，&quot;通过信任来完成改革&quot;这条路本身是堵死的。</strong> 新建则不需要信任任何人——我直接从零搭一个只听我的班子。</p>
+<h3 id="22-改革会撞上既得利益新建绕开它阻力最小路径">2.2 改革会撞上既得利益，新建绕开它：阻力最小路径</h3>
+<p>旧机构里有一大批人，他们的编制、升迁、灰色收入都绑在这套结构上。你去改革，等于动了他们的奶酪，他们会用各种方式消极抵抗、阳奉阴违（这在组织研究里叫&quot;共谋&quot;）。而新建一个平行机构，<strong>不触动存量、不制造敌人、当天就能开工</strong>，是政治阻力最小的走法。</p>
+<h3 id="23-新建可以选更依附的人信任半径不断内缩">2.3 新建可以选&quot;更依附&quot;的人：信任半径不断内缩</h3>
+<p>这是最关键的一条。看明朝这条升级链就懂了：</p>
+<table>
+	<thead>
+			<tr>
+					<th>机构</th>
+					<th>用什么人</th>
+					<th>依附程度</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>锦衣卫</td>
+					<td>武职军人</td>
+					<td>有军籍、有家族、有外部社会关系</td>
+			</tr>
+			<tr>
+					<td>东厂</td>
+					<td>宦官</td>
+					<td>无家族根基、荣辱全系于皇帝一人</td>
+			</tr>
+			<tr>
+					<td>西厂 / 内行厂</td>
+					<td>更贴身的权宦</td>
+					<td>直接由宠宦掌控，只对皇帝负责</td>
+			</tr>
+	</tbody>
+</table>
+<p>皇帝每对上一层的不信任加深一分，就往内再挖一个&quot;社会关系更少、更离不开我&quot;的代理人。<strong>这不是重复建设，是&quot;信任半径&quot;的一圈圈向内收缩。</strong> 改革旧机构没法解决这个问题——你没法把一群有家庭、有背景的军官，改造成无牵无挂的家奴。</p>
+<h3 id="24-改革慢且受规则约束新建快且不受约束">2.4 改革慢且受规则约束，新建快且不受约束</h3>
+<p>旧机构按既定规章办事，而规章既约束百官、也约束皇帝自己。皇帝要的恰恰是&quot;能绕开规矩、随传随到、法外用刑&quot;的工具（诏狱的意义就在于绕开三法司的正常司法程序）。<strong>你把旧机构改造成&quot;职责清晰、依法办事&quot;，等于亲手废掉了它作为皇权延伸的价值。</strong></p>
+<hr>
+<h2 id="三更尖锐的问题新建之后为什么不把旧的解散">三、更尖锐的问题：新建之后，为什么不把旧的解散</h2>
+<p>如果说&quot;为什么新建&quot;还相对好理解，那么&quot;新建之后旧的为何不拆&quot;就更值得追问了。答案分两半：<strong>一半是&quot;不敢拆&quot;，一半是&quot;不想拆&quot;。</strong></p>
+<h3 id="31-一半是不敢拆拆的代价高到难以承受">3.1 一半是&quot;不敢拆&quot;：拆的代价高到难以承受</h3>
+<p><strong>· 你不知道旧的到底在承担什么（切斯特顿的篱笆）。</strong> 有个很有名的比喻：你看见路中间立着一道篱笆，觉得碍事想拆掉它。智者会说——<strong>在你搞清楚它当初为什么被立在这儿之前，你没有资格拆它。</strong> 老机构运转几十年，很多功能是&quot;隐性&quot;的、说不清的：某项流程、某个惯例、某条人脉，可能正默默支撑着你没意识到的东西。贸然裁撤，很可能拆掉一根你看不见的承重柱。</p>
+<p><strong>· 裁撤会制造一大批敌人，还可能留下权力真空。</strong> 解散一个机构，意味着成千上万人丢了饭碗、断了前程。他们不会安静离开，而是变成一股敌对力量。同时，旧机构一倒，它原本覆盖的职能会出现真空，而新机构未必接得住。</p>
+<p><strong>· 不可逆——没有回滚点。</strong> 这一点，明朝开国皇帝朱元璋亲自示范过反面教材。</p>
+<blockquote>
+<p><strong>案例：朱元璋废丞相——一次罕见的&quot;真的把旧的拆了&quot;</strong></p>
+<p>洪武十三年（1380），朱元璋以胡惟庸案为由，<strong>彻底废除了延续一千多年的丞相/中书省制度</strong>，还立下祖训&quot;后世敢言复设丞相者斩&quot;。这是历史上少有的&quot;不新建、直接推倒&quot;的豪赌。</p>
+<p>结果呢？全国政务失去中枢汇总，全部压到皇帝一个人身上。史载他八天里要批阅一千多件奏章、处理三千多件事，累到受不了。于是不得不设&quot;四辅&quot;&quot;殿阁大学士&quot;帮忙看文件——<strong>这套临时班子，后来就长成了明朝的内阁。</strong></p>
+<p>也就是说：<strong>朱元璋真把旧的拆了，代价是系统当场瘫痪，然后被迫又建了一个新的来填坑。</strong> 这个反例恰恰证明了那条规律——裁撤旧机构的风险极高、几乎不可逆，一旦新机构失灵，你连退路都没有。</p>
+</blockquote>
+<h3 id="32-一半是不想拆留着旧的本身就有价值">3.2 一半是&quot;不想拆&quot;：留着旧的，本身就有价值</h3>
+<p><strong>· 冗余备份 / 回滚点。</strong> 新旧并存，等于给系统留了个&quot;备份&quot;。万一新的这条线被架空、被俘获、或者办砸了，旧的还在，随时可以退回去或另起一条。<strong>裁撤是把鸡蛋放进一个篮子，并存是分散风险。</strong></p>
+<p><strong>· 多源信息，防止被单一机构蒙蔽。</strong> 这是&quot;监视者谁来监视&quot;的经典难题。如果只有一条信息通道，这条通道就能过滤、扭曲皇帝看到的一切。多条线并存，皇帝可以<strong>交叉比对</strong>——锦衣卫报的和东厂报的对不上，就说明有人在撒谎。单一渠道做不到这一点。</p>
+<p><strong>· 合法性外壳。</strong> 新机构往往&quot;名不正言不顺&quot;（厂卫是私设、军机处最初只是临时秘书处），需要旧机构那套正式程序来&quot;盖章背书&quot;。</p>
+<blockquote>
+<p><strong>案例：清朝军机处与内阁——旧机构如何变成&quot;空壳&quot;却不消失</strong></p>
+<p>雍正年间设立军机处，起初只是处理西北军务的临时秘书班子。但它高效、保密、直接听命于皇帝，很快架空了正式中枢<strong>内阁</strong>，成了真正的权力核心。</p>
+<p>有意思的是：<strong>内阁并没有被裁撤。</strong> 它一直保留到清朝灭亡，只是从&quot;实权中枢&quot;退化成了&quot;走正式流程、盖章发布&quot;的荣誉性外壳。军机处出政策，内阁补手续。</p>
+<p>这就是&quot;旧的没被取消&quot;最典型的形态——<strong>它没有被消灭，而是被&quot;空心化&quot;了：留着它的躯壳提供合法性，抽走它的实权交给新班子。</strong> 对统治者来说，这比&quot;推倒重建&quot;省事得多，也安全得多。</p>
+</blockquote>
+<p><strong>· 责任分散，永远有回旋余地和替罪羊。</strong> 只有一条线时，它失败就是你的失败。多条线并存，出了事可以归咎于其中一条，最高层始终站在仲裁者的位置上。</p>
+<hr>
+<h2 id="四把机制抽象出来五条可迁移的底层原理">四、把机制抽象出来：五条可迁移的底层原理</h2>
+<p>上面讲的都是历史，但背后的道理是通用的，换到任何组织都成立：</p>
+<ol>
+<li><strong>信任半径内缩</strong>：不信任越深，越倾向于启用&quot;依附性更强、外部牵绊更少&quot;的新代理人，而不是改造旧的。</li>
+<li><strong>切斯特顿的篱笆（信息不对称）</strong>：你无法确知旧机构隐性承担了什么，拆它的风险是不可预估、且不可逆的。</li>
+<li><strong>路径依赖与制度惯性</strong>：机构一旦成型，就有了自己的利益、惯例和拥护者，&quot;拆&quot;的政治成本远高于&quot;绕&quot;。</li>
+<li><strong>风险对冲与冗余备份</strong>：并存 = 多源信息 + 回滚点 + 责任分散；裁撤 = 把风险集中到一处。</li>
+<li><strong>委托—代理困境（&quot;监视者谁来监视&quot;）</strong>：任何单一代理人都可能欺骗委托人，多设几条线是成本高昂但有效的对冲。</li>
+</ol>
+<p><strong>这五条合起来，就是&quot;为什么大家都不约而同地选择新建、且不拆旧的&quot;的答案。</strong> 它不是懒政，而是在&quot;信任稀缺 + 信息不对称 + 不可逆风险&quot;三重约束下，一个把&quot;自身安全&quot;放在第一位的决策者，能想到的最稳妥的走法。</p>
+<hr>
+<h2 id="五但代价是真实的别把它讲成高明设计">五、但代价是真实的：别把它讲成&quot;高明设计&quot;</h2>
+<p>诚实地说，这套逻辑有明确的副作用，明朝就是活教材：</p>
+<ul>
+<li><strong>机构臃肿、财政负担</strong>：厂卫、内行层层叠加，冗员冗费。</li>
+<li><strong>管辖权冲突、互相倾轧</strong>：新旧、厂卫之间争权夺利，内耗严重。</li>
+<li><strong>滥权与冤狱</strong>：法外裁量的工具一旦失控，就是恐怖政治。</li>
+<li><strong>致命的单点依赖</strong>：整套&quot;分而治之&quot;的平衡，<strong>必须有一个能压住所有线头的最高仲裁者在位</strong>。一旦皇帝怠政或缺位（万历、天启），冗余立刻从&quot;皇帝分而治之&quot;反转成&quot;权臣权阉各个击破&quot;——魏忠贤借东厂坐大，就是控制机制被反向捕获的典型。</li>
+</ul>
+<blockquote>
+<p>准确的表述是：<strong>它是&quot;政权存续&quot;这个目标下的局部最优，却是&quot;国家治理能力&quot;这个目标下的全局劣解。</strong> 皇帝优化的是&quot;我不被推翻&quot;，不是&quot;国家被治好&quot;，两者经常背离。</p>
+</blockquote>
+<hr>
+<h2 id="六引申那最好的做法到底是什么">六、引申：那&quot;最好的做法&quot;到底是什么</h2>
+<p>先说一个前提：<strong>没有放之四海皆准的&quot;最好&quot;，只有&quot;针对你的目标而言最好&quot;。</strong> 如果你的目标是&quot;个人权力绝对安全&quot;，那么冗余并存确实近乎最优，没什么可改的。但如果你的目标是&quot;组织长期高效、可持续&quot;，那么下面几条是更优的方向。</p>
+<h3 id="61-先问目标函数再谈架构">6.1 先问&quot;目标函数&quot;，再谈架构</h3>
+<p>厂卫式的冗余之所以&quot;合理&quot;，是因为它服务的是&quot;安全&quot;而非&quot;效率&quot;。一个现代组织如果无意识地照搬这套（不断新设部门、却不撤旧的），往往是在<strong>用&quot;效率目标&quot;付出&quot;安全逻辑&quot;的代价</strong>——这是最该警惕的错配。先想清楚你到底在优化什么。</p>
+<h3 id="62-优先改革存量把新建增量当例外">6.2 优先&quot;改革存量&quot;，把&quot;新建增量&quot;当例外</h3>
+<p>新建之所以诱人，是因为它绕开了阻力。但绕开的阻力不会消失，只会累积成组织债。<strong>除非能证明旧机构已被彻底俘获、无法从内部修复，否则应先尝试改革</strong>——改革虽慢，却不制造平行系统和责任真空。</p>
+<h3 id="63-如果一定要新建就给它装上落日条款">6.3 如果一定要新建，就给它装上&quot;落日条款&quot;</h3>
+<p>新机构设立时就写明<strong>到期自动失效</strong>，除非重新论证其必要性。这能强制周期性地清理&quot;临时变永久&quot;的班子，避免只增不减。军机处、内阁的教训就是：<strong>临时机构一旦没了退出机制，就会永久寄生。</strong></p>
+<h3 id="64-要冗余就要设计过的冗余而不是堆积出来的冗余">6.4 要冗余，就要&quot;设计过的冗余&quot;，而不是&quot;堆积出来的冗余&quot;</h3>
+<p>这里有个很好的现代对照：美国情报界有十几个机构，9·11 和珍珠港之后的反思，不是&quot;合并去重&quot;，反而常常是<strong>保留竞争性冗余</strong>——因为单一渠道被误导的代价太大。但关键在于，这种冗余是<strong>有明确目的、有清晰仲裁规则</strong>的（谁负责什么、冲突了听谁的）。厂卫式的冗余则是<strong>只叠加、不定规则</strong>，全靠皇帝个人裁量去摆平。<strong>好冗余是设计出来的，坏冗余是堆积出来的。</strong></p>
+<h3 id="65-治本之道把忠诚从依附个人变成依附制度">6.5 治本之道：把&quot;忠诚&quot;从&quot;依附个人&quot;变成&quot;依附制度&quot;</h3>
+<p>为什么皇帝要一圈圈向内挖更依附的人？因为在他的系统里，<strong>忠诚是&quot;对某个人&quot;的，而不是&quot;对某套规则&quot;的</strong>——所以只能靠不断换更贴心的人来续命，陷入&quot;内朝取代外朝&quot;的无限循环（汉之中朝、唐之使职、明之内阁厂卫、清之军机处，本质是同一个循环）。</p>
+<p>真正能跳出这个循环的办法，是建立一套<strong>激励由结构对齐、而非由个人恩宠维系</strong>的制度：明确的规则、独立的审计、任期与轮岗、专业规范。当机构&quot;不作恶、不失效&quot;是靠制度保障而不是靠&quot;换了个更忠心的人&quot;时，你就<strong>不再需要靠不断新建来对冲不信任</strong>——这才是从根上解决问题。</p>
+<hr>
+<h2 id="七一句话收束">七、一句话收束</h2>
+<blockquote>
+<p>你看到的不是&quot;组织臃肿的失败&quot;，而是<strong>在信任稀缺、信息不对称、错误不可逆的三重约束下，一个把安全置于效率之上的决策者，用&quot;不断内缩的信任半径&quot;和&quot;刻意保留的冗余&quot;来对抗失控的理性选择。</strong></p>
+<p>它之所以显得混乱，是因为它优化的根本不是&quot;清晰&quot;。而想真正走出这个循环，靠的不是建第 N 个新班子，而是<strong>把忠诚从&quot;依附于人&quot;改造成&quot;依附于制度&quot;</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="附录学界有争议之处如实标注">附录：学界有争议之处，如实标注</h2>
+<ul>
+<li><strong>&quot;皇权不断加强、相权不断削弱&quot;的线性叙事</strong>，是钱穆等前辈的经典框架，但近年学界（如阎步克、祝总斌等）有修正意见：相权并非被简单消灭，而是不断&quot;转化形态&quot;；皇权与官僚系统之间是复杂的博弈与共生，不宜简化为单向的此消彼长。</li>
+<li>**厂卫 = &quot;特务政治/恐怖统治&quot;**是传统定性，但新研究也强调它们承担了大量常规行政与司法职能，并非纯粹的暴力机器。本文取其&quot;皇权私人工具&quot;这一面，不代表其全部面貌。</li>
+</ul>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一先厘清一个误会旧的往往没有真的不顶事">一、先厘清一个误会：旧的往往没有真的&quot;不顶事&quot;</a></li>
+    <li><a href="#二核心问题为什么不改革旧的而要新建">二、核心问题：为什么不&quot;改革旧的&quot;，而要&quot;新建&quot;</a>
+      <ul>
+        <li><a href="#21-改革的前提是信任而这件事的前提恰恰是不信任">2.1 改革的前提是信任，而这件事的前提恰恰是不信任</a></li>
+        <li><a href="#22-改革会撞上既得利益新建绕开它阻力最小路径">2.2 改革会撞上既得利益，新建绕开它：阻力最小路径</a></li>
+        <li><a href="#23-新建可以选更依附的人信任半径不断内缩">2.3 新建可以选&quot;更依附&quot;的人：信任半径不断内缩</a></li>
+        <li><a href="#24-改革慢且受规则约束新建快且不受约束">2.4 改革慢且受规则约束，新建快且不受约束</a></li>
+      </ul>
+    </li>
+    <li><a href="#三更尖锐的问题新建之后为什么不把旧的解散">三、更尖锐的问题：新建之后，为什么不把旧的解散</a>
+      <ul>
+        <li><a href="#31-一半是不敢拆拆的代价高到难以承受">3.1 一半是&quot;不敢拆&quot;：拆的代价高到难以承受</a></li>
+        <li><a href="#32-一半是不想拆留着旧的本身就有价值">3.2 一半是&quot;不想拆&quot;：留着旧的，本身就有价值</a></li>
+      </ul>
+    </li>
+    <li><a href="#四把机制抽象出来五条可迁移的底层原理">四、把机制抽象出来：五条可迁移的底层原理</a></li>
+    <li><a href="#五但代价是真实的别把它讲成高明设计">五、但代价是真实的：别把它讲成&quot;高明设计&quot;</a></li>
+    <li><a href="#六引申那最好的做法到底是什么">六、引申：那&quot;最好的做法&quot;到底是什么</a>
+      <ul>
+        <li><a href="#61-先问目标函数再谈架构">6.1 先问&quot;目标函数&quot;，再谈架构</a></li>
+        <li><a href="#62-优先改革存量把新建增量当例外">6.2 优先&quot;改革存量&quot;，把&quot;新建增量&quot;当例外</a></li>
+        <li><a href="#63-如果一定要新建就给它装上落日条款">6.3 如果一定要新建，就给它装上&quot;落日条款&quot;</a></li>
+        <li><a href="#64-要冗余就要设计过的冗余而不是堆积出来的冗余">6.4 要冗余，就要&quot;设计过的冗余&quot;，而不是&quot;堆积出来的冗余&quot;</a></li>
+        <li><a href="#65-治本之道把忠诚从依附个人变成依附制度">6.5 治本之道：把&quot;忠诚&quot;从&quot;依附个人&quot;变成&quot;依附制度&quot;</a></li>
+      </ul>
+    </li>
+    <li><a href="#七一句话收束">七、一句话收束</a></li>
+    <li><a href="#附录学界有争议之处如实标注">附录：学界有争议之处，如实标注</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/imperial-naming-system/">← 帝王的名号系统：是什么，更是为什么</a>
+        
+        
+        <a class="next" href="/posts/how-to-control-the-generals/">分兵守土，还是拥兵自重：古代中央政权如何管住手握重兵的将领 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

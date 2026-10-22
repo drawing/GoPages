@@ -76,6 +76,129 @@
     
     <li>
         <article>
+            <h2 class="post-title"><a href="/posts/08-assembler-string-instruction/">汇编语言学习笔记(八)-字符串</a></h2>
+            
+            
+            <p class="post-summary">字符串处理可能是编程语言中最耗时以及最繁琐的操作，比较一个整数只需要比较32位，但是比较字符串却需要循环比较字符串的每一个字符，相关的复制 追加操作则需要很多的内存拷贝操作，可能各种语言都对应有一系列的字串处理库，对汇编来说，当然没有类似的 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-19">2014-04-19</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/07-assembler-addressing-method/">汇编语言学习笔记(七)-寻址方式</a></h2>
+            
+            
+            <p class="post-summary">寻址一直以来都是汇编中的关键内容，但是在平坦内存模式下，汇编寻址的难度降低很多，不过Intel CPU必须经历段式内存模式后才可到达页式存储，所以如果系统底层编程，也可能会涉及到实模式下的程序设计，需要掌握段式寻址。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-18">2014-04-18</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/06-assembler-math-instruction/">汇编语言学习笔记(六)-数学运算</a></h2>
+            
+            
+            <p class="post-summary">在上面几篇已经提到了一些数学运算功能，这篇再详细介绍之，数学运算无非是一些加减乘除，移位等等，就是这些简单的操作造就了丰富多彩的程序世界，可以说程序的根本就是计算。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-17">2014-04-17</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/05-assembler-control-flow/">汇编语言学习笔记(五)-控制流</a></h2>
+            
+            
+            <p class="post-summary">程序不可能一顺到底的执行，需要有一些分支流程控制的语法，对高级语言来讲，有分支循环等，对于汇编，有一个“跳”，或者选择性跳，跳转指令本身非常简单，仅仅一个jmp指令，类似于c语言的goto，语法为：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-16">2014-04-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/04-assembler-mov-instruction/">汇编语言学习笔记(四)-MOV指令</a></h2>
+            
+            
+            <p class="post-summary">汇编语言和高级语言不同，需要清晰掌握数据存储和机器相关的大量细节，高级语言会自动处理很多赋值的细节，有时甚至都不知道编译器给我创建了多少变 量，赋值了几次，但在汇编里，一切都变得很清晰了，你需要自己处理每个赋值的细节，这是通过mov指令实现 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-15">2014-04-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/03-assembler-data-structure/">汇编语言学习笔记(三)-数据结构</a></h2>
+            
+            
+            <p class="post-summary">其实对于cpu来说，本没有什么类型之分，仅是一些内存，至于是什么，看你怎么去计算它们了，汇编是与机器码一一对应的，但是还是有些许区别，汇编毕竟还需要编译连接，为了给人使用方便，还是定义了不少数据类型（也有汇编除外，比如NASM，完全是对内存 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-14">2014-04-14</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/02-assembler-framework/">汇编语言学习笔记(二)-代码框架</a></h2>
+            
+            
+            <p class="post-summary">前面总结了一下普通寄存器的知识，这里介绍下汇编程序的基本框架。
+GAS语法框架 程序员学习语言都是从hello world开始的，这样能快速展示一个能运行的完整程序，对语言有个直观的理解。首先说一下环境配置，对于linux程序，无需过多的配 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-04-13">2014-04-13</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
             <h2 class="post-title"><a href="/posts/01-assembler-register/">汇编语言学习笔记(一)-寄存器</a></h2>
             
             
@@ -125,133 +248,6 @@
         </article>
     </li>
     
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/become-an-influential-programmer/">成为有影响力的开发者</a></h2>
-            
-            
-            <p class="post-summary">腾讯会让新入职员工采访一些老员工，通过访谈方式让新员工更好地融入公司的企业文化，也能更有针对性地面对未来的工作。在腾讯混了三年，终于混成老油条了，通过近些年的工作经历，也来谈一谈如何成为一个有影响力的开发者。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-06-02">2011-06-02</time>
-                
-                <span class="sep">·</span><a href="/categories/%E8%81%8C%E5%9C%BA/">职场</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/lottery-winning-probability/">双色球必胜秘籍</a></h2>
-            
-            
-            <p class="post-summary">几天前淘宝在1212促销时，买了所有双色球的组合，免费发给用户，为了这次营销发出去几千万。我虽然没中什么大奖，不过对双色球全买能有什么结果很感兴趣，抽空计算了一下所有的组合。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-06-02">2011-06-02</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/software-versioning-and-architecture/">软件版本对系统架构的理解</a></h2>
-            
-            
-            <p class="post-summary">之前阅读开源软件总习惯性地拿新版或者稳定版开始，这两天看了 netbeans 作者写的《软件框架设计的艺术》，经常拿 java1.4 版和 java1.5 版的实现区别作对比，以此来阐释某种设计理念，想想才发现，想要了解开源软件构架，还是需 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-06-01">2011-06-01</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/technical-review-reflections/">技术答辩感悟</a></h2>
-            
-            
-            <p class="post-summary">昨天以旁观者身份观察了一场答辩，结合自己之前几次不成功的分享和答辩，也算是受益匪浅，有些心得记录一下。
-准备 成功的答辩离不开充分的准备。这里的准备分几个方面，第一个也是最重要的就是平时的准备。答辩之前可以针对性地考虑一些可能问到的问题，增 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-06-01">2011-06-01</time>
-                
-                <span class="sep">·</span><a href="/categories/%E8%81%8C%E5%9C%BA/">职场</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/server-release-best-practices/">发布后台程序注意总结</a></h2>
-            
-            
-            <p class="post-summary">QQ后台服务承载过亿的在线用户，即使是很小的事故也会影响大量的用户，造成极其不好的影响，而百分之八九十的事故都是由于上线发布引起的，所以要对服务上线发布足够的重视。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-04-16">2011-04-16</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/cpp11-explained/">C&#43;&#43;11 详解</a></h2>
-            
-            
-            <p class="post-summary">C++11 已经出来很久了，一直没有时间好好学习一下，最近项目中用到了一些，花了点时间总结一些常用的语法和库，以备参考。
-题外话 C++语言是一门非常繁复的语言，支持的编程范式很多：
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-04-15">2011-04-15</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/latex-formula/">LaTeX 数学公式整理</a></h2>
-            
-            
-            <p class="post-summary">基本字符 大多数普通字符可以直接在数学公式中使用，除了：#$%&amp;~_^\{}，这几个如果需要表示，需要使用\进行转义。
-例如：
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2011-04-15">2011-04-15</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
 </ul>
 
 
@@ -259,7 +255,7 @@
     
     <a href="/page/5/">← 上一页</a>
     
-    <span class="page-info">6 / 7</span>
+    <span class="page-info">6 / 8</span>
     
     <a href="/page/7/">下一页 →</a>
     
