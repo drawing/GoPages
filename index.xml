@@ -10,9 +10,23 @@
 		
 		
 		
-			<lastBuildDate>Thu, 22 Oct 2026 00:13:24 +0800</lastBuildDate>
+			<lastBuildDate>Mon, 26 Oct 2026 22:33:30 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>正统：一场持续两千年的合法性演出</title>
+				<link>https://drawing.fancymore.com/posts/the-logic-of-orthodoxy/</link>
+				<pubDate>Mon, 26 Oct 2026 22:33:30 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/the-logic-of-orthodoxy/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份关于&amp;quot;正统&amp;quot;的分析笔记：为什么夺权必须师出有名，这把尺子如何被历代改铸，以及名分到底值多少钱。&lt;/p&gt;&#xA;&lt;p&gt;核心是一个时间性的区分——事前看，正统是因，它是让秩序收敛的协调装置；事后看，正统是果，它是绩效被追认的名分。两头之间，隔着一个自我强化的回路。&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>Rust 在 AI 时代：一个被误读的&#34;优势&#34;</title>
+				<link>https://drawing.fancymore.com/posts/rust-token-cost-in-ai-era/</link>
+				<pubDate>Mon, 26 Oct 2026 22:22:58 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/rust-token-cost-in-ai-era/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;有一种流行的推理：AI 会写代码之后，Rust 那套&amp;quot;难学、难写、开发慢&amp;quot;的劣势就被抹平了，剩下的全是&amp;quot;安全、快、省心&amp;quot;的优势——所以 AI 时代 Rust 会大占便宜。&lt;/p&gt;&#xA;&lt;p&gt;这篇文档想说清楚一件事：这个推理漏掉了一笔账。Rust 的开发成本并没有消失，它只是从&amp;quot;人的时间&amp;quot;换成了&amp;quot;机器的 token&amp;quot;，而且换过去之后，被一种叫&lt;strong&gt;上下文复利&lt;/strong&gt;的机制放大了数倍——放大的倍数还取决于一个大多数人没意识到的变量：&lt;strong&gt;你把一个会话开了多久。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
 			<item>
 				<title>未出茅庐，便知天下三分：诸葛亮的信息究竟从哪来？</title>
 				<link>https://drawing.fancymore.com/posts/where-zhuge-liang-got-his-information/</link>

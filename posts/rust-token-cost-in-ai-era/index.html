@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rust 在 AI 时代：一个被误读的&#34;优势&#34; · 闲亩</title>
+<meta name="description" content=" 有一种流行的推理：AI 会写代码之后，Rust 那套&quot;难学、难写、开发慢&quot;的劣势就被抹平了，剩下的全是&quot;安全、快、省心&quot;的优势——所以 AI 时代 Rust 会大占便宜。
+这篇文档想说清楚一件事：这 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>Rust 在 AI 时代：一个被误读的&#34;优势&#34;</h1>
+        <div class="post-meta">
+            <time datetime="2026-10-26">2026-10-26</time>
+            <span class="sep">·</span>
+            <span>9811 字</span>
+            <span class="sep">·</span>
+            <span>约 20 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">#编程语言</a><span class="sep">·</span><a class="tag" href="/tags/ai/">#AI</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <blockquote>
+<p>有一种流行的推理：AI 会写代码之后，Rust 那套&quot;难学、难写、开发慢&quot;的劣势就被抹平了，剩下的全是&quot;安全、快、省心&quot;的优势——所以 AI 时代 Rust 会大占便宜。</p>
+<p>这篇文档想说清楚一件事：这个推理漏掉了一笔账。Rust 的开发成本并没有消失，它只是从&quot;人的时间&quot;换成了&quot;机器的 token&quot;，而且换过去之后，被一种叫<strong>上下文复利</strong>的机制放大了数倍——放大的倍数还取决于一个大多数人没意识到的变量：<strong>你把一个会话开了多久。</strong></p>
+</blockquote>
+<hr>
+<h2 id="一先给-rust-说句公道话">一、先给 Rust 说句公道话</h2>
+<p>在拆迷思之前，得先承认 Rust 确实是一门优秀的语言，否则后面的讨论就成了打稻草人。</p>
+<p><strong>Rust 的核心价值，是把一整类 bug 消灭在编译期。</strong></p>
+<p>它的所有权（ownership）和借用检查（borrow checker）系统，让&quot;内存越界、悬垂指针、数据竞争&quot;这些在 C/C++ 里能藏十年、一上线就炸的问题，在代码还没跑起来之前就被编译器拦下。你写不出一个有数据竞争的 Rust 程序——不是因为你小心，而是因为编译器不允许它编译通过。</p>
+<p>这带来一个非常实在的工程收益：<strong>Rust 是&quot;开发时痛苦、运行时省心&quot;的语言。</strong></p>
+<ul>
+<li>开发阶段：你要和借用检查器搏斗，一个生命周期标注能卡你半天，编译器像个不通人情的审稿人，把你的代码打回重写。</li>
+<li>运行阶段：一旦编译通过，程序往往就很稳。没有 GC 停顿，没有内存泄漏，没有&quot;线上跑三天崩一次&quot;的玄学问题。性能接近 C，资源占用可预测。</li>
+</ul>
+<p><strong>它的适用场景也因此非常清晰：</strong></p>
+<ul>
+<li>操作系统、数据库、浏览器引擎、编译器这类&quot;错了就是灾难&quot;的底层系统</li>
+<li>高并发、高吞吐、对延迟敏感的网络服务（网关、代理、消息中间件）</li>
+<li>长时间运行、不能随便重启的基础设施</li>
+<li>WebAssembly、嵌入式等对资源和安全都有硬要求的场景</li>
+</ul>
+<p>一句话总结 Rust 的传统账本：<strong>它用&quot;开发期的额外投入&quot;，换&quot;运行期的额外安心&quot;。</strong> 这笔交易在人类写代码的时代是划算的——因为运行期往往长达数年，而开发期只是一次性的、封顶的。</p>
+<p>记住这句话，它是整篇文档的支点。</p>
+<hr>
+<h2 id="二ai-来了这笔账看起来被改写了">二、AI 来了，这笔账看起来被改写了</h2>
+<p>2024 年之后，一个很自然的推理开始流行：</p>
+<blockquote>
+<p>&quot;Rust 最大的成本是开发慢、学习曲线陡。可现在代码是 AI 写的，人不用一行行敲了。开发慢这个劣势，不就被 AI 抹平了吗？那 Rust 不就只剩下'安全 + 高性能'的纯优势了？&quot;</p>
+</blockquote>
+<p>这个推理的前半段是对的。<strong>AI 确实把&quot;人写 Rust 很慢&quot;这件事很大程度上解决了。</strong> 你不再需要花半年学会生命周期，你可以让 agent 去和借用检查器搏斗。从&quot;人的认知负担&quot;这个角度看，Rust 的门槛被大幅削平了。</p>
+<p>但后半段——&quot;所以 Rust 只剩优势&quot;——犯了一个经典错误：<strong>它默认开发成本被消灭了，而实际上开发成本只是换了一种计价货币。</strong></p>
+<p>人写代码，成本计在&quot;工时&quot;上。
+AI 写代码，成本计在&quot;token&quot;上。</p>
+<p>而 token 是要花钱的，是按量计费的，是有预算上限的。当写代码的主体从人变成 AI，&quot;Rust 开发慢&quot;这句话并没有失效，它只是换了个说法——</p>
+<p><strong>从&quot;Rust 开发慢&quot;，变成了&quot;Rust 开发费 token&quot;。</strong></p>
+<p>慢，是人的时间维度上的贵。费 token，是机器的成本维度上的贵。它们是同一笔账的两种货币。</p>
+<p>而真正的问题是：换成 token 计价之后，这笔账不但没变小，反而因为 AI 工作流的特殊机制，被放大了。</p>
+<hr>
+<h2 id="三token-账单rust-为什么格外贵">三、token 账单：Rust 为什么格外贵</h2>
+<h3 id="31-第一层它天生话多">3.1 第一层：它天生话多</h3>
+<p>这是最直观的一层，很多人能想到。</p>
+<p><strong>同样一个功能，Rust 写出来的代码，本身就比 Go、Python 长。</strong></p>
+<p>类型标注、生命周期参数、trait 实现、错误处理的枚举包装、<code>Cargo.toml</code> 里一长串依赖声明——这些都是实打实的字符，每一个都要变成 token 喂给模型，也要模型一个 token 一个 token 地生成出来。</p>
+<p>有个粗略的对照实验（vibe-coding-lang-bench）：让 AI 用不同语言实现完全相同的功能，然后数代码的 token 量。结果是 Rust 的代码量约为 Python 的 <strong>1.4–1.5 倍</strong>。Go 没进这个实验，但 Go 以语法极简著称，静态代码量通常比 Python 还少，所以 Rust 相对 Go 的&quot;话多&quot;程度，大致也在 1.5 倍上下。</p>
+<p>如果故事到这里就结束，那 Rust 不过是&quot;贵 50%&quot;，完全在可接受范围内，根本构不成什么迷思。</p>
+<p><strong>但真正的成本大头不在这一层。</strong> 静态代码量的差异只是冰山露出水面的那一角。</p>
+<h3 id="32-被忽略的事实写代码是最便宜的环节">3.2 被忽略的事实：写代码是最便宜的环节</h3>
+<p>这里要先纠正一个几乎所有人都会犯的直觉错误。</p>
+<p><strong>我们下意识地把 AI 写代码想象成&quot;打印&quot;——输入需求，输出一坨代码，一次成型。</strong> 在这个想象里，成本就等于&quot;生成的代码有多长&quot;，也就是上面那 1.5 倍。</p>
+<p>但真实的 agent 工作流根本不是打印，而是<strong>一个不断循环的调试过程</strong>：</p>
+<blockquote>
+<p>写一段代码 → 编译 → 报错 → 读报错 → 改 → 再编译 → 又报错 → 再读 → 再改 → …… → 终于通过 → 跑测试 → 测试挂了 → 回去读代码 → 定位问题 → 改 → 再跑……</p>
+</blockquote>
+<p>在这个循环里，&quot;生成新代码&quot;只占很小一部分动作。绝大多数动作是<strong>读</strong>和<strong>改</strong>：读文件、读报错、读测试结果、搜索代码、定位符号、修改某几行、再读一遍确认改对了。</p>
+<p>有个工具（RTK）统计过一次典型的 30 分钟 AI 编程会话，把 token 花在哪做了个分解，结论很扎眼：</p>
+<table>
+	<thead>
+			<tr>
+					<th>动作</th>
+					<th>占比</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>读文件</td>
+					<td>约 34%</td>
+			</tr>
+			<tr>
+					<td>跑测试看反馈</td>
+					<td>约 21%</td>
+			</tr>
+			<tr>
+					<td>搜索代码</td>
+					<td>约 13%</td>
+			</tr>
+			<tr>
+					<td>看 git 状态和 diff</td>
+					<td>约 12%</td>
+			</tr>
+			<tr>
+					<td>真正生成新代码</td>
+					<td>很小一块</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>加起来，&quot;读 + 搜 + 试错&quot;占了整个会话的近七成。</strong></p>
+<p>顺带一提，这个事实也解释了为什么&quot;让 AI 直接生成 AST、跳过源代码&quot;这类减少层次的方案，节省的其实是最便宜的那部分——真正贵的是读和改，而读和改无论如何都省不掉。</p>
+<h3 id="33-第二层rust-把试错循环撑大了">3.3 第二层：Rust 把试错循环撑大了</h3>
+<p>回到前面那句话——Rust 是&quot;开发时痛苦&quot;的语言。那个&quot;痛苦&quot;，在人类时代体现为&quot;程序员对着编译器皱眉&quot;，在 AI 时代则原封不动地体现为&quot;agent 在编译修复循环里反复打转&quot;。</p>
+<p>具体有两个放大器。</p>
+<p><strong>放大器一：编译报错又长又难修，而且会级联。</strong></p>
+<p>Go 的编译错误通常是一行：<code>cannot use x (type A) as type B</code>，agent 一眼看懂，改一处，过了。</p>
+<p>Rust 的借用检查错误是&quot;多行小说&quot;：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">error[E0502]: cannot borrow `self.items` as mutable because it is
+</span></span><span class="line"><span class="cl">              also borrowed as immutable
+</span></span><span class="line"><span class="cl">  --&gt; src/handler.rs:42:9
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">38 |     let name = &amp;self.items[idx].name;
+</span></span><span class="line"><span class="cl">   |                 ---------------- immutable borrow occurs here
+</span></span><span class="line"><span class="cl">42 |         self.items.push(new_item);
+</span></span><span class="line"><span class="cl">   |         ^^^^^^^^^^^^^^^^^^^^^^^^ mutable borrow occurs here
+</span></span><span class="line"><span class="cl">43 |     }
+</span></span><span class="line"><span class="cl">   |     - immutable borrow might be used here...
+</span></span></code></pre></div><p>十几行起步，还带 <code>help:</code> 建议和 <code>note:</code> 注释。这一整坨，每一次都要被读进上下文、被理解、被据此修改。</p>
+<p>更麻烦的是，<strong>Rust 的错误会级联</strong>。你修好一个 move 错误，可能冒出三个新的 lifetime 错误；你为了让编译器闭嘴加一个 <code>.clone()</code>，又可能触发别处的借用冲突。于是&quot;改一个错、build 一次、又冒出新错&quot;的循环，在 Rust 里能转上十几二十轮，而在 Go 里往往一两轮就收敛。</p>
+<p>有个真实项目的记录：一个 Rust 模块的构建，agent 跑了 <strong>29 轮编译错误循环</strong>，其中约 10 轮是纯粹的所有权/借用/生命周期问题——<strong>这类问题在 Go 里根本不存在，对应的 10 轮循环直接就是零。</strong></p>
+<p>这里要点出一个常被忽略的不对称：<strong>Go 的迭代轮次并不是 1。</strong> Go 也有编译修复循环（<code>declared and not used</code>、类型不匹配），agent 写 Go 一样要迭代。只是 Go 的错误<strong>自解释、一轮可修</strong>，而 Rust 的错误<strong>会级联、不收敛</strong>。所以真正的差别不是&quot;Rust 迭代多&quot;，而是&quot;Rust 的迭代不收敛&quot;。</p>
+<p><strong>放大器二：改代码这个动作本身，在 Rust 里更容易失败。</strong></p>
+<p>agent 改代码常用&quot;精确替换&quot;——找到一段旧文本，换成新文本。Rust 的函数签名长、类型标注多、嵌套深，导致&quot;要匹配的那段旧文本&quot;又长又容易匹配错。一旦替换失败，agent 就得：读回文件拿到精确文本 → 重新构造替换 → 再试。<strong>一次失败的修改，等于三次工具调用的成本，却只换来零次进展。</strong></p>
+<p>在那个真实项目里，光是这种&quot;改代码失败&quot;就发生了 10 次以上；一个 1656 行的核心文件，就这样被反复地局部读取、又重新读取。</p>
+<p>把两个放大器合起来：</p>
+<blockquote>
+<p><strong>Rust 不只是&quot;每次说的话更多&quot;（代码更长），它更致命的是&quot;要说话的轮次更多&quot;（试错循环更长）。</strong></p>
+</blockquote>
+<p>而&quot;轮次更多&quot;这件事，在 AI 的工作流里，代价远比&quot;每次话多&quot;要重。重多少，取决于会话有多长——这是下一章的主题。</p>
+<hr>
+<h2 id="四倍数不是常数它取决于你把会话开了多久">四、倍数不是常数：它取决于你把会话开了多久</h2>
+<p>前面那个&quot;1.5 倍&quot;，很容易被当成一个固定的语言税率记下来。<strong>这是个误用。</strong> Rust 相对 Go 的成本倍数，和&quot;你在一个会话里连续干了多少轮&quot;强相关，而且这个相关性比大多数人以为的要剧烈得多。</p>
+<h3 id="41-为什么倍数会随会话变长而上升">4.1 为什么倍数会随会话变长而上升</h3>
+<p>关键在于 AI agent 一个反直觉的工作方式：<strong>它没有&quot;记忆&quot;，每一次行动，都要把之前发生的一切重新读一遍。</strong></p>
+<p>你让 agent 改第 5 处代码时，它并不是&quot;记得&quot;前 4 处改了什么。它的实际工作方式是：把整个对话历史、所有读过的文件、所有编译报错、所有之前的修改——<strong>全部重新塞进上下文，再发给模型</strong>，然后模型在这个完整历史的末尾，续写出第 5 步。</p>
+<p>于是：</p>
+<ul>
+<li>第 1 次工具调用，发送 1 份上下文</li>
+<li>第 2 次，发送 2 份累积的上下文</li>
+<li>第 N 次，发送 N 次累积的上下文</li>
+</ul>
+<p>把这些加起来是 1 + 2 + 3 + …… + N，结果不是 N，而是大约 <strong>N²/2</strong>。</p>
+<p><strong>成本随轮次按平方增长，不是线性增长。</strong> 这就是&quot;上下文复利&quot;。</p>
+<p>现在看这个平方式对倍数意味着什么。会话总成本可以粗略拆成两块：一块是<strong>固定背景</strong>（系统提示、项目文档、初始读入的代码），它每轮都重发但不增长；另一块是<strong>累积增量</strong>（每轮新产生的代码、报错、修改），它随轮次线性堆积，因而总成本按平方增长。</p>
+<ul>
+<li><strong>会话很短时</strong>，固定背景占主导。这时候 Rust 和 Go 的差别，主要就体现在&quot;轮次比&quot;上，倍数接近线性，可能只有 1.5–2 倍。</li>
+<li><strong>会话很长时</strong>，累积增量的平方项彻底压过固定背景。这时候 Rust 的两个膨胀因子（每轮增量更大、总轮次更多）同时生效，倍数逼近它的上限——而&quot;轮次&quot;这个因子是<strong>被平方</strong>的。</li>
+</ul>
+<p><strong>结论：会话越长，Rust 相对 Go 的倍数越高。</strong> 短会话里你看到的是 1.5 倍，长会话里看到的是 8 倍，这不是矛盾，是同一个公式在不同区间的表现。</p>
+<h3 id="42-而现实中的开发习惯恰恰是把会话开得很长">4.2 而现实中的开发习惯，恰恰是把会话开得很长</h3>
+<p>这里有个很实际的行为因素，它让&quot;长会话&quot;不是极端情况，而是<strong>默认情况</strong>。</p>
+<p><strong>一般人不会为一个小功能开一个新会话。</strong></p>
+<p>原因很简单：开新会话意味着要重新交代背景——项目结构、技术约定、之前做过的决策、踩过的坑。这个&quot;重新交代&quot;本身就很贵，而且人会觉得麻烦。所以绝大多数人的真实习惯是：</p>
+<blockquote>
+<p>开一个会话，然后在里面不断追问、不断修复各类问题。从&quot;帮我加个接口&quot;，到&quot;这个测试怎么挂了&quot;，到&quot;顺便把那个模块重构一下&quot;，一路问下去，一个会话用一整天甚至好几天。</p>
+</blockquote>
+<p>这个习惯在人类协作里是完全合理的——你不会每问同事一个问题就重新自我介绍一遍。但放到 AI 的计费机制下，它的后果是：</p>
+<p><strong>每一轮追问，都背着前面所有轮次的全部历史。</strong> 第 50 轮那句&quot;帮我把这个函数改一下&quot;，和第 1 轮同样的一句话，价格差了几十倍——因为前者要重发前 49 轮积累的所有代码、报错和修改记录。</p>
+<p>于是形成一个很反直觉的现象：<strong>越往后，越贵，而且贵得越快。</strong> 一个会话的前 10 轮可能只花掉总成本的 5%，最后 10 轮却可能花掉 40%。</p>
+<p>而 Rust 在这个模式下的处境格外糟：它的轮次本来就多（编译循环、改代码失败），每轮增量本来就大（代码长、报错长），这两个因子在长会话里被平方机制同时放大。<strong>你越是习惯&quot;一个会话用到底&quot;，Rust 的相对劣势就越大。</strong></p>
+<h3 id="43-窗口大小一个反直觉的影响">4.3 窗口大小：一个反直觉的影响</h3>
+<p>很多人以为，模型上下文窗口变大（从 128k 到 1M）会缓解这个问题——&quot;窗口大了，装得下了，就不用反复重读了&quot;。</p>
+<p><strong>实际情况恰好相反：窗口越大，复利越凶，Rust 与 Go 的倍数差距越大。</strong></p>
+<p>原因在于窗口大小决定了一个关键机制会不会触发——<strong>上下文压缩</strong>。</p>
+<ul>
+<li><strong>小窗口（如 128k）</strong>：会话跑几十轮就触顶了，系统被迫把前面的历史压缩成一份摘要，腾出空间继续。这个压缩<strong>相当于强制给复利踩了刹车</strong>——累积的历史被&quot;清零&quot;成摘要，平方项没法一路滚下去。代价是压缩有损，agent 对代码的记忆变模糊，需要重新读代码来补，这是另一笔开销。</li>
+<li><strong>大窗口（如 1M）</strong>：根本不会触顶，不需要压缩。于是<strong>复利一路毫无阻拦地滚下去</strong>，平方项完全主导，没有任何东西能拦住它。</li>
+</ul>
+<p>换句话说，压缩虽然烦人，但它在客观上起到了&quot;封顶&quot;的作用。大窗口把这个封顶拆掉了。</p>
+<p>再叠加 4.1 的结论：窗口越大，人们越倾向于把会话开得更长（&quot;反正装得下&quot;），也越倾向于一次性把更多文件读进上下文（固定背景本身也变大了）。这两个行为都让轮次更多、让平方项更主导。</p>
+<p><strong>所以在 1M 窗口的超长会话里，Rust 与 Go 的差距可以远远超过 10 倍。</strong> 具体能到多少，取决于代码的&quot;借用密度&quot;（见 4.4），而量化的模型放在下一章。</p>
+<h3 id="44-还有一个变量代码本身的借用密度">4.4 还有一个变量：代码本身的借用密度</h3>
+<p>必须说清楚一个边界：<strong>倍数高度依赖你在写什么样的 Rust。</strong></p>
+<ul>
+<li>写纯胶水代码、CRUD、HTTP 接口——借用检查器基本不添乱，轮次和 Go 差不多，倍数可能只有 2 倍出头。</li>
+<li>写异步、并发、自引用数据结构——借用检查器全力开火，轮次暴涨，倍数轻松上到 10 倍以上。</li>
+</ul>
+<p>这里有个相当讽刺的结论：<strong>Rust 越是用在它最擅长、最不可替代的地方（复杂系统编程），它的 token 税就越重。</strong> 它的优势场景，恰恰是它 AI 成本最高的场景。</p>
+<hr>
+<h2 id="五深入分析上下文复利的量化模型">五、深入分析：上下文复利的量化模型</h2>
+<blockquote>
+<p>这一章是前面结论的推导过程，自成一体。只想要结论的读者可以跳过它，直接看后面的迷思破解。</p>
+</blockquote>
+<h3 id="51-平方的来源">5.1 平方的来源</h3>
+<p>设一个会话里 agent 执行了 M 次工具调用，每次调用平均给上下文增加 δ 的增量，会话开始时的固定背景（系统提示、项目文档、初始代码）为 C₀。</p>
+<p>由于每次调用都要重发全部累积历史，总输入成本是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">总成本 ≈ Σ(i=1..M) (C₀ + i·δ)  ≈  M·C₀ + δ·M²/2
+</span></span></code></pre></div><p>主导项是 <strong>δ·M²/2</strong>。这就是&quot;成本按轮次平方增长&quot;的准确形式。</p>
+<h3 id="52-两个膨胀因子一个进线性一个进平方">5.2 两个膨胀因子，一个进线性，一个进平方</h3>
+<p>Rust 相比 Go，同时膨胀了两个变量：</p>
+<table>
+	<thead>
+			<tr>
+					<th>变量</th>
+					<th>Rust 的膨胀来源</th>
+					<th>典型倍数</th>
+					<th>进入公式的位置</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>δ</strong>（每轮增量）</td>
+					<td>代码/注释更长、cargo 报错带 span + help、精确替换的匹配文本更长</td>
+					<td>k_δ ≈ 1.5–2</td>
+					<td>线性</td>
+			</tr>
+			<tr>
+					<td><strong>M</strong>（调用轮次）</td>
+					<td>编译修复循环数十轮、改代码失败后需读回重试、错误级联不收敛</td>
+					<td>k_M ≈ 1.5–2</td>
+					<td><strong>平方</strong></td>
+			</tr>
+	</tbody>
+</table>
+<p>代入求和式，得到成本比：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">成本比 ≈ k_δ × k_M²
+</span></span></code></pre></div><ul>
+<li>k_δ = 1.5、k_M = 1.5 → 1.5 × 2.25 ≈ <strong>3.4 倍</strong></li>
+<li>k_δ = 2、k_M = 2 → 2 × 4 = <strong>8 倍</strong></li>
+<li>k_δ = 2、k_M = 2.5 → 2 × 6.25 = <strong>12.5 倍</strong></li>
+<li>k_δ = 2、k_M = 3 → 2 × 9 = <strong>18 倍</strong></li>
+</ul>
+<p><strong>注意那个平方。</strong> 轮次多一倍，成本不是多一倍，是多到四倍。这就是为什么&quot;Rust 试错循环长&quot;的杀伤力远超&quot;Rust 代码长&quot;——前者被平方放大，后者只被线性放大。</p>
+<p>这也点破了一个常见的算账错误：如果把各个成本因子简单相乘（静态代码量 × 编译迭代 × 上下文读取 × 重试），会<strong>重复计算 δ 类因子</strong>——&quot;静态代码量&quot;和&quot;上下文读取&quot;其实是同一根轴（都是单次调用的增量），不该相乘。正确的分解只有两根轴：δ 进线性，M 进平方。</p>
+<h3 id="53-倍数如何随会话长度变化">5.3 倍数如何随会话长度变化</h3>
+<p>把 5.1 的公式写成比值形式：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">成本比 = (M_R·C₀ + δ_R·M_R²/2) / (M_G·C₀ + δ_G·M_G²/2)
+</span></span></code></pre></div><p>这个比值随 M 单调上升，两端有明确的渐近行为：</p>
+<ul>
+<li><strong>M 很小（短会话）</strong>：C₀ 项主导，比值 ≈ M_R/M_G = <strong>k_M</strong>（退化为线性）</li>
+<li><strong>M 很大（长会话）</strong>：δM²/2 项主导，比值 → <strong>k_δ × k_M²</strong>（平方上限）</li>
+</ul>
+<p>以 k_δ = 2、k_M = 2.5 为例：短会话里你只会看到约 2.5 倍的差距，超长会话里会逼近 12.5 倍。<strong>同一个语言组合，同一个公式，倍数差 5 倍，唯一的变量是会话长度。</strong></p>
+<p>这正好对应 4.3 的结论：小窗口通过频繁压缩把 M 压在低位，比值停留在靠近 k_M 的区间；大窗口允许 M 一路增长，比值被推到 k_δ·k_M² 的上限。</p>
+<h3 id="54-隐藏账一会话压缩的再获取成本">5.4 隐藏账一：会话压缩的再获取成本</h3>
+<p>上下文窗口有上限。长项目跑着跑着历史塞满窗口，系统会把前面的对话压缩成摘要。</p>
+<p>Rust 的 δ 膨胀 1.5–2 倍，意味着<strong>同样的工作量，Rust 会更早塞满窗口、更频繁地触发压缩</strong>。而每次压缩之后，agent 对代码的&quot;记忆&quot;变模糊，它得<strong>重新读代码、重新建立理解</strong>——这笔&quot;再获取成本&quot;和当初做调研一样贵，而且它重新读的还是那些被膨胀过的、更长的 Rust 代码。</p>
+<p>这是第二重复利：不仅单个会话内成本按平方涨，跨会话的&quot;重新理解&quot;成本也在涨。它不在 5.2 的公式里，是<strong>额外乘上去的</strong>。对跨越多个会话的长项目，这一层能把 8 倍推到 10–12 倍。</p>
+<h3 id="55-隐藏账二缓存压低绝对价格但压不平比例">5.5 隐藏账二：缓存压低绝对价格，但压不平比例</h3>
+<p>有人会问：现在都有 prompt 缓存了，重发的历史按大约一折计费，复利不就被化解了吗？</p>
+<p>算一下会发现没有。缓存后的成本分两块：</p>
+<ul>
+<li>缓存命中的历史部分：约 0.1 × δM²/2，比值仍是 k_δ·k_M²（0.1 是公因子，约掉了）</li>
+<li>全价的新增部分：每轮新增 δ 按 1.0 计，即 Mδ，比值是 k_δ·k_M（线性）</li>
+</ul>
+<p>两项谁主导？比较 0.05M² 与 M，临界点在 <strong>M ≈ 20</strong>。<strong>会话超过 20 次工具调用，缓存后的平方项依然主导，比值仍 ≈ k_δ·k_M²。</strong></p>
+<p>打个比方：你和邻居都办了同一张打折卡，你买 8 件、他买 1 件，打完折账单比例还是 8:1。</p>
+<p><strong>结论：缓存把绝对成本压低约 10 倍（这是好事），但几乎不改变 Rust 与 Go 的相对比例。</strong> 别指望缓存能救复利。</p>
+<p>而且缓存还有个反作用：Rust 的&quot;改代码失败&quot;会更频繁地击穿缓存（每次失败修改都让缓存失效、需要按更高价重新写入），这反而给 Rust 额外加了一笔小税。</p>
+<h3 id="56-汇总倍数区间">5.6 汇总：倍数区间</h3>
+<table>
+	<thead>
+			<tr>
+					<th>场景</th>
+					<th>Rust / Go 成本比</th>
+					<th>主导机制</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>一次性生成、不迭代</td>
+					<td><strong>1.3–1.6 倍</strong></td>
+					<td>只有 δ，复利没机会生效</td>
+			</tr>
+			<tr>
+					<td>短会话（M &lt; 10）</td>
+					<td><strong>1.5–2.5 倍</strong></td>
+					<td>C₀ 主导，比值 ≈ k_M</td>
+			</tr>
+			<tr>
+					<td>中等复杂度 + 长会话</td>
+					<td><strong>3–8 倍</strong>（中心区间）</td>
+					<td>平方项主导</td>
+			</tr>
+			<tr>
+					<td>借用密集 + 超长会话 + 多次压缩</td>
+					<td><strong>8–12 倍</strong></td>
+					<td>平方项 + 再获取复利</td>
+			</tr>
+			<tr>
+					<td>大窗口（1M）+ 借用密集 + 会话不压缩</td>
+					<td><strong>12–18 倍</strong></td>
+					<td>平方项无封顶，k_M 本身随轮数上升</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>所以&quot;10 倍&quot;这个数是真实存在的，但它是尾部值，不是平均值。</strong> 把它当成 Rust 的默认税率会高估大多数场景；但反过来，拿&quot;1.5 倍&quot;（只算静态代码量）当默认值，又会严重低估真实的 agent 工作流。</p>
+<p><strong>诚实的中心答案是 3–8 倍，并且这个倍数会随着会话变长、窗口变大而继续上升。</strong></p>
+<h3 id="57-一个必要的诚实声明">5.7 一个必要的诚实声明</h3>
+<p>这套 k_δ·k_M² 模型加上单个项目的实证（29 轮编译循环、10+ 次改代码失败、1656 行的核心文件被反复局部读取）是<strong>有说服力的推理，但不是 benchmark</strong>。</p>
+<p>前面提到的 vibe-coding-lang-bench 明确承认它没测到迭代成本——实验里的 agent 拥有完美上下文、零编译错误。也就是说，<strong>公开数据里恰恰缺的就是这个平方项。</strong></p>
+<p>要真正坐实这些倍数，需要有人拿同一个任务、同一个 agent，分别用 Rust 和 Go 跑一遍，测累积输入 token。目前还没人做过这么一份干净的测量。所以这些数字的正确定位是：<strong>方向确定、量级可信、精确值待测。</strong></p>
+<hr>
+<h2 id="六迷思破解ai-没有让-rust-占优势它只是把成本换了个地方藏起来">六、迷思破解：AI 没有让 Rust 占优势，它只是把成本换了个地方藏起来</h2>
+<p>现在可以正面回答开头那个推理了。</p>
+<p><strong>迷思：</strong> &quot;AI 抹平了 Rust 开发慢的劣势，所以 AI 时代 Rust 大占优势。&quot;</p>
+<p><strong>真相：</strong> AI 抹平的是&quot;人的认知负担&quot;，但没有抹平&quot;开发成本&quot;本身。开发成本从&quot;人的工时&quot;转移到了&quot;机器的 token&quot;，并且在转移过程中被上下文复利放大了 3–8 倍，在长会话、大窗口、借用密集的情形下可以到 10 倍以上。</p>
+<p>Rust 那套&quot;开发时痛苦&quot;的特性——和借用检查器搏斗、冗长的报错、反复的编译修复——<strong>一点都没有消失</strong>。它只是从&quot;程序员皱眉&quot;变成了&quot;agent 空转烧 token&quot;。痛苦是守恒的，它换了个承受者，还顺便涨了价。</p>
+<p>更深一层：<strong>Rust 的传统账本是&quot;一次性开发投入，换长期运行省心&quot;。</strong> 这笔账在人类时代划算，是因为开发投入是一次性的、封顶的。但在 AI 时代，开发投入变成了<strong>按 token 持续计费、且随会话长度平方增长</strong>的东西——它不再是一次性封顶的成本，而是一个会复利膨胀的成本。Rust 用来交换&quot;运行省心&quot;的那个筹码，本身变贵了，而且贵得不成比例。</p>
+<p><strong>所以正确的结论不是&quot;AI 时代别用 Rust&quot;，而是：</strong></p>
+<blockquote>
+<p>Rust 在 AI 时代的性价比，取决于你的&quot;运行期安心&quot;值不值那个被平方放大的&quot;开发期 token&quot;。</p>
+<ul>
+<li>如果是操作系统、数据库、安全关键内核——运行期出一次事就是灾难，那几倍的 token 税完全值得付，Rust 仍不可替代。</li>
+<li>如果是业务服务、API 网关、CRUD、快速迭代的 AI 应用——运行期没那么娇贵，而你需要频繁让 AI 改动、快速试错，那这笔平方税就付得冤枉。Go 这类&quot;低熵、快编译、一轮收敛&quot;的语言，综合成本要低得多。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="七如果还是要用-rust对抗复利的工程纪律">七、如果还是要用 Rust：对抗复利的工程纪律</h2>
+<p>既然成本的平方项来自&quot;轮次&quot;，那么<strong>减少轮次，比减少单次输出量值钱得多</strong>——因为你压的是一个会被平方的量。</p>
+<ol>
+<li><strong>批量修复，别一个一个来。</strong> 一次编译报 5 个错，就 5 个一起修完再 build，而不是修一个 build 一次。每省一轮，就省一次&quot;全量上下文重发&quot;。</li>
+<li><strong>改大函数时，宁可整个文件重写，也别做精确替换。</strong> 精确替换一旦失败就是 3 倍成本（失败输出 + 读回 + 重试），整文件重写反而是一次调用、零失败率。</li>
+<li><strong>别写一次性脚本。</strong> 用完即删的临时脚本是&quot;全价买入、零残值&quot;，是 token 效率最差的形态。一开始就写可复用的脚手架。</li>
+<li><strong>把知识固化到磁盘。</strong> 调研结论写进文档、正确行为钉进测试。下个会话读一遍文档就拿到全部结论，跑一遍测试就完成验证，不用重新推导。这是对抗&quot;跨会话再获取复利&quot;的唯一正解。</li>
+<li><strong>主动切会话，别一个会话用到底。</strong> 既然倍数随会话长度上升，那么在一个自然的工作节点（一个模块完成、测试通过）主动开新会话、把背景写成文档带过去，比在旧会话里继续追问要便宜。这违反直觉——开新会话要重述背景，看起来更贵——但重述背景是一次性的 C₀，而继续留在旧会话是在喂一个平方项。</li>
+</ol>
+<p>还有一层值得点破：<strong>这个平方律对 Go 和 Rust 都成立，只是 Rust 的轮次基数更大，所以被平方放大得更狠。</strong> 换句话说，&quot;对抗复利&quot;的工程纪律在 Rust 项目上的边际收益远高于 Go——因为你在压一个会被平方的量。</p>
+<p>这也反向说明了 Go 的真正优势：<strong>它不只是&quot;每轮增量小&quot;，而是&quot;它让你不需要那么努力对抗轮次的平方&quot;。</strong> 语言选型的本质，在这里变成了选一个轮次天然收敛、不需要靠工程纪律去硬压的底座。</p>
+<hr>
+<h2 id="结语看清这笔账不是为了否定-rust">结语：看清这笔账，不是为了否定 Rust</h2>
+<p>Rust 是一门伟大的语言，这一点 AI 时代没有改变，也不会改变。</p>
+<p>改变的只是我们评估它的坐标系。过去我们问：&quot;人写它累不累？&quot;——AI 回答了这个问题：人不写了，所以不累。于是很多人就此打住，得出&quot;Rust 大占优势&quot;的结论。</p>
+<p>但真正该问的是下一个问题：<strong>&quot;机器写它、读它、改它、反复调试它，贵不贵？&quot;</strong></p>
+<p>答案是：贵，而且因为上下文复利，贵得比直觉多得多——不是线性地贵，是平方地贵。而且会话开得越久、模型窗口越大，这个平方就越没有约束。</p>
+<p>AI 没有消灭 Rust 的开发成本，它只是把这笔成本从&quot;人看得见的工时&quot;，搬到了&quot;人容易忽略的 token 账单&quot;里。而恰恰因为它被搬到了看不见的地方，才更容易被&quot;Rust 大占优势&quot;这种迷思所掩盖。</p>
+<p>看清这笔账，不是为了否定 Rust，而是为了在该用它的地方毫不犹豫地用，在不该用它的地方——别为一个被平方放大的幻觉买单。</p>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一先给-rust-说句公道话">一、先给 Rust 说句公道话</a></li>
+    <li><a href="#二ai-来了这笔账看起来被改写了">二、AI 来了，这笔账看起来被改写了</a></li>
+    <li><a href="#三token-账单rust-为什么格外贵">三、token 账单：Rust 为什么格外贵</a>
+      <ul>
+        <li><a href="#31-第一层它天生话多">3.1 第一层：它天生话多</a></li>
+        <li><a href="#32-被忽略的事实写代码是最便宜的环节">3.2 被忽略的事实：写代码是最便宜的环节</a></li>
+        <li><a href="#33-第二层rust-把试错循环撑大了">3.3 第二层：Rust 把试错循环撑大了</a></li>
+      </ul>
+    </li>
+    <li><a href="#四倍数不是常数它取决于你把会话开了多久">四、倍数不是常数：它取决于你把会话开了多久</a>
+      <ul>
+        <li><a href="#41-为什么倍数会随会话变长而上升">4.1 为什么倍数会随会话变长而上升</a></li>
+        <li><a href="#42-而现实中的开发习惯恰恰是把会话开得很长">4.2 而现实中的开发习惯，恰恰是把会话开得很长</a></li>
+        <li><a href="#43-窗口大小一个反直觉的影响">4.3 窗口大小：一个反直觉的影响</a></li>
+        <li><a href="#44-还有一个变量代码本身的借用密度">4.4 还有一个变量：代码本身的借用密度</a></li>
+      </ul>
+    </li>
+    <li><a href="#五深入分析上下文复利的量化模型">五、深入分析：上下文复利的量化模型</a>
+      <ul>
+        <li><a href="#51-平方的来源">5.1 平方的来源</a></li>
+        <li><a href="#52-两个膨胀因子一个进线性一个进平方">5.2 两个膨胀因子，一个进线性，一个进平方</a></li>
+        <li><a href="#53-倍数如何随会话长度变化">5.3 倍数如何随会话长度变化</a></li>
+        <li><a href="#54-隐藏账一会话压缩的再获取成本">5.4 隐藏账一：会话压缩的再获取成本</a></li>
+        <li><a href="#55-隐藏账二缓存压低绝对价格但压不平比例">5.5 隐藏账二：缓存压低绝对价格，但压不平比例</a></li>
+        <li><a href="#56-汇总倍数区间">5.6 汇总：倍数区间</a></li>
+        <li><a href="#57-一个必要的诚实声明">5.7 一个必要的诚实声明</a></li>
+      </ul>
+    </li>
+    <li><a href="#六迷思破解ai-没有让-rust-占优势它只是把成本换了个地方藏起来">六、迷思破解：AI 没有让 Rust 占优势，它只是把成本换了个地方藏起来</a></li>
+    <li><a href="#七如果还是要用-rust对抗复利的工程纪律">七、如果还是要用 Rust：对抗复利的工程纪律</a></li>
+    <li><a href="#结语看清这笔账不是为了否定-rust">结语：看清这笔账，不是为了否定 Rust</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/where-zhuge-liang-got-his-information/">← 未出茅庐，便知天下三分：诸葛亮的信息究竟从哪来？</a>
+        
+        
+        <a class="next" href="/posts/the-logic-of-orthodoxy/">正统：一场持续两千年的合法性演出 →</a>
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>

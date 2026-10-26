@@ -3,27 +3,45 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://drawing.fancymore.com/categories/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/categories/%E5%8E%86%E5%8F%B2/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/</loc>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/the-logic-of-orthodoxy/</loc>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</loc>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</loc>
+    <lastmod>2026-10-26T22:33:30+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/tags/ai/</loc>
+    <lastmod>2026-10-26T22:22:58+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/posts/rust-token-cost-in-ai-era/</loc>
+    <lastmod>2026-10-26T22:22:58+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
+    <lastmod>2026-10-26T22:22:58+08:00</lastmod>
+  </url><url>
+    <loc>https://drawing.fancymore.com/categories/%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2026-10-26T22:22:58+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/where-zhuge-liang-got-his-information/</loc>
     <lastmod>2026-10-22T00:13:24+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
-  </url><url>
     <loc>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF%E4%BC%A0%E6%92%AD/</loc>
-    <lastmod>2026-10-22T00:13:24+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</loc>
     <lastmod>2026-10-22T00:13:24+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E5%86%9B%E4%BA%8B%E5%8F%B2/</loc>
@@ -39,9 +57,6 @@
     <lastmod>2026-10-21T23:30:14+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/how-to-control-the-generals/</loc>
-    <lastmod>2026-10-21T22:36:43+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</loc>
     <lastmod>2026-10-21T22:36:43+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/posts/the-logic-of-parallel-institutions/</loc>
@@ -86,9 +101,6 @@
     <loc>https://drawing.fancymore.com/posts/the-nature-of-mental-strength/</loc>
     <lastmod>2026-10-16T22:22:09+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/tags/ai/</loc>
-    <lastmod>2026-10-15T23:39:19+08:00</lastmod>
-  </url><url>
     <loc>https://drawing.fancymore.com/tags/%E5%86%B3%E7%AD%96/</loc>
     <lastmod>2026-10-15T23:39:19+08:00</lastmod>
   </url><url>
@@ -122,13 +134,7 @@
     <loc>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2023-04-11T22:50:04+08:00</lastmod>
   </url><url>
-    <loc>https://drawing.fancymore.com/categories/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2023-04-11T22:50:04+08:00</lastmod>
-  </url><url>
     <loc>https://drawing.fancymore.com/posts/swig-cross-language-call/</loc>
-    <lastmod>2023-04-10T22:40:04+08:00</lastmod>
-  </url><url>
-    <loc>https://drawing.fancymore.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2023-04-10T22:40:04+08:00</lastmod>
   </url><url>
     <loc>https://drawing.fancymore.com/tags/%E7%AE%A1%E7%90%86/</loc>
