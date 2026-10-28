@@ -100,7 +100,7 @@ Redis is configured to save RDB snapshots, but is …">
 <li>1：表示内核允许分配所有的物理内存，而不管当前的内存状态如何。</li>
 <li>2：表示内核允许分配超过所有物理内存和交换空间总和的内存</li>
 </ul>
-<p>具体什么含义呢？当使用malloc等函数，向系统申请内存时，一种情况是有可用内存时返回成功，无可用内存时返回失败<code>NULL</code>，另一种情况是都返回成功，以便能运行更大的程序，因为申请内存后，可能不会立即使用，当使用时发现内存不足时，会发生OOM killer，它会选择杀死一些进程（用户态进程，不是内核线程），以便释放内存。选择进程的函数是<code>oom_badness</code>函数(在<code>mm/oom_kill.c</code>中)，该函数会计算每个进程的点数(0~1000)。点数越高，这个进程越有可能被杀死。每个进程的点数跟<code>oom_score_adj</code>有关，而且<code>oom_score_adj</code>可以被设置(-1000最低，1000最高)。</p>
+<p>具体什么含义呢？当使用malloc等函数，向系统申请内存时，一种情况是有可用内存时返回成功，无可用内存时返回失败<code>NULL</code>，另一种情况是都返回成功，以便能运行更大的程序，因为申请内存后，可能不会立即使用，当使用时发现内存不足时，会发生OOM killer，它会选择杀死一些进程（用户态进程，不是内核线程），以便释放内存。选择进程的函数是<code>oom_badness</code>函数(在<code>mm/oom_kill.c</code>中)，该函数会计算每个进程的点数(0–1000)。点数越高，这个进程越有可能被杀死。每个进程的点数跟<code>oom_score_adj</code>有关，而且<code>oom_score_adj</code>可以被设置(-1000最低，1000最高)。</p>
 <p><code>overcommit_memory</code>的三种状态分别表示为三种<code>overcommit</code>策略(<code>Documentation/vm/overcommit-accounting</code>)：</p>
 <ul>
 <li>0：启发式策略。合理的overcommit会被接受，不合理的overcommit会被拒绝。</li>

@@ -10,13 +10,27 @@
 		
 		
 		
-			<lastBuildDate>Mon, 26 Oct 2026 22:33:30 +0800</lastBuildDate>
+			<lastBuildDate>Wed, 28 Oct 2026 23:40:10 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/categories/index.xml" rel="self" type="application/rss+xml" />
 			<item>
+				<title>个人成长</title>
+				<link>https://drawing.fancymore.com/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/</link>
+				<pubDate>Wed, 28 Oct 2026 23:40:10 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>生活</title>
+				<link>https://drawing.fancymore.com/categories/%E7%94%9F%E6%B4%BB/</link>
+				<pubDate>Wed, 28 Oct 2026 22:52:24 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/categories/%E7%94%9F%E6%B4%BB/</guid>
+				<description></description>
+			</item>
+			<item>
 				<title>历史</title>
 				<link>https://drawing.fancymore.com/categories/%E5%8E%86%E5%8F%B2/</link>
-				<pubDate>Mon, 26 Oct 2026 22:33:30 +0800</pubDate>
+				<pubDate>Tue, 27 Oct 2026 22:38:49 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/categories/%E5%8E%86%E5%8F%B2/</guid>
 				<description></description>
 			</item>
@@ -25,20 +39,6 @@
 				<link>https://drawing.fancymore.com/categories/%E6%8A%80%E6%9C%AF/</link>
 				<pubDate>Mon, 26 Oct 2026 22:22:58 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/categories/%E6%8A%80%E6%9C%AF/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>生活</title>
-				<link>https://drawing.fancymore.com/categories/%E7%94%9F%E6%B4%BB/</link>
-				<pubDate>Wed, 21 Oct 2026 21:07:58 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/categories/%E7%94%9F%E6%B4%BB/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>个人成长</title>
-				<link>https://drawing.fancymore.com/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/</link>
-				<pubDate>Mon, 19 Oct 2026 21:36:01 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/categories/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/</guid>
 				<description></description>
 			</item>
 			<item>

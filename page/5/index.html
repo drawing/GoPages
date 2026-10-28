@@ -29,7 +29,7 @@
 })();
 </script>
 
-	<meta name="generator" content="Hugo 0.168.0">
+	<meta name="generator" content="Hugo 0.169.0">
 </head>
 <body>
 <header class="site-header">
@@ -73,6 +73,58 @@
 
 
 <ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-system-call/">Linux系统调用</a></h2>
+            
+            
+            <p class="post-summary">操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-16">2014-05-16</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-driver-poll-programming/">Linux 设备驱动轮询编程</a></h2>
+            
+            
+            <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-15">2014-05-15</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
+            
+            
+            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-14">2014-05-14</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
     
     <li>
         <article>
@@ -189,60 +241,6 @@
             
             <div class="post-meta">
                 <time datetime="2014-04-25">2014-04-25</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/13-assembler-mmx-instruction/">汇编语言学习笔记(十三)-MMX指令集</a></h2>
-            
-            
-            <p class="post-summary">这篇来介绍intel cpu的高级特性，SIMD-单指令多数据，从名字来看，就是执行一条指令可以计算多个数据。先从最简单的mmx指令集来看，在寄存器那篇已经提 到，mmx有 mm0-mm7 共8个64位寄存器，但是寄存器并非独立寄存器，而是 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-24">2014-04-24</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/12-assembler-float-instruction/">汇编语言学习笔记(十二)-浮点指令</a></h2>
-            
-            
-            <p class="post-summary">浮点数如何存储 浮点数的运算完全不同于整数，从寄存器到指令，都有一套独特的处理流程，浮点单元也称作x87 FPU。
-现在看浮点数的表示方式，我们所知道的，计算机使用二进制存储数据，所表示的数字都具有确定性，那是如何表示浮点这种具有近似效果的 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-23">2014-04-23</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/11-assembler-preprocessor-macro/">汇编语言学习笔记(十一)-预编译宏</a></h2>
-            
-            
-            <p class="post-summary">在c语言中，宏作为一种预编译手段，可以在编译之前进行替换，汇编中的宏只是语法与c有所差别，在语言中所起到的作用非常相近。
-先来看MASM中宏的语法规范：
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-22">2014-04-22</time>
                 
                 <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 

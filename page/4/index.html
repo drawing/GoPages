@@ -29,7 +29,7 @@
 })();
 </script>
 
-	<meta name="generator" content="Hugo 0.168.0">
+	<meta name="generator" content="Hugo 0.169.0">
 </head>
 <body>
 <header class="site-header">
@@ -73,6 +73,61 @@
 
 
 <ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/algorithm-lcs/">算法学习笔记-最长公共子序列</a></h2>
+            
+            
+            <p class="post-summary">概念 子序列：一个给定序列的子序列是指该给定序列去掉零个或多个元素，子序列并非需要在原序列中连续。
+公共子序列：给定两个序列X和Y，如果序列Z既是X的一个子序列又是Y的一个子序列，就称序列Z是X和Y的公共子序列。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-02">2014-06-02</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/algorithm-dynamic-programming/">算法学习笔记-动态规划</a></h2>
+            
+            
+            <p class="post-summary">动态规划是一种非常常见的算法，但是在学习算法很久以后才理解什么是动态规划，因为动态规划实在是&quot;名不副实&quot;，从名称上很难直观地对算法有个认识。要说动态规划，还得从分治法说起。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-06-01">2014-06-01</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度</a></h2>
+            
+            
+            <p class="post-summary">现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-23">2014-05-23</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
     
     <li>
         <article>
@@ -190,58 +245,6 @@
             
             <div class="post-meta">
                 <time datetime="2014-05-17">2014-05-17</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-system-call/">Linux系统调用</a></h2>
-            
-            
-            <p class="post-summary">操作系统管理软硬件资源，用户进程只能直接或间接的通过系统调用访问系统资源，而用户进程与内核运行于不同的权限空间，需要进行用户态到内核态的转变，这一转变是通过系统中断实现。现以getpid为例：
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-16">2014-05-16</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-driver-poll-programming/">Linux 设备驱动轮询编程</a></h2>
-            
-            
-            <p class="post-summary">Linux系统下网络模型数select最为常用，当然，select只是检测文件系统数据状态，并不只局限于网络编程，select的功能需要底层驱动提供支持，其中核心应用即为等待队列，其他模型，如poll和epoll，对驱动来说并无区别，驱动只 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-15">2014-05-15</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
-            
-            
-            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-14">2014-05-14</time>
                 
                 <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 
