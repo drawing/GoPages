@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BANG! 完全指南：三国杀的前身，一场更纯粹的身份博弈 · 闲亩</title>
+<meta name="description" content="引子：三国杀之前，先有 BANG! 2002 年，意大利设计师 Emiliano Sciarra 做了一款西部牛仔主题的卡牌游戏，由 dV Giochi 发行，名字就叫 BANG!——一声枪响。
+它做的事情在当时并不常见：把&quot;隐藏 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>BANG! 完全指南：三国杀的前身，一场更纯粹的身份博弈</h1>
+        <div class="post-meta">
+            <time datetime="2026-11-04">2026-11-04</time>
+            <span class="sep">·</span>
+            <span>8504 字</span>
+            <span class="sep">·</span>
+            <span>约 18 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E6%A1%8C%E6%B8%B8/">#桌游</a><span class="sep">·</span><a class="tag" href="/tags/bang/">#BANG</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <h2 id="引子三国杀之前先有-bang">引子：三国杀之前，先有 BANG!</h2>
+<p>2002 年，意大利设计师 Emiliano Sciarra 做了一款西部牛仔主题的卡牌游戏，由 dV Giochi 发行，名字就叫 BANG!——一声枪响。</p>
+<p>它做的事情在当时并不常见：把&quot;隐藏身份&quot;和&quot;卡牌对抗&quot;缝在一起。每人暗抽一张身份牌，除了警长必须亮明，其余人是谁全靠猜；而你猜的依据，只有别人打出的每一张牌。这套结构后来被无数游戏借用，其中最成功的一个，就是中国的<a href="/posts/sanguosha-identity-mode-guide/">《三国杀》</a>。</p>
+<p>玩过三国杀再回头看 BANG!，会有一种&quot;看到原型机&quot;的感觉：它没有武将技能的层层叠加，没有装备栏的复杂组合，没有属性伤害和铁索连环——只有身份、距离、手牌和枪。规则十分钟讲完，一局二三十分钟。</p>
+<p><strong>也正因为剥得干净，它是理解这类游戏原始设计思路的最佳入口。</strong> 三国杀里那些让你头疼的博弈，在 BANG! 里都能找到最简版本。</p>
+<hr>
+<h2 id="一游戏速览">一、游戏速览</h2>
+<table>
+	<thead>
+			<tr>
+					<th>项目</th>
+					<th>内容</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>游戏人数</td>
+					<td>4–7 人（5–6 人体验最佳）</td>
+			</tr>
+			<tr>
+					<td>游戏时长</td>
+					<td>约 20–40 分钟</td>
+			</tr>
+			<tr>
+					<td>游戏类型</td>
+					<td>隐藏身份、手牌管理、阵营对抗</td>
+			</tr>
+			<tr>
+					<td>上手难度</td>
+					<td>中等，规则 10 分钟可讲完</td>
+			</tr>
+			<tr>
+					<td>核心配件</td>
+					<td>80 张游戏牌、7 张身份牌、16 张角色牌、子弹指示物</td>
+			</tr>
+	</tbody>
+</table>
+<p>一句话概括：<strong>除警长外，没人知道彼此的身份。你要靠观察别人的出牌，猜出谁是敌人、谁是队友，然后用手里的枪完成自己阵营的目标。</strong></p>
+<hr>
+<h2 id="二四种身份与胜利条件">二、四种身份与胜利条件</h2>
+<p>这是 BANG! 的灵魂。身份牌秘密分发，<strong>只有警长需要亮明身份</strong>，其余人全程保密。</p>
+<table>
+	<thead>
+			<tr>
+					<th>身份</th>
+					<th>胜利条件</th>
+					<th>玩法核心</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>警长</strong> Sheriff</td>
+					<td>消灭所有歹徒和叛徒</td>
+					<td>全场焦点，需辨忠奸、保命</td>
+			</tr>
+			<tr>
+					<td><strong>副警长</strong> Deputy</td>
+					<td>与警长相同——保护警长、消灭歹徒和叛徒</td>
+					<td>隐藏身份协助警长</td>
+			</tr>
+			<tr>
+					<td><strong>歹徒</strong> Outlaw</td>
+					<td>杀死警长</td>
+					<td>人数占优，集火警长</td>
+			</tr>
+			<tr>
+					<td><strong>叛徒</strong> Renegade</td>
+					<td>成为<strong>最后唯一</strong>的存活者</td>
+					<td>最难，需先借刀清场再单挑警长</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>人数配置：</strong></p>
+<table>
+	<thead>
+			<tr>
+					<th>人数</th>
+					<th>警长</th>
+					<th>副警长</th>
+					<th>歹徒</th>
+					<th>叛徒</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>4 人</td>
+					<td>1</td>
+					<td>—</td>
+					<td>2</td>
+					<td>1</td>
+			</tr>
+			<tr>
+					<td>5 人</td>
+					<td>1</td>
+					<td>1</td>
+					<td>2</td>
+					<td>1</td>
+			</tr>
+			<tr>
+					<td>6 人</td>
+					<td>1</td>
+					<td>1</td>
+					<td>3</td>
+					<td>1</td>
+			</tr>
+			<tr>
+					<td>7 人</td>
+					<td>1</td>
+					<td>2</td>
+					<td>3</td>
+					<td>1</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>叛徒为什么最难？</strong> 他不能过早暴露，也不能让任何一方太快获胜。理想剧本是：先假装副警长帮警长清掉歹徒，等场上只剩自己和警长时，再翻脸单挑取胜。时机差一步就满盘皆输——跳早了被双方集火，跳晚了两边已经分出胜负。</p>
+<p><strong>人数怎么改变局势？</strong> 这张配置表其实决定了每一局的性格：</p>
+<ul>
+<li><strong>4 人局</strong>没有副警长，警长孤立无援，场上是&quot;警长 vs 2 歹徒 vs 1 叛徒&quot;的三方混战。歹徒占一半人数，警长的容错率极低，几乎全靠读人。</li>
+<li><strong>5–6 人局</strong>是公认的最佳区间：副警长回来了，但只有 1 个，警长方仍然人数劣势，需要靠判断力补回来。</li>
+<li><strong>7 人局</strong>有 2 个副警长，警长方第一次在人数上不落下风，歹徒必须更快集火、更早跳身份，否则会被逐个清掉。</li>
+</ul>
+<p>还有一条容易被忽略的：<strong>人越少，距离越短。</strong> 每死一个人，全场的距离都要重算，原本打不到你的人突然就能打到你了。所以残局的火力密度远高于开局——这也是叛徒必须把血量优势留到最后的原因。</p>
+<p>身份和人数说清楚了，接下来是怎么开局。</p>
+<hr>
+<h2 id="三开局与回合流程">三、开局与回合流程</h2>
+<h3 id="31-准备">3.1 准备</h3>
+<ol>
+<li><strong>发身份牌</strong>：按人数配置洗混后秘密分发，警长亮明身份。</li>
+<li><strong>抽角色牌</strong>：每人随机抽一张<strong>面朝上</strong>放置——角色是公开的，身份才是隐藏的。角色牌右上角的子弹数就是你的血量上限。</li>
+<li><strong>警长血量 +1</strong>：警长在角色血量基础上额外加 1 点。3 血角色当警长就是 4 血，4 血就是 5 血。</li>
+<li><strong>发起始手牌</strong>：每人按自己当前血量抽取等量的牌，4 血摸 4 张。</li>
+<li>剩余牌洗混作为<strong>摸牌堆</strong>，旁边留出<strong>弃牌堆</strong>。</li>
+</ol>
+<p>这里有个和三国杀的关键区别：三国杀里&quot;武将&quot;和&quot;体力&quot;是分开的两样东西，BANG! 里<strong>角色牌同时决定血量和技能</strong>，而且角色全程公开。所以 BANG! 的博弈更集中在&quot;身份&quot;上，而不是&quot;武将&quot;上——你不需要猜对面选了什么将，你只需要猜他是谁。</p>
+<h3 id="32-回合三阶段">3.2 回合三阶段</h3>
+<p>游戏从警长开始，<strong>顺时针</strong>轮转。每人的回合分三步：</p>
+<ol>
+<li><strong>摸牌</strong>——从摸牌堆顶摸 2 张。牌堆摸完时，把弃牌堆洗混重置。</li>
+<li><strong>出牌</strong>——可以打出任意数量的牌，但有三条铁律：
+<ul>
+<li><strong>每回合只能打出 1 张砰!</strong>（Bang!），除非装备了连发枪或角色技能允许；</li>
+<li>面前<strong>不能有同名装备</strong>，不能骑两匹马；</li>
+<li><strong>只能装备一把武器</strong>，新武器顶替旧武器。</li>
+</ul>
+</li>
+<li><strong>弃牌</strong>——回合结束时，手牌数不能超过<strong>当前血量</strong>，超出必须弃掉。</li>
+</ol>
+<p>第 3 条是 BANG! 的策略核心：<strong>血量就是手牌上限</strong>。掉血不仅让你更接近死亡，还直接削弱你的资源储备。所以在 BANG! 里，&quot;保血&quot;和&quot;保牌&quot;根本是同一件事。</p>
+<hr>
+<h2 id="四距离与射程最容易被忽略的规则">四、距离与射程：最容易被忽略的规则</h2>
+<p>距离是 BANG! 区别于普通出牌游戏的关键，也是新手最容易吃亏的地方。</p>
+<ul>
+<li><strong>距离</strong>由座位算：相邻玩家距离为 1，隔一人为 2，以此类推，顺时针和逆时针取较小值。<strong>有玩家死亡后距离会重新计算。</strong></li>
+<li><strong>射程</strong>由武器决定。你开局就有一把默认的&quot;柯尔特 45&quot;（Colt .45），射程为 1，只能打左右邻座。想打更远的人，必须换装射程更大的武器。</li>
+</ul>
+<h3 id="41-武器一览">4.1 武器一览</h3>
+<table>
+	<thead>
+			<tr>
+					<th>武器</th>
+					<th>射程</th>
+					<th>特效</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>柯尔特 45（默认）</td>
+					<td>1</td>
+					<td>不是实体牌，画在你的玩家板上，<strong>永远丢不掉</strong></td>
+			</tr>
+			<tr>
+					<td>连发枪 Volcanic</td>
+					<td>1</td>
+					<td>每回合可打出<strong>任意张</strong>砰!，但射程仍只有 1</td>
+			</tr>
+			<tr>
+					<td>斯科菲尔德 Schofield</td>
+					<td>2</td>
+					<td>—</td>
+			</tr>
+			<tr>
+					<td>雷明顿 Remington</td>
+					<td>3</td>
+					<td>—</td>
+			</tr>
+			<tr>
+					<td>卡宾枪 Rev. Carabine</td>
+					<td>4</td>
+					<td>—</td>
+			</tr>
+			<tr>
+					<td>温彻斯特 Winchester</td>
+					<td>5</td>
+					<td>—</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="42-改变距离的两张牌">4.2 改变距离的两张牌</h3>
+<ul>
+<li><strong>野马 Mustang</strong>（防御马）：别人看你的距离 +1，更难打到你。但你看别人仍是正常距离。</li>
+<li><strong>瞄准器 Scope</strong>（进攻马）：你看别人的距离 −1，更容易打到人。但别人看你仍是正常距离。距离最小为 1，不会变成 0。</li>
+</ul>
+<p>两者会相互抵消：你有瞄准器、目标有野马，净距离不变。</p>
+<h3 id="43-三条必须记住的区分">4.3 三条必须记住的区分</h3>
+<ul>
+<li><strong>武器只扩大你的射程，不改变实际距离。</strong> 所以惊慌（Panic!）这类&quot;距离 1 以内&quot;的牌，只受野马和瞄准器影响，不受武器影响——你装了温彻斯特也偷不到远处的人。</li>
+<li><strong>武器是实体牌，可以被偷被拆。</strong> 惊慌能偷走别人的武器，凯特·巴洛能强制弃掉。唯一永远丢不掉的是那把不存在的柯尔特 45。</li>
+<li><strong>距离会随死亡重算。</strong> 集火之前先扫一遍：目标死了以后，谁能打到谁。</li>
+</ul>
+<hr>
+<h2 id="五卡牌详解">五、卡牌详解</h2>
+<p>游戏牌按边框分两类：<strong>棕边牌</strong>是用完即弃的一次性牌，<strong>蓝边牌</strong>是放在面前持续生效的装备牌。</p>
+<p>还有一条贯穿全局的总规则：<strong>任何带&quot;闪躲&quot;符号的牌，都能抵消带&quot;砰!&quot;符号的牌的效果。</strong></p>
+<h3 id="51-基础牌">5.1 基础牌</h3>
+<ul>
+<li><strong>砰!</strong>（Bang!）——攻击射程内的一名玩家，对方必须打出闪躲抵消，否则掉 1 点血。每回合限一张。被抵消的砰!也要进弃牌堆。</li>
+<li><strong>闪躲</strong>（Missed!）——抵消一次砰!，可以在<strong>非自己回合</strong>被动打出。你只能抵消打向自己的攻击，不能替别人挡。</li>
+<li><strong>啤酒</strong>（Beer）——给自己回 1 点血，不能用来救别人。最大的价值在于：濒死时（掉最后一点血）可以<strong>回合外</strong>打出自救。<strong>场上仅剩 2 人时完全失效。</strong> 多张啤酒可以叠加——官方规则书举的例子是：你剩 2 血、吃了炸药 3 点伤害，打出 2 张啤酒就能活到 1 血，只打 1 张则照样出局。</li>
+<li><strong>酒馆</strong>（Saloon）——所有玩家（含自己）各回 1 点血。<strong>不能</strong>在回合外用来自救，濒死时只有啤酒算数。</li>
+</ul>
+<h3 id="52-过牌与补给">5.2 过牌与补给</h3>
+<ul>
+<li><strong>驿马车</strong>（Stagecoach）——摸 2 张。</li>
+<li><strong>威尔斯法歌</strong>（Wells Fargo）——摸 3 张。</li>
+<li><strong>杂货店</strong>（General Store）——翻开等于存活人数的牌，从你开始顺时针每人挑 1 张。注意：你是第一个挑的，但最后一张会落到你下家手里。</li>
+</ul>
+<h3 id="53-干扰与控场">5.3 干扰与控场</h3>
+<ul>
+<li><strong>惊慌</strong>（Panic!）——拿取<strong>距离 1 以内</strong>玩家的一张牌，手牌随机抽、装备任选。距离只受野马和瞄准器影响。</li>
+<li><strong>凯特·巴洛</strong>（Cat Balou）——<strong>无视距离</strong>，强制任意玩家弃一张牌。</li>
+<li><strong>决斗</strong>（Duel）——指定任意玩家，<strong>无视距离</strong>，双方轮流出砰!，先出不出的一方掉 1 点血。三条细节最容易被搞错：<strong>决斗中不能出闪躲、也不能用酒桶判定</strong>；决斗本身不算砰!牌；<strong>决斗中打出的砰!不计入&quot;每回合一张&quot;的限制</strong>——所以手里囤着的砰!可以在决斗里全部倾泻出去。</li>
+<li><strong>印第安人</strong>（Indians!）——除你外所有玩家需弃 1 张砰!，否则掉 1 点血。<strong>闪躲和酒桶在这里都无效</strong>，只能出砰!。</li>
+<li><strong>格林机关枪</strong>（Gatling）——除你外所有玩家需出闪躲，否则掉 1 点血。它不算砰!牌，所以<strong>一回合可以打任意张格林机关枪，同时还能再打一张砰!</strong></li>
+</ul>
+<h3 id="54-装备牌蓝边">5.4 装备牌（蓝边）</h3>
+<ul>
+<li><strong>酒桶</strong>（Barrel）——被砰!攻击时可以&quot;抽牌判定&quot;，翻出<strong>红心</strong>即视为闪躲成功。判定失败后你仍然可以再打一张真的闪躲。</li>
+<li><strong>监狱</strong>（Jail）——放在他人面前（<strong>不能对警长用</strong>），其回合开始前判定：红心则越狱、正常进行回合，否则跳过整个回合。坐牢期间<strong>仍然是砰!的合法目标</strong>，也仍然能在回合外打出闪躲和啤酒。</li>
+<li><strong>炸药</strong>（Dynamite）——放在自己面前，下个回合开始前判定：翻出<strong>黑桃 2–9</strong> 则爆炸、掉 3 点血，否则传给<strong>左边</strong>的玩家，一直传下去直到爆炸，或被惊慌、凯特·巴洛拿走/弃掉。<strong>炸药造成的伤害不算任何玩家造成。</strong> 如果你面前同时有炸药和监狱，<strong>先判炸药</strong>。</li>
+</ul>
+<h3 id="55-判定draw机制">5.5 判定（Draw!）机制</h3>
+<p>酒桶、监狱、炸药都靠同一套机制：翻摸牌堆顶一张牌，看它左下角的花色和点数是否满足条件，然后<strong>无论成功与否都把这张牌弃掉</strong>。点数顺序是 2-3-4-5-6-7-8-9-10-J-Q-K-A。</p>
+<p>这是 BANG! 的运气要素，但运气是可以量化的：</p>
+<ul>
+<li><strong>酒桶</strong>要红心，四种花色之一，成功率大致在四分之一上下——它不是保命符，而是&quot;多一次机会&quot;。</li>
+<li><strong>监狱</strong>要红心才能越狱，也就是说<strong>大约四分之三的概率会跳过回合</strong>，收益极高，这就是它不能对警长用的原因。</li>
+<li><strong>炸药</strong>要黑桃 2–9，单一花色加 8 个点数，单次爆炸概率不高；但它会一直传下去，<strong>累计风险随传递次数上升</strong>，而且一旦炸中就是 3 点血——对 3 血角色是直接出局。</li>
+</ul>
+<hr>
+<h2 id="六奖惩与出局规则">六、奖惩与出局规则</h2>
+<ul>
+<li><strong>杀死歹徒</strong>：无论谁动手（哪怕是另一个歹徒），击杀者<strong>摸 3 张牌</strong>作为奖励。</li>
+<li><strong>警长误杀副警长</strong>：警长必须<strong>弃掉全部手牌和装备</strong>作为惩罚。</li>
+<li><strong>出局</strong>：血量归零且无法用啤酒自救时出局，亮出身份牌，弃掉所有牌。</li>
+<li><strong>游戏结束</strong>：
+<ul>
+<li>警长被杀 → 若此时<strong>只剩叛徒一人存活</strong>，叛徒赢；否则<strong>歹徒赢</strong>，哪怕歹徒已全部阵亡也算他们赢。</li>
+<li>所有歹徒和叛徒被消灭 → 警长和副警长赢。</li>
+</ul>
+</li>
+</ul>
+<p>最后一条很反直觉：<strong>歹徒可以&quot;用自己的命换胜利&quot;</strong>——只要警长死了，即使歹徒全灭，胜利也归歹徒阵营。这条规则直接催生了一个高级打法：歹徒在残局可以主动去送死，只要队友能补掉警长。</p>
+<p>而&quot;杀歹徒摸 3 张&quot;这条奖励，是全场最强的资源杠杆。它意味着：<strong>补掉残血歹徒的人赚翻</strong>，所以警长和叛徒都会去抢这个人头，歹徒之间也可以&quot;卖队友&quot;换资源。</p>
+<p>规则讲完了，接下来是 16 个把规则掰弯的人。</p>
+<hr>
+<h2 id="七16-位角色技能与定位">七、16 位角色：技能与定位</h2>
+<p>角色全程公开，抽到强角色能显著提升胜率。按风格分四类：</p>
+<h3 id="输出与爆发型">输出与爆发型</h3>
+<ul>
+<li><strong>Willy the Kid</strong>（4 血）——出砰!无次数限制。连射狂魔，配上多张砰!可以一回合秒人。</li>
+<li><strong>Slab the Killer</strong>（4 血）——他的砰!需要对方打出<strong>两张</strong>闪躲才能抵消。注意：<strong>酒桶判定成功只算一张</strong>，所以他对付带酒桶的目标依然强势。</li>
+<li><strong>Calamity Janet</strong>（4 血）——砰!和闪躲可以互换使用，攻守极其灵活。但有个限制容易忘：<strong>她把闪躲当砰!打出之后，本回合就不能再出砰!了</strong>（除非装了连发枪）。</li>
+</ul>
+<h3 id="防御与续航型">防御与续航型</h3>
+<ul>
+<li><strong>Sid Ketchum</strong>（4 血）——任何时候都能弃 2 张牌回 1 点血，且可以连续发动多次。续航之王，但不能超过初始血量上限。</li>
+<li><strong>Jourdonnais</strong>（4 血）——自带酒桶效果，被攻击时可判定闪躲。<strong>如果再装一个真的酒桶，两次判定都能用</strong>，等于有两道闪躲机会。</li>
+<li><strong>Paul Regret</strong>（3 血）——自带野马效果，别人看他距离 +1。血少但难打，<strong>再装一匹真野马可以叠加到 +2</strong>。</li>
+<li><strong>El Gringo</strong>（3 血）——每被<strong>玩家</strong>造成 1 点伤害，就从该玩家手里随机抽一张牌（掉几点血抽几张）。反击威慑，但<strong>炸药伤害不触发</strong>，因为炸药不算任何玩家造成。</li>
+</ul>
+<h3 id="过牌与资源型">过牌与资源型</h3>
+<ul>
+<li><strong>Jesse Jones</strong>（4 血）——摸牌阶段的第一张可以改成从任意玩家手里随机抽。掠夺者。</li>
+<li><strong>Kit Carlson</strong>（4 血）——摸牌时看牌堆顶 3 张、选 2 张，第三张放回堆顶。稳定的废牌过滤器。</li>
+<li><strong>Pedro Ramirez</strong>（4 血）——摸牌的第一张可以从弃牌堆顶拿。回收关键牌，尤其能捞回别人刚弃掉的砰!和闪躲。</li>
+<li><strong>Black Jack</strong>（4 血）——摸牌的第二张要亮出来，若是红心或方块就<strong>额外再摸一张</strong>。赌徒。</li>
+<li><strong>Suzy Lafayette</strong>（4 血）——手牌一打空就立即摸一张。速攻流，几乎不会断牌。</li>
+<li><strong>Vulture Sam</strong>（4 血）——<strong>只要有角色出局</strong>，就接收其全部手牌和装备。越到后期越强。注意两个细节：他收的是&quot;手牌 + 面前的装备&quot;，但<strong>如果那人是被炸药炸死的，炸药本身不进他的手牌</strong>；另外这个技能对任何死因都触发，包括炸药。</li>
+</ul>
+<h3 id="判定与距离型">判定与距离型</h3>
+<ul>
+<li><strong>Lucky Duke</strong>（4 血）——任何判定时翻两张、选一张，然后两张都弃掉。天选之人，专克炸药和监狱。</li>
+<li><strong>Rose Doolan</strong>（4 血）——自带瞄准器效果，看别人距离 −1。狙击手，<strong>再装一个真瞄准器可以叠加到 −2</strong>。</li>
+<li><strong>Bart Cassidy</strong>（4 血）——每掉 1 点血就摸一张牌。卖血流，<strong>炸药炸他也照样触发</strong>（他的技能不要求伤害来源是玩家）。</li>
+</ul>
+<p>看懂角色之后，剩下的就是怎么打。</p>
+<hr>
+<h2 id="八实战技巧">八、实战技巧</h2>
+<h3 id="81-身份判断bang-的第一课">8.1 身份判断：BANG! 的第一课</h3>
+<ul>
+<li><strong>看谁打警长</strong>：对警长出砰!、决斗、监狱的，大概率是歹徒。</li>
+<li><strong>看谁护警长</strong>：给警长递啤酒、帮警长挡枪、打那些攻击警长的人，大概率是副警长。</li>
+<li><strong>叛徒的信号</strong>：前期像副警长一样护警长，但<strong>从不出手帮警长快速清场</strong>，刻意让局势拖延、让双方互相消耗。判断叛徒的关键不是&quot;他帮了谁&quot;，而是&quot;他有没有在加速结束比赛&quot;。</li>
+<li><strong>别急着开枪</strong>：身份未明时，副警长乱打其他玩家很可能误伤队友。<strong>信息不足时，宁可空过一回合观察。</strong> 在 BANG! 里，一次误判的代价往往比一回合不行动更大。</li>
+</ul>
+<h3 id="82-手牌管理血量就是手牌">8.2 手牌管理：血量就是手牌</h3>
+<ul>
+<li><strong>别把牌打空</strong>：手牌就是防御力。回合内不要为了输出把闪躲和啤酒全用光，留一张闪躲往往能救命。</li>
+<li><strong>掉血的代价是双重的</strong>：不仅接近死亡，手牌上限也同步下降。3 血掉到 2 血，意味着你每回合能囤的牌少了一张。所以能不掉血就不掉血。</li>
+<li><strong>啤酒的时机</strong>：啤酒能在濒死时回合外自救，这是它最大的价值——<strong>别在自己回合随手喝掉</strong>，留着当保险。只有在你确定回合外不会被打、或者血量已经影响到手牌上限时，才主动喝。</li>
+<li><strong>酒馆要算总账</strong>：它同时给所有敌人回血。场上敌方人数多于己方、或者敌人残血时，一张酒馆可能救回对面两个人。</li>
+</ul>
+<h3 id="83-距离控制无形的护城河">8.3 距离控制：无形的护城河</h3>
+<ul>
+<li><strong>野马是顶级防御</strong>：装上野马后，多数人打不到你——默认射程只有 1，加了野马就变成需要斯科菲尔德以上的武器。</li>
+<li><strong>瞄准器是顶级进攻</strong>：让你能打到更远的关键目标，尤其是坐在对面的警长或歹徒。</li>
+<li><strong>出牌前先扫一遍距离</strong>：尤其歹徒集火警长之前，要确认自己或队友有足够射程或瞄准器。打不到的输出等于没有输出。</li>
+<li><strong>记住距离会随死亡重算</strong>：残局里原本安全的位子会突然变成前线。</li>
+</ul>
+<h3 id="84-各身份打法要点">8.4 各身份打法要点</h3>
+<ul>
+<li><strong>警长</strong>：前期稳、别乱杀——误杀副警长要弃光所有手牌和装备，代价惨重。优先集火已跳明的歹徒，用监狱和炸药限制可疑目标（监狱不能对警长用，所以你是全场唯一免疫监狱的人，这是隐性优势）。</li>
+<li><strong>副警长</strong>：果断用行动表忠（护警长、打歹徒），但别过早成为最高嘲讽被歹徒转火。理想状态是让歹徒觉得&quot;先杀警长更划算&quot;。</li>
+<li><strong>歹徒</strong>：<strong>集火警长，别分散。</strong> 人数是最大优势，哪怕每回合只打 1 点，几回合也能磨死警长。杀歹徒能摸 3 张牌，必要时可以&quot;卖队友&quot;换资源；而且歹徒全灭也能赢，所以残局敢拼。</li>
+<li><strong>叛徒</strong>：前期伪装副警长，中期平衡双方血量（谁强压谁），残局确保自己的血量和手牌都优于警长时再翻脸单挑。<strong>记住仅剩 2 人时啤酒失效</strong>——单挑阶段你的啤酒全是废牌，翻脸之前先把血量差拉开。</li>
+</ul>
+<h3 id="85-关键牌的进阶用法">8.5 关键牌的进阶用法</h3>
+<ul>
+<li><strong>决斗是稳定输出</strong>：无法用闪躲和酒桶抵消，尤其适合打手牌少、砰!不足的目标。反过来，如果你自己砰!不多，被决斗时宁可掉血也别把砰!全交出去——那些砰!在决斗里打出去是不占&quot;每回合一张&quot;额度的，所以手牌多的一方在决斗里几乎必赢。</li>
+<li><strong>炸药是双刃剑</strong>：3 点伤害极高，但会一直传递。适合绝境翻盘，或者传给血量高的敌人。Lucky Duke 和酒桶类角色能化解它，所以<strong>场上有 Lucky Duke 时别轻易挂炸药</strong>。</li>
+<li><strong>监狱优先贴核心</strong>：让敌方关键角色跳过整个回合，收益巨大——大约四分之三的概率生效。<strong>记住不能监狱警长</strong>，所以这张牌天然是歹徒和叛徒的武器。</li>
+<li><strong>杂货店和酒馆要看局势</strong>：群体补牌和群体回血会同时帮到敌人，用之前先算清收益差。杂货店你第一个挑，但最后一张归你下家——如果下家是敌人，等于送他一张定向选择。</li>
+<li><strong>惊慌专偷武器和马</strong>：偷掉对方的温彻斯特，等于把他的射程打回 1；偷掉野马，等于把他从护城河里拽出来。</li>
+</ul>
+<h3 id="86-六个常见误区">8.6 六个常见误区</h3>
+<table>
+	<thead>
+			<tr>
+					<th>误区</th>
+					<th>正解</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>手里有砰!就打</td>
+					<td>先判断目标身份，误伤队友得不偿失</td>
+			</tr>
+			<tr>
+					<td>两人单挑时还想用啤酒回血</td>
+					<td><strong>仅剩 2 人时啤酒完全失效</strong>，单挑前就要把血量差拉开</td>
+			</tr>
+			<tr>
+					<td>以为炸死人是某个玩家的功劳</td>
+					<td>炸药致死不算任何玩家造成，El Gringo 不触发；但 <strong>Vulture Sam 照样收牌</strong>，Bart Cassidy 也照样摸牌</td>
+			</tr>
+			<tr>
+					<td>叛徒过早跳身份</td>
+					<td>叛徒一旦暴露会被双方集火，几乎没有生还机会</td>
+			</tr>
+			<tr>
+					<td>决斗时想打闪躲</td>
+					<td>决斗中闪躲和酒桶都无效，只能出砰!</td>
+			</tr>
+			<tr>
+					<td>决斗里打的砰!也算进&quot;每回合一张&quot;</td>
+					<td>不算。决斗中的砰!不占额度，所以可以全部倾泻</td>
+			</tr>
+	</tbody>
+</table>
+<hr>
+<h2 id="九bang-与三国杀的对照">九、BANG! 与三国杀的对照</h2>
+<p>如果你玩过三国杀，这张表能帮你快速迁移经验：</p>
+<table>
+	<thead>
+			<tr>
+					<th>BANG!</th>
+					<th>三国杀对应</th>
+					<th>说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>警长 Sheriff</td>
+					<td>主公</td>
+					<td>明置身份，全场焦点，血量 +1</td>
+			</tr>
+			<tr>
+					<td>副警长 Deputy</td>
+					<td>忠臣</td>
+					<td>隐藏身份协助</td>
+			</tr>
+			<tr>
+					<td>歹徒 Outlaw</td>
+					<td>反贼</td>
+					<td>集火核心目标</td>
+			</tr>
+			<tr>
+					<td>叛徒 Renegade</td>
+					<td>内奸</td>
+					<td>最后单挑取胜</td>
+			</tr>
+			<tr>
+					<td>砰! Bang!</td>
+					<td>杀</td>
+					<td>主要攻击手段，每回合限一张</td>
+			</tr>
+			<tr>
+					<td>闪躲 Missed!</td>
+					<td>闪</td>
+					<td>抵消攻击</td>
+			</tr>
+			<tr>
+					<td>啤酒 Beer</td>
+					<td>桃</td>
+					<td>回血，可濒死自救</td>
+			</tr>
+			<tr>
+					<td>酒馆 Saloon</td>
+					<td>桃园结义</td>
+					<td>全体回血，不能自救</td>
+			</tr>
+			<tr>
+					<td>决斗 Duel</td>
+					<td>决斗</td>
+					<td>轮流出砰!/杀</td>
+			</tr>
+			<tr>
+					<td>印第安人 Indians!</td>
+					<td>南蛮入侵</td>
+					<td>群体需出砰!/杀</td>
+			</tr>
+			<tr>
+					<td>格林机关枪 Gatling</td>
+					<td>万箭齐发</td>
+					<td>群体需出闪躲/闪</td>
+			</tr>
+			<tr>
+					<td>监狱 Jail</td>
+					<td>乐不思蜀</td>
+					<td>判定跳过回合</td>
+			</tr>
+			<tr>
+					<td>炸药 Dynamite</td>
+					<td>闪电</td>
+					<td>判定受高额伤害</td>
+			</tr>
+			<tr>
+					<td>野马 Mustang</td>
+					<td>+1 马</td>
+					<td>防御距离</td>
+			</tr>
+			<tr>
+					<td>瞄准器 Scope</td>
+					<td>−1 马</td>
+					<td>进攻距离</td>
+			</tr>
+			<tr>
+					<td>酒桶 Barrel</td>
+					<td>八卦阵</td>
+					<td>判定红色视为闪躲</td>
+			</tr>
+			<tr>
+					<td>惊慌 Panic!</td>
+					<td>顺手牵羊</td>
+					<td>偷牌，但 BANG! 限距离 1</td>
+			</tr>
+			<tr>
+					<td>凯特·巴洛 Cat Balou</td>
+					<td>过河拆桥</td>
+					<td>强制弃牌，无视距离</td>
+			</tr>
+			<tr>
+					<td>驿马车 / 威尔斯法歌</td>
+					<td>无中生有</td>
+					<td>摸牌</td>
+			</tr>
+			<tr>
+					<td>杂货店 General Store</td>
+					<td>五谷丰登</td>
+					<td>群体选牌</td>
+			</tr>
+	</tbody>
+</table>
+<p><strong>主要差异</strong>：三国杀有独立的体力条、更复杂的武将技能体系和装备系统，策略深度更高；BANG! 则更精简、节奏更快、运气成分略高，<strong>身份博弈的纯粹度更高</strong>。</p>
+<p>具体差在三处：</p>
+<ul>
+<li><strong>角色是否公开。</strong> 三国杀的武将是开局选定后全场可见，BANG! 也是——但三国杀的武将池有几百个，BANG! 只有 16 个，所以 BANG! 里&quot;看见角色就知道他能干什么&quot;，博弈完全落在身份上。</li>
+<li><strong>有没有第二层资源。</strong> 三国杀有装备区、判定区、属性伤害、铁索连环，一个回合能叠出很复杂的连锁；BANG! 只有手牌和面前一两件装备，链条短，算得清。</li>
+<li><strong>血量与手牌的关系。</strong> 两者都是&quot;血量 = 手牌上限&quot;，但三国杀的武将技能经常能绕过这条限制（吕蒙的克己、曹操的奸雄），BANG! 里几乎无人能例外。所以 BANG! 的&quot;保血&quot;纪律更硬。</li>
+</ul>
+<p>想体验&quot;隐藏身份对抗&quot;最原始的乐趣，BANG! 是最好的选择；想理解三国杀那些机制为什么长这样，回头读一遍 BANG! 的规则书同样有效。三国杀那侧的完整打法，可以参看<a href="/posts/sanguosha-identity-mode-guide/">《三国杀身份场进阶》</a>。</p>
+<hr>
+<h2 id="结语最简的版本往往最考验人">结语：最简的版本，往往最考验人</h2>
+<p>BANG! 只有 80 张牌、16 个角色、4 种身份，规则十分钟讲完。但它把这类游戏最核心的东西全留下了：<strong>你永远只知道自己的身份，其余全靠从别人的行为里反推。</strong></p>
+<p>而行为是会骗人的。叛徒前期护警长护得比副警长还卖力，歹徒可能故意不打警长来伪装，副警长可能因为怕误伤而整局沉默。你手里的枪只有射程 1，可你要判断的东西远在射程之外。</p>
+<p>这也是它比三国杀更难藏拙的地方——没有复杂的武将组合可以依赖，没有装备连锁可以翻盘，赢下来靠的只有一件事：<strong>你比别人更早看懂桌上那七个人。</strong></p>
+<hr>
+<h2 id="附新手速记口诀">附：新手速记口诀</h2>
+<blockquote>
+<p>警长稳、别乱杀，误伤副警长弃光牌；
+歹徒齐心集火警，人数优势莫分散；
+叛徒装忠拖节奏，残局单挑再翻脸；
+血量就是手牌数，留张闪躲能保命；
+距离决定打不打，野马瞄准定攻防。</p>
+</blockquote>
+<hr>
+<h2 id="附录几处需要说明的地方">附录：几处需要说明的地方</h2>
+<ul>
+<li><strong>规则依据</strong>：本文的规则、卡牌效果与 16 位角色技能，均以 dV Giochi 官方英文版规则书（Bang_rules_ENG）与官方 FAQ 为准，技能描述为功能性转述而非逐字翻译。不同语言版本、不同印刷批次之间，个别措辞与卡牌构成可能有差异，实际对局请以你手上那盒的规则书为准。</li>
+<li><strong>牌堆张数</strong>：基础版为 80 张游戏牌、7 张身份牌、16 张角色牌，这是官方规则书&quot;内容物&quot;一栏的数字。但<strong>逐张卡片的数量各版本统计不一</strong>，本文没有把握给出准确明细，因此不列具体张数；文中涉及概率的部分（酒桶约四分之一、监狱约四分之三跳过回合）只作量级判断，不作精确计算。</li>
+<li><strong>Vulture Sam 与炸药</strong>：这是最常被搞错的一条。官方 FAQ 明确：炸药炸死玩家时，Vulture Sam <strong>会</strong>收走该玩家的手牌和装备，但<strong>不会</strong>拿到那张炸药本身。而 El Gringo 因为&quot;炸药伤害不算任何玩家造成&quot;确实不触发。两者不能混为一谈。</li>
+<li><strong>&quot;隐藏身份玩法的开山之作&quot;</strong>：准确地说，BANG! 是把&quot;隐藏身份&quot;与&quot;卡牌对抗&quot;结合起来的开创性作品，也是这一类型商业上最成功的早期范例；但纯粹的隐藏身份推理游戏（如狼人杀一系）出现得更早。三国杀借鉴 BANG! 是设计者与媒体多次公开谈及的事实。</li>
+<li><strong>&quot;5–6 人体验最佳&quot;</strong>：这是玩家社区的长期共识，不是官方说法。4 人局节奏最快但容错最低，7 人局信息最丰富但等待时间也最长，实际偏好因人而异。</li>
+<li><strong>扩展包</strong>：BANG! 此后推出了 Dodge City、High Noon、A Fistful of Cards 等多个扩展，会改变人数上限（最多到 8 人）、增加角色与游戏牌、引入场景牌等机制。本文只覆盖基础版。</li>
+</ul>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引子三国杀之前先有-bang">引子：三国杀之前，先有 BANG!</a></li>
+    <li><a href="#一游戏速览">一、游戏速览</a></li>
+    <li><a href="#二四种身份与胜利条件">二、四种身份与胜利条件</a></li>
+    <li><a href="#三开局与回合流程">三、开局与回合流程</a>
+      <ul>
+        <li><a href="#31-准备">3.1 准备</a></li>
+        <li><a href="#32-回合三阶段">3.2 回合三阶段</a></li>
+      </ul>
+    </li>
+    <li><a href="#四距离与射程最容易被忽略的规则">四、距离与射程：最容易被忽略的规则</a>
+      <ul>
+        <li><a href="#41-武器一览">4.1 武器一览</a></li>
+        <li><a href="#42-改变距离的两张牌">4.2 改变距离的两张牌</a></li>
+        <li><a href="#43-三条必须记住的区分">4.3 三条必须记住的区分</a></li>
+      </ul>
+    </li>
+    <li><a href="#五卡牌详解">五、卡牌详解</a>
+      <ul>
+        <li><a href="#51-基础牌">5.1 基础牌</a></li>
+        <li><a href="#52-过牌与补给">5.2 过牌与补给</a></li>
+        <li><a href="#53-干扰与控场">5.3 干扰与控场</a></li>
+        <li><a href="#54-装备牌蓝边">5.4 装备牌（蓝边）</a></li>
+        <li><a href="#55-判定draw机制">5.5 判定（Draw!）机制</a></li>
+      </ul>
+    </li>
+    <li><a href="#六奖惩与出局规则">六、奖惩与出局规则</a></li>
+    <li><a href="#七16-位角色技能与定位">七、16 位角色：技能与定位</a>
+      <ul>
+        <li><a href="#输出与爆发型">输出与爆发型</a></li>
+        <li><a href="#防御与续航型">防御与续航型</a></li>
+        <li><a href="#过牌与资源型">过牌与资源型</a></li>
+        <li><a href="#判定与距离型">判定与距离型</a></li>
+      </ul>
+    </li>
+    <li><a href="#八实战技巧">八、实战技巧</a>
+      <ul>
+        <li><a href="#81-身份判断bang-的第一课">8.1 身份判断：BANG! 的第一课</a></li>
+        <li><a href="#82-手牌管理血量就是手牌">8.2 手牌管理：血量就是手牌</a></li>
+        <li><a href="#83-距离控制无形的护城河">8.3 距离控制：无形的护城河</a></li>
+        <li><a href="#84-各身份打法要点">8.4 各身份打法要点</a></li>
+        <li><a href="#85-关键牌的进阶用法">8.5 关键牌的进阶用法</a></li>
+        <li><a href="#86-六个常见误区">8.6 六个常见误区</a></li>
+      </ul>
+    </li>
+    <li><a href="#九bang-与三国杀的对照">九、BANG! 与三国杀的对照</a></li>
+    <li><a href="#结语最简的版本往往最考验人">结语：最简的版本，往往最考验人</a></li>
+    <li><a href="#附新手速记口诀">附：新手速记口诀</a></li>
+    <li><a href="#附录几处需要说明的地方">附录：几处需要说明的地方</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/sanguosha-identity-mode-guide/">← 三国杀身份场进阶：一场八个人的信息战</a>
+        
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>
