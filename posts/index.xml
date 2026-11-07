@@ -10,9 +10,51 @@
 		
 		
 		
-			<lastBuildDate>Wed, 04 Nov 2026 23:02:00 +0800</lastBuildDate>
+			<lastBuildDate>Sun, 08 Nov 2026 00:10:00 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/posts/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>两个开关控制同一盏灯：从机械双控到触摸同步</title>
+				<link>https://drawing.fancymore.com/posts/two-switches-one-light/</link>
+				<pubDate>Sun, 08 Nov 2026 00:10:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/two-switches-one-light/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;想知道墙上那个开关到底怎么接&amp;quot;的人的电路笔记：机械双控的内部结构与电流走向、三控怎么扩展、自复位按键的另一条技术路线、触摸面板的指示灯为什么能同步。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;机械双控把状态写在导线的拓扑里，触摸开关把状态写在芯片的内存里再复制出去——前者靠换路，后者靠记忆加通信。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>穿越者在古代画一幅素描，古人真会认它是&#34;画&#34;吗：匠与道的两套评分表</title>
+				<link>https://drawing.fancymore.com/posts/sketch-in-ancient-china/</link>
+				<pubDate>Sat, 07 Nov 2026 22:30:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/sketch-in-ancient-china/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;画得像就是画得好&amp;quot;的人的梳理：中西两套绘画评分表各自把最高分给了什么，以及为什么把一幅现代素描带回古代，大概率会被夸成神技、然后被挡在&amp;quot;画品&amp;quot;之外。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;中国画和西洋画都在区分&amp;quot;匠&amp;quot;与&amp;quot;道&amp;quot;，只是一个把&amp;quot;道&amp;quot;锚在人格修养上、一个锚在科学知识上——素描恰好站在错的那一侧。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>穿越者弹一首流行歌，古人真会觉得好听吗：音乐审美的两层代码</title>
+				<link>https://drawing.fancymore.com/posts/music-taste-two-layers/</link>
+				<pubDate>Sat, 07 Nov 2026 21:40:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/music-taste-two-layers/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;觉得好听天经地义&amp;quot;的人的梳理：审美里哪一层是进化写死的、哪一层是从小泡出来的，以及为什么把现代音乐搬回古代，大概率不会像穿越小说里那样一开口就满座惊叹。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;底层代码决定你听着刺不刺耳，后天习惯决定你听着好不好听——穿越者那首歌能过第一关，过不了第二关。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>不是风动，不是幡动：历史人物为什么在忠奸之间来回横跳</title>
+				<link>https://drawing.fancymore.com/posts/why-historical-reputations-flip/</link>
+				<pubDate>Fri, 06 Nov 2026 22:40:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/why-historical-reputations-flip/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;读史时总觉得评价在飘&amp;quot;的读者的分析笔记：为什么史料确凿、人人都知道他做了这件事，定性却能在英雄与奸雄之间来回翻；翻动的机制是什么；哪些人会翻、哪些人不会翻；以及这套机制今天还在怎么跑。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;往事如帆，史料如旗，动的是观史者的心——历史评价从来不是对过去的测量，而是对当下的表态。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>什么是道家：不谈长生，只谈怎么看世界</title>
+				<link>https://drawing.fancymore.com/posts/what-is-daoism/</link>
+				<pubDate>Fri, 06 Nov 2026 21:20:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/what-is-daoism/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;听说过道家、但分不清它和道教&amp;quot;的读者的入门介绍：道家和道教差在哪、&amp;quot;道家&amp;quot;这个名号怎么来的、筐里那四拨人为什么还算一家、他们共享的那条推理链怎么一环一环推下去、以及它今天还能怎么用。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;道家不是一套教义，是一种看世界的顺序——先承认世界本来就自己如此，再决定自己要不要动手。&lt;/strong&gt; 杨朱、老子、庄子、黄老的差别不在这条链上，只在链的末端接到哪里：全身、治国、修心、立法。&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+			<item>
+				<title>正念引导：从禅堂到诊室，它是什么、到底有没有用</title>
+				<link>https://drawing.fancymore.com/posts/mindfulness-guided-practice-guide/</link>
+				<pubDate>Fri, 06 Nov 2026 19:30:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/mindfulness-guided-practice-guide/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;听说过正念、但没真正练过&amp;quot;的人的入门梳理：这个词从哪来，被科学验证了什么、又没验证什么，以及哪些人应该谨慎。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;正念不是&amp;quot;把脑子放空&amp;quot;，而是&amp;quot;发现自己走神了，再把注意力带回来&amp;quot;——那个&amp;quot;带回来&amp;quot;的动作，才是训练本身。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
 			<item>
 				<title>BANG! 完全指南：三国杀的前身，一场更纯粹的身份博弈</title>
 				<link>https://drawing.fancymore.com/posts/bang-card-game-guide/</link>

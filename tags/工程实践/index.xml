@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Tue, 11 Apr 2023 22:50:04 +0800</lastBuildDate>
+			<lastBuildDate>Sun, 08 Nov 2026 00:10:00 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>两个开关控制同一盏灯：从机械双控到触摸同步</title>
+				<link>https://drawing.fancymore.com/posts/two-switches-one-light/</link>
+				<pubDate>Sun, 08 Nov 2026 00:10:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/two-switches-one-light/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;想知道墙上那个开关到底怎么接&amp;quot;的人的电路笔记：机械双控的内部结构与电流走向、三控怎么扩展、自复位按键的另一条技术路线、触摸面板的指示灯为什么能同步。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;机械双控把状态写在导线的拓扑里，触摸开关把状态写在芯片的内存里再复制出去——前者靠换路，后者靠记忆加通信。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
 			<item>
 				<title>告警优化实践总结</title>
 				<link>https://drawing.fancymore.com/posts/alert-optimization-practice/</link>

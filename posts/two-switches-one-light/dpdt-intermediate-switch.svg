@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 840" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif">
+<defs>
+  <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ff8f00"/>
+  </marker>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#d32f2f"/>
+  </marker>
+  <filter id="glow" x="-90%" y="-90%" width="280%" height="280%">
+    <feGaussianBlur stdDeviation="8" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="1000" height="840" fill="#ffffff"/>
+<text x="40" y="42" font-size="21" font-weight="700" fill="#1a2327">三控开关：中途开关（交叉开关）如何工作</text>
+
+<!-- ============ SECTION A ============ -->
+<text x="40" y="78" font-size="17" font-weight="700" fill="#37474f">一、中途开关 = 双刀双掷（DPDT），4 个接线柱，2 种接法</text>
+
+<!-- left: straight-through -->
+<text x="270" y="128" font-size="15" font-weight="700" fill="#2e7d32" text-anchor="middle">位置①：直通</text>
+<rect x="180" y="140" width="180" height="130" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+<path d="M120,175 H180 M120,235 H180 M360,175 H420 M360,235 H420" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<path d="M180,175 H360" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M180,235 H360" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<circle cx="180" cy="175" r="5" fill="#37474f"/><circle cx="180" cy="235" r="5" fill="#37474f"/>
+<circle cx="360" cy="175" r="5" fill="#37474f"/><circle cx="360" cy="235" r="5" fill="#37474f"/>
+<text x="116" y="180" font-size="13" fill="#455a64" text-anchor="end">进 1</text>
+<text x="116" y="240" font-size="13" fill="#455a64" text-anchor="end">进 2</text>
+<text x="424" y="180" font-size="13" fill="#455a64">出 1</text>
+<text x="424" y="240" font-size="13" fill="#455a64">出 2</text>
+<text x="270" y="292" font-size="13" fill="#546e7a" text-anchor="middle">进1 → 出1，进2 → 出2</text>
+<text x="270" y="311" font-size="13" fill="#546e7a" text-anchor="middle">两条线不交换，整体逻辑保持不变</text>
+
+<path d="M500,110 V320" stroke="#e0e6e8" stroke-width="1.5"/>
+
+<!-- right: crossed -->
+<text x="750" y="128" font-size="15" font-weight="700" fill="#c62828" text-anchor="middle">位置②：交叉</text>
+<rect x="660" y="140" width="180" height="130" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+<path d="M600,175 H660 M600,235 H660 M840,175 H900 M840,235 H900" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<path d="M660,175 L840,235" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M660,235 L840,175" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<circle cx="660" cy="175" r="5" fill="#37474f"/><circle cx="660" cy="235" r="5" fill="#37474f"/>
+<circle cx="840" cy="175" r="5" fill="#37474f"/><circle cx="840" cy="235" r="5" fill="#37474f"/>
+<text x="596" y="180" font-size="13" fill="#455a64" text-anchor="end">进 1</text>
+<text x="596" y="240" font-size="13" fill="#455a64" text-anchor="end">进 2</text>
+<text x="904" y="180" font-size="13" fill="#455a64">出 1</text>
+<text x="904" y="240" font-size="13" fill="#455a64">出 2</text>
+<text x="750" y="292" font-size="13" fill="#546e7a" text-anchor="middle">进1 → 出2，进2 → 出1</text>
+<text x="750" y="311" font-size="13" fill="#546e7a" text-anchor="middle">两条线互换 = 把结果翻转一次</text>
+
+<path d="M40,340 H960" stroke="#cfd8dc" stroke-width="1.5"/>
+
+<!-- ============ SECTION B ============ -->
+<text x="40" y="372" font-size="17" font-weight="700" fill="#37474f">二、只拨中间那个开关，灯也会亮灭（A、B 保持不动）</text>
+
+<!-- ROW 1 : straight-through, LIT -->
+<text x="50" y="394" font-size="16" font-weight="700" fill="#263238">① 中途开关「直通」，A=0、B=0 —— 电流全程走上面那条线</text>
+<text x="960" y="394" font-size="16" font-weight="700" fill="#2e7d32" text-anchor="end">灯 亮</text>
+
+<path d="M200,430 H360 M200,510 H360" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M500,430 H660 M500,510 H660" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M730,470 H774" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M50,470 H130" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M826,470 H890" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="50,470 130,470 200,430 360,430 500,430 660,430 730,470 890,470" fill="none" stroke="#ff8f00" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ao)"/>
+
+<rect x="360" y="412" width="140" height="116" rx="6" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+<path d="M360,430 H500" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M360,510 H500" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+<path d="M130,470 L200,430" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M130,470 L200,510" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M730,470 L660,430" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M730,470 L660,510" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="130" cy="470" r="4.5" fill="#37474f"/>
+<circle cx="200" cy="430" r="4.5" fill="#37474f"/><circle cx="200" cy="510" r="4.5" fill="#37474f"/>
+<circle cx="660" cy="430" r="4.5" fill="#37474f"/><circle cx="660" cy="510" r="4.5" fill="#37474f"/>
+<circle cx="730" cy="470" r="4.5" fill="#37474f"/>
+
+<circle cx="800" cy="470" r="26" fill="#ffeb3b" stroke="#f9a825" stroke-width="3" filter="url(#glow)"/>
+<path d="M782,452 L818,488 M782,488 L818,452" stroke="#f57f17" stroke-width="2.5"/>
+
+<text x="53" y="461" font-size="13" font-weight="700" fill="#d32f2f">L</text>
+<text x="895" y="465" font-size="13" font-weight="700" fill="#1565c0">N</text>
+<text x="280" y="422" font-size="12" fill="#546e7a" text-anchor="middle">联络线 1</text>
+<text x="280" y="530" font-size="12" fill="#90a4ae" text-anchor="middle">联络线 2</text>
+<text x="580" y="422" font-size="12" fill="#546e7a" text-anchor="middle">联络线 3</text>
+<text x="580" y="530" font-size="12" fill="#90a4ae" text-anchor="middle">联络线 4</text>
+<text x="165" y="548" font-size="13" fill="#546e7a" text-anchor="middle">开关 A</text>
+<text x="430" y="548" font-size="13" fill="#8d6e63" text-anchor="middle">中途开关</text>
+<text x="695" y="548" font-size="13" fill="#546e7a" text-anchor="middle">开关 B</text>
+<text x="800" y="548" font-size="13" fill="#546e7a" text-anchor="middle">灯</text>
+
+<!-- ROW 2 : crossed, OFF -->
+<text x="50" y="594" font-size="16" font-weight="700" fill="#263238">② 只把中途开关拨到「交叉」，A、B 完全不动</text>
+<text x="960" y="594" font-size="16" font-weight="700" fill="#78909c" text-anchor="end">灯 灭</text>
+
+<path d="M200,630 H360 M200,710 H360" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M500,630 H660 M500,710 H660" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M730,670 H774" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M50,670 H130" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M826,670 H890" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="50,670 130,670 200,630 360,630 500,710 660,710" fill="none" stroke="#d32f2f" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ar)"/>
+
+<rect x="360" y="612" width="140" height="116" rx="6" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+<path d="M360,630 L500,710" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M360,710 L500,630" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+<path d="M130,670 L200,630" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M130,670 L200,710" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M730,670 L660,630" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M730,670 L660,710" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="130" cy="670" r="4.5" fill="#37474f"/>
+<circle cx="200" cy="630" r="4.5" fill="#37474f"/><circle cx="200" cy="710" r="4.5" fill="#37474f"/>
+<circle cx="660" cy="630" r="4.5" fill="#37474f"/><circle cx="660" cy="710" r="4.5" fill="#37474f"/>
+<circle cx="730" cy="670" r="4.5" fill="#37474f"/>
+
+<circle cx="660" cy="710" r="10" fill="none" stroke="#d32f2f" stroke-width="2.5"/>
+<path d="M653,703 L667,717" stroke="#d32f2f" stroke-width="2.5"/>
+
+<circle cx="800" cy="670" r="26" fill="#f5f5f5" stroke="#90a4ae" stroke-width="3"/>
+<path d="M782,652 L818,688 M782,688 L818,652" stroke="#b0bec5" stroke-width="2.5"/>
+
+<text x="430" y="748" font-size="13" fill="#8d6e63" text-anchor="middle">中途开关</text>
+<text x="700" y="748" font-size="13" fill="#c62828" text-anchor="middle">线 1 被换到线 4，而 B 还搭在线 3 → 断路</text>
+
+<!-- ============ LEGEND ============ -->
+<path d="M40,782 H960" stroke="#e0e6e8" stroke-width="1.5"/>
+<g font-size="13" fill="#546e7a">
+  <path d="M60,806 H100" stroke="#ff8f00" stroke-width="4.5" marker-mid="url(#ao)"/>
+  <text x="108" y="811">有电流</text>
+  <path d="M200,806 H240" stroke="#d32f2f" stroke-width="4.5"/>
+  <text x="248" y="811">带电但无电流（死线）</text>
+  <path d="M430,806 H470" stroke="#90a4ae" stroke-width="2.5"/>
+  <text x="478" y="811">悬空 / 不带电</text>
+  <path d="M610,806 H650" stroke="#263238" stroke-width="4.5" stroke-linecap="round"/>
+  <text x="658" y="811">刀当前位置</text>
+  <path d="M770,806 H810" stroke="#b0bec5" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>
+  <text x="818" y="811">另一位置</text>
+</g>
+</svg>

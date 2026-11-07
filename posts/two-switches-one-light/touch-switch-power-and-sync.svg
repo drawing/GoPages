@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1060" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif">
+<defs>
+  <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ff8f00"/>
+  </marker>
+  <marker id="ap" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8e24aa"/>
+  </marker>
+  <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#546e7a"/>
+  </marker>
+  <filter id="glow" x="-90%" y="-90%" width="280%" height="280%">
+    <feGaussianBlur stdDeviation="8" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<rect width="1000" height="1060" fill="#ffffff"/>
+<text x="40" y="42" font-size="21" font-weight="700" fill="#1a2327">触摸开关：指示灯为什么能和灯、和对面面板同步</text>
+
+<!-- ================= SECTION A ================= -->
+<text x="40" y="78" font-size="17" font-weight="700" fill="#37474f">一、单火线取电：灯灭了，开关自己怎么还有电？</text>
+
+<!-- STATE A : relay OPEN -->
+<text x="50" y="108" font-size="15" font-weight="700" fill="#263238">状态 A：灯灭 —— 继电器断开，取电模块与灯「串联」在 L 与 N 之间</text>
+
+<path d="M70,160 H150" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M150,160 H230 M310,160 H430 M430,160 H500" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M150,160 V225 H200" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M380,225 H430 V160" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M556,160 H640" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="70,160 110,160 150,160 150,225 200,225" fill="none" stroke="#ff8f00" stroke-width="3" stroke-linejoin="round" marker-mid="url(#ao)"/>
+<polyline points="380,225 430,225 430,160 465,160 500,160" fill="none" stroke="#ff8f00" stroke-width="3" stroke-linejoin="round" marker-mid="url(#ao)"/>
+<polyline points="556,160 598,160 640,160" fill="none" stroke="#ff8f00" stroke-width="3" marker-mid="url(#ao)"/>
+
+<circle cx="150" cy="160" r="5" fill="#37474f"/>
+<circle cx="430" cy="160" r="5" fill="#37474f"/>
+<circle cx="230" cy="160" r="4.5" fill="#37474f"/>
+<circle cx="310" cy="160" r="4.5" fill="#37474f"/>
+<path d="M234,157 L300,132" stroke="#263238" stroke-width="4" stroke-linecap="round" fill="none"/>
+<text x="270" y="180" font-size="12" fill="#546e7a" text-anchor="middle">继电器触点（断开）</text>
+
+<rect x="200" y="202" width="180" height="46" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+<text x="290" y="222" font-size="13" font-weight="700" fill="#2e7d32" text-anchor="middle">取电模块</text>
+<text x="290" y="240" font-size="11" fill="#546e7a" text-anchor="middle">AC → DC 5V</text>
+
+<path d="M290,248 V272" stroke="#8e24aa" stroke-width="2.5" fill="none"/>
+<text x="298" y="266" font-size="11" fill="#8e24aa">DC 5V</text>
+<rect x="180" y="272" width="380" height="40" rx="6" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+<text x="370" y="297" font-size="12" fill="#6a1b9a" text-anchor="middle">MCU · 触摸 IC · 指示灯 · 无线模块</text>
+
+<text x="440" y="196" font-size="12" font-weight="700" fill="#ef6c00">≈ 1~3 mA</text>
+<text x="430" y="146" font-size="11" fill="#78909c" text-anchor="middle">L out</text>
+<text x="55" y="165" font-size="13" font-weight="700" fill="#d32f2f">L</text>
+<text x="645" y="165" font-size="13" font-weight="700" fill="#1565c0">N</text>
+
+<circle cx="530" cy="160" r="26" fill="#f5f5f5" stroke="#90a4ae" stroke-width="3"/>
+<path d="M512,142 L548,178 M512,178 L548,142" stroke="#b0bec5" stroke-width="2.5"/>
+<text x="530" y="205" font-size="12" fill="#78909c" text-anchor="middle">不亮</text>
+
+<rect x="680" y="115" width="295" height="160" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="1.5"/>
+<g font-size="12" fill="#455a64">
+  <text x="695" y="138">回路：L → 取电模块 → 灯 → N</text>
+  <text x="695" y="159">电流仅 1~3 mA：</text>
+  <text x="695" y="180">· 点不亮灯（灯丝冷态高阻）</text>
+  <text x="695" y="201">· 但够 MCU 与无线模块待机</text>
+  <text x="695" y="222">副作用：LED 灯微亮或闪烁</text>
+  <text x="695" y="243">解法：灯两端并联 X2 电容</text>
+  <text x="695" y="264">（0.1~0.47 µF，旁路漏电流）</text>
+</g>
+
+<!-- STATE B : relay CLOSED -->
+<text x="50" y="348" font-size="15" font-weight="700" fill="#263238">状态 B：灯亮 —— 继电器闭合，取电模块被短路，靠储能电容撑着</text>
+
+<path d="M70,400 H150" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M150,400 H230 M310,400 H430 M430,400 H500" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M150,400 V465 H200" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M380,465 H430 V400" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M556,400 H640" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="70,400 150,400 270,400 430,400 500,400" fill="none" stroke="#ff8f00" stroke-width="5" stroke-linejoin="round" marker-mid="url(#ao)"/>
+<polyline points="556,400 598,400 640,400" fill="none" stroke="#ff8f00" stroke-width="5" marker-mid="url(#ao)"/>
+
+<circle cx="150" cy="400" r="5" fill="#37474f"/>
+<circle cx="430" cy="400" r="5" fill="#37474f"/>
+<circle cx="230" cy="400" r="4.5" fill="#37474f"/>
+<circle cx="310" cy="400" r="4.5" fill="#37474f"/>
+<path d="M234,397 L300,372" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M232,400 H308" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<text x="270" y="420" font-size="12" fill="#546e7a" text-anchor="middle">继电器触点（闭合）</text>
+
+<rect x="200" y="442" width="180" height="46" rx="6" fill="#eeeeee" stroke="#b0bec5" stroke-width="2"/>
+<text x="290" y="462" font-size="13" font-weight="700" fill="#78909c" text-anchor="middle">取电模块</text>
+<text x="290" y="480" font-size="11" fill="#90a4ae" text-anchor="middle">两端等电位 · 电流 ≈ 0</text>
+
+<path d="M290,488 V512" stroke="#8e24aa" stroke-width="2.5" fill="none"/>
+<text x="298" y="506" font-size="11" fill="#8e24aa">电容放电</text>
+<rect x="180" y="512" width="380" height="40" rx="6" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+<text x="370" y="537" font-size="12" fill="#6a1b9a" text-anchor="middle">MCU · 触摸 IC · 指示灯 · 无线模块（靠储能电容供电）</text>
+
+<text x="430" y="386" font-size="11" fill="#78909c" text-anchor="middle">L out</text>
+<text x="55" y="405" font-size="13" font-weight="700" fill="#d32f2f">L</text>
+<text x="645" y="405" font-size="13" font-weight="700" fill="#1565c0">N</text>
+
+<circle cx="530" cy="400" r="26" fill="#ffeb3b" stroke="#f9a825" stroke-width="3" filter="url(#glow)"/>
+<path d="M512,382 L548,418 M512,418 L548,382" stroke="#f57f17" stroke-width="2.5"/>
+
+<rect x="680" y="355" width="295" height="160" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="1.5"/>
+<g font-size="12" fill="#455a64">
+  <text x="695" y="380">继电器闭合 → 取电模块两端</text>
+  <text x="695" y="401">都是 L 电位，压差为 0</text>
+  <text x="695" y="422">→ 停止取电，改由电容供电</text>
+  <text x="695" y="443">（几百 µF，要撑住 MCU 和</text>
+  <text x="695" y="464">  继电器线圈的持续电流）</text>
+  <text x="695" y="492">这也是「单火线」开关比</text>
+  <text x="695" y="510">「零火线」开关贵的原因</text>
+</g>
+
+<path d="M40,575 H960" stroke="#cfd8dc" stroke-width="1.5"/>
+
+<!-- ================= SECTION B ================= -->
+<text x="40" y="607" font-size="17" font-weight="700" fill="#37474f">二、两个触摸面板 + 一盏灯：三个「灯」为什么能同步</text>
+
+<rect x="60" y="655" width="380" height="250" rx="10" fill="#f4f9fe" stroke="#1976d2" stroke-width="2"/>
+<rect x="560" y="655" width="380" height="250" rx="10" fill="#fef8f3" stroke="#ef6c00" stroke-width="2"/>
+<text x="250" y="679" font-size="14" font-weight="700" fill="#1565c0" text-anchor="middle">面板 A（主控 · 串在灯的火线里）</text>
+<text x="750" y="679" font-size="14" font-weight="700" fill="#e65100" text-anchor="middle">面板 B（副控 · 可以不接强电）</text>
+
+<!-- Panel A row 1 -->
+<rect x="80" y="695" width="80" height="45" rx="5" fill="#e3f2fd" stroke="#64b5f6" stroke-width="1.5"/>
+<text x="120" y="722" font-size="12" fill="#1565c0" text-anchor="middle">触摸片</text>
+<rect x="190" y="692" width="110" height="51" rx="5" fill="#ffffff" stroke="#1976d2" stroke-width="2.5"/>
+<text x="245" y="713" font-size="13" font-weight="700" fill="#0d47a1" text-anchor="middle">MCU</text>
+<text x="245" y="733" font-size="11.5" fill="#2e7d32" text-anchor="middle">state = ON</text>
+<rect x="330" y="695" width="95" height="45" rx="5" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.5"/>
+<text x="377" y="722" font-size="12" fill="#6a1b9a" text-anchor="middle">无线模块</text>
+<path d="M160,717 H186" stroke="#546e7a" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+<path d="M304,717 H326" stroke="#8e24aa" stroke-width="2" fill="none" marker-start="url(#ap)" marker-end="url(#ap)"/>
+
+<!-- Panel A row 2 -->
+<circle cx="120" cy="805" r="15" fill="#ffeb3b" stroke="#f9a825" stroke-width="2.5" filter="url(#glow)"/>
+<text x="120" y="845" font-size="12" fill="#546e7a" text-anchor="middle">指示灯</text>
+<rect x="190" y="785" width="110" height="40" rx="5" fill="#fff3e0" stroke="#fb8c00" stroke-width="2"/>
+<text x="245" y="810" font-size="12" fill="#e65100" text-anchor="middle">继电器</text>
+<path d="M210,743 V770 H120 V786" stroke="#546e7a" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+<text x="165" y="764" font-size="11" fill="#546e7a" text-anchor="middle">点亮</text>
+<path d="M245,743 V781" stroke="#546e7a" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+<text x="255" y="768" font-size="11" fill="#546e7a">驱动</text>
+
+<!-- Panel B row 1 -->
+<rect x="575" y="695" width="95" height="45" rx="5" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.5"/>
+<text x="622" y="722" font-size="12" fill="#6a1b9a" text-anchor="middle">无线模块</text>
+<rect x="700" y="692" width="110" height="51" rx="5" fill="#ffffff" stroke="#ef6c00" stroke-width="2.5"/>
+<text x="755" y="713" font-size="13" font-weight="700" fill="#e65100" text-anchor="middle">MCU</text>
+<text x="755" y="733" font-size="11.5" fill="#2e7d32" text-anchor="middle">state = ON</text>
+<rect x="840" y="695" width="80" height="45" rx="5" fill="#fff3e0" stroke="#ffb74d" stroke-width="1.5"/>
+<text x="880" y="722" font-size="12" fill="#e65100" text-anchor="middle">触摸片</text>
+<path d="M840,717 H814" stroke="#546e7a" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+<path d="M696,717 H674" stroke="#8e24aa" stroke-width="2" fill="none" marker-start="url(#ap)" marker-end="url(#ap)"/>
+
+<!-- Panel B row 2 -->
+<circle cx="880" cy="805" r="15" fill="#ffeb3b" stroke="#f9a825" stroke-width="2.5" filter="url(#glow)"/>
+<text x="880" y="845" font-size="12" fill="#546e7a" text-anchor="middle">指示灯</text>
+<rect x="700" y="785" width="110" height="40" rx="5" fill="none" stroke="#b0bec5" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="755" y="810" font-size="12" fill="#90a4ae" text-anchor="middle">（无继电器）</text>
+<path d="M790,743 V770 H880 V786" stroke="#546e7a" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+<text x="835" y="764" font-size="12" fill="#546e7a" text-anchor="middle">点亮</text>
+
+<!-- wireless link -->
+<path d="M425,717 H478" stroke="#8e24aa" stroke-width="2.5" stroke-dasharray="8 6" fill="none" marker-end="url(#ap)"/>
+<path d="M575,717 H522" stroke="#8e24aa" stroke-width="2.5" stroke-dasharray="8 6" fill="none" marker-end="url(#ap)"/>
+<circle cx="500" cy="717" r="19" fill="#ffffff" stroke="#8e24aa" stroke-width="1.5"/>
+<text x="500" y="722" font-size="12" font-weight="700" fill="#8e24aa" text-anchor="middle">RF</text>
+<text x="500" y="762" font-size="12" fill="#6a1b9a" text-anchor="middle">双向同步 state</text>
+<text x="500" y="780" font-size="11" fill="#9575cd" text-anchor="middle">Zigbee / RF / Wi-Fi</text>
+
+<!-- lamp fed by panel A relay -->
+<path d="M245,825 V940" stroke="#90a4ae" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+<circle cx="245" cy="970" r="26" fill="#ffeb3b" stroke="#f9a825" stroke-width="3" filter="url(#glow)"/>
+<path d="M227,952 L263,988 M227,988 L263,952" stroke="#f57f17" stroke-width="2.5"/>
+<text x="245" y="1017" font-size="13" fill="#546e7a" text-anchor="middle">灯（强电负载）</text>
+
+<!-- key annotation -->
+<rect x="340" y="928" width="620" height="100" rx="8" fill="#fffde7" stroke="#fbc02d" stroke-width="1.5"/>
+<g font-size="12.5" fill="#4e342e">
+  <text x="358" y="952">关键点：指示灯和灯是 MCU 的两个独立输出，彼此没有电气连接。</text>
+  <text x="358" y="973">按下面板 → MCU 翻转内部 state → 同时做三件事：① 驱动继电器 ② 更新自己的指示灯 ③ 广播 state</text>
+  <text x="358" y="994">对端面板收到后更新自己的 state 和指示灯 —— 于是「三个灯」看起来同时变化。</text>
+  <text x="358" y="1015">所以同步的不是电，而是一份被复制的软件状态。</text>
+</g>
+</svg>

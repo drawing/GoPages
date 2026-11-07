@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>硬件电路 on 闲亩</title>
+		<link>https://drawing.fancymore.com/tags/%E7%A1%AC%E4%BB%B6%E7%94%B5%E8%B7%AF/</link>
+		<description>Recent content in 硬件电路 on 闲亩</description>
+		<generator>Hugo</generator>
+		<language>zh-CN</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 08 Nov 2026 00:10:00 +0800</lastBuildDate>
+		
+			<atom:link href="https://drawing.fancymore.com/tags/%E7%A1%AC%E4%BB%B6%E7%94%B5%E8%B7%AF/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>两个开关控制同一盏灯：从机械双控到触摸同步</title>
+				<link>https://drawing.fancymore.com/posts/two-switches-one-light/</link>
+				<pubDate>Sun, 08 Nov 2026 00:10:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/posts/two-switches-one-light/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;一份写给&amp;quot;想知道墙上那个开关到底怎么接&amp;quot;的人的电路笔记：机械双控的内部结构与电流走向、三控怎么扩展、自复位按键的另一条技术路线、触摸面板的指示灯为什么能同步。&lt;/p&gt;&#xA;&lt;p&gt;核心只有一句：&lt;strong&gt;机械双控把状态写在导线的拓扑里，触摸开关把状态写在芯片的内存里再复制出去——前者靠换路，后者靠记忆加通信。&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;</description>
+			</item>
+	</channel>
+</rss>

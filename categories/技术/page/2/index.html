@@ -76,6 +76,24 @@
     
     <li>
         <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-process-sched/">Linux内核笔记-进程调度</a></h2>
+            
+            
+            <p class="post-summary">现代操作系统都可以同时运行若干进程，对于单核CPU，给定时刻只会有一个进程运行，CPU快速的在各个进程中切换，给用户以多个进程同时运行的错觉，对于多核CPU，可以真正并发运行多个进程，取决于CPU的数目。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-23">2014-05-23</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
             <h2 class="post-title"><a href="/posts/linux-boot-protocol/">Linux内核笔记-启动协议</a></h2>
             
             
@@ -225,23 +243,6 @@
             
             <div class="post-meta">
                 <time datetime="2014-05-15">2014-05-15</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-kernel-wait-queue/">Linux 内核等待队列解析</a></h2>
-            
-            
-            <p class="post-summary">在阅读Tun驱动时看到，有一些类似 add_wait_queue 的函数，这些函数正是执行等待队列的相关操作，要说等待队列还得从内核进程调度说起，内核调度系统内的进程、为它们分配时间片，但是有些进程如从网卡中读数据，在网卡有数据到达之前进程 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-14">2014-05-14</time>
                 
                 <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审美 · 闲亩</title>
+<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="闲亩" href="/tags/%E5%AE%A1%E7%BE%8E/index.xml">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/" class="active">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+
+<p class="page-crumb">标签</p>
+
+<h1 class="page-title">审美</h1>
+
+
+<ul class="post-list">
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/sketch-in-ancient-china/">穿越者在古代画一幅素描，古人真会认它是&#34;画&#34;吗：匠与道的两套评分表</a></h2>
+            
+            
+            <p class="post-summary"> 一份写给&quot;画得像就是画得好&quot;的人的梳理：中西两套绘画评分表各自把最高分给了什么，以及为什么把一幅现代素描带回古代，大概率会被夸成神技、然后被挡在&quot;画品&quot;之外。
+核心只有一句：中国画和西洋画都在区分 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2026-11-07">2026-11-07</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/music-taste-two-layers/">穿越者弹一首流行歌，古人真会觉得好听吗：音乐审美的两层代码</a></h2>
+            
+            
+            <p class="post-summary"> 一份写给&quot;觉得好听天经地义&quot;的人的梳理：审美里哪一层是进化写死的、哪一层是从小泡出来的，以及为什么把现代音乐搬回古代，大概率不会像穿越小说里那样一开口就满座惊叹。
+核心只有一句：底层代码决定你听着刺不刺耳，后天习惯决定 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2026-11-07">2026-11-07</time>
+                
+                <span class="sep">·</span><a href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>
+                
+            </div>
+        </article>
+    </li>
+    
+</ul>
+
+
+
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+</body>
+</html>

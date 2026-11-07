@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1190" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif">
+<defs>
+  <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ff8f00"/>
+  </marker>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#d32f2f"/>
+  </marker>
+  <marker id="ag" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#78909c"/>
+  </marker>
+  <filter id="glow" x="-90%" y="-90%" width="280%" height="280%">
+    <feGaussianBlur stdDeviation="8" result="b"/>
+    <feMerge>
+      <feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+
+<rect width="1000" height="1190" fill="#ffffff"/>
+
+<text x="40" y="42" font-size="21" font-weight="700" fill="#1a2327">双控开关：内部结构与电流走向</text>
+
+<!-- ============ SECTION A ============ -->
+<text x="40" y="80" font-size="17" font-weight="700" fill="#37474f">一、单刀双掷（SPDT）开关的内部结构</text>
+
+<!-- left: physical mechanism -->
+<rect x="150" y="150" width="280" height="200" rx="10" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+
+<!-- COM wire exiting left -->
+<path d="M255,250 H90" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<text x="86" y="246" font-size="13" font-weight="700" fill="#d32f2f" text-anchor="end">COM</text>
+<text x="86" y="266" font-size="12" fill="#78909c" text-anchor="end">公共端</text>
+
+<!-- rocker bar (see-saw through the pivot): active position, tip up -->
+<path d="M195,279 L360,200" stroke="#263238" stroke-width="8" stroke-linecap="round" fill="none"/>
+<circle cx="360" cy="200" r="9" fill="#ffb300" stroke="#f57f17" stroke-width="2"/>
+<!-- rocker bar: ghost position, tip down -->
+<path d="M195,221 L360,300" stroke="#b0bec5" stroke-width="5" stroke-linecap="round" stroke-dasharray="8 7" fill="none"/>
+<circle cx="360" cy="300" r="9" fill="none" stroke="#b0bec5" stroke-width="2" stroke-dasharray="4 4"/>
+<!-- pivot drawn on top of both bars -->
+<circle cx="255" cy="250" r="9" fill="#78909c" stroke="#455a64" stroke-width="2"/>
+
+<!-- fixed contacts -->
+<rect x="370" y="188" width="16" height="24" rx="3" fill="#ffb300" stroke="#f57f17" stroke-width="2"/>
+<rect x="370" y="288" width="16" height="24" rx="3" fill="#cfd8dc" stroke="#90a4ae" stroke-width="2"/>
+
+<!-- L1 / L2 wires exiting right -->
+<path d="M386,200 H470" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<path d="M386,300 H470" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<text x="474" y="205" font-size="13" font-weight="700" fill="#455a64">L1</text>
+<text x="474" y="305" font-size="13" font-weight="700" fill="#90a4ae">L2</text>
+
+<!-- spring pushing up on the rocker tail -->
+<path d="M195,286 l9,10 l-18,10 l18,10 l-18,10 l9,8" stroke="#607d8b" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+<text x="215" y="326" font-size="12" fill="#607d8b">弹片</text>
+
+<!-- mechanism labels -->
+<text x="290" y="138" font-size="13" fill="#455a64" text-anchor="middle">翘板（面板按键）</text>
+<path d="M290,144 V222" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ag)"/>
+
+<text x="200" y="192" font-size="13" fill="#455a64" text-anchor="end">支点</text>
+<path d="M205,196 L246,240" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ag)"/>
+
+<text x="352" y="176" font-size="13" fill="#455a64" text-anchor="end">动触点（刀）</text>
+<path d="M340,181 L330,206" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ag)"/>
+
+<text x="290" y="376" font-size="13" fill="#546e7a" text-anchor="middle">拨动翘板 → 动触点绕支点摆动，与 L1 或 L2 之一贴合。</text>
+<text x="290" y="396" font-size="13" fill="#546e7a" text-anchor="middle">弹片提供快速通断（snap action），避免触点拉弧烧蚀。</text>
+
+<!-- divider between panels -->
+<path d="M510,110 V400" stroke="#e0e6e8" stroke-width="1.5"/>
+
+<!-- right: circuit symbol -->
+<path d="M560,250 H640" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<circle cx="640" cy="250" r="6" fill="#263238"/>
+<text x="556" y="246" font-size="13" font-weight="700" fill="#d32f2f" text-anchor="end">COM</text>
+
+<path d="M646,247 L806,178" stroke="#263238" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M646,253 L806,322" stroke="#b0bec5" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 7" fill="none"/>
+
+<path d="M812,175 A187.6,187.6 0 0 1 812,325" stroke="#78909c" stroke-width="2" stroke-dasharray="5 5" fill="none" marker-end="url(#ag)"/>
+
+<circle cx="812" cy="175" r="6" fill="#263238"/>
+<circle cx="812" cy="325" r="6" fill="#263238"/>
+<path d="M818,175 H900" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<path d="M818,325 H900" stroke="#90a4ae" stroke-width="3" fill="none"/>
+<text x="908" y="180" font-size="13" font-weight="700" fill="#455a64">L1</text>
+<text x="908" y="330" font-size="13" font-weight="700" fill="#455a64">L2</text>
+
+<text x="700" y="146" font-size="13" fill="#455a64" text-anchor="middle">刀（动触点）</text>
+<path d="M706,152 L724,203" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ag)"/>
+
+<text x="750" y="376" font-size="13" fill="#546e7a" text-anchor="middle">一进二出：刀必定搭在 L1 或 L2 上，没有「全断」状态。</text>
+<text x="750" y="396" font-size="13" fill="#546e7a" text-anchor="middle">这正是它能做双控的关键 —— 它不是「断开」，而是「换路」。</text>
+
+<path d="M40,420 H960" stroke="#cfd8dc" stroke-width="1.5"/>
+
+<!-- ============ SECTION B ============ -->
+<text x="40" y="454" font-size="17" font-weight="700" fill="#37474f">二、四种状态下的电流走向（a = 开关 A 位置，b = 开关 B 位置）</text>
+
+<!-- ================= ROW 1 : a=0 b=0 LIT ================= -->
+<text x="75" y="485" font-size="16" font-weight="700" fill="#263238">① a=0, b=0 —— 两把刀都搭在联络线 1，回路接通</text>
+<text x="960" y="485" font-size="16" font-weight="700" fill="#2e7d32" text-anchor="end">灯 亮</text>
+
+<path d="M265,503 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M265,587 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M695,545 H764" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M75,545 H185" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M816,545 H900" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="75,545 185,545 265,503 440,503 615,503 695,545 900,545" fill="none" stroke="#ff8f00" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ao)"/>
+
+<path d="M185,545 L265,503" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M185,545 L265,587" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M695,545 L615,503" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M695,545 L615,587" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="185" cy="545" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="503" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="587" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="503" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="587" r="4.5" fill="#37474f"/>
+<circle cx="695" cy="545" r="4.5" fill="#37474f"/>
+
+<circle cx="790" cy="545" r="26" fill="#ffeb3b" stroke="#f9a825" stroke-width="3" filter="url(#glow)"/>
+<path d="M772,527 L808,563 M772,563 L808,527" stroke="#f57f17" stroke-width="2.5"/>
+
+<text x="78" y="536" font-size="13" font-weight="700" fill="#d32f2f">火线 L</text>
+<text x="905" y="540" font-size="13" font-weight="700" fill="#1565c0">零线 N</text>
+<text x="440" y="528" font-size="13" fill="#546e7a" text-anchor="middle">联络线 1</text>
+<text x="440" y="566" font-size="13" fill="#90a4ae" text-anchor="middle">联络线 2（悬空，不带电）</text>
+<text x="185" y="568" font-size="11" fill="#78909c" text-anchor="middle">COM</text>
+<text x="253" y="500" font-size="11" fill="#78909c" text-anchor="end">L1</text>
+<text x="253" y="597" font-size="11" fill="#b0bec5" text-anchor="end">L2</text>
+<text x="225" y="613" font-size="13" fill="#546e7a" text-anchor="middle">开关 A</text>
+<text x="655" y="613" font-size="13" fill="#546e7a" text-anchor="middle">开关 B</text>
+<text x="790" y="613" font-size="13" fill="#546e7a" text-anchor="middle">灯</text>
+
+<!-- ================= ROW 2 : a=0 b=1 OFF ================= -->
+<text x="75" y="655" font-size="16" font-weight="700" fill="#263238">② a=0, b=1 —— A 搭线 1、B 搭线 2，两头对不上</text>
+<text x="960" y="655" font-size="16" font-weight="700" fill="#78909c" text-anchor="end">灯 灭</text>
+
+<path d="M265,673 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M265,757 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M695,715 H764" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M75,715 H185" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M816,715 H900" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="75,715 185,715 265,673 440,673 615,673" fill="none" stroke="#d32f2f" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ar)"/>
+
+<path d="M185,715 L265,673" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M185,715 L265,757" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M695,715 L615,757" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M695,715 L615,673" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="185" cy="715" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="673" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="757" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="673" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="757" r="4.5" fill="#37474f"/>
+<circle cx="695" cy="715" r="4.5" fill="#37474f"/>
+
+<circle cx="615" cy="673" r="10" fill="none" stroke="#d32f2f" stroke-width="2.5"/>
+<path d="M608,666 L622,680" stroke="#d32f2f" stroke-width="2.5"/>
+
+<circle cx="790" cy="715" r="26" fill="#f5f5f5" stroke="#90a4ae" stroke-width="3"/>
+<path d="M772,697 L808,733 M772,733 L808,697" stroke="#b0bec5" stroke-width="2.5"/>
+
+<text x="440" y="783" font-size="13" fill="#c62828" text-anchor="middle">联络线 1 带 220V，但在 B 的 L1 端子处走到头 → 没有回路，电流为零</text>
+
+<!-- ================= ROW 3 : a=1 b=0 OFF ================= -->
+<text x="75" y="825" font-size="16" font-weight="700" fill="#263238">③ a=1, b=0 —— A 搭线 2、B 搭线 1，同样对不上</text>
+<text x="960" y="825" font-size="16" font-weight="700" fill="#78909c" text-anchor="end">灯 灭</text>
+
+<path d="M265,843 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M265,927 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M695,885 H764" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M75,885 H185" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M816,885 H900" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="75,885 185,885 265,927 440,927 615,927" fill="none" stroke="#d32f2f" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ar)"/>
+
+<path d="M185,885 L265,927" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M185,885 L265,843" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M695,885 L615,843" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M695,885 L615,927" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="185" cy="885" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="843" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="927" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="843" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="927" r="4.5" fill="#37474f"/>
+<circle cx="695" cy="885" r="4.5" fill="#37474f"/>
+
+<circle cx="615" cy="927" r="10" fill="none" stroke="#d32f2f" stroke-width="2.5"/>
+<path d="M608,920 L622,934" stroke="#d32f2f" stroke-width="2.5"/>
+
+<circle cx="790" cy="885" r="26" fill="#f5f5f5" stroke="#90a4ae" stroke-width="3"/>
+<path d="M772,867 L808,903 M772,903 L808,867" stroke="#b0bec5" stroke-width="2.5"/>
+
+<text x="440" y="953" font-size="13" fill="#c62828" text-anchor="middle">联络线 2 带 220V，但在 B 的 L2 端子处走到头 → 没有回路，电流为零</text>
+
+<!-- ================= ROW 4 : a=1 b=1 LIT ================= -->
+<text x="75" y="995" font-size="16" font-weight="700" fill="#263238">④ a=1, b=1 —— 两把刀都搭在联络线 2，回路接通</text>
+<text x="960" y="995" font-size="16" font-weight="700" fill="#2e7d32" text-anchor="end">灯 亮</text>
+
+<path d="M265,1013 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M265,1097 H615" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M695,1055 H764" stroke="#90a4ae" stroke-width="2.5" fill="none"/>
+<path d="M75,1055 H185" stroke="#d32f2f" stroke-width="3" fill="none"/>
+<path d="M816,1055 H900" stroke="#1565c0" stroke-width="3" fill="none"/>
+
+<polyline points="75,1055 185,1055 265,1097 440,1097 615,1097 695,1055 900,1055" fill="none" stroke="#ff8f00" stroke-width="4.5" stroke-linejoin="round" marker-mid="url(#ao)"/>
+
+<path d="M185,1055 L265,1097" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M185,1055 L265,1013" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+<path d="M695,1055 L615,1097" stroke="#263238" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<path d="M695,1055 L615,1013" stroke="#b0bec5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 6" fill="none"/>
+
+<circle cx="185" cy="1055" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="1013" r="4.5" fill="#37474f"/>
+<circle cx="265" cy="1097" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="1013" r="4.5" fill="#37474f"/>
+<circle cx="615" cy="1097" r="4.5" fill="#37474f"/>
+<circle cx="695" cy="1055" r="4.5" fill="#37474f"/>
+
+<circle cx="790" cy="1055" r="26" fill="#ffeb3b" stroke="#f9a825" stroke-width="3" filter="url(#glow)"/>
+<path d="M772,1037 L808,1073 M772,1073 L808,1037" stroke="#f57f17" stroke-width="2.5"/>
+
+<text x="440" y="1123" font-size="13" fill="#546e7a" text-anchor="middle">与状态 ① 完全对称，只是电流改走联络线 2</text>
+
+<!-- ============ LEGEND ============ -->
+<path d="M40,1146 H960" stroke="#e0e6e8" stroke-width="1.5"/>
+<g font-size="13" fill="#546e7a">
+  <path d="M60,1168 H100" stroke="#ff8f00" stroke-width="4.5" marker-mid="url(#ao)"/>
+  <text x="108" y="1173">有电流（回路接通）</text>
+
+  <path d="M270,1168 H310" stroke="#d32f2f" stroke-width="4.5"/>
+  <text x="318" y="1173">带电但无电流（死线）</text>
+
+  <path d="M500,1168 H540" stroke="#90a4ae" stroke-width="2.5"/>
+  <text x="548" y="1173">悬空 / 不带电</text>
+
+  <path d="M680,1168 H720" stroke="#263238" stroke-width="4.5" stroke-linecap="round"/>
+  <text x="728" y="1173">刀当前位置</text>
+
+  <path d="M830,1168 H870" stroke="#b0bec5" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>
+  <text x="878" y="1173">另一位置</text>
+</g>
+</svg>

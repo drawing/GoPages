@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      data-accent="ink"
+      data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>两个开关控制同一盏灯：从机械双控到触摸同步 · 闲亩</title>
+<meta name="description" content=" 一份写给&quot;想知道墙上那个开关到底怎么接&quot;的人的电路笔记：机械双控的内部结构与电流走向、三控怎么扩展、自复位按键的另一条技术路线、触摸面板的指示灯为什么能同步。
+核心只有一句：机械双控把状态写在导线的拓扑里，触摸开关把状 …">
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chroma.css">
+<script>
+(function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var cfg = 'light';
+    var t = saved || cfg;
+    if (t === 'auto') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!saved) {
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+    }
+    root.dataset.theme = t;
+})();
+</script>
+
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="site-title" href="/">
+            <span class="seal" aria-hidden="true">闲</span>闲亩
+        </a>
+        <nav>
+            <a href="/">首页</a>
+            
+            
+            
+            <a href="/archives/">归档</a>
+            
+            
+            
+            <a href="/categories/">分类</a>
+            
+            
+            
+            <a href="/tags/">标签</a>
+            
+            
+            
+            <a href="/search/">搜索</a>
+            
+            <button id="theme-toggle" type="button" aria-label="切换深浅色模式">
+                <span class="when-dark">浅色</span><span class="when-light">深色</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+<article class="post">
+    <header class="post-header">
+        <h1>两个开关控制同一盏灯：从机械双控到触摸同步</h1>
+        <div class="post-meta">
+            <time datetime="2026-11-08">2026-11-08</time>
+            <span class="sep">·</span>
+            <span>3696 字</span>
+            <span class="sep">·</span>
+            <span>约 8 分钟</span>
+            
+            <span class="sep">·</span><a class="tag" href="/tags/%E7%A1%AC%E4%BB%B6%E7%94%B5%E8%B7%AF/">#硬件电路</a><span class="sep">·</span><a class="tag" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">#工程实践</a>
+            
+        </div>
+    </header>
+
+    <div class="post-layout">
+        <div class="post-content">
+            <blockquote>
+<p>一份写给&quot;想知道墙上那个开关到底怎么接&quot;的人的电路笔记：机械双控的内部结构与电流走向、三控怎么扩展、自复位按键的另一条技术路线、触摸面板的指示灯为什么能同步。</p>
+<p>核心只有一句：<strong>机械双控把状态写在导线的拓扑里，触摸开关把状态写在芯片的内存里再复制出去——前者靠换路，后者靠记忆加通信。</strong></p>
+</blockquote>
+<hr>
+<h2 id="引子楼下开灯楼上随手就能关">引子：楼下开灯，楼上随手就能关</h2>
+<p>楼梯下口按一下灯亮了，走到二楼口再按一下就能关；卧室门口开灯，躺到床上伸手又能关掉。两处谁也不用先看看对方那个开关现在朝哪边。</p>
+<p>这件事看起来理所当然，但普通开关做不到。两个普通开关无论怎么接，都会出现&quot;必须两个都合上才亮&quot;或者&quot;必须两个都断开才灭&quot;的死结。真正能双控的开关，内部结构和你想的不一样——它压根就没有&quot;断开&quot;这个状态。</p>
+<hr>
+<h2 id="一机械双控单刀双掷--两根联络线">一、机械双控：单刀双掷 + 两根联络线</h2>
+<h3 id="11-它不是普通开关">1.1 它不是普通开关</h3>
+<p>普通开关是<strong>单刀单掷</strong>（SPST）：两个接线柱，只有&quot;通/断&quot;两种状态。</p>
+<p>双控开关是<strong>单刀双掷</strong>（SPDT）：三个接线柱——一个公共端（COM，也叫 L 或&quot;刀&quot;），两个触点（L1、L2）。拨动时公共端<strong>必定</strong>与其中一个触点接通。</p>
+<p>关键区别：它不是&quot;断开电路&quot;，而是&quot;把电路切换到另一条路上&quot;。它没有&quot;全断&quot;状态。</p>
+<p><img src="/posts/two-switches-one-light/spdt-two-way-switch.svg" alt="SPDT 内部结构与电路符号"></p>
+<h3 id="12-接线">1.2 接线</h3>
+<ul>
+<li>火线先进<strong>开关 A 的公共端</strong></li>
+<li>A 的 L1、L2 用两根线连到 B 的 L1、L2 —— 这两根就是<strong>联络线</strong>（也叫过路线、双控线），是双控比普通布线多出来的那一根</li>
+<li><strong>B 的公共端</strong>出线接灯，灯的另一端接零线</li>
+</ul>
+<p>A 的 L1 要接 B 的 L1、L2 接 L2。如果交叉接了，功能上照样能双控，只是两个开关的拨动方向会相反（一个往上按是开，另一个往上按是关），用起来别扭但不影响安全。</p>
+<h3 id="13-电流到底怎么走">1.3 电流到底怎么走</h3>
+<p>上图下半部分是四种状态的完整电流路径。要点：</p>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: center">状态</th>
+					<th style="text-align: center">开关 A</th>
+					<th style="text-align: center">开关 B</th>
+					<th style="text-align: center">通路</th>
+					<th style="text-align: center">灯</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: center">①</td>
+					<td style="text-align: center">搭线 1</td>
+					<td style="text-align: center">搭线 1</td>
+					<td style="text-align: center">联络线 1</td>
+					<td style="text-align: center">亮</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">②</td>
+					<td style="text-align: center">搭线 1</td>
+					<td style="text-align: center">搭线 2</td>
+					<td style="text-align: center">无</td>
+					<td style="text-align: center">灭</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">③</td>
+					<td style="text-align: center">搭线 2</td>
+					<td style="text-align: center">搭线 1</td>
+					<td style="text-align: center">无</td>
+					<td style="text-align: center">灭</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">④</td>
+					<td style="text-align: center">搭线 2</td>
+					<td style="text-align: center">搭线 2</td>
+					<td style="text-align: center">联络线 2</td>
+					<td style="text-align: center">亮</td>
+			</tr>
+	</tbody>
+</table>
+<p>记 a、b 为两个开关的位置，则 <strong>灯亮 = (a XNOR b)</strong>。</p>
+<p>这个表达式的性质就是答案：<strong>翻转任意一个变量，都会翻转整个结果</strong>。所以无论当前处于哪个状态，拨动任何一个开关都必然改变灯的亮灭。</p>
+<p>对比一下为什么普通开关做不到：</p>
+<ul>
+<li><strong>串联</strong>：灯亮 = <code>a AND b</code>。任一开关都能关灯，但必须两个都合上才能开灯。</li>
+<li><strong>并联</strong>：灯亮 = <code>a OR b</code>。任一开关都能开灯，但必须两个都断开才能关灯。</li>
+</ul>
+<p>只有 SPDT + 双联络线这种结构，才让每个开关同时具备&quot;开&quot;和&quot;关&quot;的权力。</p>
+<h3 id="14-一个容易忽略的安全点">1.4 一个容易忽略的安全点</h3>
+<p>看图里的状态 ② 和 ③：<strong>灯灭的时候，有一根联络线仍然带着 220 V</strong>，只是走到了头、没有回路而已。</p>
+<p>所以检修双控电路时，&quot;把开关关掉&quot;并不等于&quot;线不带电&quot;。必须拉总闸。</p>
+<hr>
+<h2 id="二三控中间加一个交叉开关">二、三控：中间加一个交叉开关</h2>
+<p>要在三个地方控制同一盏灯，就在两个双控开关<strong>中间</strong>串入一个<strong>双刀双掷</strong>（DPDT）开关，俗称&quot;中途开关&quot;或&quot;交叉开关&quot;。它有 4 个接线柱（2 进 2 出），两个位置：</p>
+<ul>
+<li><strong>直通</strong>：进 1→出 1，进 2→出 2，不改变逻辑</li>
+<li><strong>交叉</strong>：进 1→出 2，进 2→出 1，把两条联络线互换</li>
+</ul>
+<p><img src="/posts/two-switches-one-light/dpdt-intermediate-switch.svg" alt="中途开关的两种接法与三控电路"></p>
+<p>&quot;互换两条线&quot;在逻辑上等价于<strong>把结果翻转一次</strong>。所以每加一个中途开关就多一处控制点，可以无限延伸（四控、五控……）。</p>
+<p>上图第二行是最能说明问题的：A 和 B 完全没动，只把中间那个开关从&quot;直通&quot;拨到&quot;交叉&quot;，灯就灭了。中途开关和两端的开关拥有完全相同的权力。</p>
+<p>接线口诀：中途开关的 2 根进线接 A 的两根联络线，2 根出线接 B 的两根联络线，进出不能混。</p>
+<hr>
+<h2 id="三另一条技术路线自复位按键--锁存继电器">三、另一条技术路线：自复位按键 + 锁存继电器</h2>
+<p>前面两种方案的共同点是：<strong>状态就存在开关的物理位置里</strong>。刀搭在哪条线上，电路就是什么样。这是纯组合逻辑，没有记忆。</p>
+<p>还有一种做法完全不同——按键是<strong>自复位</strong>的（按一下松手就弹回，永远是断开的），状态由一个<strong>锁存继电器</strong>（latching relay，也叫脉冲继电器、磁保持继电器）来记。</p>
+<p>工作方式：</p>
+<ol>
+<li>锁存继电器装在配电箱或灯位处，它的触点串在灯的火线里</li>
+<li>所有按键都是常开自复位按钮，<strong>全部并联</strong>成一根信号线，接到继电器的线圈</li>
+<li>按一下任意按键 → 线圈得到一个电流脉冲 → 继电器翻转并<strong>机械/磁保持</strong>在新状态 → 灯亮或灭</li>
+<li>松手后按键弹回断开，但继电器记住了刚才的翻转</li>
+</ol>
+<p>这是时序逻辑：状态存在器件的记忆里，而不是导线的拓扑里。</p>
+<p>好处很直接：</p>
+<ul>
+<li><strong>控制点数量不受限</strong>。加一个按键就是往信号线上并一个按钮，不用像中途开关那样串进强电回路</li>
+<li><strong>按键可以走低压</strong>。信号线可以是 12 V/24 V 弱电，面板更安全、更薄</li>
+<li><strong>布线简单</strong>。只需要一根信号线从继电器辐射到各个按键，不需要在开关之间来回穿联络线</li>
+</ul>
+<p>智能开关的&quot;无线双控&quot;就是这个思路的电子化版本：副面板根本不接强电，按键只发一个无线信号给主控面板。</p>
+<hr>
+<h2 id="四触摸开关三个灯为什么能同步">四、触摸开关：三个&quot;灯&quot;为什么能同步</h2>
+<p>触摸面板上有指示灯，两个面板的指示灯和真正的灯，三个一起亮一起灭。这看起来最玄，其实拆开看没有任何神秘的地方。</p>
+<h3 id="41-先解决一个前置问题开关自己怎么有电">4.1 先解决一个前置问题：开关自己怎么有电</h3>
+<p>普通机械开关不需要供电——它只是一块金属。但触摸面板里有芯片、有指示灯、有无线模块，它自己得吃饭。</p>
+<p>如果底盒里只有火线没有零线（国内绝大多数老房子都是这样），就得用<strong>单火线取电</strong>：</p>
+<p><img src="/posts/two-switches-one-light/touch-switch-power-and-sync.svg" alt="单火线取电的两个状态"></p>
+<ul>
+<li><strong>灯灭时</strong>：继电器断开，取电模块跨接在 L 和 L-out 之间，而 L-out 通过灯连着 N。于是有一个微小电流（约 1–3 mA）沿 <code>L → 取电模块 → 灯 → N</code> 流动。这个电流点不亮灯，但足够让 MCU 待机。</li>
+<li><strong>灯亮时</strong>：继电器闭合，把取电模块两端短接到同一电位，压差为 0，模块停止取电。此时靠储能电容（几百 µF）撑住 MCU 和继电器线圈。</li>
+</ul>
+<p>副作用：LED 灯对微小电流很敏感，可能会微亮或周期性闪烁。解法是在灯两端并联一个防闪烁电容（X2 安规电容，0.1–0.47 µF），把漏电流旁路掉。</p>
+<p>这也是&quot;单火线&quot;开关比&quot;零火线&quot;开关贵的原因——多了一套取电和储能电路。</p>
+<h3 id="42-指示灯和灯是两条完全独立的支路">4.2 指示灯和灯，是两条完全独立的支路</h3>
+<p>这是理解同步的关键：<strong>指示灯不是从灯的电流里&quot;感应&quot;出来的</strong>。</p>
+<p>看图下半部分的框图。MCU 有三个输出：</p>
+<ol>
+<li>驱动继电器 → 接通/切断灯的强电</li>
+<li>点亮/熄灭自己面板上的指示灯</li>
+<li>通过无线模块把状态广播出去</li>
+</ol>
+<p>指示灯和灯在电气上毫无关系，它们只是<strong>同一个软件变量的两个执行结果</strong>。</p>
+<h3 id="43-同步的本质状态复制">4.3 同步的本质：状态复制</h3>
+<p>按下任意一个面板时，发生的是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">触摸 → MCU 翻转内部 state 变量
+</span></span><span class="line"><span class="cl">         ├─→ 驱动继电器（如果是主控面板）
+</span></span><span class="line"><span class="cl">         ├─→ 更新自己的指示灯
+</span></span><span class="line"><span class="cl">         └─→ 广播 state
+</span></span><span class="line"><span class="cl">                 ↓
+</span></span><span class="line"><span class="cl">             对端面板收到 → 更新自己的 state → 更新自己的指示灯
+</span></span></code></pre></div><p>所以&quot;三个灯同步&quot;的真相是：<strong>只有一个状态，被复制到了三个地方</strong>。灯和两个指示灯都是这个状态的显示设备。</p>
+<p>这在计算机里有个更熟悉的名字——分布式状态复制。两个面板就是两个节点，无线链路就是节点间通信，state 就是被复制的那份数据。</p>
+<p>同步的物理载体有几种：</p>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: left">方式</th>
+					<th style="text-align: left">载体</th>
+					<th style="text-align: left">特点</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: left">无线（Zigbee / RF / 蓝牙 Mesh）</td>
+					<td style="text-align: left">2.4G 或 433M 射频</td>
+					<td style="text-align: left">最常见，副面板可以完全不接强电、电池供电</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">Wi-Fi / 局域网</td>
+					<td style="text-align: left">家庭网络，可能过云</td>
+					<td style="text-align: left">能接入 App 和语音助手，但依赖网络</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">RS485 / KNX 总线</td>
+					<td style="text-align: left">一根低压双绞线</td>
+					<td style="text-align: left">高端全屋智能，可靠但需要预埋</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">电力线载波</td>
+					<td style="text-align: left">复用现有电线传数据</td>
+					<td style="text-align: left">不用重新布线，但易受干扰</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="44-一个反直觉的结论指示灯会说谎">4.4 一个反直觉的结论：指示灯会说谎</h3>
+<p>因为指示灯反映的是 <strong>MCU 里的 state 变量</strong>，不是灯的真实状态，所以：</p>
+<ul>
+<li>灯泡烧了 → 指示灯照样显示&quot;开&quot;</li>
+<li>继电器触点粘连（烧死了断不开）→ 灯实际亮着，但 state 已经是&quot;关&quot;，指示灯显示&quot;关&quot;</li>
+<li>无线丢包 → 两个面板的 state 短暂不一致，你在这边按了，那边的指示灯延迟几百毫秒才变，或者干脆没变</li>
+</ul>
+<p>高端一点的产品会加<strong>负载电流检测</strong>（在火线上串一个采样电阻或霍尔元件），真正去测量有没有电流流过灯，这样指示灯反映的才是物理现实。绝大多数便宜货没有这个。</p>
+<p>所以严格说，触摸开关的指示灯是 <strong>&quot;我认为灯是什么状态&quot;</strong>，不是 <strong>&quot;灯是什么状态&quot;</strong>。</p>
+<hr>
+<h2 id="五四种方案对比">五、四种方案对比</h2>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: left"></th>
+					<th style="text-align: left">机械双控（SPDT）</th>
+					<th style="text-align: left">三控（+中途开关）</th>
+					<th style="text-align: left">自复位按键 + 锁存继电器</th>
+					<th style="text-align: left">触摸/智能面板</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: left">状态存在哪</td>
+					<td style="text-align: left">刀的物理位置</td>
+					<td style="text-align: left">刀的物理位置</td>
+					<td style="text-align: left">继电器的磁/机械锁扣</td>
+					<td style="text-align: left">MCU 的内存变量</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">逻辑类型</td>
+					<td style="text-align: left">组合逻辑（无记忆）</td>
+					<td style="text-align: left">组合逻辑（无记忆）</td>
+					<td style="text-align: left">时序逻辑（有记忆）</td>
+					<td style="text-align: left">时序逻辑（有记忆）</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">布线</td>
+					<td style="text-align: left">两根联络线</td>
+					<td style="text-align: left">两根联络线 ×2 段</td>
+					<td style="text-align: left">一根信号线并联</td>
+					<td style="text-align: left">可以完全无线</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">扩展控制点</td>
+					<td style="text-align: left">不行</td>
+					<td style="text-align: left">每个点串一个中途开关</td>
+					<td style="text-align: left">并一个按键即可</td>
+					<td style="text-align: left">配对即可，几乎无上限</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">指示灯同步</td>
+					<td style="text-align: left">无指示灯</td>
+					<td style="text-align: left">无指示灯</td>
+					<td style="text-align: left">需额外接线</td>
+					<td style="text-align: left">天然同步（状态复制）</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">需要自身供电</td>
+					<td style="text-align: left">不需要</td>
+					<td style="text-align: left">不需要</td>
+					<td style="text-align: left">继电器需强电</td>
+					<td style="text-align: left">需要（单火线取电或接零线）</td>
+			</tr>
+			<tr>
+					<td style="text-align: left">故障可见性</td>
+					<td style="text-align: left">直接、可用万用表查</td>
+					<td style="text-align: left">直接</td>
+					<td style="text-align: left">中等</td>
+					<td style="text-align: left">指示灯可能与实际不符</td>
+			</tr>
+	</tbody>
+</table>
+<hr>
+<h2 id="结语状态存在哪决定了它能传多远">结语：状态存在哪，决定了它能传多远</h2>
+<p>机械双控靠&quot;换路&quot;实现异或逻辑，状态写在导线的拓扑里，所以它必须拉两根联络线、也根本不需要指示灯；触摸开关靠&quot;记忆 + 通信&quot;，状态写在芯片的内存里再复制到每个面板，所以指示灯能同步——代价是它显示的是&quot;我认为&quot;，而不是&quot;事实&quot;。</p>
+
+        </div>
+        
+        
+        <aside class="toc">
+            <details open>
+                <summary>目录</summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引子楼下开灯楼上随手就能关">引子：楼下开灯，楼上随手就能关</a></li>
+    <li><a href="#一机械双控单刀双掷--两根联络线">一、机械双控：单刀双掷 + 两根联络线</a>
+      <ul>
+        <li><a href="#11-它不是普通开关">1.1 它不是普通开关</a></li>
+        <li><a href="#12-接线">1.2 接线</a></li>
+        <li><a href="#13-电流到底怎么走">1.3 电流到底怎么走</a></li>
+        <li><a href="#14-一个容易忽略的安全点">1.4 一个容易忽略的安全点</a></li>
+      </ul>
+    </li>
+    <li><a href="#二三控中间加一个交叉开关">二、三控：中间加一个交叉开关</a></li>
+    <li><a href="#三另一条技术路线自复位按键--锁存继电器">三、另一条技术路线：自复位按键 + 锁存继电器</a></li>
+    <li><a href="#四触摸开关三个灯为什么能同步">四、触摸开关：三个&quot;灯&quot;为什么能同步</a>
+      <ul>
+        <li><a href="#41-先解决一个前置问题开关自己怎么有电">4.1 先解决一个前置问题：开关自己怎么有电</a></li>
+        <li><a href="#42-指示灯和灯是两条完全独立的支路">4.2 指示灯和灯，是两条完全独立的支路</a></li>
+        <li><a href="#43-同步的本质状态复制">4.3 同步的本质：状态复制</a></li>
+        <li><a href="#44-一个反直觉的结论指示灯会说谎">4.4 一个反直觉的结论：指示灯会说谎</a></li>
+      </ul>
+    </li>
+    <li><a href="#五四种方案对比">五、四种方案对比</a></li>
+    <li><a href="#结语状态存在哪决定了它能传多远">结语：状态存在哪，决定了它能传多远</a></li>
+  </ul>
+</nav>
+            </details>
+        </aside>
+        
+    </div>
+
+    <nav class="post-nav">
+        
+        <a class="prev" href="/posts/sketch-in-ancient-china/">← 穿越者在古代画一幅素描，古人真会认它是&#34;画&#34;吗：匠与道的两套评分表</a>
+        
+        
+    </nav>
+</article>
+
+</main>
+<footer class="site-footer">
+    <div class="container">
+        <span>© 2020–2026 闲亩</span>
+        
+        <a href="https://github.com/drawing/" target="_blank" rel="me noopener">GitHub</a>
+        
+        <span>Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+    </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+
+
+
+
+<script src="/js/toc.js" defer></script>
+
+
+</body>
+</html>
