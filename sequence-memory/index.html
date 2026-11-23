@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="更上层楼：看一遍序列，遮住，按序复现。颜色 / 位置 / 数字 / 扑克四种类型，免费、无广告、无需注册，进度保存在本地。">
+<title>更上层楼</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%230b0f1e'/%3E%3Ccircle%20cx='11'%20cy='11'%20r='4.2'%20fill='%234c8dff'/%3E%3Crect%20x='17'%20y='7'%20width='8'%20height='8'%20rx='1.6'%20fill='%23ffb020'/%3E%3Cpath%20d='M11%2017l4.4%208h-8.8z'%20fill='%23ff4d94'/%3E%3Cpath%20d='M21%2017l4.2%204.2-4.2%204.2-4.2-4.2z'%20fill='%232ee6c5'/%3E%3C/svg%3E">
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #080b16;
+    }
+
+    body {
+        color: #eaeeff;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #game-container { position: fixed; inset: 0; }
+    #game-container canvas { display: block; }
+
+    /* 首屏占位：Phaser 本体约 1.2MB，下载期间不能白屏 */
+    #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        background: linear-gradient(180deg, #080b16 0%, #141a2e 46%, #1c2440 78%, #3a34a8 100%);
+        transition: opacity .4s ease;
+    }
+
+    #splash.is-hidden { opacity: 0; pointer-events: none; }
+
+    /* 四个信号色 + 四个固定形状：位置 + 形状 + 颜色三重冗余，这套编码就是玩法本身 */
+    .splash-mark {
+        display: flex;
+        gap: 12px;
+        animation: sm-breathe 2.6s ease-in-out infinite;
+    }
+
+    .splash-mark i {
+        width: 22px;
+        height: 22px;
+        filter: drop-shadow(0 0 12px rgba(139, 123, 255, .45));
+    }
+
+    .splash-mark i:nth-child(1) { background: #4c8dff; border-radius: 50%; }
+    .splash-mark i:nth-child(2) { background: #ffb020; border-radius: 5px; }
+    .splash-mark i:nth-child(3) { background: #ff4d94; clip-path: polygon(50% 2%, 100% 96%, 0 96%); }
+    .splash-mark i:nth-child(4) { background: #2ee6c5; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+
+    .splash-title {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: .3em;
+        text-indent: .3em;
+        color: #fff;
+        text-shadow: 0 2px 18px rgba(8, 11, 22, .8);
+    }
+
+    .splash-note {
+        margin: 0;
+        font-size: 13px;
+        letter-spacing: .16em;
+        color: rgba(234, 238, 255, .72);
+    }
+
+    .splash-bar {
+        position: relative;
+        width: 220px;
+        height: 3px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, .16);
+        overflow: hidden;
+    }
+
+    .splash-bar span {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 40%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #4c8dff, #ff4d94, #ffb020);
+        animation: sm-slide 1.25s ease-in-out infinite;
+    }
+
+    #fatal {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        overflow: auto;
+        background: radial-gradient(120% 90% at 50% 0%, #1c2440 0%, #080b16 70%);
+        scrollbar-width: thin;
+        scrollbar-color: #5a4bff #0d1222;
+    }
+
+    #fatal[hidden] { display: none; }
+    #fatal::-webkit-scrollbar { width: 10px; }
+    #fatal::-webkit-scrollbar-track { background: #0d1222; }
+    #fatal::-webkit-scrollbar-thumb { background: #5a4bff; border-radius: 6px; border: 2px solid #0d1222; }
+    #fatal::-webkit-scrollbar-thumb:hover { background: #8b7bff; }
+
+    .fatal-card {
+        width: min(440px, 100%);
+        padding: 28px 30px 26px;
+        border: 1px solid rgba(139, 123, 255, .32);
+        border-radius: 18px;
+        background: linear-gradient(160deg, rgba(20, 26, 46, .92), rgba(8, 11, 22, .96));
+        box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+    }
+
+    .fatal-card h1 {
+        margin: 0 0 12px;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: .06em;
+        color: #ffb020;
+    }
+
+    .fatal-card p { margin: 0 0 10px; font-size: 14px; line-height: 1.75; color: rgba(234, 238, 255, .86); }
+
+    .fatal-detail {
+        display: block;
+        margin: 14px 0 20px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(8, 11, 22, .7);
+        border: 1px solid rgba(76, 141, 255, .22);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #2ee6c5;
+        word-break: break-all;
+    }
+
+    .fatal-card button {
+        appearance: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 11px 26px;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        color: #0d1222;
+        background: linear-gradient(120deg, #8b7bff, #4c8dff);
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+        box-shadow: 0 8px 22px rgba(90, 75, 255, .28);
+    }
+
+    .fatal-card button:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(90, 75, 255, .4); }
+    .fatal-card button:active { transform: translateY(0); }
+
+    noscript .fatal-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 40; }
+
+    @keyframes sm-slide { 0% { left: -42%; } 100% { left: 102%; } }
+    @keyframes sm-breathe { 0%, 100% { opacity: .72; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+
+    @media (prefers-reduced-motion: reduce) {
+        .splash-mark, .splash-bar span { animation: none; }
+        .splash-bar span { left: 0; width: 100%; }
+    }
+</style>
+<script>
+    window.SequenceMemoryFatal = function (detail) {
+        var splash = document.getElementById('splash');
+        var fatal = document.getElementById('fatal');
+        if (splash) { splash.classList.add('is-hidden'); }
+        if (!fatal) { return; }
+        if (detail) { fatal.querySelector('[data-detail]').textContent = detail; }
+        fatal.hidden = false;
+    };
+
+    // CDN 不可达时 onerror 不一定触发（被中间设备黑洞掉就会一直挂着），所以另留一条超时兜底
+    window.__smWatchdog = window.setTimeout(function () {
+        if (typeof window.Phaser === 'undefined') {
+            window.SequenceMemoryFatal('等待 cdn.jsdelivr.net 超过 15 秒，可能是网络被拦截。');
+        }
+    }, 15000);
+</script>
+</head>
+<body>
+    <!-- canvas 对读屏器是黑盒（没有 tab 顺序、文字不可选中），这里只做到最低限度：
+         标明这是一块应用区域，键盘可达性留给阶段 8d，读屏器支持在 8c 当已知折损记录 -->
+    <div id="game-container" role="application" aria-label="更上层楼游戏画面"></div>
+
+    <div id="splash">
+        <div class="splash-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <p class="splash-title">更上层楼</p>
+        <div class="splash-bar"><span></span></div>
+        <p class="splash-note">正在加载引擎</p>
+    </div>
+
+    <div id="fatal" hidden>
+        <div class="fatal-card">
+            <h1>序列没能开始</h1>
+            <p>无法加载 Phaser，请检查网络后重试。游戏引擎来自公共 CDN，离线或内网环境下会被拦截。</p>
+            <span class="fatal-detail" data-detail>https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js</span>
+            <button type="button" onclick="location.reload()">重新加载</button>
+        </div>
+    </div>
+
+    <noscript>
+        <div class="fatal-card">
+            <h1>需要 JavaScript</h1>
+            <p>更上层楼是一个跑在浏览器里的小游戏，请开启 JavaScript 后重新加载本页。</p>
+        </div>
+    </noscript>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"
+            integrity="sha384-AvQiDMZAVLda3VtAoU5MCfBz8pzXhteb2CiUJeKBmPlWzpXj1uJ96Km11+YuFNu/"
+            crossorigin="anonymous" referrerpolicy="no-referrer"
+            onerror="window.SequenceMemoryFatal('脚本请求失败：cdn.jsdelivr.net 不可达。')"></script>
+    <script>
+        (function () {
+            window.clearTimeout(window.__smWatchdog);
+            if (typeof window.Phaser === 'undefined') {
+                window.SequenceMemoryFatal('Phaser 未定义：CDN 脚本未能执行。');
+                return;
+            }
+
+            // classic script 按依赖顺序执行（async=false 保序），不用 ES modules，联网时 file:// 双击也能跑。
+            // 这份顺序与 tests/load.mjs 的 FILES 同源同序，那边只取 config / systems
+            var files = [
+                'src/config.js',
+                'src/utils/display.js',
+                'src/utils/layout.js',
+                'src/utils/tween.js',
+                'src/utils/ui.js',
+                'src/systems/SequenceGenerator.js',
+                'src/systems/Judge.js',
+                'src/systems/Storage.js',
+                'src/systems/Norms.js',
+                'src/systems/ScoreKeeper.js',
+                'src/systems/Prefs.js',
+                'src/systems/Setup.js',
+                'src/systems/session.js',
+                'src/systems/Audio.js',
+                'src/objects/Backdrop.js',
+                'src/objects/HUD.js',
+                'src/objects/Symbols.js',
+                'src/objects/Stage.js',
+                'src/objects/Board.js',
+                'src/objects/Cards.js',
+                'src/objects/Effects.js',
+                'src/objects/Chart.js',
+                'src/scenes/BootScene.js',
+                'src/scenes/MenuScene.js',
+                'src/scenes/GameScene.js',
+                'src/scenes/PauseScene.js',
+                'src/scenes/GameOverScene.js',
+                'src/scenes/RecordsScene.js',
+                'src/scenes/SettingsScene.js',
+                'src/scenes/HowToScene.js',
+                'src/main.js'
+            ];
+
+            files.forEach(function (file, index) {
+                var tag = document.createElement('script');
+                tag.src = file;
+                tag.async = false;
+                tag.onerror = function () { window.SequenceMemoryFatal('脚本加载失败：' + file); };
+                if (index === files.length - 1) {
+                    tag.onload = function () {
+                        try {
+                            window.SequenceMemory.start();
+                        } catch (err) {
+                            window.SequenceMemoryFatal('启动失败：' + (err && err.message ? err.message : err));
+                        }
+                    };
+                }
+                document.body.appendChild(tag);
+            });
+        })();
+    </script>
+</body>
+</html>

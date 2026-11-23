@@ -72,6 +72,76 @@
     
     <li>
         <article>
+            <h2 class="post-title"><a href="/posts/linux-vfs-source/">Linux内核笔记-VFS</a></h2>
+            
+            
+            <p class="post-summary">Linux 文件系统有着复杂的结构，仅仅概念就有file，dentry，inode，vfsmount，super_block等等，还有他们之间的关联，细节虽然繁多，但只要抓住主干框架，其他的细节通过阅读源码都可顺理成章的理解。这里Linux …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-21">2014-05-21</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-virtual-address/">Linux内核笔记-虚拟地址空间</a></h2>
+            
+            
+            <p class="post-summary">在程序中打印变量地址时，往往在不同的程序中都可能打印相同的地址，显然它们并不是占用相同的物理空间，它们之所以地址相同，得益于内核提供的虚拟地址空间的机制。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-interrupt-and-exception/">Linux内核笔记-中断和异常</a></h2>
+            
+            
+            <p class="post-summary">中断和异常的定义 中断和异常其实都属于中断，中断分为同步中断和异步中断，同步中断指处理器发生的异常，如除0错误；异步中断指CPU外部事件引发，如IO设备中断，因为中断可以发生在任何时刻，与当前CPU时钟周期没有任何关系。
+</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-20">2014-05-20</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
+            <h2 class="post-title"><a href="/posts/linux-kernel-debugging/">Linux 内核调试</a></h2>
+            
+            
+            <p class="post-summary">UML调试Linux内核 最近看了些Linux内核源码，之前认为调试内核源码最好的方式是使用Qemu虚拟机，结合GDB调试，虽然在网上也看到一些这种调试方式的弊端，但感觉虚拟机支持调试是最完美的事情，虽然Bochs更为灵活甚至内置调试器，但 …</p>
+            
+            
+            <div class="post-meta">
+                <time datetime="2014-05-19">2014-05-19</time>
+                
+                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+                
+            </div>
+        </article>
+    </li>
+    
+    <li>
+        <article>
             <h2 class="post-title"><a href="/posts/linux-kernel-slab-allocator/">Linux 内核 slab 分配器</a></h2>
             
             
@@ -167,76 +237,6 @@
             
             <div class="post-meta">
                 <time datetime="2014-05-13">2014-05-13</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-tap-tun-driver/">tun/tap 驱动源码分析</a></h2>
-            
-            
-            <p class="post-summary">tun/tap驱动程序是Linux平台虚拟网卡驱动程序，驱动加载后会建立网络接口tun0，与其他网卡驱动不同的是，tun驱动并不会把到达的数据包发送出去，而是会暂时存储于队列之中，用户态进程可以通过read，write读写网络数据包，实质上 …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-12">2014-05-12</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/linux-character-driver/">Linux字符设备驱动开发</a></h2>
-            
-            
-            <p class="post-summary">什么是字符驱动？ 所谓驱动程序，本质上讲是硬件接口，因为操作系统不可能实现每种硬件的接口，所以只对厂商提供接口，只要厂商实现这些接口，就可被操作系统调用，Linux系统驱动程序分为字符设备驱动和块设备驱动，所谓字符设备驱动就是例如键盘驱动， …</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-05-11">2014-05-11</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/practice-assembler-bios/">汇编语言练习-BIOS模式下的汇编</a></h2>
-            
-            
-            <p class="post-summary">AT&amp;T BIOS模式 BIOS(Basic Input/Output System) 是基本输入输出系统，它是硬件之上的一层。为计算机提供了最基本的控制硬件方式，BIOS存储了基本的硬件信息，例如磁盘大小等，并负责引导系统。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-28">2014-04-28</time>
-                
-                <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
-                
-            </div>
-        </article>
-    </li>
-    
-    <li>
-        <article>
-            <h2 class="post-title"><a href="/posts/practice-assembler-gas-win32/">汇编语言练习-AT&amp;T汇编win32窗口</a></h2>
-            
-            
-            <p class="post-summary">这里写一个win32窗口程序，如果对c语言如何使用api创建窗口还不熟悉，请先学习win32 api的使用，网上有很多用masm编写win32程序的例子，使用masm编写win32程序也比较方便，这里便不再重复。
-</p>
-            
-            
-            <div class="post-meta">
-                <time datetime="2014-04-27">2014-04-27</time>
                 
                 <span class="sep">·</span><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
                 

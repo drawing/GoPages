@@ -10,9 +10,44 @@
 		
 		
 		
-			<lastBuildDate>Sun, 08 Nov 2026 00:10:00 +0800</lastBuildDate>
+			<lastBuildDate>Wed, 18 Nov 2026 21:56:35 +0800</lastBuildDate>
 		
 			<atom:link href="https://drawing.fancymore.com/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>审美</title>
+				<link>https://drawing.fancymore.com/tags/%E5%AE%A1%E7%BE%8E/</link>
+				<pubDate>Wed, 18 Nov 2026 21:56:35 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E5%AE%A1%E7%BE%8E/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>中国古代史</title>
+				<link>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</link>
+				<pubDate>Wed, 18 Nov 2026 21:56:35 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>制度演化</title>
+				<link>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</link>
+				<pubDate>Sun, 15 Nov 2026 15:30:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>心智成长</title>
+				<link>https://drawing.fancymore.com/tags/%E5%BF%83%E6%99%BA%E6%88%90%E9%95%BF/</link>
+				<pubDate>Thu, 12 Nov 2026 21:00:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E5%BF%83%E6%99%BA%E6%88%90%E9%95%BF/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>学习方法</title>
+				<link>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</link>
+				<pubDate>Thu, 12 Nov 2026 21:00:00 +0800</pubDate>
+				<guid>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</guid>
+				<description></description>
+			</item>
 			<item>
 				<title>工程实践</title>
 				<link>https://drawing.fancymore.com/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link>
@@ -28,20 +63,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>审美</title>
-				<link>https://drawing.fancymore.com/tags/%E5%AE%A1%E7%BE%8E/</link>
-				<pubDate>Sat, 07 Nov 2026 22:30:00 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E5%AE%A1%E7%BE%8E/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>中国古代史</title>
-				<link>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</link>
-				<pubDate>Sat, 07 Nov 2026 22:30:00 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E4%B8%AD%E5%9B%BD%E5%8F%A4%E4%BB%A3%E5%8F%B2/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>音乐</title>
 				<link>https://drawing.fancymore.com/tags/%E9%9F%B3%E4%B9%90/</link>
 				<pubDate>Sat, 07 Nov 2026 21:40:00 +0800</pubDate>
@@ -53,13 +74,6 @@
 				<link>https://drawing.fancymore.com/tags/%E8%AE%A4%E7%9F%A5%E5%81%8F%E5%B7%AE/</link>
 				<pubDate>Fri, 06 Nov 2026 22:40:00 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/tags/%E8%AE%A4%E7%9F%A5%E5%81%8F%E5%B7%AE/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>心智成长</title>
-				<link>https://drawing.fancymore.com/tags/%E5%BF%83%E6%99%BA%E6%88%90%E9%95%BF/</link>
-				<pubDate>Fri, 06 Nov 2026 21:20:00 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E5%BF%83%E6%99%BA%E6%88%90%E9%95%BF/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -91,13 +105,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>学习方法</title>
-				<link>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</link>
-				<pubDate>Wed, 04 Nov 2026 21:40:00 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>运动</title>
 				<link>https://drawing.fancymore.com/tags/%E8%BF%90%E5%8A%A8/</link>
 				<pubDate>Wed, 04 Nov 2026 21:39:04 +0800</pubDate>
@@ -123,13 +130,6 @@
 				<link>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF%E4%BC%A0%E6%92%AD/</link>
 				<pubDate>Tue, 27 Oct 2026 22:38:49 +0800</pubDate>
 				<guid>https://drawing.fancymore.com/tags/%E4%BF%A1%E6%81%AF%E4%BC%A0%E6%92%AD/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>制度演化</title>
-				<link>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</link>
-				<pubDate>Mon, 26 Oct 2026 22:33:30 +0800</pubDate>
-				<guid>https://drawing.fancymore.com/tags/%E5%88%B6%E5%BA%A6%E6%BC%94%E5%8C%96/</guid>
 				<description></description>
 			</item>
 			<item>
