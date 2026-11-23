@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>体感躲避球 🏀</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      overflow: hidden;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    video { display: none; }
+    canvas { display: block; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+    /* HUD */
+    #hud {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 20px; z-index: 100; pointer-events: none;
+    }
+    .hud-item {
+      background: rgba(0,0,0,0.65); color: #fff; padding: 10px 20px;
+      border-radius: 24px; font-size: 20px; font-weight: 700;
+      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15);
+    }
+    .hearts { font-size: 24px; letter-spacing: 4px; }
+
+    /* 通用覆盖层 */
+    .screen {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    }
+    .screen-content {
+      text-align: center; color: #fff; max-width: 440px; padding: 32px; width: 92%;
+    }
+    .screen-content h1 { font-size: 44px; margin-bottom: 12px; letter-spacing: -1px; }
+    .screen-content h2 { font-size: 32px; margin-bottom: 16px; }
+    .subtitle { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 24px; }
+    .rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; font-size: 15px; color: rgba(255,255,255,0.85); }
+
+    .btn {
+      display: block; width: 100%; padding: 14px 24px; border: none; border-radius: 12px;
+      font-size: 18px; font-weight: 700; cursor: pointer; margin-bottom: 12px;
+      transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #FF6B35; color: #fff; }
+    .btn-primary:hover { background: #e55a2a; }
+    .btn-secondary { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.22); }
+
+    .loader {
+      width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #FF6B35; border-radius: 50%; margin: 24px auto;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #countdown-overlay { background: rgba(0,0,0,0.65); }
+    #countdown-number {
+      font-size: 160px; font-weight: 900; color: #fff;
+      text-shadow: 0 0 80px rgba(255,107,53,0.8);
+      animation: pulse 0.8s ease-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1.6); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .final-score { font-size: 72px; font-weight: 900; color: #FF6B35; margin: 8px 0 4px; line-height: 1; }
+    #final-label { font-size: 16px; color: rgba(255,255,255,0.65); margin-bottom: 24px; }
+    .top-score-text { font-size: 18px; color: #FFD700; margin-bottom: 16px; }
+
+    #player-name {
+      width: 100%; padding: 12px 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff;
+      font-size: 18px; text-align: center; outline: none; margin-bottom: 12px;
+    }
+    #player-name:focus { border-color: #FF6B35; }
+    #player-name::placeholder { color: rgba(255,255,255,0.4); }
+
+    #leaderboard-list { list-style: none; margin: 24px 0; text-align: left; }
+    #leaderboard-list li {
+      display: flex; align-items: center; padding: 12px 16px; margin-bottom: 6px;
+      background: rgba(255,255,255,0.08); border-radius: 10px; font-size: 16px; gap: 12px;
+    }
+    .rank-badge { width: 28px; height: 28px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+    .rank-1 { background: #FFD700; color: #000; }
+    .rank-2 { background: #C0C0C0; color: #000; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: rgba(255,255,255,0.15); color: #fff; }
+    .lb-name { flex: 1; font-weight: 600; }
+    .lb-score { font-weight: 800; color: #FF6B35; font-size: 18px; }
+    .lb-date { font-size: 12px; color: rgba(255,255,255,0.35); margin-left: 4px; }
+
+    .hidden { display: none !important; }
+
+    /* 受伤闪红 */
+    #damage-flash {
+      position: fixed; inset: 0; background: rgba(255,0,0,0.35);
+      pointer-events: none; z-index: 150; opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    @media (max-width: 480px) {
+      .screen-content h1 { font-size: 32px; }
+      .final-score { font-size: 56px; }
+      #countdown-number { font-size: 120px; }
+      .hud-item { font-size: 16px; padding: 8px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div id="damage-flash"></div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-item hearts" id="hud-lives">❤️❤️❤️</div>
+      <div class="hud-item" id="hud-score">⏱ 0s</div>
+      <div class="hud-item" id="hud-speed">速度 x1</div>
+    </div>
+
+    <div id="loading-screen" class="screen">
+      <div class="screen-content">
+        <h1>🏀 体感躲避球</h1>
+        <p>正在加载人体识别模型...</p>
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <div id="start-screen" class="screen hidden">
+      <div class="screen-content">
+        <h1>🏀 体感躲避球</h1>
+        <p class="subtitle">用身体躲开飞来的球！<br>站远一点效果更好哦～</p>
+        <div class="rules">
+          <span>❤️ 3条命，被球碰到扣1血</span>
+          <span>⏱ 坚持越久分越高</span>
+          <span>🚀 球会越来越快！</span>
+        </div>
+        <button id="btn-start" class="btn btn-primary">开始游戏</button>
+        <button id="btn-leaderboard" class="btn btn-secondary">🏆 排行榜</button>
+      </div>
+    </div>
+
+    <div id="countdown-overlay" class="screen hidden">
+      <div id="countdown-number">3</div>
+    </div>
+
+    <div id="gameover-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>💥 游戏结束！</h2>
+        <p id="final-score" class="final-score">0</p>
+        <p id="final-label">坚持秒数</p>
+        <div id="top-score-section" class="hidden">
+          <p class="top-score-text">🎉 恭喜进入前10名！</p>
+          <input id="player-name" type="text" placeholder="输入你的名字" maxlength="10" />
+          <button id="btn-save" class="btn btn-primary">保存成绩</button>
+        </div>
+        <button id="btn-again" class="btn btn-primary hidden">再来一局</button>
+        <button id="btn-back" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+
+    <div id="leaderboard-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>🏆 排行榜 TOP 10</h2>
+        <ol id="leaderboard-list"></ol>
+        <button id="btn-back-home" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+    "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
+  }}
+  </script>
+
+  <script type="module">
+    import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision';
+
+    /* ===== 常量 ===== */
+    const MAX_LIVES       = 3;
+    const LEADERBOARD_KEY = 'dodge-ball-leaderboard';
+    const BALL_COLORS     = ['#FF6B35','#E63946','#2EC4B6','#F72585','#7209B7','#4CC9F0','#FFBE0B','#FB5607'];
+    const COLLISION_POINTS = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]; // 关键碰撞点
+    const HIT_RADIUS      = 55;  // 碰撞半径（像素）
+    const INVINCIBLE_TIME = 1.5; // 受伤无敌时间（秒）
+    const CATCHES_PER_LIFE= 5;   // 接几个球回一滴血
+
+    const POSE_CONNECTIONS = [
+      [11,12],[11,13],[13,15],[12,14],[14,16], // 上半身+手臂
+      [11,23],[12,24],[23,24],                  // 躯干
+      [23,25],[25,27],[24,26],[26,28],          // 腿
+    ];
+
+    /* ===== 工具函数 ===== */
+    function dist(x1,y1,x2,y2) { return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
+    function randRange(a,b)    { return a + Math.random()*(b-a); }
+    function escapeHTML(s)     { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+    /* ===== 排行榜 ===== */
+    function loadBoard() { try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY))||[]; } catch { return []; } }
+    function saveBoard(b) { localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(b)); }
+    function isTop(score) { const b=loadBoard(); return b.length<10||score>(b[b.length-1]?.score??0); }
+    function addScore(name,score) {
+      const b=loadBoard();
+      b.push({name,score,date:new Date().toLocaleDateString('zh-CN')});
+      b.sort((a,c)=>c.score-a.score);
+      const t=b.slice(0,10); saveBoard(t); return t;
+    }
+
+    /* ===== 球 ===== */
+    class Ball {
+      constructor(w, h) {
+        this.radius = randRange(18, 28);
+        this.color  = BALL_COLORS[Math.floor(Math.random()*BALL_COLORS.length)];
+        this.alive  = true;
+        this.trail  = [];
+        // 每球独立速度系数（0.6~1.4 随机）
+        const ownSpeed = randRange(0.6, 1.4);
+
+        // 随机从屏幕边缘飞入
+        const side = Math.floor(Math.random()*4); // 0上 1下 2左 3右
+        const margin = this.radius + 20;
+        if (side === 0)      { this.x=randRange(0,w); this.y=-margin; this.vx=randRange(-80,80); this.vy=randRange(180,320)*ownSpeed; }
+        else if (side === 1) { this.x=randRange(0,w); this.y=h+margin; this.vx=randRange(-80,80); this.vy=-randRange(180,320)*ownSpeed; }
+        else if (side === 2) { this.x=-margin; this.y=randRange(0,h); this.vx=randRange(180,320)*ownSpeed; this.vy=randRange(-60,60); }
+        else                 { this.x=w+margin; this.y=randRange(0,h); this.vx=-randRange(180,320)*ownSpeed; this.vy=randRange(-60,60); }
+
+        this.glowPhase = Math.random() * Math.PI * 2;
+      }
+
+      update(dt, w, h) {
+        this.trail.push({ x: this.x, y: this.y, alpha: 0.6 });
+        if (this.trail.length > 8) this.trail.shift();
+        this.trail.forEach(t => t.alpha -= dt * 2);
+
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.glowPhase += dt * 6;
+
+        // 飞出屏幕
+        const m = this.radius + 60;
+        if (this.x < -m || this.x > w+m || this.y < -m || this.y > h+m) this.alive = false;
+      }
+
+      draw(ctx) {
+        // 拖尾
+        for (const t of this.trail) {
+          if (t.alpha <= 0) continue;
+          ctx.save();
+          ctx.globalAlpha = t.alpha * 0.4;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, this.radius * 0.7, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+        // 球体
+        const glow = 0.6 + Math.sin(this.glowPhase) * 0.4;
+        ctx.save();
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 20 * glow;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        ctx.fill();
+        // 高光
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.beginPath();
+        ctx.arc(this.x - this.radius*0.3, this.y - this.radius*0.3, this.radius*0.35, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* ===== 粒子效果 ===== */
+    class HitEffect {
+      constructor(x, y) {
+        this.particles = [];
+        for (let i = 0; i < 12; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = randRange(100, 300);
+          this.particles.push({
+            x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+            r: randRange(3,7), alpha: 1, color: Math.random()>0.5?'#FF3333':'#FF8800'
+          });
+        }
+        this.alive = true;
+      }
+      update(dt) {
+        let any = false;
+        for (const p of this.particles) {
+          p.x += p.vx*dt; p.y += p.vy*dt;
+          p.alpha -= dt*2;
+          p.vx *= 0.95; p.vy *= 0.95;
+          if (p.alpha > 0) any = true;
+        }
+        if (!any) this.alive = false;
+      }
+      draw(ctx) {
+        for (const p of this.particles) {
+          if (p.alpha <= 0) continue;
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 接球特效（绿色） ===== */
+    class CatchEffect {
+      constructor(x, y) {
+        this.particles = [];
+        for (let i = 0; i < 10; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = randRange(80, 250);
+          this.particles.push({
+            x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+            r: randRange(3,6), alpha: 1, color: Math.random()>0.5?'#00E676':'#69F0AE'
+          });
+        }
+        this.ring = { x, y, r:8, alpha:1 };
+        this.alive = true;
+      }
+      update(dt) {
+        let any = false;
+        for (const p of this.particles) {
+          p.x+=p.vx*dt; p.y+=p.vy*dt; p.alpha-=dt*2.5;
+          p.vx*=0.94; p.vy*=0.94;
+          if (p.alpha>0) any=true;
+        }
+        this.ring.r += 150*dt; this.ring.alpha -= dt*3;
+        if (!any && this.ring.alpha<=0) this.alive=false;
+      }
+      draw(ctx) {
+        if (this.ring.alpha > 0) {
+          ctx.save(); ctx.globalAlpha=this.ring.alpha;
+          ctx.strokeStyle='#00E676'; ctx.lineWidth=3;
+          ctx.beginPath(); ctx.arc(this.ring.x,this.ring.y,this.ring.r,0,Math.PI*2); ctx.stroke();
+          ctx.restore();
+        }
+        for (const p of this.particles) {
+          if (p.alpha<=0) continue;
+          ctx.save(); ctx.globalAlpha=p.alpha;
+          ctx.fillStyle=p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 飘字 ===== */
+    class FloatText {
+      constructor(x, y, text, color='#00E676') {
+        this.x=x; this.y=y; this.text=text; this.color=color;
+        this.alpha=1; this.alive=true;
+      }
+      update(dt) { this.y-=60*dt; this.alpha-=dt*1.5; if(this.alpha<=0) this.alive=false; }
+      draw(ctx) {
+        if(!this.alive) return;
+        ctx.save(); ctx.globalAlpha=this.alpha;
+        ctx.font='bold 28px sans-serif'; ctx.textAlign='center';
+        ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=3;
+        ctx.strokeText(this.text,this.x,this.y);
+        ctx.fillStyle=this.color; ctx.fillText(this.text,this.x,this.y);
+        ctx.restore();
+      }
+    }
+
+    /* ===== 主游戏 ===== */
+    class DodgeBallGame {
+      constructor() {
+        this.video   = document.getElementById('video');
+        this.canvas  = document.getElementById('canvas');
+        this.ctx     = this.canvas.getContext('2d');
+        this.hud     = document.getElementById('hud');
+        this.hudLives= document.getElementById('hud-lives');
+        this.hudScore= document.getElementById('hud-score');
+        this.hudSpeed= document.getElementById('hud-speed');
+        this.loading = document.getElementById('loading-screen');
+        this.startScr= document.getElementById('start-screen');
+        this.cntdown = document.getElementById('countdown-overlay');
+        this.cntNum  = document.getElementById('countdown-number');
+        this.overScr = document.getElementById('gameover-screen');
+        this.finalSc = document.getElementById('final-score');
+        this.topSec  = document.getElementById('top-score-section');
+        this.nameInp = document.getElementById('player-name');
+        this.lbScr   = document.getElementById('leaderboard-screen');
+        this.lbList  = document.getElementById('leaderboard-list');
+        this.btnAgain= document.getElementById('btn-again');
+        this.flash   = document.getElementById('damage-flash');
+
+        this.state    = 'loading';
+        this.lives    = MAX_LIVES;
+        this.elapsed  = 0;
+        this.balls    = [];
+        this.effects  = [];
+        this.poseLm   = null;   // 当前姿势关键点 [{x,y}]
+        this.spawnTimer = 0;
+        this.lastTime = 0;
+        this.invincible = 0;    // 无敌剩余时间
+        this.catches  = 0;      // 接球数
+        this.catchProgress = 0; // 距下次回血还差几个
+        this.texts    = [];     // 飘字效果
+        this.poseLandmarker = null;
+
+        this.bindEvents();
+        this.init();
+      }
+
+      async init() {
+        try {
+          await this.initCamera();
+          await this.initPoseTracker();
+          this.showScreen('start');
+        } catch (err) {
+          console.error('初始化失败:', err);
+          this.loading.querySelector('.screen-content').innerHTML = `
+            <h1>❌ 初始化失败</h1>
+            <p style="margin-top:16px;color:rgba(255,255,255,0.8)">${err.message}</p>
+            <p style="margin-top:12px;font-size:14px;color:rgba(255,255,255,0.5)">
+              请确保使用 Chrome/Edge 并允许摄像头权限<br>需通过 HTTP 服务器访问
+            </p>
+            <button class="btn btn-primary" style="margin-top:24px" onclick="location.reload()">重试</button>`;
+        }
+      }
+
+      async initCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode:'user', width:{ideal:1280}, height:{ideal:720} }, audio:false
+        });
+        this.video.srcObject = stream;
+        await new Promise(r => this.video.addEventListener('loadeddata', r, {once:true}));
+        this.canvas.width  = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        this.video.play();
+      }
+
+      async initPoseTracker() {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+        this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
+            delegate: 'GPU'
+          },
+          runningMode: 'VIDEO',
+          numPoses: 1
+        });
+      }
+
+      bindEvents() {
+        document.getElementById('btn-start').addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-leaderboard').addEventListener('click', ()=>this.showLeaderboard());
+        document.getElementById('btn-save').addEventListener('click', ()=>this.saveScore());
+        this.btnAgain.addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-back').addEventListener('click', ()=>this.showScreen('start'));
+        document.getElementById('btn-back-home').addEventListener('click', ()=>this.showScreen('start'));
+        this.nameInp.addEventListener('keydown', e=>{ if(e.key==='Enter') this.saveScore(); });
+      }
+
+      showScreen(name) {
+        [this.loading,this.startScr,this.cntdown,this.overScr,this.lbScr]
+          .forEach(s=>s.classList.add('hidden'));
+        this.hud.classList.add('hidden');
+        switch(name) {
+          case 'loading':     this.loading.classList.remove('hidden'); break;
+          case 'start':       this.startScr.classList.remove('hidden'); break;
+          case 'countdown':   this.cntdown.classList.remove('hidden'); break;
+          case 'playing':     this.hud.classList.remove('hidden'); break;
+          case 'gameover':    this.overScr.classList.remove('hidden'); break;
+          case 'leaderboard': this.lbScr.classList.remove('hidden'); break;
+        }
+        this.state = name;
+      }
+
+      async startCountdown() {
+        this.showScreen('countdown');
+        for (let i=3; i>0; i--) {
+          this.cntNum.textContent = i;
+          this.cntNum.style.animation = 'none';
+          void this.cntNum.offsetWidth;
+          this.cntNum.style.animation = 'pulse 0.8s ease-out';
+          await new Promise(r=>setTimeout(r,900));
+        }
+        this.startGame();
+      }
+
+      startGame() {
+        this.lives     = MAX_LIVES;
+        this.elapsed   = 0;
+        this.balls     = [];
+        this.effects   = [];
+        this.spawnTimer= 0;
+        this.invincible= 0;
+        this.lastTime  = performance.now();
+        this.showScreen('playing');
+        this.updateHUD();
+        requestAnimationFrame(t => this.gameLoop(t));
+      }
+
+      endGame() {
+        this.showScreen('gameover');
+        this.finalSc.textContent = this.elapsed.toFixed(1);
+        if (isTop(this.elapsed) && this.elapsed > 0) {
+          this.topSec.classList.remove('hidden');
+          this.btnAgain.classList.add('hidden');
+          this.nameInp.value = '';
+          setTimeout(()=>this.nameInp.focus(), 300);
+        } else {
+          this.topSec.classList.add('hidden');
+          this.btnAgain.classList.remove('hidden');
+        }
+      }
+
+      saveScore() {
+        const name = this.nameInp.value.trim();
+        if (!name) { this.nameInp.style.borderColor='#f44336'; this.nameInp.placeholder='请输入名字！'; return; }
+        addScore(name, parseFloat(this.elapsed.toFixed(1)));
+        this.topSec.classList.add('hidden');
+        this.btnAgain.classList.remove('hidden');
+      }
+
+      showLeaderboard() {
+        const board = loadBoard();
+        this.lbList.innerHTML = '';
+        if (board.length===0) {
+          this.lbList.innerHTML='<li style="justify-content:center;color:rgba(255,255,255,0.5)">暂无记录</li>';
+        } else {
+          board.forEach((e,i)=>{
+            const r=i+1, bc=r<=3?`rank-${r}`:'rank-other';
+            const m=r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
+            const li=document.createElement('li');
+            li.innerHTML=`<span class="rank-badge ${bc}">${m}</span>
+              <span class="lb-name">${escapeHTML(e.name)}</span>
+              <span class="lb-score">${e.score}s</span>
+              <span class="lb-date">${e.date||''}</span>`;
+            this.lbList.appendChild(li);
+          });
+        }
+        this.showScreen('leaderboard');
+      }
+
+      updateHUD() {
+        this.hudLives.textContent = '❤️'.repeat(this.lives) + '🖤'.repeat(MAX_LIVES-this.lives);
+        this.hudScore.textContent = `⏱ ${this.elapsed.toFixed(1)}s`;
+        // 显示接球进度
+        const dots = '●'.repeat(this.catchProgress) + '○'.repeat(CATCHES_PER_LIFE - this.catchProgress);
+        this.hudSpeed.textContent = `🖐 ${dots}`;
+      }
+
+      /* --- 难度曲线 --- */
+      getSpawnInterval() { return Math.max(0.4, 1.8 - this.elapsed * 0.025); }
+      getSpeedMult()     { return 1 + this.elapsed * 0.03; }
+      getMaxBalls()        { return Math.min(12, 4 + Math.floor(this.elapsed / 8)); }
+
+      /* --- 主循环 --- */
+      gameLoop(ts) {
+        const dt = Math.min((ts-this.lastTime)/1000, 0.1);
+        this.lastTime = ts;
+        if (this.state==='playing') this.update(dt);
+        this.draw();
+        requestAnimationFrame(t=>this.gameLoop(t));
+      }
+
+      update(dt) {
+        const w=this.canvas.width, h=this.canvas.height;
+        this.elapsed += dt;
+        this.invincible = Math.max(0, this.invincible - dt);
+
+        // 检测姿势
+        this.detectPose();
+
+        // 生成球
+        this.spawnTimer += dt;
+        if (this.spawnTimer >= this.getSpawnInterval() && this.balls.length < this.getMaxBalls()) {
+          this.balls.push(new Ball(w, h));
+          this.spawnTimer = 0;
+        }
+
+        // 更新球
+        this.balls.forEach(b => b.update(dt, w, h));
+
+        // 碰撞检测（手接球优先，身体扣血）
+        if (this.poseLm) {
+          const HAND_POINTS = [15, 16]; // 左右手腕
+          const BODY_POINTS = COLLISION_POINTS.filter(i => i !== 15 && i !== 16);
+          const CATCH_R = 65;
+
+          for (const ball of this.balls) {
+            if (!ball.alive) continue;
+            let caught = false;
+
+            // 优先检测手部接球
+            for (const idx of HAND_POINTS) {
+              const lm = this.poseLm[idx];
+              if (!lm || lm.visibility < 0.3) continue;
+              if (dist(ball.x, ball.y, lm.x, lm.y) < CATCH_R + ball.radius) {
+                ball.alive = false;
+                caught = true;
+                this.catches++;
+                this.catchProgress++;
+                this.effects.push(new CatchEffect(ball.x, ball.y));
+
+                if (this.catchProgress >= CATCHES_PER_LIFE) {
+                  // 攒够了，回血
+                  this.catchProgress = 0;
+                  if (this.lives < MAX_LIVES) {
+                    this.lives++;
+                    this.texts.push(new FloatText(ball.x, ball.y - 20, '+1❤️', '#FF6B35'));
+                  } else {
+                    this.texts.push(new FloatText(ball.x, ball.y - 20, '已满血!', '#FFD700'));
+                  }
+                } else {
+                  this.texts.push(new FloatText(ball.x, ball.y - 20,
+                    `接住 ${this.catchProgress}/${CATCHES_PER_LIFE}`, '#00E676'));
+                }
+                break;
+              }
+            }
+            if (caught) continue;
+
+            // 身体碰撞（无敌期间不扣血）
+            if (this.invincible > 0) continue;
+            for (const idx of BODY_POINTS) {
+              const lm = this.poseLm[idx];
+              if (!lm || lm.visibility < 0.3) continue;
+              if (dist(ball.x, ball.y, lm.x, lm.y) < HIT_RADIUS + ball.radius) {
+                ball.alive = false;
+                this.lives--;
+                this.invincible = INVINCIBLE_TIME;
+                this.effects.push(new HitEffect(ball.x, ball.y));
+                this.showDamageFlash();
+                if (this.lives <= 0) { this.updateHUD(); this.endGame(); return; }
+                break;
+              }
+            }
+          }
+        }
+
+        // 清理
+        this.balls   = this.balls.filter(b => b.alive);
+        this.effects.forEach(e => e.update(dt));
+        this.effects = this.effects.filter(e => e.alive);
+        this.texts.forEach(t => t.update(dt));
+        this.texts   = this.texts.filter(t => t.alive);
+        this.updateHUD();
+      }
+
+      detectPose() {
+        this.poseLm = null;
+        if (!this.poseLandmarker || this.video.readyState < 2) return;
+        try {
+          const result = this.poseLandmarker.detectForVideo(this.video, performance.now());
+          if (result.landmarks && result.landmarks[0]) {
+            const w=this.canvas.width, h=this.canvas.height;
+            this.poseLm = result.landmarks[0].map(lm => ({
+              x: lm.x * w, y: lm.y * h, z: lm.z, visibility: lm.visibility
+            }));
+          }
+        } catch {}
+      }
+
+      showDamageFlash() {
+        this.flash.style.opacity = '1';
+        setTimeout(()=>{ this.flash.style.opacity='0'; }, 150);
+      }
+
+      draw() {
+        const {ctx,canvas:cvs}=this;
+        const w=cvs.width, h=cvs.height;
+        ctx.clearRect(0,0,w,h);
+
+        // 摄像头
+        if (this.video.readyState>=2) ctx.drawImage(this.video,0,0,w,h);
+
+        // 游戏中轻微暗化
+        if (this.state==='playing') {
+          ctx.fillStyle='rgba(0,0,0,0.08)';
+          ctx.fillRect(0,0,w,h);
+        }
+
+        // 球
+        this.balls.forEach(b => b.draw(ctx));
+
+        // 粒子
+        this.effects.forEach(e => e.draw(ctx));
+
+        // 飘字
+        this.texts.forEach(t => t.draw(ctx));
+
+        // 人体骨骼
+        this.drawPose(ctx);
+      }
+
+      drawPose(ctx) {
+        if (!this.poseLm) return;
+        const isInvincible = this.invincible > 0;
+        const boneColor = isInvincible ? 'rgba(255,255,0,0.7)' : 'rgba(0,255,200,0.6)';
+        const dotColor  = isInvincible ? '#FFD700' : '#00E5CC';
+
+        // 骨骼连线
+        ctx.strokeStyle = boneColor;
+        ctx.lineWidth = 3;
+        for (const [i,j] of POSE_CONNECTIONS) {
+          const a=this.poseLm[i], b=this.poseLm[j];
+          if (!a||!b||a.visibility<0.3||b.visibility<0.3) continue;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+
+        // 碰撞关键点
+        for (const idx of COLLISION_POINTS) {
+          const lm = this.poseLm[idx];
+          if (!lm || lm.visibility<0.3) continue;
+          ctx.fillStyle = dotColor;
+          ctx.beginPath();
+          ctx.arc(lm.x, lm.y, 6, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        // 无敌光环
+        if (isInvincible) {
+          ctx.save();
+          ctx.strokeStyle = `rgba(255,215,0,${0.3+Math.sin(performance.now()/100)*0.3})`;
+          ctx.lineWidth = 4;
+          ctx.setLineDash([8,6]);
+          const cx = (this.poseLm[11].x + this.poseLm[12].x)/2;
+          const cy = (this.poseLm[11].y + this.poseLm[24].y)/2;
+          ctx.beginPath(); ctx.arc(cx,cy,120,0,Math.PI*2); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+      }
+    }
+
+    new DodgeBallGame();
+  </script>
+</body>
+</html>

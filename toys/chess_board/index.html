@@ -1,71 +1,83 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title> chess board </title>
-	</head>
-
-
-	<style type="text/css">
-
-body {
-	font-family: 'Courier New', Courier, monospace;
-}
-	</style>
-	<script>
-
-(function(doc, win) {  
-	setRem();  
-	var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',  
-	recalc = function() {  
-		setRem();  
-	};  
-	if (!doc.addEventListener)  
-		return;  
-	win.addEventListener(resizeEvt, recalc, false);  
-})(document, window);  
-
-function setRem() {  
-	var docEl = document.documentElement;  
-	var clientWidth = docEl.clientWidth;  
-	if (!clientWidth) {  
-		return;  
-	}  
-	docEl.style.fontSize = 100 * (clientWidth / 1080) + 'px';  
-}
-
-window.onload = loadBody;
-var row = 5;
-var col = 5;
-
-function generateCode() {
-	var res = "";
-	var col_index = Math.floor(Math.random() * 8);
-	var row_index = Math.floor(Math.random() * 8);
-	res += String.fromCharCode('a'.charCodeAt() + col_index)
-	res += String.fromCharCode('1'.charCodeAt() + row_index)
-	return res;
-}
-
-function refreshDigit() {
-	var text = "";
-	for (var i = 0; i < row; i++)
-	{ 
-		for (var j = 0; j < col - 1; j++) {
-			text += generateCode() + "&emsp;";
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="盲棋训练：不给看棋盘，用字母加数字报坐标，练一步可达与马的路线。">
+<title>盲棋训练 · 闲亩</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23f7f5f1'/%3E%3Ctext%20x='16'%20y='24'%20font-size='22'%20text-anchor='middle'%20fill='%2337352f'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
+<script>
+	// 与博客主题同一套约定：读 localStorage['theme'] 落到 html[data-theme]，回落 light。
+	(function () {
+		var root = document.documentElement;
+		var saved = null;
+		try { saved = localStorage.getItem('theme'); } catch (e) {}
+		var t = saved || 'light';
+		if (t === 'auto') {
+			var mq = matchMedia('(prefers-color-scheme: dark)');
+			t = mq.matches ? 'dark' : 'light';
+			mq.addEventListener('change', function (e) {
+				root.dataset.theme = e.matches ? 'dark' : 'light';
+			});
 		}
-		text += generateCode() + "<br>";
-	}
-	document.getElementById('display').innerHTML = text;
-}
+		root.dataset.theme = t;
+	})();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+	<header class="topbar">
+		<a class="back" id="back-menu" href="../">← 小玩意</a>
+		<button class="back" id="back-play" type="button" hidden>← 玩法</button>
+		<h1 class="title" id="title">盲棋训练</h1>
+		<span class="timer" id="timer"></span>
+	</header>
 
-function loadBody(){
-	refreshDigit();
-	setInterval(refreshDigit, 60000);
-}
+	<main class="main" id="main">
+		<section class="menu" id="menu">
+			<p class="lede">不给看棋盘。题目只用文字给，你靠底下那排键报坐标：先点字母 A–H，再点数字 1–8，两下就是一格。</p>
 
-	</script>
-	<body>
-		<div id="display"></div>
-	</body>
+			<button class="mode" type="button" data-mode="reach">
+				<span class="mode-glyph" aria-hidden="true">♞</span>
+				<span class="mode-body">
+					<span class="mode-title">一步可达</span>
+					<span class="mode-desc">给一个子和它所在的格子，把它一步能走到的格子全部报出来。总数先告诉你，报齐就过。空棋盘，无阻挡。</span>
+					<span class="mode-tag">马 / 王 / 象 / 车 / 后</span>
+				</span>
+			</button>
+
+			<button class="mode" type="button" data-mode="route">
+				<span class="mode-glyph" aria-hidden="true">♞</span>
+				<span class="mode-body">
+					<span class="mode-title">马的路线</span>
+					<span class="mode-desc">给马的起点和终点，一格格报中间的落脚点，把它跳过去。走错只提示一句，不判失败，可以悔一步。</span>
+					<span class="mode-tag">三到五步的距离</span>
+				</span>
+			</button>
+
+			<p class="foot">报错了不扣分，也没有失败——这是练习，不是考试。答完或点"看答案"才展开棋盘复盘。</p>
+		</section>
+
+		<section class="play" id="play" hidden>
+			<div class="piecebar" id="piecebar"></div>
+			<div class="prompt" id="prompt"></div>
+			<div class="stats" id="stats"></div>
+			<div class="entries" id="entries"></div>
+			<p class="feedback" id="feedback" aria-live="polite"></p>
+			<div class="actions" id="actions"></div>
+			<div class="board-wrap" id="board" hidden></div>
+		</section>
+	</main>
+
+	<footer class="keypad" id="keypad" hidden>
+		<button class="buffer" id="buffer" type="button"></button>
+		<div class="keys" id="keys"></div>
+	</footer>
+</div>
+
+<script src="chess.js"></script>
+<script src="game.js"></script>
+</body>
 </html>

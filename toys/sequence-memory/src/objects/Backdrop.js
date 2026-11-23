@@ -20,8 +20,8 @@
             list.push({
                 x: next(),
                 y: 0.04 + next() * 0.56,
-                r: 0.5 + next() * 1.2,
-                a: 0.14 + next() * 0.46,
+                r: 0.7 + next() * 1.5,
+                a: 0.25 + next() * 0.5,
                 period: 2000 + next() * 3000,
                 phase: next() * Math.PI * 2
             });
@@ -29,7 +29,7 @@
         return list;
     }
 
-    const STARS = starField(46);
+    const STARS = starField(100);
 
     // 地平线剪影与星点同一条纪律：固定种子 + 归一化坐标，转屏 restart 不换地平线。
     // 两层楼群各自从左到右随机步进生成，楼宽与步进重叠一点，连成一片而不是几根孤柱。
@@ -204,7 +204,7 @@
     // 返回建出来的所有对象，调用方把它们排除在入场动画之外（背景一动就会露出底色）。
     // 尺寸一律从 layout 推，并且多铺一圈：纯高度抖动（手机地址栏收放）只把画布跟上视口、
     // 不重排场景，背景要是刚好铺满旧视口，边上就会露出一条底色（harness/architecture.md）。
-    // opts.starScale 压暗星点（首页传 0.55，ui.md 面板半透那条）：不传原样，其余场景不受影响。
+    // opts.starScale 压暗星点（首页传 0.8，ui.md 面板半透那条）：不传原样，其余场景不受影响。
     // opts.meteor 只首页传 true：transient 动效不进局内免得扰呈现（ui.md 远楼剪影那条）
     objects.backdrop = function (scene, view, opts) {
         const starScale = opts && opts.starScale != null ? opts.starScale : 1;
@@ -218,7 +218,7 @@
             .setDisplaySize(width, height)
             .setDepth(DEPTH.backdrop);
 
-        // 46 颗星画进同一个 Graphics：一个绘制调用。慢眨靠每帧按正弦重算 alpha 重画这一层，
+        // 100 颗星画进同一个 Graphics：一个绘制调用。慢眨靠每帧按正弦重算 alpha 重画这一层，
         // 渐变本体不动。驱动用一条 repeat tween 而不是场景 update 钩子：调用方零接线，
         // 场景 paused 时 tween 不走、星空自动冻住，restart 时随场景销毁
         const stars = scene.add.graphics().setDepth(DEPTH.backdrop);

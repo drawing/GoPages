@@ -851,6 +851,37 @@
         }
     ];
 
+    // 9h 组合专练：字母 / 数字 / 符号任意多选 = 正式注册的方案（harness/gameplay.md 组合专练节）。
+    // id 按注册序用 '+' 连接（乱序 id 经 schemeById 回落标准，规范化只在构造 id 时做）；
+    // 内容逐档 = 成员拼接（成员池互不相交，无重复键）。**version = 成员之和**：任一成员 bump
+    // 版本改池时组合内容跟着变，求和让旧组合记录键自动失效封存（9a 封印契约，否则新旧混算）。
+    // combo 标志只给 UI 过滤用：弹层与排行榜页签只列基础方案，组合记录在菜单 / 结算照常显示
+    const COMBO_MEMBERS = ['letters', 'digits', 'symbols'];
+    (function () {
+        const members = COMBO_MEMBERS.map(function (id) {
+            return SCHEMES.find(function (scheme) { return scheme.id === id; });
+        });
+        // mask 位序即注册序，天然产出规范 id；单成员掩码（1/2/4）不是组合，跳过
+        for (let mask = 3; mask < (1 << members.length); mask++) {
+            const picked = members.filter(function (member, index) { return mask & (1 << index); });
+            if (picked.length < 2) { continue; }
+            const content = {};
+            for (const level of LEVELS) {
+                content[level.id] = picked.map(function (member) { return member.content[level.id]; }).join('');
+            }
+            SCHEMES.push({
+                id: picked.map(function (member) { return member.id; }).join('+'),
+                name: picked.map(function (member) { return member.name; }).join('+'),
+                version: picked.reduce(function (sum, member) { return sum + member.version; }, 0),
+                desc: picked.map(function (member) { return member.name; }).join('与') + '混练',
+                pair: false,
+                unit: false,
+                combo: true,
+                content: content
+            });
+        }
+    })();
+
     const DEFAULT_SCHEME = 'standard';
     const FALLBACK_SCHEME = SCHEMES.find(function (scheme) { return scheme.id === DEFAULT_SCHEME; });
 
@@ -994,6 +1025,7 @@
     ns.DEFAULT_LEVEL = DEFAULT_LEVEL;
     ns.DEFAULT_MODE = DEFAULT_MODE;
     ns.DEFAULT_SCHEME = DEFAULT_SCHEME;
+    ns.COMBO_MEMBERS = COMBO_MEMBERS;
     ns.DEFAULT_STAR_TYPE = DEFAULT_STAR_TYPE;
 
     ns.tint = function (hex) {
@@ -1012,6 +1044,20 @@
     // 与 levelById / modeById 同一套路：缺参与未知 id 回落默认方案（标准），不是 SCHEMES[0] 的偶然顺序
     ns.schemeById = function (id) {
         return SCHEMES.find(function (scheme) { return scheme.id === id; }) || FALLBACK_SCHEME;
+    };
+
+    // 9h 多选互斥（纯函数，弹层 onSelect 只调它）：字母 / 数字 / 符号在当前选择集里 toggle，
+    // 结果按注册序规范化（与点击序无关），空集回落标准；标准 / 汉字 / 双拼单选，点它即清空组合
+    // （单元方案与键位方案不可混出，level.units 是全局形式判据）
+    ns.toggleScheme = function (currentId, clickedId) {
+        if (!COMBO_MEMBERS.includes(clickedId)) { return clickedId; }
+        const current = ns.schemeById(currentId);
+        const selected = current.combo ? current.id.split('+')
+            : COMBO_MEMBERS.includes(current.id) ? [current.id] : [];
+        const next = COMBO_MEMBERS.filter(function (id) {
+            return id === clickedId ? !selected.includes(id) : selected.includes(id);
+        });
+        return next.length ? next.join('+') : DEFAULT_SCHEME;
     };
 
     // 9f 双拼编码（纯函数，map 是入参）：一个音节 → 恒两键 [声母键, 韵母键]。

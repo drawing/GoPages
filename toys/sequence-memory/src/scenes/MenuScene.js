@@ -77,7 +77,7 @@
             const view = utils.layout(this);
             // 首页星空压暗（ui.md 面板半透那条）：背景只需要安静地衬着。
             // 流星只首页给（ui.md 远楼剪影那条）：偶尔一闪的活气，不进局内扰呈现
-            objects.backdrop(this, view, { starScale: 0.55, meteor: true });
+            objects.backdrop(this, view, { starScale: 0.8, meteor: true });
 
             // 横屏不是竖屏的缩小版，是同一套构件换一种排布（harness/gameplay.md / harness/requirements.md 4d）：
             // 左边品牌区 + 出口钉底，右边玩法区。出口在左列是 4d 定案：320 高的横屏右列装不下

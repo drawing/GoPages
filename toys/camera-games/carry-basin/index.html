@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>抬盆接物 🥘</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a0e2e; overflow: hidden;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    video { display: none; }
+    canvas { display: block; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+    #hud {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 16px; z-index: 100; pointer-events: none;
+    }
+    .hud-item {
+      background: rgba(0,0,0,0.65); color: #fff; padding: 10px 18px;
+      border-radius: 24px; font-size: 18px; font-weight: 700;
+      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .screen {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    }
+    .screen-content { text-align: center; color: #fff; max-width: 460px; padding: 32px; width: 92%; }
+    .screen-content h1 { font-size: 42px; margin-bottom: 12px; }
+    .screen-content h2 { font-size: 30px; margin-bottom: 16px; }
+    .subtitle { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 24px; }
+    .rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; font-size: 14px; color: rgba(255,255,255,0.85); }
+
+    .btn {
+      display: block; width: 100%; padding: 14px 24px; border: none; border-radius: 12px;
+      font-size: 18px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #7C3AED; color: #fff; }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-secondary { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+
+    .loader {
+      width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #7C3AED; border-radius: 50%; margin: 24px auto;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #countdown-overlay { background: rgba(0,0,0,0.65); }
+    #countdown-number {
+      font-size: 160px; font-weight: 900; color: #fff;
+      text-shadow: 0 0 80px rgba(124,58,237,0.8);
+      animation: pulse 0.8s ease-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1.6); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .final-score { font-size: 72px; font-weight: 900; color: #7C3AED; margin: 8px 0 4px; line-height: 1; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 28px; text-align: center; }
+    .stat-item { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; color: #7C3AED; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+    .top-score-text { font-size: 18px; color: #FFD700; margin-bottom: 16px; }
+
+    #player-name {
+      width: 100%; padding: 12px 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff;
+      font-size: 18px; text-align: center; outline: none; margin-bottom: 12px;
+    }
+    #player-name:focus { border-color: #7C3AED; }
+    #player-name::placeholder { color: rgba(255,255,255,0.4); }
+
+    #leaderboard-list { list-style: none; margin: 24px 0; text-align: left; }
+    #leaderboard-list li {
+      display: flex; align-items: center; padding: 12px 16px; margin-bottom: 6px;
+      background: rgba(255,255,255,0.08); border-radius: 10px; font-size: 16px; gap: 12px;
+    }
+    .rank-badge { width: 28px; height: 28px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+    .rank-1 { background: #FFD700; color: #000; }
+    .rank-2 { background: #C0C0C0; color: #000; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: rgba(255,255,255,0.15); color: #fff; }
+    .lb-name { flex: 1; font-weight: 600; }
+    .lb-score { font-weight: 800; color: #7C3AED; font-size: 18px; }
+    .hidden { display: none !important; }
+
+    /* 倾斜警告 */
+    #tilt-warning {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,0,0,0.8); color: #fff; padding: 10px 24px;
+      border-radius: 20px; font-size: 18px; font-weight: 700;
+      pointer-events: none; z-index: 150; opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    @media (max-width: 480px) {
+      .screen-content h1 { font-size: 32px; }
+      .final-score { font-size: 56px; }
+      #countdown-number { font-size: 120px; }
+      .hud-item { font-size: 15px; padding: 8px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div id="tilt-warning">⚠️ 盆要掉了！保持平衡！</div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-item" id="hud-timer">⏱ 60s</div>
+      <div class="hud-item" id="hud-food">🥘 0</div>
+      <div class="hud-item" id="hud-status">放下</div>
+    </div>
+
+    <div id="loading-screen" class="screen">
+      <div class="screen-content">
+        <h1>🥘 抬盆接物</h1>
+        <p>正在加载人体识别模型...</p>
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <div id="start-screen" class="screen hidden">
+      <div class="screen-content">
+        <h1>🥘 抬盆接物</h1>
+        <p class="subtitle">两手抓住盆的两侧把手抬起<br>接住天上掉下来的食物！</p>
+        <div class="rules">
+          <span>🤲 双手同时放在盆两侧才能抬起</span>
+          <span>⚖️ 保持双手平衡，倾斜太大会掉盆</span>
+          <span>🍔 接住食物得分，盆掉了会丢食物</span>
+          <span>⏱ 60秒限时，接越多越好！</span>
+        </div>
+        <button id="btn-start" class="btn btn-primary">开始游戏</button>
+        <button id="btn-leaderboard" class="btn btn-secondary">🏆 排行榜</button>
+      </div>
+    </div>
+
+    <div id="countdown-overlay" class="screen hidden">
+      <div id="countdown-number">3</div>
+    </div>
+
+    <div id="gameover-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>⏰ 时间到！</h2>
+        <p id="final-score" class="final-score">0</p>
+        <p style="font-size:16px;color:rgba(255,255,255,0.65);margin-bottom:8px">接住食物数</p>
+        <div class="stats-grid">
+          <div class="stat-item"><div class="stat-value" id="stat-caught">0</div><div class="stat-label">接住总数</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-lost">0</div><div class="stat-label">丢失数量</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-drops">0</div><div class="stat-label">掉盆次数</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-lifts">0</div><div class="stat-label">抬盆次数</div></div>
+        </div>
+        <div id="top-score-section" class="hidden">
+          <p class="top-score-text">🎉 恭喜进入前10名！</p>
+          <input id="player-name" type="text" placeholder="输入你的名字" maxlength="10" />
+          <button id="btn-save" class="btn btn-primary">保存成绩</button>
+        </div>
+        <button id="btn-again" class="btn btn-primary hidden">再来一局</button>
+        <button id="btn-back" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+
+    <div id="leaderboard-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>🏆 排行榜 TOP 10</h2>
+        <ol id="leaderboard-list"></ol>
+        <button id="btn-back-home" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+    "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
+  }}
+  </script>
+
+  <script type="module">
+    import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision';
+
+    const GAME_DURATION  = 60;
+    const LEADERBOARD_KEY= 'carry-basin-leaderboard';
+    const MAX_TILT_DEG   = 30;   // 超过此角度掉盆
+    const WARN_TILT_DEG  = 18;   // 警告角度
+    const BASIN_WIDTH    = 220;  // 盆宽
+    const BASIN_HEIGHT   = 100;  // 盆高
+    const GRAB_RADIUS    = 80;   // 抓取判定半径
+    const FOOD_TYPES = [
+      { emoji:'🥟', name:'饺子', points:3, color:'#F5E6CC' },
+      { emoji:'🍔', name:'汉堡', points:2, color:'#D4A03C' },
+      { emoji:'🥬', name:'青菜', points:1, color:'#4CAF50' },
+      { emoji:'🍞', name:'面包', points:1, color:'#E8B960' },
+      { emoji:'🍅', name:'番茄', points:2, color:'#E63946' },
+      { emoji:'🌽', name:'玉米', points:1, color:'#FFD700' },
+      { emoji:'🥕', name:'胡萝卜', points:1, color:'#FF8C00' },
+      { emoji:'🍗', name:'鸡腿', points:3, color:'#C4843A' },
+    ];
+    const POSE_CONNECTIONS = [
+      [11,12],[11,13],[13,15],[12,14],[14,16],
+      [11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],
+    ];
+
+    function dist(x1,y1,x2,y2) { return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
+    function randRange(a,b)    { return a+Math.random()*(b-a); }
+    function escapeHTML(s)     { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+    function clamp(v,a,b)      { return Math.max(a,Math.min(b,v)); }
+
+    /* ===== 排行榜 ===== */
+    function loadBoard() { try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY))||[]; } catch { return []; } }
+    function saveBoard(b) { localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(b)); }
+    function isTop(s) { const b=loadBoard(); return b.length<10||s>(b[b.length-1]?.score??0); }
+    function addScore(name,score) {
+      const b=loadBoard(); b.push({name,score,date:new Date().toLocaleDateString('zh-CN')});
+      b.sort((a,c)=>c.score-a.score); const t=b.slice(0,10); saveBoard(t); return t;
+    }
+
+    /* ===== 食物 ===== */
+    class Food {
+      constructor(w, h) {
+        const type = FOOD_TYPES[Math.floor(Math.random()*FOOD_TYPES.length)];
+        this.emoji  = type.emoji;
+        this.points = type.points;
+        this.color  = type.color;
+        this.size   = randRange(30, 38);
+        this.x      = randRange(60, w - 60);
+        this.y      = -40;
+        this.vy     = randRange(120, 200);
+        this.vx     = randRange(-30, 30);
+        this.rot    = 0;
+        this.rotSpd = randRange(-3, 3);
+        this.alive  = true;
+        this.caught = false;
+      }
+      update(dt, w, h) {
+        if (this.caught) return;
+        this.y += this.vy * dt;
+        this.x += this.vx * dt;
+        this.rot += this.rotSpd * dt;
+        if (this.y > h + 50) this.alive = false;
+      }
+      draw(ctx) {
+        if (this.caught) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // 发光背景圆
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 25;
+        ctx.fillStyle = this.color + '55';
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // 白色边框圆
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size * 0.9, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // emoji
+        ctx.rotate(this.rot);
+        ctx.font = `${this.size * 2}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.emoji, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    /* ===== 盆 ===== */
+    class Basin {
+      constructor(w, h) {
+        this.w = BASIN_WIDTH;
+        this.h = BASIN_HEIGHT;
+        this.groundY = h - 100; // 地面位置
+        this.x = w / 2;         // 盆中心 x
+        this.y = this.groundY;  // 盆底部 y
+        this.tilt = 0;          // 倾斜角度（度）
+        this.state = 'grounded';// grounded / lifted / falling
+        this.fallSpeed = 0;
+        this.foodInside = [];   // 盆内食物
+        this.dropAnim = 0;      // 掉落动画计时
+      }
+
+      get handleL() { return { x: this.x - this.w/2 - 15, y: this.y - this.h/2 }; }
+      get handleR() { return { x: this.x + this.w/2 + 15, y: this.y - this.h/2 }; }
+      get openingY() { return this.y - this.h; } // 盆口 y
+
+      lift(leftWrist, rightWrist) {
+        this.state = 'lifted';
+        this.fallSpeed = 0;
+        this.updateFromHands(leftWrist, rightWrist);
+      }
+
+      updateFromHands(lw, rw) {
+        // 盆中心 = 两手中间
+        this.x = (lw.x + rw.x) / 2;
+        this.y = (lw.y + rw.y) / 2;
+        // 倾斜角度
+        const dx = rw.x - lw.x;
+        const dy = rw.y - lw.y;
+        this.tilt = Math.atan2(dy, dx) * 180 / Math.PI;
+      }
+
+      drop(tiltDeg) {
+        this.state = 'falling';
+        this.fallSpeed = 0;
+        this.dropAnim = 0;
+        this.tilt = tiltDeg;
+      }
+
+      update(dt, w, h) {
+        this.groundY = h - 100;
+
+        if (this.state === 'falling') {
+          this.fallSpeed += 800 * dt; // 重力
+          this.y += this.fallSpeed * dt;
+          this.dropAnim += dt;
+          if (this.y >= this.groundY) {
+            this.y = this.groundY;
+            this.state = 'grounded';
+            this.tilt = 0;
+            this.fallSpeed = 0;
+          }
+        }
+      }
+
+      draw(ctx) {
+        const { x, y, w, h, tilt, state } = this;
+
+        ctx.save();
+        ctx.translate(x, y - h/2);
+        ctx.rotate(tilt * Math.PI / 180);
+
+        // 盆体（梯形）
+        const topW = w * 1.1;
+        const botW = w * 0.75;
+        ctx.fillStyle = '#8B6914';
+        ctx.strokeStyle = '#5C4400';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-topW/2, -h/2);
+        ctx.lineTo(topW/2, -h/2);
+        ctx.lineTo(botW/2, h/2);
+        ctx.lineTo(-botW/2, h/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 盆口边沿
+        ctx.fillStyle = '#A0782C';
+        ctx.fillRect(-topW/2 - 5, -h/2 - 8, topW + 10, 12);
+        ctx.strokeRect(-topW/2 - 5, -h/2 - 8, topW + 10, 12);
+
+        // 把手（左）
+        ctx.strokeStyle = '#5C4400';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(-topW/2 - 18, -h/4, 18, -Math.PI/2, Math.PI/2);
+        ctx.stroke();
+        // 把手（右）
+        ctx.beginPath();
+        ctx.arc(topW/2 + 18, -h/4, 18, Math.PI/2, -Math.PI/2);
+        ctx.stroke();
+
+        // 盆内食物
+        const maxShow = Math.min(this.foodInside.length, 12);
+        for (let i = 0; i < maxShow; i++) {
+          const f = this.foodInside[i];
+          const fx = randRange(-botW/3, botW/3);
+          const fy = randRange(-h/3, h/4);
+          ctx.font = '20px serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(f.emoji, fx, fy);
+        }
+
+        ctx.restore();
+
+        // 把手抓取提示圈（盆在地上时）
+        if (state === 'grounded') {
+          const hl = this.handleL, hr = this.handleR;
+          ctx.save();
+          ctx.strokeStyle = 'rgba(124,58,237,0.5)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6,4]);
+          ctx.beginPath(); ctx.arc(hl.x, hl.y, GRAB_RADIUS, 0, Math.PI*2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(hr.x, hr.y, GRAB_RADIUS, 0, Math.PI*2); ctx.stroke();
+          ctx.setLineDash([]);
+          // 提示文字
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.font = '14px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('左手', hl.x, hl.y - GRAB_RADIUS - 8);
+          ctx.fillText('右手', hr.x, hr.y - GRAB_RADIUS - 8);
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 飘字 ===== */
+    class FloatText {
+      constructor(x, y, text, color='#fff') {
+        this.x=x; this.y=y; this.text=text; this.color=color;
+        this.alpha=1; this.alive=true;
+      }
+      update(dt) { this.y-=55*dt; this.alpha-=dt*1.5; if(this.alpha<=0) this.alive=false; }
+      draw(ctx) {
+        if(!this.alive) return;
+        ctx.save(); ctx.globalAlpha=this.alpha;
+        ctx.font='bold 26px sans-serif'; ctx.textAlign='center';
+        ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=3;
+        ctx.strokeText(this.text,this.x,this.y);
+        ctx.fillStyle=this.color; ctx.fillText(this.text,this.x,this.y);
+        ctx.restore();
+      }
+    }
+
+    /* ===== 粒子 ===== */
+    class BurstEffect {
+      constructor(x, y, color) {
+        this.particles = [];
+        for (let i=0; i<8; i++) {
+          const a=Math.random()*Math.PI*2, s=randRange(60,180);
+          this.particles.push({ x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,
+            r:randRange(3,6),alpha:1,color });
+        }
+        this.alive = true;
+      }
+      update(dt) {
+        let any=false;
+        for(const p of this.particles) {
+          p.x+=p.vx*dt; p.y+=p.vy*dt; p.alpha-=dt*2; p.vy+=200*dt;
+          if(p.alpha>0) any=true;
+        }
+        if(!any) this.alive=false;
+      }
+      draw(ctx) {
+        for(const p of this.particles) {
+          if(p.alpha<=0) continue;
+          ctx.save(); ctx.globalAlpha=p.alpha;
+          ctx.fillStyle=p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 主游戏 ===== */
+    class CarryBasinGame {
+      constructor() {
+        this.video  = document.getElementById('video');
+        this.canvas = document.getElementById('canvas');
+        this.ctx    = this.canvas.getContext('2d');
+        this.hud    = document.getElementById('hud');
+        this.hudTimer = document.getElementById('hud-timer');
+        this.hudFood  = document.getElementById('hud-food');
+        this.hudStatus= document.getElementById('hud-status');
+        this.tiltWarn = document.getElementById('tilt-warning');
+        this.loading  = document.getElementById('loading-screen');
+        this.startScr = document.getElementById('start-screen');
+        this.cntdown  = document.getElementById('countdown-overlay');
+        this.cntNum   = document.getElementById('countdown-number');
+        this.overScr  = document.getElementById('gameover-screen');
+        this.finalSc  = document.getElementById('final-score');
+        this.topSec   = document.getElementById('top-score-section');
+        this.nameInp  = document.getElementById('player-name');
+        this.lbScr    = document.getElementById('leaderboard-screen');
+        this.lbList   = document.getElementById('leaderboard-list');
+        this.btnAgain = document.getElementById('btn-again');
+
+        this.state    = 'loading';
+        this.timeLeft = GAME_DURATION;
+        this.score    = 0;
+        this.totalCaught = 0;
+        this.totalLost   = 0;
+        this.totalDrops  = 0;
+        this.totalLifts  = 0;
+        this.basin    = null;
+        this.foods    = [];
+        this.effects  = [];
+        this.texts    = [];
+        this.poseLm   = null;
+        this.spawnTimer = 0;
+        this.lastTime = 0;
+        this.prevGrab = { left:false, right:false };
+        this.poseLandmarker = null;
+
+        this.bindEvents();
+        this.init();
+      }
+
+      async init() {
+        try {
+          await this.initCamera();
+          await this.initPoseTracker();
+          this.showScreen('start');
+        } catch(err) {
+          console.error('初始化失败:', err);
+          this.loading.querySelector('.screen-content').innerHTML = `
+            <h1>❌ 初始化失败</h1>
+            <p style="margin-top:16px;color:rgba(255,255,255,0.8)">${err.message}</p>
+            <button class="btn btn-primary" style="margin-top:24px" onclick="location.reload()">重试</button>`;
+        }
+      }
+
+      async initCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode:'user', width:{ideal:1280}, height:{ideal:720} }, audio:false
+        });
+        this.video.srcObject = stream;
+        await new Promise(r => this.video.addEventListener('loadeddata', r, {once:true}));
+        this.canvas.width = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        this.video.play();
+      }
+
+      async initPoseTracker() {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+        this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
+            delegate: 'GPU'
+          },
+          runningMode: 'VIDEO', numPoses: 1
+        });
+      }
+
+      bindEvents() {
+        document.getElementById('btn-start').addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-leaderboard').addEventListener('click', ()=>this.showLeaderboard());
+        document.getElementById('btn-save').addEventListener('click', ()=>this.saveScore());
+        this.btnAgain.addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-back').addEventListener('click', ()=>this.showScreen('start'));
+        document.getElementById('btn-back-home').addEventListener('click', ()=>this.showScreen('start'));
+        this.nameInp.addEventListener('keydown', e=>{ if(e.key==='Enter') this.saveScore(); });
+      }
+
+      showScreen(name) {
+        [this.loading,this.startScr,this.cntdown,this.overScr,this.lbScr].forEach(s=>s.classList.add('hidden'));
+        this.hud.classList.add('hidden');
+        this.tiltWarn.style.opacity = '0';
+        switch(name) {
+          case 'loading':     this.loading.classList.remove('hidden'); break;
+          case 'start':       this.startScr.classList.remove('hidden'); break;
+          case 'countdown':   this.cntdown.classList.remove('hidden'); break;
+          case 'playing':     this.hud.classList.remove('hidden'); break;
+          case 'gameover':    this.overScr.classList.remove('hidden'); break;
+          case 'leaderboard': this.lbScr.classList.remove('hidden'); break;
+        }
+        this.state = name;
+      }
+
+      async startCountdown() {
+        this.showScreen('countdown');
+        for (let i=3;i>0;i--) {
+          this.cntNum.textContent=i;
+          this.cntNum.style.animation='none'; void this.cntNum.offsetWidth;
+          this.cntNum.style.animation='pulse 0.8s ease-out';
+          await new Promise(r=>setTimeout(r,900));
+        }
+        this.startGame();
+      }
+
+      startGame() {
+        this.timeLeft = GAME_DURATION;
+        this.score = 0; this.totalCaught=0; this.totalLost=0; this.totalDrops=0; this.totalLifts=0;
+        this.foods=[]; this.effects=[]; this.texts=[];
+        this.spawnTimer=0; this.prevGrab={left:false,right:false};
+        this.basin = new Basin(this.canvas.width, this.canvas.height);
+        this.lastTime = performance.now();
+        this.showScreen('playing'); this.updateHUD();
+        requestAnimationFrame(t=>this.gameLoop(t));
+      }
+
+      endGame() {
+        this.showScreen('gameover');
+        this.finalSc.textContent = this.score;
+        document.getElementById('stat-caught').textContent = this.totalCaught;
+        document.getElementById('stat-lost').textContent   = this.totalLost;
+        document.getElementById('stat-drops').textContent  = this.totalDrops;
+        document.getElementById('stat-lifts').textContent  = this.totalLifts;
+
+        if (isTop(this.score) && this.score > 0) {
+          this.topSec.classList.remove('hidden');
+          this.btnAgain.classList.add('hidden');
+          this.nameInp.value = '';
+          setTimeout(()=>this.nameInp.focus(), 300);
+        } else {
+          this.topSec.classList.add('hidden');
+          this.btnAgain.classList.remove('hidden');
+        }
+      }
+
+      saveScore() {
+        const name = this.nameInp.value.trim();
+        if (!name) { this.nameInp.style.borderColor='#f44336'; this.nameInp.placeholder='请输入名字！'; return; }
+        addScore(name, this.score);
+        this.topSec.classList.add('hidden');
+        this.btnAgain.classList.remove('hidden');
+      }
+
+      showLeaderboard() {
+        const board = loadBoard();
+        this.lbList.innerHTML = '';
+        if (board.length===0) {
+          this.lbList.innerHTML='<li style="justify-content:center;color:rgba(255,255,255,0.5)">暂无记录</li>';
+        } else {
+          board.forEach((e,i)=>{
+            const r=i+1, bc=r<=3?`rank-${r}`:'rank-other';
+            const m=r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
+            const li=document.createElement('li');
+            li.innerHTML=`<span class="rank-badge ${bc}">${m}</span>
+              <span class="lb-name">${escapeHTML(e.name)}</span>
+              <span class="lb-score">${e.score}</span>`;
+            this.lbList.appendChild(li);
+          });
+        }
+        this.showScreen('leaderboard');
+      }
+
+      updateHUD() {
+        this.hudTimer.textContent = `⏱ ${Math.ceil(this.timeLeft)}s`;
+        this.hudFood.textContent  = `🥘 ${this.score}`;
+        const st = this.basin?.state === 'lifted' ? '抬起' : this.basin?.state === 'falling' ? '掉落!' : '放下';
+        this.hudStatus.textContent = st;
+      }
+
+      getSpawnInterval() { return Math.max(0.6, 1.5 - (GAME_DURATION - this.timeLeft) * 0.012); }
+
+      /* --- 主循环 --- */
+      gameLoop(ts) {
+        const dt = Math.min((ts - this.lastTime)/1000, 0.1);
+        this.lastTime = ts;
+        if (this.state==='playing') this.update(dt);
+        this.draw();
+        requestAnimationFrame(t=>this.gameLoop(t));
+      }
+
+      update(dt) {
+        const w=this.canvas.width, h=this.canvas.height;
+        this.timeLeft -= dt;
+        if (this.timeLeft <= 0) { this.timeLeft=0; this.updateHUD(); this.endGame(); return; }
+
+        this.detectPose();
+
+        // 生成食物
+        this.spawnTimer += dt;
+        if (this.spawnTimer >= this.getSpawnInterval()) {
+          this.foods.push(new Food(w, h));
+          this.spawnTimer = 0;
+        }
+
+        // 更新食物
+        this.foods.forEach(f => f.update(dt, w, h));
+
+        // 盆状态更新
+        this.updateBasin(dt, w, h);
+
+        // 接食物检测
+        this.checkCatchFood();
+
+        // 清理
+        this.foods = this.foods.filter(f => f.alive && !f.caught);
+        this.effects.forEach(e => e.update(dt));
+        this.effects = this.effects.filter(e => e.alive);
+        this.texts.forEach(t => t.update(dt));
+        this.texts = this.texts.filter(t => t.alive);
+        this.updateHUD();
+      }
+
+      updateBasin(dt, w, h) {
+        const basin = this.basin;
+        basin.update(dt, w, h);
+
+        if (!this.poseLm) {
+          this.tiltWarn.style.opacity = '0';
+          if (basin.state === 'lifted') this.dropBasin();
+          return;
+        }
+
+        // CSS scaleX(-1) 镜像了画面，所以视觉上左手=原始坐标右手(16)，视觉右手=原始左手(15)
+        const lw = this.poseLm[16]; // 视觉左手（原始右手腕）
+        const rw = this.poseLm[15]; // 视觉右手（原始左手腕）
+        if (!lw || !rw || lw.visibility < 0.3 || rw.visibility < 0.3) {
+          this.tiltWarn.style.opacity = '0';
+          if (basin.state === 'lifted') this.dropBasin();
+          return;
+        }
+
+        const hl = basin.handleL, hr = basin.handleR;
+        const grabL = dist(lw.x, lw.y, hl.x, hl.y) < GRAB_RADIUS;
+        const grabR = dist(rw.x, rw.y, hr.x, hr.y) < GRAB_RADIUS;
+
+        if (basin.state === 'grounded') {
+          // 两只手都抓住把手才能抬起
+          if (grabL && grabR) {
+            basin.lift(lw, rw);
+            this.totalLifts++;
+          }
+        } else if (basin.state === 'lifted') {
+          // 检查是否还抓着
+          if (!grabL || !grabR) {
+            this.dropBasin();
+            return;
+          }
+          // 更新盆位置和倾斜
+          basin.updateFromHands(lw, rw);
+
+          // 检查倾斜
+          const absTilt = Math.abs(basin.tilt);
+          if (absTilt >= MAX_TILT_DEG) {
+            this.dropBasin();
+            return;
+          }
+          // 倾斜警告
+          if (absTilt >= WARN_TILT_DEG) {
+            this.tiltWarn.style.opacity = '1';
+          } else {
+            this.tiltWarn.style.opacity = '0';
+          }
+        }
+      }
+
+      dropBasin() {
+        const basin = this.basin;
+        const tiltDeg = Math.abs(basin.tilt);
+        basin.drop(basin.tilt);
+        this.totalDrops++;
+        this.tiltWarn.style.opacity = '0';
+
+        // 按比例丢失食物
+        const lossRatio = clamp(tiltDeg / 90, 0.1, 1);
+        const lostCount = Math.ceil(basin.foodInside.length * lossRatio);
+        if (lostCount > 0) {
+          const lost = basin.foodInside.splice(0, lostCount);
+          this.score = Math.max(0, this.score - lost.length);
+          this.totalLost += lost.length;
+          this.texts.push(new FloatText(basin.x, basin.y - 80,
+            `丢失 ${lost.length} 个！`, '#FF5252'));
+          this.effects.push(new BurstEffect(basin.x, basin.y - 50, '#FF5252'));
+        }
+      }
+
+      checkCatchFood() {
+        const basin = this.basin;
+        if (basin.state !== 'lifted') return;
+
+        const openY = basin.openingY;
+        const leftEdge = basin.x - basin.w/2;
+        const rightEdge = basin.x + basin.w/2;
+
+        for (const food of this.foods) {
+          if (food.caught || !food.alive) continue;
+          // 食物进入盆口区域
+          if (food.y >= openY - 20 && food.y <= openY + 30 &&
+              food.x >= leftEdge && food.x <= rightEdge) {
+            food.caught = true;
+            basin.foodInside.push(food);
+            this.score += food.points;
+            this.totalCaught++;
+            this.effects.push(new BurstEffect(food.x, food.y, food.color));
+            this.texts.push(new FloatText(food.x, food.y - 20,
+              `${food.emoji} +${food.points}`, food.color));
+          }
+        }
+      }
+
+      detectPose() {
+        this.poseLm = null;
+        if (!this.poseLandmarker || this.video.readyState < 2) return;
+        try {
+          const result = this.poseLandmarker.detectForVideo(this.video, performance.now());
+          if (result.landmarks && result.landmarks[0]) {
+            const w=this.canvas.width, h=this.canvas.height;
+            this.poseLm = result.landmarks[0].map(lm => ({
+              x: lm.x*w, y: lm.y*h, z: lm.z, visibility: lm.visibility
+            }));
+          }
+        } catch {}
+      }
+
+      draw() {
+        const {ctx,canvas:cvs}=this;
+        const w=cvs.width, h=cvs.height;
+        ctx.clearRect(0,0,w,h);
+
+        if (this.video.readyState>=2) ctx.drawImage(this.video,0,0,w,h);
+
+        if (this.state==='playing') {
+          ctx.fillStyle='rgba(0,0,0,0.06)';
+          ctx.fillRect(0,0,w,h);
+        }
+
+        // 地面线
+        if (this.basin) {
+          const gy = this.basin.groundY + 10;
+          ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([10,8]);
+          ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // 食物
+        this.foods.forEach(f => f.draw(ctx));
+
+        // 盆
+        if (this.basin) this.basin.draw(ctx);
+
+        // 粒子
+        this.effects.forEach(e => e.draw(ctx));
+
+        // 飘字
+        this.texts.forEach(t => t.draw(ctx));
+
+        // 人体骨骼
+        this.drawPose(ctx);
+
+        // 倾斜角度指示器（抬起时）
+        if (this.basin?.state === 'lifted') {
+          this.drawTiltIndicator(ctx);
+        }
+      }
+
+      drawTiltIndicator(ctx) {
+        const tilt = this.basin.tilt;
+        const absTilt = Math.abs(tilt);
+        const x = 80, y = this.canvas.height - 80;
+        const r = 35;
+
+        ctx.save();
+        ctx.translate(x, y);
+
+        // 背景圆
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath(); ctx.arc(0, 0, r+5, 0, Math.PI*2); ctx.fill();
+
+        // 刻度
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(-r,0); ctx.lineTo(r,0); ctx.stroke();
+
+        // 指针
+        const color = absTilt >= WARN_TILT_DEG ? '#FF5252' : '#00E676';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        const angle = tilt * Math.PI / 180;
+        ctx.lineTo(Math.sin(angle) * r, -Math.cos(angle) * r);
+        ctx.stroke();
+
+        // 角度文字
+        ctx.fillStyle = color;
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.round(absTilt)}°`, 0, r + 20);
+
+        ctx.restore();
+      }
+
+      drawPose(ctx) {
+        if (!this.poseLm) return;
+
+        ctx.strokeStyle = 'rgba(0,255,200,0.4)';
+        ctx.lineWidth = 3;
+        for (const [i,j] of POSE_CONNECTIONS) {
+          const a=this.poseLm[i], b=this.poseLm[j];
+          if (!a||!b||a.visibility<0.3||b.visibility<0.3) continue;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+
+        // 手腕特殊标记
+        for (const idx of [15, 16]) {
+          const lm = this.poseLm[idx];
+          if (!lm || lm.visibility < 0.3) continue;
+          ctx.save();
+          ctx.shadowColor = '#7C3AED';
+          ctx.shadowBlur = 15;
+          ctx.fillStyle = '#7C3AED';
+          ctx.beginPath(); ctx.arc(lm.x, lm.y, 10, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.beginPath(); ctx.arc(lm.x, lm.y, 4, 0, Math.PI*2); ctx.fill();
+          ctx.restore();
+        }
+
+        // 其他关键点
+        for (let i=0; i<this.poseLm.length; i++) {
+          if (i===15||i===16) continue;
+          const lm = this.poseLm[i];
+          if (!lm || lm.visibility < 0.3) continue;
+          ctx.fillStyle = 'rgba(0,255,200,0.6)';
+          ctx.beginPath(); ctx.arc(lm.x, lm.y, 4, 0, Math.PI*2); ctx.fill();
+        }
+      }
+    }
+
+    new CarryBasinGame();
+  </script>
+</body>
+</html>

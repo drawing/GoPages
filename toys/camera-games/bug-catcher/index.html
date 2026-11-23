@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>抓虫大作战 🐛</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    video { display: none; }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    /* HUD */
+    #hud {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .hud-item {
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;
+    }
+
+    /* 通用覆盖层 */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+    }
+
+    .screen-content {
+      text-align: center;
+      color: #fff;
+      max-width: 420px;
+      padding: 32px;
+      width: 90%;
+    }
+
+    .screen-content h1 { font-size: 42px; margin-bottom: 12px; letter-spacing: -1px; }
+    .screen-content h2 { font-size: 32px; margin-bottom: 16px; }
+
+    .subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .rules {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 32px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* 按钮 */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary { background: #4CAF50; color: #fff; }
+    .btn-primary:hover { background: #45a049; }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.25); }
+
+    /* 加载动画 */
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #4CAF50;
+      border-radius: 50%;
+      margin: 24px auto;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 倒计时 */
+    #countdown-overlay { background: rgba(0,0,0,0.6); }
+
+    #countdown-number {
+      font-size: 160px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 60px rgba(76,175,80,0.8);
+      animation: countdown-pulse 0.8s ease-out;
+    }
+
+    @keyframes countdown-pulse {
+      0%   { transform: scale(1.5); opacity: 0; }
+      50%  { opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* 游戏结束 */
+    .final-score {
+      font-size: 80px;
+      font-weight: 900;
+      color: #4CAF50;
+      margin: 8px 0 4px;
+      line-height: 1;
+    }
+
+    #final-label { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 24px; }
+
+    .top-score-text { font-size: 18px; color: #FFD700; margin-bottom: 16px; }
+
+    #player-name {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    #player-name:focus { border-color: #4CAF50; }
+    #player-name::placeholder { color: rgba(255,255,255,0.4); }
+
+    /* 排行榜 */
+    #leaderboard-list { list-style: none; margin: 24px 0; text-align: left; }
+
+    #leaderboard-list li {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      font-size: 16px;
+      gap: 12px;
+    }
+
+    .rank-badge {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .rank-1 { background: #FFD700; color: #000; }
+    .rank-2 { background: #C0C0C0; color: #000; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .leaderboard-name  { flex: 1; font-weight: 600; color: #fff; }
+    .leaderboard-score { font-weight: 800; color: #4CAF50; font-size: 18px; }
+    .leaderboard-date  { font-size: 12px; color: rgba(255,255,255,0.4); margin-left: 4px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 480px) {
+      .screen-content h1 { font-size: 32px; }
+      .final-score { font-size: 60px; }
+      #countdown-number { font-size: 120px; }
+      .hud-item { font-size: 14px; padding: 6px 12px; }
+      #hud { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div class="hud-item" id="hud-score">得分: 0</div>
+      <div class="hud-item" id="hud-timer">30s</div>
+      <div class="hud-item" id="hud-count">虫子: 0</div>
+    </div>
+
+    <!-- 加载中 -->
+    <div id="loading-screen" class="screen">
+      <div class="screen-content">
+        <h1>🐛 抓虫大作战</h1>
+        <p>正在加载手部识别模型...</p>
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <!-- 开始 -->
+    <div id="start-screen" class="screen hidden">
+      <div class="screen-content">
+        <h1>🐛 抓虫大作战</h1>
+        <p class="subtitle">用你的手去抓住屏幕上的虫子！<br />捏合拇指和食指 = 抓取</p>
+        <div class="rules">
+          <span>⏱ 30秒限时</span>
+          <span>🐛 抓住尽可能多的虫子</span>
+          <span>🏆 进入前10名可上榜</span>
+        </div>
+        <button id="btn-start" class="btn btn-primary">开始游戏</button>
+        <button id="btn-leaderboard" class="btn btn-secondary">🏆 排行榜</button>
+      </div>
+    </div>
+
+    <!-- 倒计时 -->
+    <div id="countdown-overlay" class="screen hidden">
+      <div id="countdown-number">3</div>
+    </div>
+
+    <!-- 游戏结束 -->
+    <div id="gameover-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>⏰ 时间到！</h2>
+        <p id="final-score" class="final-score">0</p>
+        <p id="final-label">抓到虫子数</p>
+        <div id="top-score-section" class="hidden">
+          <p class="top-score-text">🎉 恭喜进入前10名！</p>
+          <input id="player-name" type="text" placeholder="输入你的名字" maxlength="10" />
+          <button id="btn-save" class="btn btn-primary">保存成绩</button>
+        </div>
+        <button id="btn-again" class="btn btn-primary hidden">再来一局</button>
+        <button id="btn-back" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+
+    <!-- 排行榜 -->
+    <div id="leaderboard-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>🏆 排行榜 TOP 10</h2>
+        <ol id="leaderboard-list"></ol>
+        <button id="btn-back-home" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MediaPipe CDN ESM，通过 importmap 解析 -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
+
+    /* ===== 常量 ===== */
+    const GAME_DURATION   = 30;
+    const MAX_BUGS        = 5;
+    const SPAWN_INTERVAL  = 2.0;
+    const PINCH_THRESHOLD = 0.07;
+    const GRAB_RADIUS     = 50;
+    const LEADERBOARD_KEY = 'bug-catcher-leaderboard';
+
+    const HAND_CONNECTIONS = [
+      [0,1],[1,2],[2,3],[3,4],
+      [0,5],[5,6],[6,7],[7,8],
+      [5,9],[9,10],[10,11],[11,12],
+      [9,13],[13,14],[14,15],[15,16],
+      [13,17],[17,18],[18,19],[19,20],
+      [0,17]
+    ];
+
+    const BUG_PALETTES = [
+      { body: '#2E7D32', shell: '#1B5E20' },
+      { body: '#C62828', shell: '#B71C1C' },
+      { body: '#4527A0', shell: '#311B92' },
+      { body: '#E65100', shell: '#BF360C' },
+      { body: '#00695C', shell: '#004D40' },
+      { body: '#283593', shell: '#1A237E' },
+      { body: '#6A1B9A', shell: '#4A148C' },
+      { body: '#00838F', shell: '#006064' },
+    ];
+
+    /* ===== 工具函数 ===== */
+    function dist(x1, y1, x2, y2) {
+      return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    }
+
+    function randRange(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /* ===== 排行榜 ===== */
+    function loadLeaderboard() {
+      try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function saveLeaderboard(board) {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
+    }
+
+    function isTopScore(score) {
+      const board = loadLeaderboard();
+      return board.length < 10 || score > (board[board.length - 1]?.score ?? 0);
+    }
+
+    function addToLeaderboard(name, score) {
+      const board = loadLeaderboard();
+      board.push({ name, score, date: new Date().toLocaleDateString('zh-CN') });
+      board.sort((a, b) => b.score - a.score);
+      const trimmed = board.slice(0, 10);
+      saveLeaderboard(trimmed);
+      return trimmed;
+    }
+
+    /* ===== 虫子 ===== */
+    class Bug {
+      constructor(w, h) {
+        this.canvasW = w;
+        this.canvasH = h;
+        const palette = BUG_PALETTES[Math.floor(Math.random() * BUG_PALETTES.length)];
+        this.bodyColor  = palette.body;
+        this.shellColor = palette.shell;
+        this.size = randRange(16, 22);
+        const margin = 80;
+        this.x = randRange(margin, w - margin);
+        this.y = randRange(margin, h - margin);
+        this.angle = Math.random() * Math.PI * 2;
+        this.baseSpeed = randRange(50, 120);
+        this.speed = this.baseSpeed;
+        this.dirTimer = 0;
+        this.dirInterval = randRange(0.8, 2.0);
+        this.speedTimer = 0;
+        this.speedInterval = randRange(1.0, 3.0);
+        this.legPhase = Math.random() * Math.PI * 2;
+        this.fleeing = false;
+        this.caught = false;
+      }
+
+      update(dt, w, h, hands) {
+        if (this.caught) return;
+        this.canvasW = w;
+        this.canvasH = h;
+        // 腿动画速度跟随移动速度
+        this.legPhase += dt * (6 + this.speed / 20);
+        this.dirTimer += dt;
+        this.speedTimer += dt;
+
+        // 虫子显示位置（与摄像头同一坐标空间）
+        const displayX = this.x;
+        const displayY = this.y;
+        const FLEE_RADIUS = 220;
+        let fleeForce = 0;
+        let fleeAngle = 0;
+
+        // 检测手部接近，计算逃跑力
+        if (hands && hands.length > 0) {
+          for (const hand of hands) {
+            // 用食指和中指尖端作为威胁点
+            const threats = [hand.landmarks[8], hand.landmarks[12]];
+            for (const tip of threats) {
+              const d = dist(displayX, displayY, tip.x, tip.y);
+              if (d < FLEE_RADIUS) {
+                const intensity = 1 - d / FLEE_RADIUS; // 越近越强
+                // 逃跑方向：远离手指
+                const awayAngle = Math.atan2(displayY - tip.y, displayX - tip.x);
+                fleeForce += intensity;
+                fleeAngle = awayAngle;
+              }
+            }
+          }
+        }
+
+        if (fleeForce > 0) {
+          // 逃跑模式：加速 + 转向远离
+          this.fleeing = true;
+          this.speed = this.baseSpeed * (1.5 + fleeForce * 2.5); // 最高4倍速
+          // 平滑转向逃跑方向
+          let angleDiff = fleeAngle - this.angle;
+          while (angleDiff > Math.PI)  angleDiff -= Math.PI * 2;
+          while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+          this.angle += angleDiff * Math.min(1, 8 * dt); // 快速转向
+        } else {
+          this.fleeing = false;
+          // 随机速度变化
+          if (this.speedTimer > this.speedInterval) {
+            this.baseSpeed = randRange(40, 130);
+            this.speedTimer = 0;
+            this.speedInterval = randRange(1.0, 3.0);
+          }
+          this.speed = this.baseSpeed;
+          // 随机变向
+          if (this.dirTimer > this.dirInterval) {
+            this.angle += randRange(-0.8, 0.8);
+            this.dirTimer = 0;
+            this.dirInterval = randRange(0.8, 2.0);
+          }
+        }
+
+        this.x += Math.cos(this.angle) * this.speed * dt;
+        this.y += Math.sin(this.angle) * this.speed * dt;
+
+        const m = this.size + 10;
+        if (this.x < m)     { this.x = m;     this.angle = Math.PI - this.angle; }
+        if (this.x > w - m) { this.x = w - m; this.angle = Math.PI - this.angle; }
+        if (this.y < m)     { this.y = m;     this.angle = -this.angle; }
+        if (this.y > h - m) { this.y = h - m; this.angle = -this.angle; }
+      }
+
+      draw(ctx) {
+        if (this.caught) return;
+        const { size, bodyColor, shellColor, legPhase } = this;
+        const x = this.x;
+        const y = this.y;
+        const angle = this.angle;
+
+        ctx.save();
+        // 逃跑时加抨动效果
+        const jx = this.fleeing ? (Math.random() - 0.5) * 5 : 0;
+        const jy = this.fleeing ? (Math.random() - 0.5) * 5 : 0;
+        ctx.translate(x + jx, y + jy);
+        ctx.rotate(angle);
+
+        // 阴影
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath();
+        ctx.ellipse(3, 3, size * 1.1, size * 0.75, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 腿（6条）
+        ctx.strokeStyle = '#4E342E';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 3; i++) {
+          const offset = (i - 1) * size * 0.45;
+          const wiggle = Math.sin(legPhase + i * 0.9) * 5;
+          ctx.beginPath();
+          ctx.moveTo(offset, -size * 0.35);
+          ctx.lineTo(offset - size * 0.45, -size * 0.9 - wiggle);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(offset, size * 0.35);
+          ctx.lineTo(offset - size * 0.45, size * 0.9 + wiggle);
+          ctx.stroke();
+        }
+
+        // 身体
+        ctx.fillStyle = bodyColor;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size, size * 0.7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = shellColor;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // 翅膀分界线
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.7, 0);
+        ctx.lineTo(size * 0.7, 0);
+        ctx.stroke();
+
+        // 触角
+        ctx.strokeStyle = '#5D4037';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(size * 0.85, -size * 0.15);
+        ctx.quadraticCurveTo(size * 1.3, -size * 0.5, size * 1.45, -size * 0.35);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(size * 0.85, size * 0.15);
+        ctx.quadraticCurveTo(size * 1.3, size * 0.5, size * 1.45, size * 0.35);
+        ctx.stroke();
+
+        // 眼睛
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(size * 0.6, -size * 0.22, size * 0.18, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.6,  size * 0.22, size * 0.18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(size * 0.65, -size * 0.22, size * 0.1, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(size * 0.65,  size * 0.22, size * 0.1, 0, Math.PI * 2); ctx.fill();
+
+        ctx.restore();
+
+        // 逃跑时显示惊慌感叹号
+        if (this.fleeing) {
+          ctx.save();
+          ctx.font = `bold ${size * 0.9}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#FF5252';
+          ctx.fillText('❗', x + (Math.random() - 0.5) * 4, y - size - 6 + (Math.random() - 0.5) * 3);
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 粒子效果 ===== */
+    class BurstEffect {
+      constructor(x, y, color) {
+        this.x = x; this.y = y;
+        this.color = color;
+        this.radius = 5;
+        this.opacity = 1;
+        this.alive = true;
+      }
+      update(dt) {
+        this.radius += 120 * dt;
+        this.opacity -= 2.5 * dt;
+        if (this.opacity <= 0) this.alive = false;
+      }
+      draw(ctx) {
+        if (!this.alive) return;
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    class FloatingText {
+      constructor(x, y, text) {
+        this.x = x; this.y = y;
+        this.text = text;
+        this.opacity = 1;
+        this.alive = true;
+      }
+      update(dt) {
+        this.y -= 60 * dt;
+        this.opacity -= 1.5 * dt;
+        if (this.opacity <= 0) this.alive = false;
+      }
+      draw(ctx) {
+        if (!this.alive) return;
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.font = 'bold 28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#FFD700';
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.lineWidth = 3;
+        ctx.strokeText(this.text, this.x, this.y);
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    /* ===== 主游戏 ===== */
+    class BugCatcherGame {
+      constructor() {
+        this.video            = document.getElementById('video');
+        this.canvas           = document.getElementById('canvas');
+        this.ctx              = this.canvas.getContext('2d');
+        this.hud              = document.getElementById('hud');
+        this.hudScore         = document.getElementById('hud-score');
+        this.hudTimer         = document.getElementById('hud-timer');
+        this.hudCount         = document.getElementById('hud-count');
+        this.loadingScreen    = document.getElementById('loading-screen');
+        this.startScreen      = document.getElementById('start-screen');
+        this.countdownOverlay = document.getElementById('countdown-overlay');
+        this.countdownNum     = document.getElementById('countdown-number');
+        this.gameoverScreen   = document.getElementById('gameover-screen');
+        this.finalScore       = document.getElementById('final-score');
+        this.topScoreSection  = document.getElementById('top-score-section');
+        this.playerNameInput  = document.getElementById('player-name');
+        this.leaderboardScreen= document.getElementById('leaderboard-screen');
+        this.leaderboardList  = document.getElementById('leaderboard-list');
+        this.btnAgain         = document.getElementById('btn-again');
+
+        this.state      = 'loading';
+        this.score      = 0;
+        this.timeLeft   = GAME_DURATION;
+        this.bugs       = [];
+        this.effects    = [];
+        this.texts      = [];
+        this.hands      = [];
+        this.spawnTimer = 0;
+        this.lastTime   = 0;
+        this.handLandmarker = null;
+
+        this.bindEvents();
+        this.init();
+      }
+
+      async init() {
+        try {
+          await this.initCamera();
+          await this.initHandTracker();
+          this.showScreen('start');
+        } catch (err) {
+          console.error('初始化失败:', err);
+          this.loadingScreen.querySelector('.screen-content').innerHTML = `
+            <h1>❌ 初始化失败</h1>
+            <p style="margin-top:16px;color:rgba(255,255,255,0.8)">${err.message}</p>
+            <p style="margin-top:12px;font-size:14px;color:rgba(255,255,255,0.5)">
+              请确保使用 Chrome/Edge 并允许摄像头权限<br />
+              需要通过 HTTP 服务器访问（不支持 file:// 协议）
+            </p>
+            <button class="btn btn-primary" style="margin-top:24px" onclick="location.reload()">重试</button>
+          `;
+        }
+      }
+
+      async initCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false,
+        });
+        this.video.srcObject = stream;
+        await new Promise(r => this.video.addEventListener('loadeddata', r, { once: true }));
+        this.canvas.width  = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        this.video.play();
+      }
+
+      async initHandTracker() {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+        );
+        this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task',
+            delegate: 'GPU',
+          },
+          numHands: 2,
+          runningMode: 'VIDEO',
+        });
+      }
+
+      bindEvents() {
+        document.getElementById('btn-start').addEventListener('click', () => this.startCountdown());
+        document.getElementById('btn-leaderboard').addEventListener('click', () => this.showLeaderboard());
+        document.getElementById('btn-save').addEventListener('click', () => this.saveScore());
+        this.btnAgain.addEventListener('click', () => this.startCountdown());
+        document.getElementById('btn-back').addEventListener('click', () => this.showScreen('start'));
+        document.getElementById('btn-back-home').addEventListener('click', () => this.showScreen('start'));
+        this.playerNameInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') this.saveScore();
+        });
+      }
+
+      showScreen(name) {
+        const screens = [this.loadingScreen, this.startScreen, this.countdownOverlay,
+                         this.gameoverScreen, this.leaderboardScreen];
+        screens.forEach(s => s.classList.add('hidden'));
+        this.hud.classList.add('hidden');
+
+        switch (name) {
+          case 'loading':     this.loadingScreen.classList.remove('hidden');    break;
+          case 'start':       this.startScreen.classList.remove('hidden');      break;
+          case 'countdown':   this.countdownOverlay.classList.remove('hidden'); break;
+          case 'playing':     this.hud.classList.remove('hidden');              break;
+          case 'gameover':    this.gameoverScreen.classList.remove('hidden');   break;
+          case 'leaderboard': this.leaderboardScreen.classList.remove('hidden'); break;
+        }
+        this.state = name;
+      }
+
+      async startCountdown() {
+        this.showScreen('countdown');
+        for (let i = 3; i > 0; i--) {
+          this.countdownNum.textContent = i;
+          this.countdownNum.style.animation = 'none';
+          void this.countdownNum.offsetWidth;
+          this.countdownNum.style.animation = 'countdown-pulse 0.8s ease-out';
+          await new Promise(r => setTimeout(r, 900));
+        }
+        this.startGame();
+      }
+
+      startGame() {
+        this.score      = 0;
+        this.timeLeft   = GAME_DURATION;
+        this.bugs       = [];
+        this.effects    = [];
+        this.texts      = [];
+        this.spawnTimer = 0;
+        this.lastTime   = performance.now();
+        this.showScreen('playing');
+        this.updateHUD();
+
+        for (let i = 0; i < 3; i++) {
+          this.bugs.push(new Bug(this.canvas.width, this.canvas.height));
+        }
+        requestAnimationFrame((t) => this.gameLoop(t));
+      }
+
+      endGame() {
+        this.showScreen('gameover');
+        this.finalScore.textContent = this.score;
+
+        if (isTopScore(this.score) && this.score > 0) {
+          this.topScoreSection.classList.remove('hidden');
+          this.btnAgain.classList.add('hidden');
+          this.playerNameInput.value = '';
+          setTimeout(() => this.playerNameInput.focus(), 300);
+        } else {
+          this.topScoreSection.classList.add('hidden');
+          this.btnAgain.classList.remove('hidden');
+        }
+      }
+
+      saveScore() {
+        const name = this.playerNameInput.value.trim();
+        if (!name) {
+          this.playerNameInput.style.borderColor = '#f44336';
+          this.playerNameInput.placeholder = '请输入名字！';
+          return;
+        }
+        addToLeaderboard(name, this.score);
+        this.topScoreSection.classList.add('hidden');
+        this.btnAgain.classList.remove('hidden');
+      }
+
+      showLeaderboard() {
+        const board = loadLeaderboard();
+        this.leaderboardList.innerHTML = '';
+
+        if (board.length === 0) {
+          this.leaderboardList.innerHTML =
+            '<li style="justify-content:center;color:rgba(255,255,255,0.5)">暂无记录，快去创造历史吧！</li>';
+        } else {
+          board.forEach((entry, i) => {
+            const rank = i + 1;
+            const badgeClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <span class="rank-badge ${badgeClass}">${medal}</span>
+              <span class="leaderboard-name">${escapeHTML(entry.name)}</span>
+              <span class="leaderboard-score">${entry.score}</span>
+              <span class="leaderboard-date">${entry.date || ''}</span>
+            `;
+            this.leaderboardList.appendChild(li);
+          });
+        }
+        this.showScreen('leaderboard');
+      }
+
+      updateHUD() {
+        this.hudScore.textContent = `得分: ${this.score}`;
+        this.hudTimer.textContent = `${Math.ceil(this.timeLeft)}s`;
+        this.hudCount.textContent = `虫子: ${this.bugs.filter(b => !b.caught).length}`;
+      }
+
+      gameLoop(timestamp) {
+        const dt = Math.min((timestamp - this.lastTime) / 1000, 0.1);
+        this.lastTime = timestamp;
+        if (this.state === 'playing') this.update(dt);
+        this.draw();
+        requestAnimationFrame((t) => this.gameLoop(t));
+      }
+
+      update(dt) {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+
+        this.timeLeft -= dt;
+        if (this.timeLeft <= 0) {
+          this.timeLeft = 0;
+          this.updateHUD();
+          this.endGame();
+          return;
+        }
+
+        // 生成新虫子
+        this.spawnTimer += dt;
+        if (this.spawnTimer >= SPAWN_INTERVAL && this.bugs.filter(b => !b.caught).length < MAX_BUGS) {
+          this.bugs.push(new Bug(w, h));
+          this.spawnTimer = 0;
+        }
+
+        // 手部检测（先检测再更新虫子，实现逃跑）
+        this.detectHands();
+
+        this.bugs.forEach(b => b.update(dt, w, h, this.hands));
+
+        // 抓取判定（bug 存储原始坐标，显示位置为 w-bug.x）
+        for (const hand of this.hands) {
+          if (!hand.isGrabbing) continue;
+          const tip = hand.landmarks[8];
+          for (const bug of this.bugs) {
+            if (bug.caught) continue;
+            const bugDisplayX = bug.x;
+            if (dist(tip.x, tip.y, bugDisplayX, bug.y) < GRAB_RADIUS) {
+              bug.caught = true;
+              this.score++;
+              this.effects.push(new BurstEffect(bugDisplayX, bug.y, bug.bodyColor));
+              this.texts.push(new FloatingText(bugDisplayX, bug.y - 20, '+1'));
+            }
+          }
+        }
+
+        this.bugs    = this.bugs.filter(b => !b.caught);
+        this.effects.forEach(e => e.update(dt));
+        this.effects = this.effects.filter(e => e.alive);
+        this.texts.forEach(t => t.update(dt));
+        this.texts   = this.texts.filter(t => t.alive);
+
+        this.updateHUD();
+      }
+
+      detectHands() {
+        this.hands = [];
+        if (!this.handLandmarker || this.video.readyState < 2) return;
+        try {
+          const result = this.handLandmarker.detectForVideo(this.video, performance.now());
+          if (!result.landmarks) return;
+
+          const w = this.canvas.width;
+          const h = this.canvas.height;
+
+          for (const landmarks of result.landmarks) {
+            // 存储原始像素坐标（镜像由 drawHands 统一处理）
+            const raw = landmarks.map(lm => ({ x: lm.x * w, y: lm.y * h }));
+
+            // 捏合距离（使用原始归一化坐标）
+            const thumb = landmarks[4];
+            const index = landmarks[8];
+            const pinchDist = dist(thumb.x, thumb.y, index.x, index.y);
+
+            this.hands.push({
+              landmarks: raw,
+              isGrabbing: pinchDist < PINCH_THRESHOLD,
+            });
+          }
+        } catch { /* 偶尔检测失败，忽略 */ }
+      }
+
+      draw() {
+        const { ctx, canvas: cvs } = this;
+        const w = cvs.width;
+        const h = cvs.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // 摄像头画面（CSS scaleX(-1) 处理镜像）
+        if (this.video.readyState >= 2) {
+          ctx.drawImage(this.video, 0, 0, w, h);
+        }
+
+        // 游戏中轻微暗化
+        if (this.state === 'playing') {
+          ctx.fillStyle = 'rgba(0,0,0,0.1)';
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        // 虫子（内部已做镜像绘制）
+        this.bugs.forEach(b => b.draw(ctx));
+
+        // 粒子（已用镜像坐标创建）
+        this.effects.forEach(e => e.draw(ctx));
+
+        // 手部骨骼（landmarks 已镜像）
+        this.drawHands(ctx);
+
+        // 浮动文字
+        this.texts.forEach(t => t.draw(ctx));
+      }
+
+      drawHands(ctx) {
+        for (const hand of this.hands) {
+          const { landmarks, isGrabbing } = hand;
+          const lineColor = isGrabbing ? 'rgba(255,82,82,0.6)' : 'rgba(255,255,255,0.5)';
+
+          // 直接使用原始像素坐标（与视频同一空间）
+          const pts = landmarks;
+
+          // 骨骼
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = 2;
+          for (const [i, j] of HAND_CONNECTIONS) {
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+
+          // 关键点
+          for (let k = 0; k < pts.length; k++) {
+            const isTip = k === 8 || k === 4;
+            const r = isTip ? 8 : 4;
+            ctx.fillStyle = isTip ? (isGrabbing ? '#FF5252' : '#4CAF50')
+                                  : (isGrabbing ? '#FF5252' : '#FFFFFF');
+            ctx.beginPath();
+            ctx.arc(pts[k].x, pts[k].y, r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // 抓取圈
+          if (isGrabbing) {
+            const tip = pts[8];
+            ctx.strokeStyle = 'rgba(255,82,82,0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.arc(tip.x, tip.y, GRAB_RADIUS, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+      }
+    }
+
+    /* ===== 启动 ===== */
+    new BugCatcherGame();
+  </script>
+</body>
+</html>

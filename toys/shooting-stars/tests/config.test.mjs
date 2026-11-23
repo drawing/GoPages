@@ -114,7 +114,7 @@ test('SCHEMES：标准方案 version 1、内容表覆盖五档且逐档扩池，
 // （';' 属符号键，中排也剔除）；数字符号入门档即出全池、五档恒定（档位只提速）；
 // 物理仍读共享 LEVELS——改档位物理所有方案同步生效。9e 又注册了汉字方案（下面单独一条）
 test('专练方案：字母逐档扩到全字母不出数字符号，数字符号入门即全池且五档恒定', function () {
-    assert.deepEqual(Array.from(ns.SCHEMES, (scheme) => scheme.id), ['standard', 'letters', 'digits', 'symbols', 'hanzi', 'flypy']);
+    assert.deepEqual(Array.from(ns.SCHEMES.filter((scheme) => !scheme.combo), (scheme) => scheme.id), ['standard', 'letters', 'digits', 'symbols', 'hanzi', 'flypy']);
     for (const id of ['letters', 'digits', 'symbols']) {
         const scheme = ns.schemeById(id);
         assert.equal(scheme.version, 1);
@@ -151,6 +151,47 @@ test('专练方案：字母逐档扩到全字母不出数字符号，数字符�
         assert.equal(digits.content[level.id], digits.content[1], '数字专练 Lv' + level.id + ' 内容变了（档位只提速）');
         assert.equal(symbols.content[level.id], symbols.content[1], '符号专练 Lv' + level.id + ' 内容变了（档位只提速）');
     }
+});
+
+// 9h 组合专练：四种组合程序化注册——内容逐档 = 成员拼接（成员池互不相交 ⇒ 无重复键），
+// version = 成员之和（任一成员 bump 版本改池时旧组合记录键自动失效封存，9a 封印契约的推广）
+test('组合专练注册：内容逐档 = 成员拼接，version = 成员之和，不出双星不是单元', function () {
+    const combos = ns.SCHEMES.filter((scheme) => scheme.combo);
+    assert.deepEqual(Array.from(combos, (scheme) => scheme.id),
+        ['letters+digits', 'letters+symbols', 'digits+symbols', 'letters+digits+symbols']);
+    for (const combo of combos) {
+        const members = combo.id.split('+').map((id) => ns.schemeById(id));
+        assert.equal(combo.version, members.reduce((sum, member) => sum + member.version, 0), combo.id + ' 版本不是成员之和');
+        assert.equal(combo.pair, false, combo.id + ' 不该用线连双星');
+        assert.equal(combo.unit, false, combo.id + ' 不该是单元方案');
+        for (const level of ns.LEVELS) {
+            const pool = combo.content[level.id];
+            assert.equal(pool, members.map((member) => member.content[level.id]).join(''), combo.id + ' Lv' + level.id + ' 内容不是成员拼接');
+            assert.equal(new Set(pool).size, pool.length, combo.id + ' Lv' + level.id + ' 有重复键');
+        }
+    }
+});
+
+// 9h 多选互斥（弹层 onSelect 只调这个纯函数）：三成员任意组合可达且与点击序无关；
+// 标准 / 汉字 / 双拼单选互斥（点它即清空组合）；组合空了回落标准
+test('toggleScheme：组合与点击序无关，标准/汉字/双拼单选互斥，空集回落标准', function () {
+    // 从标准出发，任意点击序到三合都是同一个规范 id
+    assert.equal(ns.toggleScheme(ns.toggleScheme(ns.toggleScheme('standard', 'symbols'), 'letters'), 'digits'), 'letters+digits+symbols');
+    assert.equal(ns.toggleScheme(ns.toggleScheme(ns.toggleScheme('standard', 'digits'), 'symbols'), 'letters'), 'letters+digits+symbols');
+    // 单成员 = 单元素组合；再点已选成员是取消
+    assert.equal(ns.toggleScheme('standard', 'letters'), 'letters');
+    assert.equal(ns.toggleScheme('letters', 'digits'), 'letters+digits');
+    assert.equal(ns.toggleScheme('letters+digits', 'letters'), 'digits');
+    assert.equal(ns.toggleScheme('letters+digits+symbols', 'digits'), 'letters+symbols');
+    assert.equal(ns.toggleScheme('letters', 'letters'), 'standard');
+    // 互斥行：组合态 / 单元态点它都直接换成它
+    for (const id of ['standard', 'hanzi', 'flypy']) {
+        assert.equal(ns.toggleScheme('letters+digits', id), id);
+        assert.equal(ns.toggleScheme('hanzi', id), id);
+    }
+    // 单元 / 标准态点成员 = 从头起组合，不与原方案叠加
+    assert.equal(ns.toggleScheme('hanzi', 'digits'), 'digits');
+    assert.equal(ns.toggleScheme('flypy', 'symbols'), 'symbols');
 });
 
 // 所有**键位方案**的池：字符都在 45 键全集里（letters.test 已逐键证明全集每个字符有唯一键位），

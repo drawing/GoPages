@@ -186,7 +186,7 @@
         const radius = Math.round(pad * 0.16);
         const glyph = Math.round(pad * 0.44);
         const container = scene.add.container(opts.x, opts.y).setDepth(DEPTH.board);
-        const state = { veil: false, interactive: false };
+        const state = { veil: false, interactive: false, phase: null };
         // 减少动效（4b，harness/ui.md）：构建时读一次，转屏 restart 重读。砍弹跳 / 呼吸光，
         // 波浪与示意的行进降级成同时亮——亮起 / 余晖 / 遮罩 / 按下缩放这些信息性动画照旧
         const reduced = ns.utils.reducedMotion();
@@ -332,8 +332,10 @@
         // 不允许"只更新我记得的那个对象"——漏更新在结构上不会出现（harness/ui.md）
         function sync(view) {
             const veilChanged = view.veil !== state.veil;
+            const phaseChanged = view.phase !== state.phase;
             state.veil = view.veil;
             state.interactive = view.interactive;
+            state.phase = view.phase;
 
             tiles.forEach(function (tile) {
                 const lit = !view.veil && view.lit === tile.index;
@@ -376,7 +378,10 @@
                     // 遮住的时候连标记一起压暗：颜色与形状都是序列的信息，不能留一半
                     tintMark(tile, view.veil ? PALETTE.textFaint : tile.accent);
                     fadeMark(tile, view.veil ? 0.3 : 0.92, view.veil ? MOTION.veilIn : MOTION.veilOut);
-                    if (view.veil) { fade(tile, tile.glow, 0, MOTION.veilIn); }
+                    if (view.veil) {
+                        fade(tile, tile.glow, 0, MOTION.veilIn);
+                        fade(tile, tile.litPanel, 0, MOTION.veilIn);
+                    }
                 }
             });
 
@@ -386,6 +391,20 @@
                 scene.tweens.killTweensOf(veilText);
                 scene.tweens.add({ targets: veilPanel, alpha: view.veil ? 1 : 0, duration: duration, ease: 'Quad.easeOut' });
                 scene.tweens.add({ targets: veilText, alpha: view.veil ? 1 : 0, duration: duration, ease: 'Quad.easeOut' });
+            }
+
+            // 相位切换全量归位：wave / cue 是带 delay 的 transient 脉冲，起始值在延迟走完那一刻才取，
+            // 可能把"淡出到一半"的 alpha 当成静止态，yoyo 回来停在半亮（高亮框残留）。逻辑态没变的格子
+            // 上面的增量分支不会再碰，所以相位一变就把未亮格子的柔光 / 亮起层 kill 回 0——状态永远赢
+            if (phaseChanged) {
+                tiles.forEach(function (tile) {
+                    if (tile.lit) { return; }
+                    scene.tweens.killTweensOf(tile.glow);
+                    scene.tweens.killTweensOf(tile.litPanel);
+                    tile.glowTween = null;
+                    tile.glow.setAlpha(0);
+                    tile.litPanel.setAlpha(0);
+                });
             }
         }
 

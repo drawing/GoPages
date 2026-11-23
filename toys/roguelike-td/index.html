@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Roguelike 塔防 · Prototype</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #1a1626;
+    color: #f5e9c9;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    overflow: hidden;
+    height: 100%;
+  }
+  #game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  canvas {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+<div id="game-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/map.js"></script>
+<script src="js/data.js"></script>
+<script src="js/scenes/BootScene.js"></script>
+<script src="js/scenes/GameScene.js"></script>
+<script src="js/scenes/UIScene.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

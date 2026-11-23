@@ -300,6 +300,9 @@
         // 高亮留给键盘选中行——与设置面板同一条纪律
         openModePanel() {
             const audio = ns.systems.audio();
+            // 9h：弹层只列基础方案（组合按 combo 标志过滤）——行数不变几何不动，
+            // 字母 / 数字 / 符号三行是多选 toggle，其余行单选，互斥逻辑全在 toggleScheme
+            const baseSchemes = ns.SCHEMES.filter((scheme) => !scheme.combo);
             let modeButtons = [];
             let schemeButtons = [];
             let rows = [];
@@ -310,9 +313,13 @@
                     entry.button.setLabel(entry.mode.name + '模式' +
                         (entry.mode.id === this.mode.id ? '（当前）' : ''));
                 });
+                const selected = this.scheme.combo ? this.scheme.id.split('+') : [this.scheme.id];
                 schemeButtons.forEach((entry) => {
-                    entry.button.setLabel(entry.scheme.name + '方案' +
-                        (entry.scheme.id === this.scheme.id ? '（当前）' : ''));
+                    const id = entry.scheme.id;
+                    const mark = ns.COMBO_MEMBERS.includes(id)
+                        ? (selected.includes(id) ? '（已选）' : '')
+                        : (id === this.scheme.id ? '（当前）' : '');
+                    entry.button.setLabel(entry.scheme.name + '方案' + mark);
                 });
             };
             const paint = () => {
@@ -332,7 +339,7 @@
                 // 捅穿画布（关闭按钮落在 566–606，被裁掉且点不到）。可用行高 = 画布高
                 // − 底边余量 − 行块起点 − 行块之后那三段固定开销（方案节标题 30 / 提示到关闭 36 /
                 // 关闭到卡片底边 30）；六行（9d 的四方案）算出 47 ⇒ 取上限 44，那一版逐像素不变
-                const rowCount = ns.MODES.length + ns.SCHEMES.length;
+                const rowCount = ns.MODES.length + baseSchemes.length;
                 const rowStep = Math.min(44,
                     Math.floor((CONFIG.HEIGHT - 8 - 212 - (30 + 36 + 30)) / rowCount));
                 const rowHeight = Math.min(36, rowStep - 6);
@@ -340,7 +347,7 @@
                 const modeYs = ns.MODES.map(() => { const at = y; y += rowStep; return at; });
                 const schemeHeaderY = y;
                 y += 30;
-                const schemeYs = ns.SCHEMES.map(() => { const at = y; y += rowStep; return at; });
+                const schemeYs = baseSchemes.map(() => { const at = y; y += rowStep; return at; });
                 const hintY = y + 2;
                 const closeY = y + 36;
                 const cardTop = 124;
@@ -367,11 +374,11 @@
                 parts.push(ui.text(this, CX, schemeHeaderY, '方案', {
                     fontSize: '11px', color: PALETTE.hudMuted, letterSpacing: 2
                 }));
-                schemeButtons = ns.SCHEMES.map((scheme, index) => {
+                schemeButtons = baseSchemes.map((scheme, index) => {
                     const button = ui.button(this, {
                         x: CX, y: schemeYs[index], width: 344, height: rowHeight,
                         label: '', fontSize: '15px', meta: scheme.desc, accent: PALETTE.gold,
-                        onSelect: () => { this.setScheme(scheme.id); sync(); }
+                        onSelect: () => { this.setScheme(ns.toggleScheme(this.scheme.id, scheme.id)); sync(); }
                     });
                     parts.push(button);
                     return { scheme: scheme, button: button };
@@ -606,7 +613,9 @@
         // 栏内是该方案的「玩法 × 档位」记录表。跨方案分数不并列比较、不做归一化总榜：
         // 内容不同的方案分数没有可比性。页签点选 / 悬停 / ←→ 都走 setTab，选中项真的换了才响
         openScores() {
-            const schemes = ns.SCHEMES;
+            // 9h：页签维持基础方案，组合不列（10 页签单行放不下，harness/ui.md 排行榜节）；
+            // 组合记录不丢——菜单各档最高分与结算页按当前方案照常读组合记录线
+            const schemes = ns.SCHEMES.filter((scheme) => !scheme.combo);
             let tab = Math.max(0, schemes.findIndex((scheme) => scheme.id === this.scheme.id));
             let setTab = () => {};
 

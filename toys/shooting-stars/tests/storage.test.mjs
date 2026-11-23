@@ -298,6 +298,28 @@ test('菜单选择：专练方案 id 合法，saveSelection 落盘换实例读�
     assert.deepEqual({ ...JSON.parse(disk.data.get(NS + '.menu')) }, { mode: 'endless', scheme: 'digits' });
 });
 
+// 9h：组合方案 id 也是合法选择；记录线与成员 / 标准方案互不串号；
+// 乱序 id 不在注册表里（规范化只在 toggleScheme 构造时做），校验回落标准
+test('组合专练：选择持久化读得回，记录线与成员方案互不串号', function () {
+    const disk = backend();
+    const store = new Storage(disk);
+    store.saveSelection('endless', 'letters+digits');
+    assert.deepEqual({ ...new Storage(disk).selection() }, { mode: 'endless', scheme: 'letters+digits' });
+
+    store.submitRun('letters+digits', 3, 'endless', run(1580, 40, 12));
+    store.submitRun('letters', 3, 'endless', run(900, 20, 6));
+    store.submitRun('digits', 3, 'endless', run(700, 15, 5));
+    store.submitRun('standard', 3, 'endless', run(500, 10, 3));
+    const bests = new Storage(disk).bestMap();
+    assert.equal(bests[Storage.bestKey('letters+digits', 3, 'endless')], 1580);
+    assert.equal(bests[Storage.bestKey('letters', 3, 'endless')], 900);
+    assert.equal(bests[Storage.bestKey('digits', 3, 'endless')], 700);
+    assert.equal(bests[Storage.bestKey('standard', 3, 'endless')], 500);
+
+    store.saveSelection('endless', 'digits+letters');
+    assert.deepEqual({ ...new Storage(disk).selection() }, { mode: 'endless', scheme: 'standard' });
+});
+
 // 迁移落盘失败（配额中途写满）：cache-first，内存已是迁移后的新格式，本会话读得到；
 // 盘上洗盘失败仍留旧键，下次可用时再迁。隐私模式（构造即不可用）根本不读盘，迁移无从谈起
 test('迁移落盘失败：内存仍是迁移后的新格式，本会话读得到，盘上留旧键', function () {

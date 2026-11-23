@@ -332,8 +332,23 @@ mark { background: var(--mark-bg); color: inherit; }
 .site-footer a:hover { color: var(--accent); }
 
 /* ========== 404 ========== */
-.not-found { padding: 60px 0; }
-.not-found h1 { font-size: 48px; margin: 0 0 12px; }
+.not-found { padding: 96px 0 120px; text-align: center; }
+.not-found h1 { font-size: 88px; line-height: 1.1; margin: 0 0 12px; letter-spacing: 0.06em; }
+.not-found h1 .zero { color: var(--seal); }
+.not-found-desc { color: var(--muted); margin: 0 0 32px; }
+.not-found-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.not-found-actions a {
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--fg);
+    text-decoration: none;
+}
+.not-found-actions a:hover { border-color: var(--accent); color: var(--accent); }
+.not-found-actions a.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.not-found-actions a.primary:hover { opacity: 0.85; color: var(--bg); }
 
 /* ========== 移动端 ========== */
 @media (max-width: 900px) {
@@ -354,4 +369,6 @@ mark { background: var(--mark-bg); color: inherit; }
     .post-header h1 { font-size: 22px; }
     .post-nav { flex-direction: column; gap: 8px; }
     .post-nav a { max-width: 100%; }
+    .not-found { padding: 56px 0 72px; }
+    .not-found h1 { font-size: 64px; }
 }

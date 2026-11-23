@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>体感拳击 🥊</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f; overflow: hidden;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    video { display: none; }
+    canvas { display: block; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+    #hud {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 16px; z-index: 100; pointer-events: none;
+    }
+    .hud-item {
+      background: rgba(0,0,0,0.65); color: #fff; padding: 10px 18px;
+      border-radius: 24px; font-size: 18px; font-weight: 700;
+      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15);
+    }
+    #hud-combo { color: #FFD700; }
+
+    .screen {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    }
+    .screen-content { text-align: center; color: #fff; max-width: 440px; padding: 32px; width: 92%; }
+    .screen-content h1 { font-size: 44px; margin-bottom: 12px; }
+    .screen-content h2 { font-size: 32px; margin-bottom: 16px; }
+    .subtitle { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 24px; }
+    .rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; font-size: 15px; color: rgba(255,255,255,0.85); }
+
+    .btn {
+      display: block; width: 100%; padding: 14px 24px; border: none; border-radius: 12px;
+      font-size: 18px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #E63946; color: #fff; }
+    .btn-primary:hover { background: #d12e3b; }
+    .btn-secondary { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+
+    .loader {
+      width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #E63946; border-radius: 50%; margin: 24px auto;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #countdown-overlay { background: rgba(0,0,0,0.65); }
+    #countdown-number {
+      font-size: 160px; font-weight: 900; color: #fff;
+      text-shadow: 0 0 80px rgba(230,57,70,0.8);
+      animation: pulse 0.8s ease-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1.6); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .final-score { font-size: 72px; font-weight: 900; color: #E63946; margin: 8px 0 4px; line-height: 1; }
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 28px;
+      text-align: center;
+    }
+    .stat-item { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; color: #E63946; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+    .top-score-text { font-size: 18px; color: #FFD700; margin-bottom: 16px; }
+
+    #player-name {
+      width: 100%; padding: 12px 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff;
+      font-size: 18px; text-align: center; outline: none; margin-bottom: 12px;
+    }
+    #player-name:focus { border-color: #E63946; }
+    #player-name::placeholder { color: rgba(255,255,255,0.4); }
+
+    #leaderboard-list { list-style: none; margin: 24px 0; text-align: left; }
+    #leaderboard-list li {
+      display: flex; align-items: center; padding: 12px 16px; margin-bottom: 6px;
+      background: rgba(255,255,255,0.08); border-radius: 10px; font-size: 16px; gap: 12px;
+    }
+    .rank-badge { width: 28px; height: 28px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+    .rank-1 { background: #FFD700; color: #000; }
+    .rank-2 { background: #C0C0C0; color: #000; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: rgba(255,255,255,0.15); color: #fff; }
+    .lb-name { flex: 1; font-weight: 600; }
+    .lb-score { font-weight: 800; color: #E63946; font-size: 18px; }
+
+    .hidden { display: none !important; }
+
+    /* 连击提示 */
+    #combo-popup {
+      position: fixed; top: 30%; left: 50%; transform: translateX(-50%);
+      font-size: 64px; font-weight: 900; color: #FFD700;
+      text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 4px 20px rgba(0,0,0,0.5);
+      pointer-events: none; z-index: 150; opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    @media (max-width: 480px) {
+      .screen-content h1 { font-size: 32px; }
+      .final-score { font-size: 56px; }
+      #countdown-number { font-size: 120px; }
+      .hud-item { font-size: 15px; padding: 8px 12px; }
+      #combo-popup { font-size: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div id="combo-popup"></div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-item" id="hud-timer">⏱ 60s</div>
+      <div class="hud-item" id="hud-score">得分: 0</div>
+      <div class="hud-item" id="hud-combo">连击: 0</div>
+    </div>
+
+    <div id="loading-screen" class="screen">
+      <div class="screen-content">
+        <h1>🥊 体感拳击</h1>
+        <p>正在加载人体识别模型...</p>
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <div id="start-screen" class="screen hidden">
+      <div class="screen-content">
+        <h1>🥊 体感拳击</h1>
+        <p class="subtitle">挥拳击中屏幕上的靶子！<br>出拳越快、连击越多，分越高！</p>
+        <div class="rules">
+          <span>🎯 挥拳击中出现的目标</span>
+          <span>🔥 连击获得倍率加分</span>
+          <span>⏱ 60秒限时</span>
+        </div>
+        <button id="btn-start" class="btn btn-primary">开始战斗</button>
+        <button id="btn-leaderboard" class="btn btn-secondary">🏆 排行榜</button>
+      </div>
+    </div>
+
+    <div id="countdown-overlay" class="screen hidden">
+      <div id="countdown-number">3</div>
+    </div>
+
+    <div id="gameover-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>⏰ 时间到！</h2>
+        <p id="final-score" class="final-score">0</p>
+        <p id="final-label" style="font-size:16px;color:rgba(255,255,255,0.65);margin-bottom:8px">总得分</p>
+        <div class="stats-grid">
+          <div class="stat-item"><div class="stat-value" id="stat-hits">0</div><div class="stat-label">命中数</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-max-combo">0</div><div class="stat-label">最高连击</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-accuracy">0%</div><div class="stat-label">命中率</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-punches">0</div><div class="stat-label">出拳数</div></div>
+        </div>
+        <div id="top-score-section" class="hidden">
+          <p class="top-score-text">🎉 恭喜进入前10名！</p>
+          <input id="player-name" type="text" placeholder="输入你的名字" maxlength="10" />
+          <button id="btn-save" class="btn btn-primary">保存成绩</button>
+        </div>
+        <button id="btn-again" class="btn btn-primary hidden">再来一局</button>
+        <button id="btn-back" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+
+    <div id="leaderboard-screen" class="screen hidden">
+      <div class="screen-content">
+        <h2>🏆 排行榜 TOP 10</h2>
+        <ol id="leaderboard-list"></ol>
+        <button id="btn-back-home" class="btn btn-secondary">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+    "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
+  }}
+  </script>
+
+  <script type="module">
+    import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision';
+
+    const GAME_DURATION   = 60;
+    const LEADERBOARD_KEY = 'punch-boxing-leaderboard';
+    const PUNCH_SPEED     = 0.012;  // 手腕速度阈值（归一化/帧）
+    const HIT_RADIUS      = 70;     // 命中判定半径
+    const TARGET_LIFETIME = 3.0;    // 靶子存活时间（秒）
+    const TARGET_COLORS   = ['#E63946','#FF6B35','#FFBE0B','#2EC4B6','#4CC9F0','#7209B7'];
+    const POSE_CONNECTIONS = [
+      [11,12],[11,13],[13,15],[12,14],[14,16],
+      [11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],
+    ];
+
+    function dist(x1,y1,x2,y2) { return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
+    function randRange(a,b)    { return a+Math.random()*(b-a); }
+    function escapeHTML(s)     { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+    /* ===== 排行榜 ===== */
+    function loadBoard() { try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY))||[]; } catch { return []; } }
+    function saveBoard(b) { localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(b)); }
+    function isTop(score) { const b=loadBoard(); return b.length<10||score>(b[b.length-1]?.score??0); }
+    function addScore(name,score) {
+      const b=loadBoard(); b.push({name,score,date:new Date().toLocaleDateString('zh-CN')});
+      b.sort((a,c)=>c.score-a.score); const t=b.slice(0,10); saveBoard(t); return t;
+    }
+
+    /* ===== 靶子 ===== */
+    class Target {
+      constructor(w, h, elapsed) {
+        this.radius = randRange(40, 55);
+        this.color  = TARGET_COLORS[Math.floor(Math.random()*TARGET_COLORS.length)];
+        this.alive  = true;
+        this.hit    = false;
+        this.age    = 0;
+        this.maxAge = TARGET_LIFETIME - Math.min(1.5, elapsed * 0.015); // 随时间缩短
+        this.pulse  = 0;
+        const margin = this.radius + 40;
+        this.x = randRange(margin, w - margin);
+        this.y = randRange(margin + 60, h - margin);
+      }
+      update(dt) {
+        this.age += dt;
+        this.pulse += dt * 4;
+        if (this.age >= this.maxAge) this.alive = false;
+      }
+      draw(ctx) {
+        if (this.hit || !this.alive) return;
+        const fadeAlpha = this.age > this.maxAge - 0.5 ? (this.maxAge - this.age) / 0.5 : 1;
+        const scale = 0.9 + Math.sin(this.pulse) * 0.1;
+        const r = this.radius * scale;
+
+        ctx.save();
+        ctx.globalAlpha = fadeAlpha;
+
+        // 外圈光晕
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 25;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.stroke();
+
+        // 内圈填充
+        ctx.fillStyle = this.color + '33';
+        ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
+
+        // 十字准心
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(this.x-r*0.5, this.y); ctx.lineTo(this.x+r*0.5, this.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(this.x, this.y-r*0.5); ctx.lineTo(this.x, this.y+r*0.5); ctx.stroke();
+
+        // 倒计时环
+        const progress = 1 - this.age / this.maxAge;
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, r + 8, -Math.PI/2, -Math.PI/2 + Math.PI*2*progress);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+    }
+
+    /* ===== 命中爆炸 ===== */
+    class PunchEffect {
+      constructor(x, y, color) {
+        this.particles = [];
+        for (let i=0; i<16; i++) {
+          const a = Math.random()*Math.PI*2, s = randRange(150,400);
+          this.particles.push({ x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s,
+            r:randRange(3,8), alpha:1, color: Math.random()>0.4 ? color : '#FFD700' });
+        }
+        this.ring = { x, y, r:10, alpha:1 };
+        this.alive = true;
+      }
+      update(dt) {
+        let any = false;
+        for (const p of this.particles) {
+          p.x+=p.vx*dt; p.y+=p.vy*dt; p.alpha-=dt*2.5;
+          p.vx*=0.94; p.vy*=0.94;
+          if (p.alpha>0) any=true;
+        }
+        this.ring.r += 200*dt; this.ring.alpha -= dt*3;
+        if (!any && this.ring.alpha<=0) this.alive=false;
+      }
+      draw(ctx) {
+        if (this.ring.alpha > 0) {
+          ctx.save(); ctx.globalAlpha=this.ring.alpha;
+          ctx.strokeStyle='#fff'; ctx.lineWidth=3;
+          ctx.beginPath(); ctx.arc(this.ring.x,this.ring.y,this.ring.r,0,Math.PI*2); ctx.stroke();
+          ctx.restore();
+        }
+        for (const p of this.particles) {
+          if (p.alpha<=0) continue;
+          ctx.save(); ctx.globalAlpha=p.alpha;
+          ctx.fillStyle=p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    /* ===== 得分飘字 ===== */
+    class FloatScore {
+      constructor(x, y, text, color='#FFD700') {
+        this.x=x; this.y=y; this.text=text; this.color=color;
+        this.alpha=1; this.alive=true;
+      }
+      update(dt) { this.y-=70*dt; this.alpha-=dt*1.5; if(this.alpha<=0) this.alive=false; }
+      draw(ctx) {
+        if(!this.alive) return;
+        ctx.save(); ctx.globalAlpha=this.alpha;
+        ctx.font='bold 32px sans-serif'; ctx.textAlign='center';
+        ctx.strokeStyle='rgba(0,0,0,0.6)'; ctx.lineWidth=4;
+        ctx.strokeText(this.text,this.x,this.y);
+        ctx.fillStyle=this.color; ctx.fillText(this.text,this.x,this.y);
+        ctx.restore();
+      }
+    }
+
+    /* ===== 主游戏 ===== */
+    class PunchBoxingGame {
+      constructor() {
+        this.video  = document.getElementById('video');
+        this.canvas = document.getElementById('canvas');
+        this.ctx    = this.canvas.getContext('2d');
+        this.hud    = document.getElementById('hud');
+        this.hudTimer = document.getElementById('hud-timer');
+        this.hudScore = document.getElementById('hud-score');
+        this.hudCombo = document.getElementById('hud-combo');
+        this.comboPopup = document.getElementById('combo-popup');
+        this.loading  = document.getElementById('loading-screen');
+        this.startScr = document.getElementById('start-screen');
+        this.cntdown  = document.getElementById('countdown-overlay');
+        this.cntNum   = document.getElementById('countdown-number');
+        this.overScr  = document.getElementById('gameover-screen');
+        this.finalSc  = document.getElementById('final-score');
+        this.topSec   = document.getElementById('top-score-section');
+        this.nameInp  = document.getElementById('player-name');
+        this.lbScr    = document.getElementById('leaderboard-screen');
+        this.lbList   = document.getElementById('leaderboard-list');
+        this.btnAgain = document.getElementById('btn-again');
+
+        this.state     = 'loading';
+        this.score     = 0;
+        this.timeLeft  = GAME_DURATION;
+        this.combo     = 0;
+        this.maxCombo  = 0;
+        this.hits      = 0;
+        this.punches   = 0;
+        this.targets   = [];
+        this.effects   = [];
+        this.texts     = [];
+        this.poseLm    = null;
+        this.prevWrists= { left:null, right:null }; // 上一帧手腕位置
+        this.spawnTimer= 0;
+        this.lastTime  = 0;
+        this.poseLandmarker = null;
+
+        this.bindEvents();
+        this.init();
+      }
+
+      async init() {
+        try {
+          await this.initCamera();
+          await this.initPoseTracker();
+          this.showScreen('start');
+        } catch (err) {
+          console.error('初始化失败:', err);
+          this.loading.querySelector('.screen-content').innerHTML = `
+            <h1>❌ 初始化失败</h1>
+            <p style="margin-top:16px;color:rgba(255,255,255,0.8)">${err.message}</p>
+            <p style="margin-top:12px;font-size:14px;color:rgba(255,255,255,0.5)">
+              请确保使用 Chrome/Edge 并允许摄像头权限
+            </p>
+            <button class="btn btn-primary" style="margin-top:24px" onclick="location.reload()">重试</button>`;
+        }
+      }
+
+      async initCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode:'user', width:{ideal:1280}, height:{ideal:720} }, audio:false
+        });
+        this.video.srcObject = stream;
+        await new Promise(r => this.video.addEventListener('loadeddata', r, {once:true}));
+        this.canvas.width = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        this.video.play();
+      }
+
+      async initPoseTracker() {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+        this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
+            delegate: 'GPU'
+          },
+          runningMode: 'VIDEO', numPoses: 1
+        });
+      }
+
+      bindEvents() {
+        document.getElementById('btn-start').addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-leaderboard').addEventListener('click', ()=>this.showLeaderboard());
+        document.getElementById('btn-save').addEventListener('click', ()=>this.saveScore());
+        this.btnAgain.addEventListener('click', ()=>this.startCountdown());
+        document.getElementById('btn-back').addEventListener('click', ()=>this.showScreen('start'));
+        document.getElementById('btn-back-home').addEventListener('click', ()=>this.showScreen('start'));
+        this.nameInp.addEventListener('keydown', e=>{ if(e.key==='Enter') this.saveScore(); });
+      }
+
+      showScreen(name) {
+        [this.loading,this.startScr,this.cntdown,this.overScr,this.lbScr].forEach(s=>s.classList.add('hidden'));
+        this.hud.classList.add('hidden');
+        switch(name) {
+          case 'loading':     this.loading.classList.remove('hidden'); break;
+          case 'start':       this.startScr.classList.remove('hidden'); break;
+          case 'countdown':   this.cntdown.classList.remove('hidden'); break;
+          case 'playing':     this.hud.classList.remove('hidden'); break;
+          case 'gameover':    this.overScr.classList.remove('hidden'); break;
+          case 'leaderboard': this.lbScr.classList.remove('hidden'); break;
+        }
+        this.state = name;
+      }
+
+      async startCountdown() {
+        this.showScreen('countdown');
+        for (let i=3;i>0;i--) {
+          this.cntNum.textContent=i;
+          this.cntNum.style.animation='none'; void this.cntNum.offsetWidth;
+          this.cntNum.style.animation='pulse 0.8s ease-out';
+          await new Promise(r=>setTimeout(r,900));
+        }
+        this.startGame();
+      }
+
+      startGame() {
+        this.score=0; this.timeLeft=GAME_DURATION; this.combo=0; this.maxCombo=0;
+        this.hits=0; this.punches=0;
+        this.targets=[]; this.effects=[]; this.texts=[];
+        this.spawnTimer=0; this.prevWrists={left:null,right:null};
+        this.lastTime=performance.now();
+        this.showScreen('playing'); this.updateHUD();
+        requestAnimationFrame(t=>this.gameLoop(t));
+      }
+
+      endGame() {
+        this.showScreen('gameover');
+        this.finalSc.textContent = this.score;
+        document.getElementById('stat-hits').textContent = this.hits;
+        document.getElementById('stat-max-combo').textContent = this.maxCombo;
+        document.getElementById('stat-punches').textContent = this.punches;
+        const acc = this.punches > 0 ? Math.round(this.hits/this.punches*100) : 0;
+        document.getElementById('stat-accuracy').textContent = acc + '%';
+
+        if (isTop(this.score) && this.score > 0) {
+          this.topSec.classList.remove('hidden');
+          this.btnAgain.classList.add('hidden');
+          this.nameInp.value = '';
+          setTimeout(()=>this.nameInp.focus(), 300);
+        } else {
+          this.topSec.classList.add('hidden');
+          this.btnAgain.classList.remove('hidden');
+        }
+      }
+
+      saveScore() {
+        const name = this.nameInp.value.trim();
+        if (!name) { this.nameInp.style.borderColor='#f44336'; this.nameInp.placeholder='请输入名字！'; return; }
+        addScore(name, this.score);
+        this.topSec.classList.add('hidden');
+        this.btnAgain.classList.remove('hidden');
+      }
+
+      showLeaderboard() {
+        const board = loadBoard();
+        this.lbList.innerHTML = '';
+        if (board.length===0) {
+          this.lbList.innerHTML='<li style="justify-content:center;color:rgba(255,255,255,0.5)">暂无记录</li>';
+        } else {
+          board.forEach((e,i)=>{
+            const r=i+1, bc=r<=3?`rank-${r}`:'rank-other';
+            const m=r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
+            const li=document.createElement('li');
+            li.innerHTML=`<span class="rank-badge ${bc}">${m}</span>
+              <span class="lb-name">${escapeHTML(e.name)}</span>
+              <span class="lb-score">${e.score}</span>`;
+            this.lbList.appendChild(li);
+          });
+        }
+        this.showScreen('leaderboard');
+      }
+
+      updateHUD() {
+        this.hudTimer.textContent = `⏱ ${Math.ceil(this.timeLeft)}s`;
+        this.hudScore.textContent = `得分: ${this.score}`;
+        this.hudCombo.textContent = `连击: ${this.combo}`;
+      }
+
+      showComboPopup(combo) {
+        if (combo < 3) { this.comboPopup.style.opacity='0'; return; }
+        const labels = ['','','','🔥 NICE!','🔥🔥 GREAT!','🔥🔥🔥 AMAZING!','💥 UNSTOPPABLE!'];
+        const label = combo >= labels.length ? `💥💥 x${combo}!` : labels[combo];
+        this.comboPopup.textContent = label;
+        this.comboPopup.style.opacity = '1';
+        this.comboPopup.style.transform = 'translateX(-50%) scale(1.2)';
+        setTimeout(()=>{
+          this.comboPopup.style.transform = 'translateX(-50%) scale(1)';
+        }, 150);
+        setTimeout(()=>{ this.comboPopup.style.opacity='0'; }, 800);
+      }
+
+      getSpawnInterval() { return Math.max(0.5, 1.5 - (GAME_DURATION - this.timeLeft) * 0.012); }
+      getMaxTargets()    { return Math.min(6, 2 + Math.floor((GAME_DURATION - this.timeLeft) / 12)); }
+
+      /* --- 主循环 --- */
+      gameLoop(ts) {
+        const dt = Math.min((ts - this.lastTime)/1000, 0.1);
+        this.lastTime = ts;
+        if (this.state==='playing') this.update(dt);
+        this.draw();
+        requestAnimationFrame(t=>this.gameLoop(t));
+      }
+
+      update(dt) {
+        const w=this.canvas.width, h=this.canvas.height;
+        this.timeLeft -= dt;
+        if (this.timeLeft <= 0) { this.timeLeft=0; this.updateHUD(); this.endGame(); return; }
+
+        this.detectPose();
+
+        // 生成靶子
+        this.spawnTimer += dt;
+        if (this.spawnTimer >= this.getSpawnInterval() && this.targets.length < this.getMaxTargets()) {
+          const elapsed = GAME_DURATION - this.timeLeft;
+          this.targets.push(new Target(w, h, elapsed));
+          this.spawnTimer = 0;
+        }
+        this.targets.forEach(t => t.update(dt));
+
+        // 出拳检测
+        this.detectPunches(w, h);
+
+        // 清理
+        this.targets = this.targets.filter(t => t.alive && !t.hit);
+        this.effects.forEach(e => e.update(dt));
+        this.effects = this.effects.filter(e => e.alive);
+        this.texts.forEach(t => t.update(dt));
+        this.texts = this.texts.filter(t => t.alive);
+
+        this.updateHUD();
+      }
+
+      detectPose() {
+        this.poseLm = null;
+        if (!this.poseLandmarker || this.video.readyState < 2) return;
+        try {
+          const result = this.poseLandmarker.detectForVideo(this.video, performance.now());
+          if (result.landmarks && result.landmarks[0]) {
+            const w=this.canvas.width, h=this.canvas.height;
+            this.poseLm = result.landmarks[0].map(lm => ({
+              x: lm.x*w, y: lm.y*h, z: lm.z, visibility: lm.visibility
+            }));
+          }
+        } catch {}
+      }
+
+      detectPunches(w, h) {
+        if (!this.poseLm) { this.prevWrists = {left:null,right:null}; return; }
+
+        const wrists = [
+          { name:'left',  idx:15, curr: this.poseLm[15] },
+          { name:'right', idx:16, curr: this.poseLm[16] },
+        ];
+
+        for (const wrist of wrists) {
+          if (!wrist.curr || wrist.curr.visibility < 0.3) continue;
+          const prev = this.prevWrists[wrist.name];
+          if (!prev) { this.prevWrists[wrist.name] = { x:wrist.curr.x, y:wrist.curr.y }; continue; }
+
+          // 计算速度
+          const dx = wrist.curr.x - prev.x;
+          const dy = wrist.curr.y - prev.y;
+          const speed = Math.sqrt(dx*dx + dy*dy) / w; // 归一化
+
+          if (speed >= PUNCH_SPEED) {
+            this.punches++;
+            // 检查是否命中靶子
+            let hitAny = false;
+            for (const target of this.targets) {
+              if (target.hit || !target.alive) continue;
+              if (dist(wrist.curr.x, wrist.curr.y, target.x, target.y) < HIT_RADIUS + target.radius) {
+                target.hit = true;
+                hitAny = true;
+                this.hits++;
+                this.combo++;
+                this.maxCombo = Math.max(this.maxCombo, this.combo);
+
+                // 得分 = 基础分 * 连击倍率
+                const multiplier = Math.min(5, 1 + Math.floor(this.combo / 3));
+                const points = 10 * multiplier;
+                this.score += points;
+
+                this.effects.push(new PunchEffect(target.x, target.y, target.color));
+                this.texts.push(new FloatScore(target.x, target.y - 30,
+                  `+${points}${multiplier > 1 ? ` x${multiplier}` : ''}`,
+                  multiplier > 1 ? '#FFD700' : '#fff'));
+                this.showComboPopup(this.combo);
+                break;
+              }
+            }
+            if (!hitAny) {
+              this.combo = 0; // 挥拳未命中，连击中断
+            }
+          }
+          this.prevWrists[wrist.name] = { x: wrist.curr.x, y: wrist.curr.y };
+        }
+      }
+
+      draw() {
+        const {ctx,canvas:cvs}=this;
+        const w=cvs.width, h=cvs.height;
+        ctx.clearRect(0,0,w,h);
+
+        if (this.video.readyState>=2) ctx.drawImage(this.video,0,0,w,h);
+
+        if (this.state==='playing') {
+          ctx.fillStyle='rgba(0,0,0,0.06)';
+          ctx.fillRect(0,0,w,h);
+        }
+
+        // 靶子
+        this.targets.forEach(t => t.draw(ctx));
+
+        // 粒子
+        this.effects.forEach(e => e.draw(ctx));
+
+        // 飘字
+        this.texts.forEach(t => t.draw(ctx));
+
+        // 人体骨骼 + 拳头标记
+        this.drawPose(ctx);
+      }
+
+      drawPose(ctx) {
+        if (!this.poseLm) return;
+
+        // 骨骼连线
+        ctx.strokeStyle = 'rgba(0,255,200,0.5)';
+        ctx.lineWidth = 3;
+        for (const [i,j] of POSE_CONNECTIONS) {
+          const a=this.poseLm[i], b=this.poseLm[j];
+          if (!a||!b||a.visibility<0.3||b.visibility<0.3) continue;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+
+        // 拳头（手腕）特殊标记
+        for (const idx of [15, 16]) {
+          const lm = this.poseLm[idx];
+          if (!lm || lm.visibility < 0.3) continue;
+
+          // 拳头光晕
+          ctx.save();
+          ctx.shadowColor = '#FF4444';
+          ctx.shadowBlur = 20;
+          ctx.fillStyle = '#E63946';
+          ctx.beginPath();
+          ctx.arc(lm.x, lm.y, 14, 0, Math.PI*2);
+          ctx.fill();
+
+          // 内圈
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(lm.x, lm.y, 6, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // 其他关键点
+        for (let i=0; i<this.poseLm.length; i++) {
+          if (i===15||i===16) continue;
+          const lm = this.poseLm[i];
+          if (!lm || lm.visibility < 0.3) continue;
+          ctx.fillStyle = 'rgba(0,255,200,0.7)';
+          ctx.beginPath();
+          ctx.arc(lm.x, lm.y, 4, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+
+    new PunchBoxingGame();
+  </script>
+</body>
+</html>
