@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="闲亩的小玩意：几个跑在浏览器里的小游戏与小工具，不要钱、不要注册、不投广告。">
+<title>小玩意 · 闲亩</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23f7f5f1'/%3E%3Ccircle%20cx='10'%20cy='16'%20r='3.4'%20fill='%235a4bff'/%3E%3Ccircle%20cx='16'%20cy='16'%20r='3.4'%20fill='%23ffd700'/%3E%3Ccircle%20cx='22'%20cy='16'%20r='3.4'%20fill='%2337352f'/%3E%3C/svg%3E">
+<script>
+    // 与博客主题同一套约定：themes/sharp/layouts/partials/head.html 读 localStorage['theme']
+    // 并落到 html[data-theme]。这里的回落值 'light' 对应 config.yaml 的 params.colorScheme。
+    (function () {
+        var root = document.documentElement;
+        var saved = null;
+        try { saved = localStorage.getItem('theme'); } catch (e) {}
+        var t = saved || 'light';
+        if (t === 'auto') {
+            var mq = matchMedia('(prefers-color-scheme: dark)');
+            t = mq.matches ? 'dark' : 'light';
+            mq.addEventListener('change', function (e) {
+                root.dataset.theme = e.matches ? 'dark' : 'light';
+            });
+        }
+        root.dataset.theme = t;
+    })();
+</script>
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --bg: #f7f5f1;
+        --panel: #fffdf9;
+        --fg: #37352f;
+        --muted: #7d7668;
+        --border: #e5dfd4;
+        --accent: #1a4f8b;
+        --shadow: 0 6px 18px rgba(55, 53, 47, .07);
+        color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+        --bg: #191714;
+        --panel: #211f1b;
+        --fg: #e8e4dc;
+        --muted: #a49d90;
+        --border: #3a362e;
+        --accent: #7fa8dc;
+        --shadow: 0 6px 18px rgba(0, 0, 0, .45);
+        color-scheme: dark;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.75 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 56px; }
+
+    .crumb {
+        display: inline-block;
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .crumb:hover { color: var(--accent); }
+
+    .page-title {
+        margin: 0 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: .04em;
+    }
+
+    .hero { margin: 0 0 28px; padding-left: 12px; border-left: 3px solid var(--accent); }
+    .hero p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .toys { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+
+    .card {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--panel);
+        color: var(--fg);
+        text-decoration: none;
+        transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    .card:hover { border-color: var(--card-accent); transform: translateY(-1px); box-shadow: var(--shadow); }
+    .card:hover .title { color: var(--card-accent); }
+    .card:active { transform: translateY(0); box-shadow: none; }
+
+    /* 卡片强调色取各游戏自己的主色：更上层楼 dominant、流星打字金色（压暗才在纸面上读得出）、
+       数字记忆没有颜色（它本来就是一张黑白页） */
+    .card-sm { --card-accent: #5a4bff; }
+    .card-ss { --card-accent: #b07d00; }
+    .card-mem { --card-accent: var(--fg); }
+
+    html[data-theme="dark"] .card-sm { --card-accent: #8b7bff; }
+    html[data-theme="dark"] .card-ss { --card-accent: #ffd700; }
+
+    .mark {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+    }
+
+    .body { min-width: 0; }
+    .title { margin: 0 0 4px; font-size: 19px; font-weight: 600; line-height: 1.4; }
+    .desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+
+    .chip {
+        padding: 1px 9px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+        white-space: nowrap;
+    }
+
+    /* 更上层楼：四个信号色 + 四个固定形状，照它 splash 的那套编码 */
+    .card-sm .mark { display: grid; grid-template-columns: repeat(2, 13px); gap: 5px; align-content: center; justify-content: center; }
+    .card-sm .mark i { display: block; width: 13px; height: 13px; }
+    .card-sm .mark i:nth-child(1) { background: #4c8dff; border-radius: 50%; }
+    .card-sm .mark i:nth-child(2) { background: #ffb020; border-radius: 3px; }
+    .card-sm .mark i:nth-child(3) { background: #ff4d94; clip-path: polygon(50% 4%, 100% 96%, 0 96%); }
+    .card-sm .mark i:nth-child(4) { background: #2ee6c5; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+
+    /* 流星打字：一颗五角星，clip-path 照它 splash 的那颗 */
+    .card-ss .mark i {
+        display: block;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(160deg, #ffd700, #f6ad55);
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2));
+    }
+
+    /* 数字记忆：等宽字体的两位数，跟那个页面自己用的字体一致 */
+    .card-mem .mark {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        gap: 1px 5px;
+        align-content: center;
+        justify-content: center;
+        color: var(--muted);
+        font-family: "Courier New", Courier, monospace;
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .foot {
+        margin: 32px 0 0;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .foot p { margin: 0; }
+
+    @media (max-width: 520px) {
+        .wrap { padding: 24px 16px 44px; }
+        .card { gap: 12px; padding: 15px 16px; }
+        .mark { width: 42px; height: 42px; border-radius: 10px; }
+        .card-sm .mark { grid-template-columns: repeat(2, 11px); gap: 4px; }
+        .card-sm .mark i { width: 11px; height: 11px; }
+        .card-ss .mark i { width: 22px; height: 22px; }
+        .card-mem .mark { font-size: 9px; }
+        .title { font-size: 17px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .card { transition: none; }
+        .card:hover, .card:active { transform: none; }
+    }
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <a class="crumb" href="../../">← 闲亩</a>
+
+        <h1 class="page-title">小玩意</h1>
+
+        <div class="hero">
+            <p>几个跑在浏览器里的小游戏与小工具：不要钱、不要注册、不投广告。</p>
+        </div>
+
+        <ul class="toys">
+            <li>
+                <a class="card card-sm" href="sequence-memory/">
+                    <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                    <div class="body">
+                        <h2 class="title">更上层楼</h2>
+                        <p class="desc">看一遍序列，遮住，按顺序复现；全对就加一位，出错这一局结束，得分是全对过的最大长度。</p>
+                        <p class="meta">
+                            <span class="chip">颜色 / 位置 / 数字 / 扑克</span>
+                            <span class="chip">手机竖屏为主</span>
+                            <span class="chip">进度存在本地</span>
+                            <span class="chip">首次加载需联网</span>
+                        </p>
+                    </div>
+                </a>
+            </li>
+
+            <li>
+                <a class="card card-ss" href="shooting-stars/">
+                    <span class="mark" aria-hidden="true"><i></i></span>
+                    <div class="body">
+                        <h2 class="title">流星打字</h2>
+                        <p class="desc">星星从顶上匀速下落，敲对应的字母键把它敲落；落到地平线坠毁，扣一条命。</p>
+                        <p class="meta">
+                            <span class="chip">需要键盘</span>
+                            <span class="chip">五方案 × 五档</span>
+                            <span class="chip">闯关 / 无尽</span>
+                            <span class="chip">首次加载需联网</span>
+                        </p>
+                    </div>
+                </a>
+            </li>
+
+            <li>
+                <a class="card card-mem" href="memory/">
+                    <span class="mark" aria-hidden="true"><i>07</i><i>42</i><i>19</i><i>88</i><i>35</i><i>61</i></span>
+                    <div class="body">
+                        <h2 class="title">数字记忆</h2>
+                        <p class="desc">一屏 5×5 的两位数，每分钟自动换一批。没有按钮，也没有计分。</p>
+                        <p class="meta">
+                            <span class="chip">纯静态</span>
+                            <span class="chip">无外部依赖</span>
+                        </p>
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <footer class="foot">
+            <p>这几个页面互相独立，各自成一体。有进度的那些，进度只存在你自己这台设备的浏览器里。</p>
+        </footer>
+    </div>
+</body>
+</html>
