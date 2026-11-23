@@ -1,4 +1,4 @@
-// UIScene: 右侧面板（金币/生命/波次/待放置塔/天赋/塔信息）
+// UIScene: 右侧面板（金币/生命/波次/待放置塔/天赋/塔信息/波次预告）
 class UIScene extends Phaser.Scene {
   constructor() { super('UI'); }
 
@@ -30,7 +30,8 @@ class UIScene extends Phaser.Scene {
     this.txtWave = this._text(X + 20, y, '波次 0', 20, 0xffe89a, 'bold');
     this.txtWave.setOrigin(0, 0.5);
 
-    // 暂停按钮（右上角）
+    // 加速按钮 + 暂停按钮（右上角）
+    this.speedBtn = this._makeSpeedButton(X + W - 94, y);
     this.pauseBtn = this._makePauseButton(X + W - 52, y);
 
     y += 34;
@@ -76,15 +77,28 @@ class UIScene extends Phaser.Scene {
     this.towerInfoContainer = this.add.container(X + 20, y);
     this.selectedTower = null;
 
-    // ===== 底部：波次进度/提示 =====
-    this.txtHint = this._text(X + W/2, H - 30, '', 12, 0xa89ac8, 'normal', 'center');
+    // ===== 底部：波次预告 / 提前开战 =====
+    this._hr(X + 16, 540, W - 32);
+    this.txtPreviewTitle = this._text(X + 20, 560, '下一波预告', 13, 0xc9b8e8);
+    this.txtPreviewTitle.setOrigin(0, 0.5);
+    this.txtPreviewComp = this._text(X + 20, 580, '', 12, 0xffffff);
+    this.txtPreviewComp.setOrigin(0, 0);
+    this.txtCountdown = this._text(X + 20, 636, '', 13, PALETTE.gold, 'bold');
+    this.txtCountdown.setOrigin(0, 0.5);
+    this.earlyBtn = this._makeButton(X + 20, 652, 170, 32, '提前开战 (+金币)', PALETTE.gold, () => {
+      this.game_.callWaveEarly();
+    }, false);
+
+    // ===== 最底部：提示 =====
+    this.txtHint = this._text(X + W/2, H - 18, '', 12, 0xa89ac8, 'normal', 'center');
     this.txtHint.setOrigin(0.5, 0.5);
 
-    // ===== 天赋选择遮罩 =====
+    // ===== 遮罩层 =====
     this.talentOverlay = this.add.container(0, 0).setVisible(false).setDepth(100);
-
-    // ===== 游戏结束遮罩 =====
+    this.lootOverlay = this.add.container(0, 0).setVisible(false).setDepth(110);
     this.gameOverOverlay = this.add.container(0, 0).setVisible(false).setDepth(200);
+    this._overlayQueue = [];
+    this.banner = null;
 
     // ===== 暂停遮罩（盖在地图上，UI 面板仍可见）=====
     this.pauseOverlay = this.add.container(0, 0).setVisible(false).setDepth(90);
@@ -97,32 +111,43 @@ class UIScene extends Phaser.Scene {
     pauseSub.setOrigin(0.5);
     this.pauseOverlay.add(pauseSub);
 
-    // 键盘快捷键：P 或 空格 切换暂停
+    // 键盘快捷键：P/空格 暂停，F 加速
     this.input.keyboard.on('keydown-P', () => this.togglePause());
     this.input.keyboard.on('keydown-SPACE', () => this.togglePause());
+    this.input.keyboard.on('keydown-F', () => this._toggleSpeed());
 
-    // 监听事件
-    this.game_.events.on('gold-changed', v => {
+    // 事件监听（统一登记，场景关闭时全部解绑，避免 restart 后重复监听）
+    this._handlers = [];
+    this.events.once('shutdown', () => {
+      for (const [name, fn] of this._handlers) this.game_.events.off(name, fn);
+    });
+
+    this._on('gold-changed', v => {
       this.txtGold.setText(v);
       // 金币变化时刷新当前选中面板，让升级按钮的置灰态实时更新
       if (this.selectedTower) this._showTowerInfo(this.selectedTower);
       else if (this.baseInfoShown) this._showBaseInfo();
     });
-    this.game_.events.on('hp-changed', v => this.txtHp.setText(`${Math.max(0, v)} / ${this.game_.state.baseHp}`));
-    this.game_.events.on('wave-start', n => {
-      this.txtWave.setText(`波次 ${n}`);
-      this.txtHint.setText('敌人来袭！');
+    this._on('hp-changed', v => this.txtHp.setText(`${Math.max(0, v)} / ${this.game_.state.baseHp}`));
+    this._on('wave-start', info => {
+      this.txtWave.setText(`波次 ${info.n}`);
+      this.txtPreviewTitle.setText('当前波');
+      this.txtPreviewComp.setText(this._previewText(this.game_.nextWaveDef));
+      this._showWaveBanner(info);
     });
-    this.game_.events.on('wave-end', n => {
-      this.txtHint.setText(`第 ${n} 波清空！准备下一波...`);
+    this._on('wave-end', n => {
+      this.txtHint.setText(`第 ${n} 波清空！选择战利品...`);
+      this.txtPreviewTitle.setText('下一波预告');
+      this.txtPreviewComp.setText(this._previewText(this.game_.nextWaveDef));
     });
-    this.game_.events.on('drops-updated', drops => this._refreshDrops(drops));
-    this.game_.events.on('drop-selected', drop => this._refreshDropHighlight(drop));
-    this.game_.events.on('tower-selected', t => { this.baseInfoShown = false; this._showTowerInfo(t); });
-    this.game_.events.on('base-selected', () => { this.baseInfoShown = true; this._showBaseInfo(); });
-    this.game_.events.on('offer-talent', () => this._showTalentChoice());
-    this.game_.events.on('game-over', info => this._showGameOver(info));
-    this.game_.events.on('hint', msg => {
+    this._on('drops-updated', drops => this._refreshDrops(drops));
+    this._on('drop-selected', drop => this._refreshDropHighlight(drop));
+    this._on('tower-selected', t => { this.baseInfoShown = false; this._showTowerInfo(t); });
+    this._on('base-selected', () => { this.baseInfoShown = true; this._showBaseInfo(); });
+    this._on('offer-loot', opts => { this._overlayQueue.push({ kind: 'loot', opts }); this._pumpOverlays(); });
+    this._on('offer-talent', () => { this._overlayQueue.push({ kind: 'talent' }); this._pumpOverlays(); });
+    this._on('game-over', info => this._showGameOver(info));
+    this._on('hint', msg => {
       this.txtHint.setText(msg);
       this.time.delayedCall(2000, () => {
         if (this.txtHint.text === msg) this.txtHint.setText('');
@@ -133,6 +158,26 @@ class UIScene extends Phaser.Scene {
     this._refreshDrops(this.game_.pendingDrops);
     this.txtGold.setText(this.game_.state.gold);
     this.txtHp.setText(`${this.game_.state.hp} / ${this.game_.state.baseHp}`);
+    this.txtPreviewComp.setText(this._previewText(this.game_.nextWaveDef));
+  }
+
+  update() {
+    const g = this.game_;
+    if (!g || !g.state || g.state.gameOver) return;
+    if (g.state.interWave) {
+      const secs = Math.max(0, Math.ceil((g.nextWaveAt - g.gameTime) / 1000));
+      this.txtCountdown.setText(`${secs}s 后来袭`);
+      this.earlyBtn.setAlpha(g.state.paused ? 0.4 : 1);
+    } else {
+      const left = g.enemies.length + (g.waveQueue ? g.waveQueue.length : 0);
+      this.txtCountdown.setText(`剩余敌人 ${left}`);
+      this.earlyBtn.setAlpha(0.4);
+    }
+  }
+
+  _on(name, fn) {
+    this.game_.events.on(name, fn);
+    this._handlers.push([name, fn]);
   }
 
   _text(x, y, str, size, color, style, align) {
@@ -154,6 +199,48 @@ class UIScene extends Phaser.Scene {
     g.lineBetween(x, y, x + w, y);
     g.fillStyle(PALETTE.gold, 0.7);
     g.fillCircle(x + w/2, y, 3);
+  }
+
+  // 波次组成预告文本
+  _previewText(def) {
+    if (!def) return '';
+    const counts = {};
+    for (const g of def.list) counts[g.type] = (counts[g.type] || 0) + g.count;
+    let s = Object.entries(counts).map(([t, c]) => `${ENEMY_TYPES[t].name}×${c}`).join('  ');
+    if (def.boss) s = 'BOSS 波！' + s;
+    if (def.affix) s += `\n词缀「${def.affix.name}」${def.affix.desc}`;
+    if (def.eliteCount) s += `\n混入 ${def.eliteCount} 个精英（金血条）`;
+    return s;
+  }
+
+  // 波次横幅：地图中央大字滑入淡出
+  _showWaveBanner(info) {
+    if (this.banner) { this.banner.destroy(); this.banner = null; }
+    const c = this.add.container(CFG.MAP_W/2, 190).setDepth(80);
+    const title = this._text(0, 0, info.boss ? `第 ${info.n} 波 · BOSS` : `第 ${info.n} 波`, 44, PALETTE.gold, 'bold', 'center');
+    title.setOrigin(0.5);
+    title.setStroke('#2b1e14', 6);
+    c.add(title);
+    let sub = '';
+    if (info.boss) sub = 'BOSS 半血后会狂暴加速！';
+    else if (info.affix) sub = `词缀「${info.affix.name}」：${info.affix.desc}`;
+    else if (info.eliteCount) sub = `精英 x${info.eliteCount} 混入敌群`;
+    if (sub) {
+      const st = this._text(0, 44, sub, 18, 0xffffff, 'bold', 'center');
+      st.setOrigin(0.5);
+      st.setStroke('#2b1e14', 4);
+      c.add(st);
+    }
+    c.setAlpha(0);
+    c.setScale(0.8);
+    this.tweens.add({ targets: c, alpha: 1, scale: 1, duration: 250, ease: 'Back.Out' });
+    this.time.delayedCall(1500, () => {
+      this.tweens.add({
+        targets: c, alpha: 0, y: 170, duration: 350,
+        onComplete: () => { c.destroy(); if (this.banner === c) this.banner = null; }
+      });
+    });
+    this.banner = c;
   }
 
   _makeDropSlot(cx, cy) {
@@ -280,7 +367,7 @@ class UIScene extends Phaser.Scene {
 
     // 按钮：升级（常驻，满级/金币不足则置灰）+ 出售（位置固定，避免误点）
     const maxed = tower.star >= 4;
-    const upCost = maxed ? 0 : Math.round(this.game_._towerValue({ star: tower.star + 1 }) * 0.7);
+    const upCost = maxed ? 0 : Math.round(this.game_._towerValue({ star: tower.star + 1 }) * 0.7 * this.game_.state.mods.upCostMul);
     const canAfford = this.game_.state.gold >= upCost;
     const upDisabled = maxed || !canAfford;
     const upLabel = maxed ? '已满级 ★4' : `升级 (${upCost}金)`;
@@ -361,6 +448,34 @@ class UIScene extends Phaser.Scene {
     this.towerInfoContainer.add(hint);
   }
 
+  // 加速按钮：×1 / ×2 切换
+  _makeSpeedButton(cx, cy) {
+    const S = 34;
+    const c = this.add.container(cx, cy);
+    const bg = this.add.rectangle(0, 0, S, S, PALETTE.panelLight, 0.9);
+    bg.setStrokeStyle(2, PALETTE.gold, 0.8);
+    c.add(bg);
+    const label = this._text(0, 0, '×1', 15, PALETTE.gold, 'bold', 'center');
+    label.setOrigin(0.5);
+    c.add(label);
+    c.setData('bg', bg);
+    c.setData('label', label);
+    bg.setInteractive({ useHandCursor: true });
+    bg.on('pointerover', () => bg.setFillStyle(0x7a5a9a, 1));
+    bg.on('pointerout', () => bg.setFillStyle(c.getData('label').text === '×2' ? 0x7a5a10 : PALETTE.panelLight, 0.9));
+    bg.on('pointerdown', () => this._toggleSpeed());
+    return c;
+  }
+
+  _toggleSpeed() {
+    const v = this.game_.toggleSpeed();
+    const label = this.speedBtn.getData('label');
+    const bg = this.speedBtn.getData('bg');
+    label.setText('×' + v);
+    bg.setFillStyle(v === 2 ? 0x7a5a10 : PALETTE.panelLight, 0.9);
+    this.txtHint.setText(v === 2 ? '已开启 2 倍速（F 键切换）' : '已恢复 1 倍速');
+  }
+
   // 暂停按钮：右上角小方块，图标随状态切换（暂停/播放）
   _makePauseButton(cx, cy) {
     const S = 34;
@@ -401,7 +516,7 @@ class UIScene extends Phaser.Scene {
   togglePause() {
     const st = this.game_.state;
     if (st.gameOver) return;
-    if (this.talentOverlay.visible) return;
+    if (this.talentOverlay.visible || this.lootOverlay.visible) return;
     st.userPaused = !st.userPaused;
     st.paused = st.userPaused;
     this._drawPauseIcon(this.pauseBtn.getData('icon'), st.userPaused);
@@ -436,6 +551,90 @@ class UIScene extends Phaser.Scene {
     return c;
   }
 
+  // ===== 遮罩队列：战利品 → 天赋 依次弹出 =====
+  _pumpOverlays() {
+    if (this.talentOverlay.visible || this.lootOverlay.visible) return;
+    const o = this._overlayQueue.shift();
+    if (!o) return;
+    if (o.kind === 'loot') this._showLootChoice(o.opts);
+    else this._showTalentChoice();
+  }
+
+  _closeChoice() {
+    // 恢复到玩家手动暂停状态（若之前没手动暂停则继续游戏）
+    this.game_.state.paused = this.game_.state.userPaused;
+    this._pumpOverlays();
+  }
+
+  // 战利品三选一
+  _showLootChoice(options) {
+    this.game_.state.paused = true;
+    this.lootOverlay.removeAll(true);
+    this.lootOverlay.setVisible(true);
+
+    const mask = this.add.rectangle(CFG.GAME_W/2, CFG.GAME_H/2, CFG.GAME_W, CFG.GAME_H, 0x000000, 0.7);
+    mask.setInteractive();
+    this.lootOverlay.add(mask);
+
+    const title = this._text(CFG.GAME_W/2, 100, '选择战利品', 32, PALETTE.gold, 'bold', 'center');
+    title.setOrigin(0.5);
+    this.lootOverlay.add(title);
+    const sub = this._text(CFG.GAME_W/2, 140, '三选一放入待放置栏，不满意可花金币重掷', 14, 0xc9b8e8, 'normal', 'center');
+    sub.setOrigin(0.5);
+    this.lootOverlay.add(sub);
+
+    const cardW = 220, cardH = 260, gap = 30;
+    const totalW = cardW * 3 + gap * 2;
+    const startX = (CFG.GAME_W - totalW) / 2;
+    const cardY = 200;
+    const starColor = { 1: 0x8fd98f, 2: 0x6ec8e8, 3: 0xc9a0ff };
+
+    options.forEach((opt, i) => {
+      const cx = startX + i * (cardW + gap);
+      const card = this.add.container(cx, cardY);
+      const def = TOWER_TYPES[opt.type];
+      const color = starColor[opt.star];
+
+      const bg = this.add.rectangle(cardW/2, cardH/2, cardW, cardH, PALETTE.panelLight, 1);
+      bg.setStrokeStyle(3, color, 0.9);
+      card.add(bg);
+
+      const spr = this.add.image(cardW/2, 84, `tower_${opt.type}_${opt.star}`).setScale(1.7 * CFG.IS);
+      card.add(spr);
+
+      const name = this._text(cardW/2, 156, `${def.name} ${'★'.repeat(opt.star)}`, 20, color, 'bold', 'center');
+      name.setOrigin(0.5);
+      card.add(name);
+
+      const desc = this._text(cardW/2, 190, def.desc, 14, 0xffffff, 'normal', 'center');
+      desc.setOrigin(0.5, 0);
+      desc.setWordWrapWidth(cardW - 30);
+      card.add(desc);
+
+      card.setSize(cardW, cardH);
+      bg.setInteractive({ useHandCursor: true });
+      bg.on('pointerover', () => { bg.setFillStyle(0x7a5a9a, 1); card.setScale(1.05); });
+      bg.on('pointerout', () => { bg.setFillStyle(PALETTE.panelLight, 1); card.setScale(1); });
+      bg.on('pointerdown', () => {
+        this.game_.takeLoot(opt);
+        this.lootOverlay.setVisible(false);
+        this.txtHint.setText(`获得战利品：${def.name} ${'★'.repeat(opt.star)}`);
+        this._closeChoice();
+      });
+      this.lootOverlay.add(card);
+    });
+
+    const rerollBtn = this._makeButton(CFG.GAME_W/2 - 80, 500, 160, 40, '重掷 (25金)', 0x6ec8e8, () => {
+      const next = this.game_.rerollLoot();
+      if (next) {
+        this._showLootChoice(next);
+      } else {
+        this.txtHint.setText('金币不足，无法重掷！');
+      }
+    }, false);
+    this.lootOverlay.add(rerollBtn);
+  }
+
   _showTalentChoice() {
     this.game_.state.paused = true;
     this.talentOverlay.removeAll(true);
@@ -453,11 +652,24 @@ class UIScene extends Phaser.Scene {
     sub.setOrigin(0.5);
     this.talentOverlay.add(sub);
 
-    const pool = [...TALENTS];
+    // 按稀有度权重抽取 3 个不重复天赋（已拿过的不可叠加天赋不再出现）
+    const taken = new Set(this.game_.state.talents.map(t => t.id));
+    const bag = TALENTS.filter(t => t.stack || !taken.has(t.id));
     const picks = [];
-    for (let i = 0; i < 3 && pool.length; i++) {
-      const idx = Math.floor(Math.random() * pool.length);
-      picks.push(pool.splice(idx, 1)[0]);
+    for (let i = 0; i < 3 && bag.length; i++) {
+      const total = bag.reduce((s, t) => s + RARITY[t.rarity].weight, 0);
+      let r = Math.random() * total;
+      let idx = 0;
+      for (let j = 0; j < bag.length; j++) {
+        r -= RARITY[bag[j].rarity].weight;
+        if (r <= 0) { idx = j; break; }
+      }
+      picks.push(bag.splice(idx, 1)[0]);
+    }
+    if (picks.length === 0) {
+      this.talentOverlay.setVisible(false);
+      this._closeChoice();
+      return;
     }
 
     const cardW = 220, cardH = 260, gap = 30;
@@ -465,31 +677,35 @@ class UIScene extends Phaser.Scene {
     const startX = (CFG.GAME_W - totalW) / 2;
     const cardY = 200;
 
-    picks.forEach((talent, i) => {
+    picks.forEach((talent) => {
+      const i = picks.indexOf(talent);
       const cx = startX + i * (cardW + gap);
       const card = this.add.container(cx, cardY);
+      const rar = RARITY[talent.rarity];
 
       const bg = this.add.rectangle(cardW/2, cardH/2, cardW, cardH, PALETTE.panelLight, 1);
-      bg.setStrokeStyle(3, PALETTE.gold, 0.8);
+      bg.setStrokeStyle(3, rar.color, 0.9);
       card.add(bg);
 
+      const rarLabel = this._text(cardW - 14, 16, rar.name, 12, rar.color, 'bold', 'right');
+      rarLabel.setOrigin(1, 0.5);
+      card.add(rarLabel);
+
       const icon = this.add.graphics();
-      icon.fillStyle(PALETTE.gold, 1);
-      icon.fillCircle(cardW/2, 60, 30);
+      icon.fillStyle(rar.color, 1);
+      icon.fillCircle(cardW/2, 66, 30);
       icon.lineStyle(3, PALETTE.ink, 1);
-      icon.strokeCircle(cardW/2, 60, 30);
-      icon.fillStyle(PALETTE.panel, 1);
+      icon.strokeCircle(cardW/2, 66, 30);
       card.add(icon);
-      const symbols = ['⚔', '⚡', ''];
-      const sym = this._text(cardW/2, 60, symbols[i % 3], 28, PALETTE.ink, 'bold', 'center');
+      const sym = this._text(cardW/2, 66, talent.icon, 28, PALETTE.ink, 'bold', 'center');
       sym.setOrigin(0.5);
       card.add(sym);
 
-      const name = this._text(cardW/2, 110, talent.name, 20, PALETTE.gold, 'bold', 'center');
+      const name = this._text(cardW/2, 116, talent.name, 20, PALETTE.gold, 'bold', 'center');
       name.setOrigin(0.5);
       card.add(name);
 
-      const desc = this._text(cardW/2, 150, talent.desc, 14, 0xffffff, 'normal', 'center');
+      const desc = this._text(cardW/2, 152, talent.desc, 14, 0xffffff, 'normal', 'center');
       desc.setOrigin(0.5, 0);
       desc.setWordWrapWidth(cardW - 30);
       card.add(desc);
@@ -508,9 +724,8 @@ class UIScene extends Phaser.Scene {
       bg.on('pointerdown', () => {
         this.game_.applyTalent(talent);
         this.talentOverlay.setVisible(false);
-        // 恢复到玩家手动暂停状态（若之前没手动暂停则继续游戏）
-        this.game_.state.paused = this.game_.state.userPaused;
         this.txtHint.setText(`获得天赋：${talent.name}`);
+        this._closeChoice();
       });
 
       this.talentOverlay.add(card);
@@ -529,7 +744,7 @@ class UIScene extends Phaser.Scene {
     this.gameOverOverlay.add(title);
 
     const stats = this._text(CFG.GAME_W/2, 280,
-      `坚持到第 ${info.wave} 波\n获得 ${info.talents.length} 个天赋`, 20, 0xffffff, 'normal', 'center');
+      `坚持到第 ${info.wave} 波\n击杀 ${info.kills} 个敌人 · 获得 ${info.talents.length} 个天赋`, 20, 0xffffff, 'normal', 'center');
     stats.setOrigin(0.5);
     this.gameOverOverlay.add(stats);
 

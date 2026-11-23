@@ -9,6 +9,11 @@ class GameScene extends Phaser.Scene {
     this.cameras.main.setZoom(CFG.RS);
     this.cameras.main.setScroll(0, 0);
 
+    // 独立游戏时钟（毫秒）：所有战斗计时走这里，随加速倍率缩放，
+    // 与 Phaser 的 time/tweens timeScale 保持同步
+    this.gameTime = 0;
+    this.speed = 1;
+
     // 状态
     this.state = {
       gold: 120,
@@ -16,28 +21,32 @@ class GameScene extends Phaser.Scene {
       baseHp: 20,
       baseLevel: 1,
       wave: 0,
+      kills: 0,
       waveActive: false,
       interWave: true,
       gameOver: false,
       paused: false,
-      userPaused: false, // 玩家手动暂停（区别于天赋选择的临时暂停）
+      userPaused: false, // 玩家手动暂停（区别于天赋/战利品选择的临时暂停）
       mods: {
         dmgMul: 1, rateMul: 1, rangeMul: 1,
         goldMul: 1, extraDrop: 0, mergeJump: 0,
         frostSlow: 0.45, regen: 0, splashAll: 0, crit: 0,
+        upCostMul: 1, chainBonus: 0, dotMul: 1, frostDur: 0,
+        cannonSplashMul: 1, arrowDouble: 0, auraRangeMul: 1,
+        killHeal: 0, eliteDmgMul: 1, lootLuck: 0,
       },
       talents: [],
     };
+    this._healKills = 0;
 
     // 生成地图
     this.mapData = MapGen.generate(CFG.MAP_COLS, CFG.MAP_ROWS);
     this.pathPx = MapGen.pathToPixels(this.mapData.path, CFG.TILE);
 
-    // 图层容器
+    // 图层容器。塔与敌人共用 unitLayer，按 y 设 depth 实现正确遮挡
     this.mapLayer = this.add.container(0, 0);
     this.decoLayer = this.add.container(0, 0);
-    this.towerLayer = this.add.container(0, 0);
-    this.enemyLayer = this.add.container(0, 0);
+    this.unitLayer = this.add.container(0, 0);
     this.projLayer = this.add.container(0, 0);
     this.fxLayer = this.add.container(0, 0);
 
@@ -52,6 +61,9 @@ class GameScene extends Phaser.Scene {
     // 掉落塔池（等待玩家放置）
     this.pendingDrops = [];
 
+    // 粒子发射器缓存（按 用途+颜色 复用）
+    this._emitters = {};
+
     // 开局赠送 3 个随机塔，保证第一波有得放
     for (let i = 0; i < 3; i++) this._rollDrop();
 
@@ -62,14 +74,17 @@ class GameScene extends Phaser.Scene {
     // 拖拽状态
     this.dragging = null;
 
+    // 波次：预生成下一波，供 UI 预告与提前开战
+    this.nextWaveDef = makeWave(1);
+    this.nextWaveAt = 1500;
+    this.currentAffix = null;
+
     // UI 场景
     this.scene.launch('UI', { game: this });
+  }
 
-    // 波次调度
-    this.time.delayedCall(1500, () => this.startNextWave());
-
-    // 每帧逻辑
-    this.events.on('update', (time, delta) => this._update(time, delta / 1000));
+  update(time, delta) {
+    this._update(time, delta / 1000);
   }
 
   // ============ 地图绘制 ============
@@ -80,8 +95,7 @@ class GameScene extends Phaser.Scene {
       for (let x = 0; x < cols; x++) {
         const v = grid[y][x];
         let key = 'tile_grass';
-        if (v === 1) key = 'tile_path';
-        else if (v === 2) key = 'tile_buildable';
+        if (v === 2) key = 'tile_buildable';
         else if (v === 3) {
           const r = Math.random();
           key = r < 0.5 ? 'deco_tree' : (r < 0.85 ? 'deco_rock' : 'deco_flower');
@@ -105,6 +119,8 @@ class GameScene extends Phaser.Scene {
         this.mapLayer.add(img);
       }
     }
+
+    this._drawRoad();
 
     // 起点/终点标记
     const s = this.mapData.start, e = this.mapData.end;
@@ -141,6 +157,60 @@ class GameScene extends Phaser.Scene {
     this.baseZone.on('pointerout', () => { this.baseZone.setData('hover', false); this._drawBase(); });
     this.baseZone.on('pointerdown', () => { this.events.emit('base-selected'); });
     this.decoLayer.add(this.baseZone);
+  }
+
+  // 连续道路：沿路径格画"圆 + 连接矩形"，转弯处自然圆角，
+  // 先画深色宽边再画浅色路面，烘焙成一张贴图盖在草地上
+  _drawRoad() {
+    const T = CFG.TILE;
+    const { grid, cols, rows } = this.mapData;
+    const RW = T * 0.62;
+    const g = this.make.graphics({ add: false });
+    g.scaleX = CFG.RS;
+    g.scaleY = CFG.RS;
+
+    const isPath = (x, y) => x >= 0 && x < cols && y >= 0 && y < rows && grid[y][x] === 1;
+    const passes = [
+      { w: RW + 10, color: PALETTE.pathEdge },
+      { w: RW, color: PALETTE.path },
+    ];
+    for (const pass of passes) {
+      g.fillStyle(pass.color, 1);
+      const half = pass.w / 2;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (!isPath(x, y)) continue;
+          const cx = x * T + T/2, cy = y * T + T/2;
+          g.fillCircle(cx, cy, half);
+          if (isPath(x + 1, y)) g.fillRect(cx, cy - half, T, pass.w);
+          if (isPath(x, y + 1)) g.fillRect(cx - half, cy, pass.w, T);
+        }
+      }
+    }
+    // 路面碎石点缀
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (!isPath(x, y)) continue;
+        const cx = x * T + T/2, cy = y * T + T/2;
+        for (let i = 0; i < 3; i++) {
+          const px = cx + (Math.random() - 0.5) * (RW - 14);
+          const py = cy + (Math.random() - 0.5) * (RW - 14);
+          g.fillStyle(Math.random() < 0.5 ? 0xc9a878 : 0xe8caa0, 0.7);
+          g.fillCircle(px, py, 1 + Math.random() * 2);
+        }
+        if (Math.random() < 0.3) {
+          const px = cx + (Math.random() - 0.5) * (RW - 16);
+          const py = cy + (Math.random() - 0.5) * (RW - 16);
+          g.fillStyle(0x8a6a4a, 0.9);
+          g.fillCircle(px, py, 2 + Math.random() * 1.5);
+        }
+      }
+    }
+    if (this.textures.exists('road')) this.textures.remove('road');
+    g.generateTexture('road', CFG.MAP_W * CFG.RS, CFG.MAP_H * CFG.RS);
+    g.destroy();
+    const road = this.add.image(CFG.MAP_W/2, CFG.MAP_H/2, 'road').setScale(CFG.IS);
+    this.mapLayer.add(road);
   }
 
   // 绘制基地（随等级变化外观 + 悬停高亮）
@@ -191,6 +261,24 @@ class GameScene extends Phaser.Scene {
     this.baseHpFg.fillColor = ratio > 0.5 ? PALETTE.hp : (ratio > 0.25 ? 0xe89a3f : 0xff3a2a);
   }
 
+  // ============ 粒子 ============
+  _emitter(kind, tint) {
+    const key = `${kind}_${tint}`;
+    if (this._emitters[key]) return this._emitters[key];
+    const presets = {
+      death: { speed: { min: 50, max: 190 }, lifespan: { min: 280, max: 520 }, scale: { start: 0.7 * CFG.IS, end: 0 }, gravityY: 260, quantity: 12 },
+      hit:   { speed: { min: 30, max: 100 }, lifespan: { min: 120, max: 240 }, scale: { start: 0.45 * CFG.IS, end: 0 }, quantity: 5 },
+      gold:  { speed: { min: 40, max: 140 }, lifespan: { min: 300, max: 600 }, scale: { start: 0.6 * CFG.IS, end: 0 }, gravityY: -60, quantity: 14 },
+    };
+    const em = this.add.particles(0, 0, 'spark', Object.assign({
+      tint, emitting: false, blendMode: 'ADD', angle: { min: 0, max: 360 },
+    }, presets[kind]));
+    em.setDepth(30);
+    this.fxLayer.add(em);
+    this._emitters[key] = em;
+    return em;
+  }
+
   // ============ 波次 ============
   startNextWave() {
     if (this.state.gameOver) return;
@@ -202,30 +290,39 @@ class GameScene extends Phaser.Scene {
       this.state.hp = Math.min(this.state.baseHp, this.state.hp + this.state.mods.regen);
     }
 
-    const waveDef = makeWave(this.state.wave);
+    const def = this.nextWaveDef;
+    this.currentAffix = def.affix;
     this.waveQueue = [];
-    for (const group of waveDef) {
+    for (const group of def.list) {
       for (let i = 0; i < group.count; i++) {
         this.waveQueue.push({
           type: group.type,
           at: (group.delay || 0) + i * group.gap,
           hpMul: group.hpMul,
           speedMul: group.speedMul,
+          elite: false,
         });
       }
     }
+    // 随机挑非 Boss 单位晋升精英
+    if (def.eliteCount > 0) {
+      const candidates = this.waveQueue.map((q, i) => q.type !== 'boss' ? i : -1).filter(i => i >= 0);
+      for (let k = 0; k < def.eliteCount && candidates.length; k++) {
+        const idx = candidates.splice(Math.floor(Math.random() * candidates.length), 1)[0];
+        this.waveQueue[idx].elite = true;
+      }
+    }
     this.waveQueue.sort((a, b) => a.at - b.at);
-    this.waveStart = this.time.now;
+    this.waveStart = this.gameTime;
 
-    this.events.emit('wave-start', this.state.wave);
+    this.events.emit('wave-start', { n: this.state.wave, affix: def.affix, eliteCount: def.eliteCount, boss: def.boss });
   }
 
   _spawnFromQueue() {
-    const now = this.time.now;
-    const elapsed = (now - this.waveStart) / 1000;
+    const elapsed = (this.gameTime - this.waveStart) / 1000;
     while (this.waveQueue.length && this.waveQueue[0].at <= elapsed) {
       const item = this.waveQueue.shift();
-      this._spawnEnemy(item.type, item.hpMul, item.speedMul);
+      this._spawnEnemy(item);
     }
     if (this.waveQueue.length === 0 && this.enemies.length === 0 && this.state.waveActive) {
       this._endWave();
@@ -235,24 +332,36 @@ class GameScene extends Phaser.Scene {
   _endWave() {
     this.state.waveActive = false;
     this.state.interWave = true;
-    const dropCount = 2 + this.state.mods.extraDrop + (this.state.wave % 3 === 0 ? 1 : 0);
-    for (let i = 0; i < dropCount; i++) {
-      this._rollDrop();
-    }
+    // 自动掉落 + 战利品三选一
+    const autoDrops = 1 + this.state.mods.extraDrop + (this.state.wave % 3 === 0 ? 1 : 0);
+    for (let i = 0; i < autoDrops; i++) this._rollDrop();
+    this.events.emit('offer-loot', this.rollLootOptions());
     if (this.state.wave % 3 === 0) {
       this.events.emit('offer-talent');
     }
+    this.nextWaveDef = makeWave(this.state.wave + 1);
+    this.nextWaveAt = this.gameTime + 4000;
     this.events.emit('wave-end', this.state.wave);
-    // 4 秒后自动开下一波（若正卡在天赋选择/暂停则顺延）
-    const scheduleNext = () => {
-      if (this.state.gameOver) return;
-      if (this.state.paused) {
-        this.time.delayedCall(500, scheduleNext);
-        return;
-      }
-      this.startNextWave();
-    };
-    this.time.delayedCall(4000, scheduleNext);
+  }
+
+  // 提前开战：剩余等待秒数折算金币奖励
+  callWaveEarly() {
+    if (!this.state.interWave || this.state.gameOver || this.state.paused) return 0;
+    const bonus = Math.max(0, Math.ceil((this.nextWaveAt - this.gameTime) / 1000)) * 3;
+    this.state.gold += bonus;
+    this.events.emit('gold-changed', this.state.gold);
+    if (bonus > 0) {
+      this._showFloatText(this.baseSprite.x, this.baseSprite.y - 50, `提前迎战 +${bonus}金`, PALETTE.gold);
+    }
+    this.startNextWave();
+    return bonus;
+  }
+
+  toggleSpeed() {
+    this.speed = this.speed === 1 ? 2 : 1;
+    this.time.timeScale = this.speed;
+    this.tweens.timeScale = this.speed;
+    return this.speed;
   }
 
   _rollDrop() {
@@ -261,44 +370,94 @@ class GameScene extends Phaser.Scene {
     const r = Math.random();
     if (r > 0.92) star = 3;
     else if (r > 0.65) star = 2;
+    this._addDrop(type, star);
+  }
+
+  // 战利品三选一选项（幸运星天赋提高高星概率）
+  rollLootOptions() {
+    const opts = [];
+    const luck = this.state.mods.lootLuck;
+    for (let i = 0; i < 3; i++) {
+      const type = TOWER_KEYS[Math.floor(Math.random() * TOWER_KEYS.length)];
+      let star = 1;
+      const r = Math.random();
+      if (r > 0.92 - luck) star = 3;
+      else if (r > 0.62 - luck) star = 2;
+      opts.push({ type, star, id: Math.random().toString(36).slice(2) });
+    }
+    return opts;
+  }
+
+  takeLoot(opt) {
+    this._addDrop(opt.type, opt.star);
+  }
+
+  rerollLoot() {
+    const cost = 25;
+    if (this.state.gold < cost) return null;
+    this.state.gold -= cost;
+    this.events.emit('gold-changed', this.state.gold);
+    return this.rollLootOptions();
+  }
+
+  _addDrop(type, star) {
+    // 待放置栏满时折算金币，避免溢出丢失
+    if (this.pendingDrops.length >= 6) {
+      const refund = Math.round(this._towerValue({ star }) * 0.5);
+      this.state.gold += refund;
+      this.events.emit('gold-changed', this.state.gold);
+      this.events.emit('hint', `待放置栏已满，战利品折算 +${refund}金`);
+      return;
+    }
     this.pendingDrops.push({ type, star, id: Math.random().toString(36).slice(2) });
     this.events.emit('drops-updated', this.pendingDrops);
   }
 
-  _spawnEnemy(type, hpMul, speedMul) {
-    const def = ENEMY_TYPES[type];
+  _spawnEnemy(item) {
+    const def = ENEMY_TYPES[item.type];
+    const affix = this.currentAffix || {};
+    const elite = !!item.elite;
     const start = this.pathPx[0];
-    const spr = this.add.image(start.x, start.y, `enemy_${type}`);
-    spr.setDepth(5);
-    this.enemyLayer.add(spr);
+    const spr = this.add.image(start.x, start.y, `enemy_${item.type}`);
+    this.unitLayer.add(spr);
 
-    const hp = Math.round(def.hp * hpMul);
-    const barW = def.size * 2;
-    const hpBg = this.add.rectangle(start.x, start.y - def.size - 9, barW, 5, PALETTE.hpBg).setDepth(6);
+    const visualScale = elite ? 1.25 : 1;
+    const hp = Math.round(def.hp * item.hpMul * (elite ? 3.2 : 1));
+    const vsize = def.size * visualScale;
+    const barW = vsize * 2;
+    const hpBg = this.add.rectangle(start.x, start.y - vsize - 9, barW, 5, PALETTE.hpBg).setDepth(5000);
     hpBg.setStrokeStyle(1, PALETTE.ink, 0.8);
-    const hpFg = this.add.rectangle(start.x - barW/2, start.y - def.size - 9, barW, 5, PALETTE.hp).setOrigin(0, 0.5).setDepth(7);
-    this.enemyLayer.add(hpBg);
-    this.enemyLayer.add(hpFg);
+    const hpFg = this.add.rectangle(start.x - barW/2, start.y - vsize - 9, barW, 5, elite ? PALETTE.gold : PALETTE.hp).setOrigin(0, 0.5).setDepth(5001);
+    this.unitLayer.add(hpBg);
+    this.unitLayer.add(hpFg);
 
     const enemy = {
-      type, def, spr, hpBg, hpFg, barW,
+      type: item.type, def, spr, hpBg, hpFg, barW,
       hp, maxHp: hp,
-      speed: def.speed * speedMul,
-      baseSpeed: def.speed * speedMul,
+      speed: def.speed * item.speedMul,
+      baseSpeed: def.speed * item.speedMul,
       pathIdx: 0,
       x: start.x, y: start.y,
-      slowUntil: 0, slowFactor: 1,
+      slowUntil: 0, slowFactor: 1, flashUntil: 0,
       dot: null,
-      gold: Math.round(def.gold * this.state.mods.goldMul),
+      gold: Math.round(def.gold * this.state.mods.goldMul * (affix.goldMul || 1) * (elite ? 3 : 1)),
       dead: false,
       flying: !!def.flying,
-      armor: def.armor || 0,
+      armor: Math.min(0.75, (def.armor || 0) + (affix.armorAdd || 0) + (elite ? 0.1 : 0)),
+      regen: affix.regen || 0,
+      elite,
+      enraged: false,
+      visualScale,
+      phase: Math.random() * Math.PI * 2,
+      spawnUntil: this.gameTime + 260,
+      _tintState: '',
     };
 
     spr.setScale(0.3 * CFG.IS);
-    this.tweens.add({ targets: spr, scaleX: CFG.IS, scaleY: CFG.IS, duration: 250, ease: 'Back.Out' });
+    this.tweens.add({ targets: spr, scaleX: CFG.IS * visualScale, scaleY: CFG.IS * visualScale, duration: 250, ease: 'Back.Out' });
 
     this.enemies.push(enemy);
+    if (elite) this._showFloatText(start.x, start.y - 30, '精英!', PALETTE.gold);
   }
 
   // ============ 塔 ============
@@ -307,9 +466,9 @@ class GameScene extends Phaser.Scene {
     if (this.towers[key]) return false;
     const T = CFG.TILE;
     const spr = this.add.image(gx * T + T/2, gy * T + T/2, `tower_${type}_${star}`);
-    spr.setDepth(4);
+    spr.setDepth(spr.y); // y 排序：靠下的单位盖住靠上的
     spr.setData('gx', gx); spr.setData('gy', gy);
-    this.towerLayer.add(spr);
+    this.unitLayer.add(spr);
 
     spr.setScale(0.3 * CFG.IS);
     this.tweens.add({ targets: spr, scaleX: CFG.IS, scaleY: CFG.IS, duration: 300, ease: 'Back.Out' });
@@ -320,7 +479,15 @@ class GameScene extends Phaser.Scene {
       x: spr.x, y: spr.y,
       cooldown: 0,
       target: null,
+      auraRing: null,
     };
+    if (type === 'buff') {
+      const ring = this.add.circle(tower.x, tower.y, 100, def.color, 0.07);
+      ring.setStrokeStyle(2, def.color, 0.4);
+      this.decoLayer.add(ring);
+      this.tweens.add({ targets: ring, alpha: 0.5, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      tower.auraRing = ring;
+    }
     this.towers[key] = tower;
     this.towerList.push(tower);
     this._recalcAuras();
@@ -336,6 +503,7 @@ class GameScene extends Phaser.Scene {
       targets: flash, scale: 2, alpha: 0, duration: 500,
       onComplete: () => flash.destroy()
     });
+    this._emitter('gold', PALETTE.gold).explode(14, tower.x, tower.y - 10);
     this._recalcAuras();
   }
 
@@ -346,6 +514,10 @@ class GameScene extends Phaser.Scene {
     const refund = Math.round(this._towerValue(tower) * 0.6);
     this.state.gold += refund;
     this.events.emit('gold-changed', this.state.gold);
+    if (tower.auraRing) {
+      this.tweens.killTweensOf(tower.auraRing);
+      tower.auraRing.destroy();
+    }
     this.tweens.add({
       targets: tower.spr, scale: 0, alpha: 0, duration: 250,
       onComplete: () => tower.spr.destroy()
@@ -395,7 +567,8 @@ class GameScene extends Phaser.Scene {
     for (const t of this.towerList) {
       if (t.type !== 'buff') continue;
       const mul = STAR_MUL[t.star];
-      const range = t.def.range * mul.range * this.state.mods.rangeMul;
+      const range = t.def.range * mul.range * this.state.mods.rangeMul * this.state.mods.auraRangeMul;
+      if (t.auraRing) t.auraRing.setRadius(range);
       const aura = t.def.aura;
       for (const other of this.towerList) {
         if (other === t) continue;
@@ -528,18 +701,34 @@ class GameScene extends Phaser.Scene {
     this._updateBaseBar();
     if (this.state.gameOver || this.state.paused) return;
 
+    const sdt = dt * this.speed;
+    this.gameTime += sdt * 1000;
+    const gt = this.gameTime;
+
+    if (this.state.interWave && gt >= this.nextWaveAt) this.startNextWave();
     if (this.state.waveActive) this._spawnFromQueue();
 
     // 敌人移动
     for (const e of this.enemies) {
       if (e.dead) continue;
       let speed = e.baseSpeed;
-      if (time < e.slowUntil) speed *= e.slowFactor;
+      if (gt < e.slowUntil) speed *= e.slowFactor;
+      // 再生词缀
+      if (e.regen > 0 && e.hp < e.maxHp) {
+        e.hp = Math.min(e.maxHp, e.hp + e.maxHp * e.regen * sdt);
+      }
+      // Boss 半血狂暴
+      if (e.type === 'boss' && !e.enraged && e.hp < e.maxHp * 0.5) {
+        e.enraged = true;
+        e.baseSpeed *= 1.6;
+        this._showFloatText(e.x, e.y - e.def.size - 20, '狂暴!', 0xff5a3a);
+        this.cameras.main.shake(150, 0.004);
+      }
       // DOT
-      if (e.dot && time >= e.dot.nextTick) {
+      if (e.dot && gt >= e.dot.nextTick) {
         e.hp -= e.dot.dmg;
-        e.dot.nextTick = time + e.dot.tick * 1000;
-        if (e.dot.nextTick > time + e.dot.dur * 1000) e.dot = null;
+        e.dot.nextTick = gt + e.dot.tick * 1000;
+        if (e.dot.nextTick > gt + e.dot.dur * 1000) e.dot = null;
         this._showFloatText(e.spr.x, e.spr.y - 20, `-${e.dot.dmg}`, 0xc9a0ff);
         if (e.hp <= 0) { this._killEnemy(e); continue; }
       }
@@ -550,7 +739,7 @@ class GameScene extends Phaser.Scene {
       }
       const dx = target.x - e.x, dy = target.y - e.y;
       const dist = Math.hypot(dx, dy);
-      const step = speed * dt;
+      const step = speed * sdt;
       if (step >= dist) {
         e.x = target.x; e.y = target.y;
         e.pathIdx++;
@@ -559,21 +748,50 @@ class GameScene extends Phaser.Scene {
         e.y += dy / dist * step;
       }
       e.spr.setPosition(e.x, e.y);
-      e.hpBg.setPosition(e.x, e.y - e.def.size - 9);
-      e.hpFg.setPosition(e.x - e.barW/2, e.y - e.def.size - 9);
+      e.spr.setDepth(e.y);
+      const vsize = e.def.size * e.visualScale;
+      e.hpBg.setPosition(e.x, e.y - vsize - 9);
+      e.hpFg.setPosition(e.x - e.barW/2, e.y - vsize - 9);
       if (dx < 0) e.spr.setFlipX(true);
       else if (dx > 0) e.spr.setFlipX(false);
       const ratio = Math.max(0, e.hp / e.maxHp);
       e.hpFg.width = e.barW * ratio;
-      if (e.flying) {
-        e.spr.y += Math.sin(time / 200 + e.pathIdx) * 3;
+
+      // 走路起伏（地面单位挤压拉伸，飞行单位上下飘）
+      if (gt > e.spawnUntil) {
+        const b = Math.sin(gt / 110 + e.phase);
+        if (e.flying) {
+          e.spr.y += Math.sin(gt / 200 + e.phase) * 3;
+        } else {
+          const s = CFG.IS * e.visualScale;
+          e.spr.setScale(s * (1 + b * 0.05), s * (1 - b * 0.05));
+        }
       }
+
+      // 受击闪白 > 减速蓝 > 狂暴红 > 精英金
+      let ts = '';
+      if (gt < e.flashUntil) {
+        if (e._tintState !== 'flash') { e.spr.setTintFill(0xffffff); e._tintState = 'flash'; }
+        ts = 'flash';
+      } else if (gt < e.slowUntil) {
+        if (e._tintState !== 'slow') { e.spr.setTint(0xa0e0ff); e._tintState = 'slow'; }
+        ts = 'slow';
+      } else if (e.enraged) {
+        if (e._tintState !== 'rage') { e.spr.setTint(0xff8a7a); e._tintState = 'rage'; }
+        ts = 'rage';
+      } else if (e.elite) {
+        if (e._tintState !== 'elite') { e.spr.setTint(0xffe9a0); e._tintState = 'elite'; }
+        ts = 'elite';
+      } else if (e._tintState !== '') {
+        e.spr.clearTint();
+      }
+      e._tintState = ts;
     }
 
     // 塔攻击
     for (const t of this.towerList) {
       if (t.type === 'buff') continue;
-      t.cooldown -= dt;
+      t.cooldown -= sdt;
       if (t.cooldown > 0) continue;
       const mul = STAR_MUL[t.star];
       const range = t.def.range * mul.range * this.state.mods.rangeMul;
@@ -599,8 +817,8 @@ class GameScene extends Phaser.Scene {
           const dx = p.lastX - p.spr.x, dy = p.lastY - p.spr.y;
           const d = Math.hypot(dx, dy);
           if (d < 8) { p.spr.destroy(); this.projectiles.splice(i, 1); continue; }
-          p.spr.x += dx / d * p.speed * dt;
-          p.spr.y += dy / d * p.speed * dt;
+          p.spr.x += dx / d * p.speed * sdt;
+          p.spr.y += dy / d * p.speed * sdt;
         } else {
           p.spr.destroy(); this.projectiles.splice(i, 1);
         }
@@ -609,7 +827,7 @@ class GameScene extends Phaser.Scene {
       p.lastX = p.target.x; p.lastY = p.target.y;
       const dx = p.target.x - p.spr.x, dy = p.target.y - p.spr.y;
       const d = Math.hypot(dx, dy);
-      const step = p.speed * dt;
+      const step = p.speed * sdt;
       if (step >= d) {
         this._projectileHit(p);
         p.spr.destroy();
@@ -626,25 +844,40 @@ class GameScene extends Phaser.Scene {
 
   _fire(tower, target, mul) {
     const def = tower.def;
-    const dmg = def.dmg * mul.dmg * this.state.mods.dmgMul * (tower.auraDmg || 1);
+    const mods = this.state.mods;
+    const dmg = def.dmg * mul.dmg * mods.dmgMul * (tower.auraDmg || 1);
+
+    // 开火后坐
+    this.tweens.add({ targets: tower.spr, scaleY: CFG.IS * 0.85, duration: 70, yoyo: true, ease: 'Quad.Out' });
 
     if (tower.type === 'zap') {
-      this._chainLightning(tower, target, dmg, def.chain, def.chainRange);
+      this._chainLightning(tower, target, dmg, def.chain + mods.chainBonus, def.chainRange);
       return;
     }
 
-    const spr = this.add.image(tower.x, tower.y - 10, 'proj');
-    spr.setTint(def.projColor || 0xffffff);
-    spr.setDepth(6);
-    spr.setScale((tower.star * 0.25 + 0.6) * CFG.IS);
-    this.projLayer.add(spr);
-    this.projectiles.push({
-      spr, target, speed: def.projSpeed,
-      dmg, tower,
-      splash: def.splash || this.state.mods.splashAll || 0,
-      slow: def.slow, slowDur: def.slowDur,
-      dot: def.dot,
-    });
+    let splash = def.splash ? def.splash * mods.cannonSplashMul : 0;
+    if (!splash) splash = mods.splashAll;
+    const slowDur = def.slowDur ? def.slowDur + mods.frostDur : 0;
+
+    const mkProj = (offsetY) => {
+      const spr = this.add.image(tower.x, tower.y - 10 + offsetY, 'proj');
+      spr.setTint(def.projColor || 0xffffff);
+      spr.setDepth(6000);
+      spr.setScale((tower.star * 0.25 + 0.6) * CFG.IS);
+      this.projLayer.add(spr);
+      this.projectiles.push({
+        spr, target, speed: def.projSpeed,
+        dmg, tower,
+        splash,
+        slow: def.slow, slowDur,
+        dot: def.dot,
+      });
+    };
+    mkProj(0);
+    // 箭雨天赋：概率追加一箭
+    if (tower.type === 'arrow' && mods.arrowDouble > 0 && Math.random() < mods.arrowDouble) {
+      mkProj(-8);
+    }
 
     const flash = this.add.circle(tower.x, tower.y - 10, 8, 0xfff2b0, 0.8);
     this.fxLayer.add(flash);
@@ -696,18 +929,14 @@ class GameScene extends Phaser.Scene {
     if (target && !target.dead) {
       this._damageEnemy(target, p.dmg, p.tower);
       if (p.slow) {
-        target.slowUntil = this.time.now + p.slowDur * 1000;
+        target.slowUntil = this.gameTime + p.slowDur * 1000;
         target.slowFactor = 1 - Math.min(0.85, p.slow + (this.state.mods.frostSlow - 0.45));
-        target.spr.setTint(0xa0e0ff);
-        this.time.delayedCall(p.slowDur * 1000, () => {
-          if (!target.dead) target.spr.clearTint();
-        });
       }
       if (p.dot) {
         target.dot = {
-          dmg: p.dot.dmg * STAR_MUL[p.tower.star].dmg * this.state.mods.dmgMul,
+          dmg: p.dot.dmg * STAR_MUL[p.tower.star].dmg * this.state.mods.dmgMul * this.state.mods.dotMul,
           dur: p.dot.dur, tick: p.dot.tick,
-          nextTick: this.time.now + p.dot.tick * 1000,
+          nextTick: this.gameTime + p.dot.tick * 1000,
         };
       }
     }
@@ -726,10 +955,9 @@ class GameScene extends Phaser.Scene {
         targets: boom, scale: p.splash / 15, alpha: 0, duration: 350,
         onComplete: () => boom.destroy()
       });
+      this._emitter('hit', 0xff9a4a).explode(8, cx, cy);
     }
-    const hit = this.add.circle(p.spr.x, p.spr.y, 6, 0xffffff, 0.8);
-    this.fxLayer.add(hit);
-    this.tweens.add({ targets: hit, scale: 2.5, alpha: 0, duration: 200, onComplete: () => hit.destroy() });
+    this._emitter('hit', 0xfff2b0).explode(5, p.spr.x, p.spr.y);
   }
 
   _damageEnemy(e, dmg, sourceTower) {
@@ -738,9 +966,11 @@ class GameScene extends Phaser.Scene {
       dmg *= 2;
       this._showFloatText(e.x, e.y - 24, '暴击!', PALETTE.gold);
     }
+    if (e.elite || e.type === 'boss') dmg *= this.state.mods.eliteDmgMul;
     dmg *= (1 - (e.armor || 0));
     dmg = Math.max(1, Math.round(dmg));
     e.hp -= dmg;
+    e.flashUntil = this.gameTime + 70;
     this._showFloatText(e.x + (Math.random() - 0.5) * 10, e.y - 16, `-${dmg}`, 0xffffff);
     if (e.hp <= 0) this._killEnemy(e);
   }
@@ -748,15 +978,20 @@ class GameScene extends Phaser.Scene {
   _killEnemy(e) {
     if (e.dead) return;
     e.dead = true;
+    this.state.kills++;
     this.state.gold += e.gold;
     this.events.emit('gold-changed', this.state.gold);
     this._showFloatText(e.x, e.y - 20, `+${e.gold}`, PALETTE.gold);
-    const puff = this.add.circle(e.x, e.y, e.def.size, e.def.color, 0.8);
-    this.fxLayer.add(puff);
-    this.tweens.add({
-      targets: puff, scale: 2.2, alpha: 0, duration: 350,
-      onComplete: () => puff.destroy()
-    });
+    this._emitter('death', e.def.color).explode(e.elite ? 20 : 12, e.x, e.y);
+    // 嗜血天赋：每 8 杀回血
+    if (this.state.mods.killHeal > 0) {
+      this._healKills++;
+      if (this._healKills % 8 === 0 && this.state.hp < this.state.baseHp) {
+        this.state.hp = Math.min(this.state.baseHp, this.state.hp + this.state.mods.killHeal);
+        this.events.emit('hp-changed', this.state.hp);
+        this._showFloatText(this.baseSprite.x, this.baseSprite.y - 50, `+${this.state.mods.killHeal}`, 0x8fd98f);
+      }
+    }
     this.tweens.add({
       targets: e.spr, scale: 0, alpha: 0, angle: 180, duration: 300,
       onComplete: () => e.spr.destroy()
@@ -768,7 +1003,7 @@ class GameScene extends Phaser.Scene {
   _enemyReachBase(e) {
     if (e.dead) return;
     e.dead = true;
-    const dmg = e.type === 'boss' ? 5 : 1;
+    const dmg = e.type === 'boss' ? 5 : (e.elite ? 2 : 1);
     this.state.hp -= dmg;
     this.events.emit('hp-changed', this.state.hp);
     const flash = this.add.circle(this.baseSprite.x, this.baseSprite.y, 40, 0xff2a2a, 0.6);
@@ -800,13 +1035,15 @@ class GameScene extends Phaser.Scene {
 
   _gameOver() {
     this.state.gameOver = true;
-    this.events.emit('game-over', { wave: this.state.wave, talents: this.state.talents });
+    this.events.emit('game-over', { wave: this.state.wave, kills: this.state.kills, talents: this.state.talents });
   }
 
   applyTalent(talent) {
     talent.apply(this.state);
     this.state.talents.push(talent);
     this._recalcAuras();
+    this.events.emit('gold-changed', this.state.gold);
+    this.events.emit('hp-changed', this.state.hp);
     this.events.emit('talent-applied', talent);
   }
 

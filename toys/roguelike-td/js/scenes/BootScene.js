@@ -4,7 +4,6 @@ class BootScene extends Phaser.Scene {
 
   create() {
     this.genGrassTile();
-    this.genPathTile();
     this.genBuildableTile();
     this.genDecoTiles();
     this.genTowers();
@@ -42,26 +41,6 @@ class BootScene extends Phaser.Scene {
       g.strokePath();
     }
     this._gen(g, 'tile_grass', T, T);
-  }
-
-  genPathTile() {
-    const T = CFG.TILE;
-    const g = this.make.graphics({ add: false });
-    g.fillStyle(PALETTE.path, 1);
-    g.fillRect(0, 0, T, T);
-    for (let i = 0; i < 20; i++) {
-      const x = Math.random() * T, y = Math.random() * T;
-      g.fillStyle(Math.random() < 0.5 ? 0xc9a878 : 0xe8caa0, 0.6);
-      g.fillCircle(x, y, 1 + Math.random() * 2.5);
-    }
-    for (let i = 0; i < 3; i++) {
-      const x = 4 + Math.random() * (T - 8), y = 4 + Math.random() * (T - 8);
-      g.fillStyle(0x8a6a4a, 0.9);
-      g.fillCircle(x, y, 2 + Math.random() * 1.5);
-      g.lineStyle(1, PALETTE.ink, 0.6);
-      g.strokeCircle(x, y, 2 + Math.random() * 1.5);
-    }
-    this._gen(g, 'tile_path', T, T);
   }
 
   genBuildableTile() {
@@ -390,6 +369,12 @@ class BootScene extends Phaser.Scene {
     g.lineStyle(1.5, PALETTE.ink, 0.7);
     g.strokeCircle(6, 6, 5);
     this._gen(g, 'proj', 12, 12);
+
+    // 粒子（命中火花/死亡爆裂/合成金光）
+    const g2 = this.make.graphics({ add: false });
+    g2.fillStyle(0xffffff, 1);
+    g2.fillCircle(4, 4, 4);
+    this._gen(g2, 'spark', 8, 8);
   }
 
   genUI() {
